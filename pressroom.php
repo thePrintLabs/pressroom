@@ -51,14 +51,19 @@
 			add_action( 'admin_notices', array( $this, 'check_libs_notice' ) ) ;
 			add_action( 'p2p_init', array( $this, 'register_connection_type' ) );
 			add_action( 'p2p_init', array( $this, 'register_connection_type' ) );
+			register_activation_hook( __FILE__, array( $this, 'setup' ) );
 
 			$this->load_edition();
 			$this->load_adb_package();
 			if (!isset($GLOBALS['tpl_options'])) {
 				$this->_configs = get_option('tpl_options', array());
 			}
-
 		}
+
+		 public function setup() {
+        $database = new TPL_Database;
+				$database-> install_database();
+     }
 
 		public function load_edition() {
 			if ($this->_edition === null) {

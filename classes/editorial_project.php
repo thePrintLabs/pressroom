@@ -72,7 +72,9 @@
       $editorial = get_term($editorial_id, TPL_EDITORIAL_PROJECT);
       switch ($column_name) {
           case 'header_icon':
-              echo '<a href="'.TPL_SHELF_URI.$editorial->slug.'_shelf.json">'.__("View endpoint", 'editorial_project').'</a>';
+              $shelf_url = TPL_SHELF_URI.$editorial->slug.'_shelf.json';
+              if(is_file( TPL_SHELF_DIR . $editorial->slug.'_shelf.json'))
+              echo '<a href="'.$shelf_url.'">'.__("View endpoint", 'editorial_project').'</a>';
               break;
 
           default:

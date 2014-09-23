@@ -33,8 +33,6 @@
 	require_once( 'classes/adb_package.php' );
 	require_once( 'classes/preview.php' );
 
-
-
 	class TPL_Pressroom {
 
 		protected $_push;
@@ -50,11 +48,12 @@
 			// Display the admin notification
 			add_action( 'admin_notices', array( $this, 'check_libs_notice' ) ) ;
 			add_action( 'p2p_init', array( $this, 'register_connection_type' ) );
-			add_action( 'p2p_init', array( $this, 'register_connection_type' ) );
 			register_activation_hook( __FILE__, array( $this, 'setup' ) );
+			add_action('admin_menu', array($this,'init_preview'));
 
 			$this->load_edition();
 			$this->load_adb_package();
+
 			if (!isset($GLOBALS['tpl_options'])) {
 				$this->_configs = get_option('tpl_options', array());
 			}
@@ -75,6 +74,18 @@
 			if ($this->_adb_package === null) {
 				$this->_adb_package = new TPL_Adb_Package();
 			}
+		}
+
+		public function init_preview() {
+    	add_submenu_page( null, 'Preview screen', 'Preview', 'manage_options', 'preview-page', array($this, 'init_preview_callback'));
+		}
+
+		public function init_preview_callback() {
+
+			echo '<div class="wrap"><div id="icon-tools" class="icon32"></div>';
+				echo '<h2>Edition Preview</h2>';
+			echo '</div>';
+			
 		}
 
 		/**
@@ -119,7 +130,7 @@
 		* @return void
 		*/
 		public function register_connection_type() {
-
+			echo "register".microtime();
 			$registered = array( 'post', TPL_ADB_PACKAGE );
 			$post_types = $this->_configs['tpl-custom-post-type'];
 			foreach($post_types as $post_type) {
@@ -159,3 +170,4 @@
 
 	// instantiate the plugin class
 	$tpl_pressroom = new TPL_Pressroom();
+	$preview = new Tpl_Preview();

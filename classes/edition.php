@@ -23,7 +23,7 @@
 				add_action( 'admin_enqueue_scripts', array($this, 'edition_styles' ) );
 				add_action( 'edit_form_advanced', array($this, 'init_thickbox') );
 				add_action( 'wp_ajax_publishing', array($this, 'publishing_callback' ) );
-				add_action( 'wp_ajax_preview', array($this, 'preview_callback' ) );
+				// add_action( 'wp_ajax_preview', array($this, 'preview_callback' ) );
 			}
 		}
 
@@ -366,7 +366,7 @@
 
 		public function cmb_render_button() {
 		    echo '<a id="publish_edition" href="'.admin_url('admin-ajax.php').'?action=publishing&edition_id='.get_the_id().'&width=800&height=600&TB_iframe=true" class=" thickbox button button-primary button-large">'.__("Publish", "edition").'</a> ';
-				echo '<a id="preview_edition" target="_blank" href="'.admin_url('admin-ajax.php').'?action=preview&edition_id='.get_the_id().'" class="button button-primary button-large">'.__("Preview", "edition").'</a> ';
+				echo '<a id="preview_edition" target="_blank" href="'.admin_url().'?page=preview-page&preview=true&edition_id='.get_the_id().'" class="button button-primary button-large">'.__("Preview", "edition").'</a> ';
 		}
 
 		/**
@@ -405,11 +405,11 @@
 			die() ;
 		}
 
-		public function preview_callback() {
-			$preview = new Tpl_Preview();
-			$preview->run();
-			die();
-		}
+		// public function preview_callback() {
+		// 	$preview = new Tpl_Preview();
+		// 	$preview->run();
+		// 	die();
+		// }
 
 		/**
 		 * initialize_wp_list function.

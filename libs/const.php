@@ -10,6 +10,7 @@
 	define ("TPL_SHELF_URI", plugin_dir_url(TPL_LIBS_PATH) . 'api/shelf/');
 	define ("TPL_PLUGIN_ASSETS", plugin_dir_url(TPL_LIBS_PATH). '/assets/');
 	define ("TPL_HPUB_URI", plugin_dir_url(TPL_LIBS_PATH) . 'api/hpub/');
+	define ("TPL_PLUGIN_URI", plugin_dir_url(TPL_LIBS_PATH));
 
 	/* Packager */
 	define ("TPL_EDITION_MEDIA", 'gfx/');

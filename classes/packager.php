@@ -4,14 +4,14 @@ class TPL_Packager {
 	protected $_edition_post;
 	protected $_connected_query;
 	protected $_theme;
-	protected $_post_ids;
+	protected $_post_ids = array();
 	protected $_attachments;
 	protected $_posts_urls;
 	protected $_array_order = array();
 	public 		$json_options;
 	public		$verbose = true;
 	public 		$edition_folder;
-	public		$html_preview;
+	public		$html_preview = array();
 
 	/**
 	* TPL_Packager function.
@@ -28,6 +28,11 @@ class TPL_Packager {
 		$this->_theme = new TPL_Themes();
 	}
 
+
+	public function get_edition_folder() {
+		$edition_folder = $this->edition_folder;
+		return $edition_folder;
+	}
 	/**
 	* get_connected_data function.
 	*
@@ -40,13 +45,13 @@ class TPL_Packager {
 			$this->_edition_post = get_post($_GET['edition_id']);
 		}
 		$args = array(
-			'connected_type' 		=> 'edition_post',
+			'connected_type' 			=> 'edition_post',
 			'connected_items' 		=> $this->_edition_post,
-			'nopaging' 				=> true,
+			'nopaging' 						=> true,
 			'connected_orderby' 	=> 'order',
 			'connected_order' 		=> 'asc',
-			'connected_order_num' 	=> true,
-			'connected_meta' 		=> array(
+			'connected_order_num' => true,
+			'connected_meta' 			=> array(
 				array(
 						'key' 	=> 'state',
 						'value' => 1,
@@ -56,13 +61,14 @@ class TPL_Packager {
 		);
 
 		$connected_query = new WP_Query($args);
-
+		
 		$this->_connected_query = $connected_query;
 
 		$posts_ids = array();
 		foreach($this->_connected_query->posts as $post_id) {
 			$posts_ids[] = $post_id->ID;
 		}
+
 		$this->_post_ids = $posts_ids;
 	}
 	/**
@@ -376,7 +382,7 @@ class TPL_Packager {
 	* get all option and html file and put them in an array
 	* @param  string $edition_folder
 	*/
-	public function generate_book_json(){
+	public function generate_book_json() {
 		$options = $this->get_options($this->_edition_post->ID);
 		foreach($this->_connected_query->posts as $post) {
 			$post_title = TPL_Utils::TPL_parse_string($post->post_title);
@@ -517,17 +523,7 @@ class TPL_Packager {
 		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_ADB  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
 		if(is_file($path_index)) {
 			$final_post = file_get_contents($path_index);
-			$this->html_preview .= '
-				<div class="swiper-slide">
-					<div class="swiper-container swiper-in-slider">
-						<div class="swiper-wrapper">
-							<div class="swiper-slide">
-								<div class="content-slider">'.$final_post.'</div>
-							</div>
-						</div>
-					</div>
-					<div class="swiper-scrollbar"></div>
-				</div>';
+			$this->html_preview[] = $final_post;
 		}
 	}
 
@@ -536,7 +532,6 @@ class TPL_Packager {
 		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_ADB  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
 		if(is_file($path_index)){
 			$this->json_options['contents'][] = TPL_EDITION_ADB . $post_title . DIRECTORY_SEPARATOR . $indexfile[0];
-
 		}
 		else {
 			$this->print_line(sprintf(__('Can\'t find file %s. It won\'t add to book.json. See the wiki to know how to make an add bundle', 'edition'), $path_index), 'error');
@@ -606,103 +601,22 @@ class TPL_Packager {
 		$parsed_cover = $this->cover_parse(); //parse html of cover index.php file
 		$final_cover = $this->rewrite_url($parsed_cover); //rewrite url of cover html
 		$this->html_write($final_cover, 'index', true); //write html in a new file index.html
-		$this->html_preview = '';
+
 		foreach($this->_connected_query->posts as $k => $connected_post) {
 			$parsed_post = $this->html_parse($connected_post); //get single post html
+
 			$final_post = $this->rewrite_url($parsed_post); //rewrite all contained url
 			if (!has_action('preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
-				$this->html_preview .= '
-					<div class="swiper-slide">
-						<div class="swiper-container swiper-in-slider">
-							<div class="swiper-wrapper">
-								<div class="swiper-slide">
-									<div class="content-slider">'.$final_post.'</div>
-								</div>
-							</div>
-						</div>
-						<div class="swiper-scrollbar"></div>
-					</div>';
+				$this->html_preview[] = $final_post;
 			}
 			else {
 				$post_title = TPL_Utils::TPL_parse_string($connected_post->post_title);
 				do_action('preview_hook_' . $connected_post->post_type, $connected_post->ID, $post_title, $this->edition_folder);
 			}
 		}
-		$index = $this->html_write_preview($this->html_preview);
+
 		$this->save_attachments($this->_attachments, $media_folder); //duplicate all attachment in tmp folder
 
-		return $index;
-	}
-
-	/**
-	* Save the html output into unique file and prepare
-	* @param  string $parsed_post    post html parsed
-	* @param  string $filename
-	*/
-	public function html_write_preview($html_posts) {
-		$swiper_open= '
-		<!DOCTYPE html>
-		<head>
-			<meta charset="utf-8">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-			<title></title>
-			<meta name="description" content="">
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<link href="'.TPL_PLUGIN_ASSETS.'css/preview.css" rel="stylesheet">
-			<link rel="stylesheet" href="'.TPL_PLUGIN_ASSETS.'css/idangerous.swiper.css">
-			<link rel="stylesheet" href="'.TPL_PLUGIN_ASSETS.'css/idangerous.swiper.scrollbar.css">
-		</head>
-		<body>
-		<div class="device">
-			<a class="arrow-left" href="#"></a>
-			<a class="arrow-right" href="#"></a>
-			<div class="swiper-container">
-				<div class="swiper-wrapper">';
-		$swiper_close = '
-				</div>
-			</div>
-			<div class="pagination"></div>
-		</div>
-		</body></html>
-		<script src="'.TPL_PLUGIN_ASSETS.'js/jquery-1.10.1.min.js"></script>
-		<script src="'.TPL_PLUGIN_ASSETS.'js/idangerous.swiper.min.js"></script>
-		<script src="'.TPL_PLUGIN_ASSETS.'js/idangerous.swiper.scrollbar.js"></script>
-		<script>
-		var mySwiper = new Swiper(".swiper-container",{
-			mode:"horizontal",
-			scrollContainer:false,
-			mousewheelControl:false,
-			pagination: ".pagination",
-			loop:true,
-			grabCursor: true,
-			paginationClickable: true,
-		});
-		$(".swiper-in-slider").each(function(){
-			$(this).swiper({
-				mode:"vertical",
-				scrollContainer:true,
-				mousewheelControl:true,
-				scrollbar: {
-					container : ".swiper-scrollbar",
-					draggable : true,
-					hide: false,
-					snapOnRelease: true
-				}
-			})
-		});
-
-		$(".arrow-left").on("click", function(e){
-			e.preventDefault();
-			mySwiper.swipePrev();
-		})
-		$(".arrow-right").on("click", function(e){
-			e.preventDefault();
-			mySwiper.swipeNext();
-		})
-		</script>';
-		$index = $this->edition_folder . DIRECTORY_SEPARATOR . 'index.html';
-		file_put_contents($index, $swiper_open . $html_posts . $swiper_close);
-
-		return $index;
+		return $this->html_preview;
 	}
 }

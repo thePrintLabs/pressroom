@@ -85,7 +85,10 @@
 			echo '<div class="wrap"><div id="icon-tools" class="icon32"></div>';
 				echo '<h2>Edition Preview</h2>';
 			echo '</div>';
-			
+			global $tpl_preview;
+			echo $tpl_preview->get_preview_slider();
+
+
 		}
 
 		/**
@@ -130,7 +133,6 @@
 		* @return void
 		*/
 		public function register_connection_type() {
-			echo "register".microtime();
 			$registered = array( 'post', TPL_ADB_PACKAGE );
 			$post_types = $this->_configs['tpl-custom-post-type'];
 			foreach($post_types as $post_type) {
@@ -170,4 +172,4 @@
 
 	// instantiate the plugin class
 	$tpl_pressroom = new TPL_Pressroom();
-	$preview = new Tpl_Preview();
+	$tpl_preview = new Tpl_Preview();

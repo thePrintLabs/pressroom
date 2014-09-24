@@ -2,30 +2,46 @@
 
 class Tpl_Preview {
   protected $_edition_id;
+  protected $_preview_slider;
+  protected $_packager;
   public function __construct() {
+
       add_action('wp_ajax_next_slide_ajax', array($this,'next_slide_ajax_callback' ));
-      add_action('wp_loaded', array($this,'run' ));
 
-
+      if(is_admin() && isset($_GET['preview'])) {
+        add_action('wp_loaded', array($this,'run' ));
+      }
   }
 
   public function run() {
-    if(is_admin() && isset($_GET['preview'])) {
-      $packager = new TPL_Packager();
-      $preview_html = $packager->package_preview();
-      $edition_folder = $packager->get_edition_folder();
+    $this->_packager = new TPL_Packager();
+    $preview_html = array();
+    $preview_html[] = $this->_packager->package_preview(1);
+    $preview_html[] = $this->_packager->package_preview(2);
 
-      $index = $this->html_write_preview($preview_html, $edition_folder);
-      $html_preview = file_get_contents($index);
-      echo $html_preview;
-    }
+    $edition_folder = $this->_packager->get_edition_folder();
+    $index = $this->html_write_preview($preview_html, $edition_folder);
+    $preview_slider = file_get_contents($index);
+    $this->_preview_slider = $preview_slider;
   }
 
   public function get_slide($number) {
-    global $tpl_packager;
-    $preview_html = $tpl_packager->package_preview();
+    global $tpl_preview;
+    var_dump($tpl_preview->_edition_id);
+    //var_dump($tpl_preview);
+    //$preview_html = $tpl_preview->_packager->package_preview($number);
 
-    return $preview_html[$number];
+    return $preview_html;
+  }
+
+  public function next_slide_ajax_callback() {
+    $slide = $this->get_slide(2);
+    echo "banane".$slide;
+    die();
+  }
+
+  public function get_preview_slider() {
+    return $this->_preview_slider;
   }
 
 
@@ -133,11 +149,5 @@ class Tpl_Preview {
     file_put_contents($index, $swiper_open . $html_replaced_one. $html_replaced_two . $swiper_close);
     //file_put_contents($index, $swiper_open  . $swiper_close);
     return $index;
-  }
-
-  public function next_slide_ajax_callback() {
-    $slide = $this->get_slide(2);
-    echo "banane".$slide;
-    die();
   }
 }

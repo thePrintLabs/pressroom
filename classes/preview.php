@@ -3,47 +3,48 @@
 class Tpl_Preview {
   protected $_edition_id;
   protected $_preview_slider;
-  protected $_packager;
+  protected $_connected_query;
+  protected $_edition_post;
+  protected $_html_preview;
+
   public function __construct() {
 
-      add_action('wp_ajax_next_slide_ajax', array($this,'next_slide_ajax_callback' ));
+    add_action( 'admin_enqueue_scripts', array($this,'preview_register_script' ));
+    add_action( 'admin_footer', array($this,'preview_script' ));
+    add_action( 'wp_ajax_next_slide_ajax', array($this ,'next_slide_ajax_callback' ));
+    add_action('wp_loaded', array($this,'get_connected_data' ));
+    $this->_theme = new TPL_Themes();
 
-      if(is_admin() && isset($_GET['preview'])) {
-        add_action('wp_loaded', array($this,'run' ));
-      }
-  }
 
-  public function run() {
-    $this->_packager = new TPL_Packager();
-    $preview_html = array();
-    $preview_html[] = $this->_packager->package_preview(1);
-    $preview_html[] = $this->_packager->package_preview(2);
-
-    $edition_folder = $this->_packager->get_edition_folder();
-    $index = $this->html_write_preview($preview_html, $edition_folder);
-    $preview_slider = file_get_contents($index);
-    $this->_preview_slider = $preview_slider;
-  }
-
-  public function get_slide($number) {
-    global $tpl_preview;
-    var_dump($tpl_preview->_edition_id);
-    //var_dump($tpl_preview);
-    //$preview_html = $tpl_preview->_packager->package_preview($number);
-
-    return $preview_html;
-  }
-
-  public function next_slide_ajax_callback() {
-    $slide = $this->get_slide(2);
-    echo "banane".$slide;
-    die();
   }
 
   public function get_preview_slider() {
+    $this->run();
     return $this->_preview_slider;
   }
 
+  public function run() {
+
+    $preview_html = array();
+    $preview_html[] = $this->get_post_html(1);
+    $preview_html[] = $this->get_post_html(2);
+
+
+    $edition_folder = TPL_Utils::TPL_make_dir(TPL_PREVIEW_DIR, $this->_edition_post->post_title);
+    $index = $this->html_write_preview($preview_html, $edition_folder);
+    $preview_slider = file_get_contents($index);
+    $this->_preview_slider = $preview_slider;
+
+  }
+
+
+  public function next_slide_ajax_callback() {
+    $preview = new self;
+    $preview->get_connected_data();
+    $slide = $preview->get_post_html(1);
+    echo $slide;
+    die();
+  }
 
   /**
   * Save the html output into unique file and prepare
@@ -74,18 +75,36 @@ class Tpl_Preview {
       </div>
       <div class="pagination"></div>
     </div>
-    </body></html>
-    <script src="'.TPL_PLUGIN_ASSETS.'js/jquery-1.10.1.min.js"></script>
-    <script src="'.TPL_PLUGIN_ASSETS.'js/idangerous.swiper.min.js"></script>
-    <script src="'.TPL_PLUGIN_ASSETS.'js/idangerous.swiper.scrollbar.js"></script>
+    </body></html>';
+    $html_slide = '
+      <div class="swiper-slide">
+        <div class="swiper-container swiper-in-slider">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="content-slider">[final_post]</div>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-scrollbar"></div>
+      </div>';
+    $index = $edition_folder . DIRECTORY_SEPARATOR . 'index.html';
+    $html_replaced_one = str_replace('[final_post]',$html_posts[0], $html_slide );
+    $html_replaced_two = str_replace('[final_post]',$html_posts[1], $html_slide );
+
+    file_put_contents($index, $swiper_open . $html_replaced_one. $html_replaced_two . $swiper_close);
+    //file_put_contents($index, $swiper_open  . $swiper_close);
+    return $index;
+  }
+  public function preview_script() {
+    ?>
     <script>
     function lazy() {
       var data = {
         "action" : "next_slide_ajax",
-        "edition_id" : "'.$_GET['edition_id'].'",
+        "edition_id" : "<?php echo $_GET['edition_id']?>",
       };
 
-      jQuery.post("'.admin_url("admin-ajax.php").'", data, function(response) {
+      jQuery.get(ajaxurl, data, function(response) {
         if(response) {
           console.log(response);
         }
@@ -130,24 +149,85 @@ class Tpl_Preview {
       e.preventDefault();
 
     });
-    </script>';
-    $html_slide = '
-      <div class="swiper-slide">
-        <div class="swiper-container swiper-in-slider">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <div class="content-slider">[final_post]</div>
-            </div>
-          </div>
-        </div>
-        <div class="swiper-scrollbar"></div>
-      </div>';
-    $index = $edition_folder . DIRECTORY_SEPARATOR . 'index.html';
-    $html_replaced_one = str_replace('[final_post]',$html_posts[0], $html_slide );
-    $html_replaced_two = str_replace('[final_post]',$html_posts[1], $html_slide );
-
-    file_put_contents($index, $swiper_open . $html_replaced_one. $html_replaced_two . $swiper_close);
-    //file_put_contents($index, $swiper_open  . $swiper_close);
-    return $index;
+    </script>
+    <?php
   }
+  public function preview_register_script() {
+    wp_register_script( 'jquery_tpl', TPL_PLUGIN_ASSETS.'js/jquery-1.10.1.min.js' );
+    wp_register_script( 'swiper', TPL_PLUGIN_ASSETS.'js/idangerous.swiper.min.js' );
+    wp_register_script( 'swiper_scrollbar', TPL_PLUGIN_ASSETS.'js/idangerous.swiper.scrollbar.js' );
+    wp_enqueue_script( 'jquery_tpl');
+    wp_enqueue_script( 'swiper');
+    wp_enqueue_script( 'swiper_scrollbar');
+  }
+
+
+  /**
+	* get_connected_data function.
+	*
+	* @access public
+	* @return array
+	*/
+
+	public function get_connected_data() {
+		if (isset($_GET['edition_id'])) {
+			$this->_edition_post = get_post($_GET['edition_id']);
+		}
+		$args = array(
+			'connected_type' 			=> 'edition_post',
+			'connected_items' 		=> $this->_edition_post,
+			'nopaging' 						=> true,
+			'connected_orderby' 	=> 'order',
+			'connected_order' 		=> 'asc',
+			'connected_order_num' => true,
+			'connected_meta' 			=> array(
+				array(
+						'key' 	=> 'state',
+						'value' => 1,
+						'type' 	=> 'numeric',
+				)
+			)
+		);
+
+		$connected_query = new WP_Query($args);
+
+		$this->_connected_query = $connected_query;
+	}
+
+  /**
+  * Parsing html
+  * @param  object $connected_post wordpress $post
+  * @return string	html string
+  */
+
+  public function html_parse($connected_post) {
+    $template = $this->_theme->get_template_file_per_page($connected_post->p2p_id);
+    if($template) {
+      ob_start();
+      global $post;
+      $post = $connected_post;
+      setup_postdata($post);
+      require($template);
+      $output = ob_get_contents();
+      wp_reset_postdata();
+      ob_end_clean();
+      return $output;
+    }
+  }
+
+
+  public function get_post_html( $number ) {
+    $connected_post = $this->_connected_query->posts[$number];
+    $parsed_post = $this->html_parse($connected_post); //get single post html
+
+    if (!has_action('preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
+      $html_preview = $parsed_post;
+    }
+    else {
+      $post_title = TPL_Utils::TPL_parse_string($connected_post->post_title);
+      do_action('preview_hook_' . $connected_post->post_type, $connected_post->ID, $post_title, $this->edition_folder);
+    }
+    return $html_preview;
+  }
+
 }

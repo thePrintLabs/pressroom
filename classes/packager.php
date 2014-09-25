@@ -26,6 +26,7 @@ class TPL_Packager {
 		add_action('preview_hook_' . TPL_ADB_PACKAGE, array($this,'preview_adb_package'), 10, 3);
 		$this->get_connected_data();
 		$this->_theme = new TPL_Themes();
+
 	}
 
 
@@ -523,7 +524,7 @@ class TPL_Packager {
 		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_ADB  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
 		if(is_file($path_index)) {
 			$final_post = file_get_contents($path_index);
-			$this->html_preview[] = $final_post;
+			$this->html_preview = $final_post;
 		}
 	}
 
@@ -590,37 +591,5 @@ class TPL_Packager {
 		$this->generate_shelf_json(TPL_SHELF_DIR);
 		$this->print_line(__('Done', 'edition'), 'success');
 		ob_end_flush();
-	}
-
-	public function package_preview($number) {
-
-		$this->verbose = false;
-		$this->edition_folder = TPL_Utils::TPL_make_dir(TPL_PREVIEW_DIR, $this->_edition_post->post_title);
-		$media_folder = TPL_Utils::TPL_make_dir($this->edition_folder, TPL_EDITION_MEDIA );
-		$theme_folder = $this->_theme->get_template_path($this->_edition_post->ID); //get current theme folder
-		$this->download_assets($theme_folder . DIRECTORY_SEPARATOR . 'assets'); //duplicate asset in new folder
-		$parsed_cover = $this->cover_parse(); //parse html of cover index.php file
-		$final_cover = $this->rewrite_url($parsed_cover); //rewrite url of cover html
-		$this->html_write($final_cover, 'index', true); //write html in a new file index.html
-		$this->get_post_html($number);
-
-
-		$this->save_attachments($this->_attachments, $media_folder); //duplicate all attachment in tmp folder
-		return $this->html_preview;
-	}
-
-	public function get_post_html( $number ) {
-		$connected_post = $this->_connected_query->posts[$number];
-		$parsed_post = $this->html_parse($connected_post); //get single post html
-
-		$final_post = $this->rewrite_url($parsed_post); //rewrite all contained url
-		if (!has_action('preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
-			$this->html_preview = $final_post;
-		}
-		else {
-			$post_title = TPL_Utils::TPL_parse_string($connected_post->post_title);
-			do_action('preview_hook_' . $connected_post->post_type, $connected_post->ID, $post_title, $this->edition_folder);
-		}
-		return $this->html_preview[$number];
 	}
 }

@@ -42,6 +42,7 @@
 		protected $_adb_package;
 		protected $_pages;
 		public 		$_configs;
+		public 		$tpl_preview;
 		/* protected $_themes; */
 
 		public function __construct() {
@@ -87,8 +88,6 @@
 			echo '</div>';
 			global $tpl_preview;
 			echo $tpl_preview->get_preview_slider();
-
-
 		}
 
 		/**

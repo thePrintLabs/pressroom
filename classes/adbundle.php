@@ -3,7 +3,7 @@
 	/**
 	 * TPL_Adb_Package class.
 	 */
-	class TPL_Adb_Package {
+	class TPL_ADBundle {
 
 		/**
 		 * TPL_Adb_Package function.

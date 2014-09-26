@@ -267,7 +267,7 @@ class TPL_Packager {
 	* @param  	string $assets_folder
 	*/
 	public function download_assets($assets_folder){
-		$new_assets = TPL_Utils::TPL_make_dir($this->edition_folder, 'assets' );
+		$new_assets = TPL_Utils::make_dir($this->edition_folder, 'assets' );
 		if($new_assets) {
 			$this->print_line(__('Create folder ', 'edition') . $new_assets, 'success');
 		}
@@ -320,7 +320,7 @@ class TPL_Packager {
 			'_tpl_date'							=> 'date',
 			'post_title' 						=> 'title',
 		);
-		foreach ($tpl_pressroom->_configs as $k => $option) { /* General options */
+		foreach ($tpl_pressroom->configs as $k => $option) { /* General options */
 			if(array_key_exists ( $k, $keys )){
 				switch ($k) {
 					case 'tpl-index-height':
@@ -558,8 +558,8 @@ class TPL_Packager {
 	public function run () {
 		ob_start();
 		$output = array();
-		$this->edition_folder = TPL_Utils::TPL_make_dir(TPL_TMP_DIR, $this->_edition_post->post_title);
-		$media_folder = TPL_Utils::TPL_make_dir($this->edition_folder, TPL_EDITION_MEDIA );
+		$this->edition_folder = TPL_Utils::make_dir(TPL_TMP_DIR, $this->_edition_post->post_title);
+		$media_folder = TPL_Utils::make_dir($this->edition_folder, TPL_EDITION_MEDIA );
 		if($this->edition_folder) {
 			$this->print_line(__('Create folder ', 'edition') . $this->edition_folder, 'success');
 		}

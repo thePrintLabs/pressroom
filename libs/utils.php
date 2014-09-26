@@ -1,10 +1,7 @@
 <?php
-class TPL_Utils{
-
-	public function __construct() {
-
-	}
-
+class TPL_Utils
+{
+	public function __construct() {}
 
 	/**
 	 * readDirectory function.
@@ -143,22 +140,26 @@ class TPL_Utils{
 		return $str;
 	}
 
-	public static function TPL_make_dir($path, $name){
-		$folder = $path . DIRECTORY_SEPARATOR . TPL_Utils::TPL_parse_string($name);
-		if( !is_dir($folder) ){
-			if(is_writable($path)){
-				if(mkdir($folder, 0755)){
-					return $folder;
-				}
-				else {
-					return false;
-				}
-			}
-		}
-		else {
-				return $folder;
+	/**
+	 * Create a new folder
+	 * @param  string $basepath - parent folder
+	 * @param  string $dir - new directory
+	 * @return string or false - new directory path
+	 */
+	public static function make_dir( $basepath, $dir ) {
+
+		$path = $basepath . DIRECTORY_SEPARATOR . TPL_Utils::TPL_parse_string( $dir );
+		if ( is_dir( $path ) ) {
+			return $path;
 		}
 
+		if ( is_writable( $basepath ) ) {
+			if ( mkdir( $path, 0755 ) ) {
+				return $path;
+			}
+		}
+
+		return false;
 	}
 
 	public static function TPL_recursive_copy($src, $dst, &$count = 0, &$not_copied = array()) {

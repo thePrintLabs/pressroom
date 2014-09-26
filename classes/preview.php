@@ -30,7 +30,7 @@ class Tpl_Preview {
     $preview_html[] = $this->get_post_html(2);
 
 
-    $edition_folder = TPL_Utils::TPL_make_dir(TPL_PREVIEW_DIR, $this->_edition_post->post_title);
+    $edition_folder = TPL_Utils::make_dir(TPL_PREVIEW_DIR, $this->_edition_post->post_title);
     $index = $this->html_write_preview($preview_html, $edition_folder);
     $preview_slider = file_get_contents($index);
     $this->_preview_slider = $preview_slider;

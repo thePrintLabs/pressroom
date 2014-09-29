@@ -1,5 +1,4 @@
 <?php
-
 /**
  * TPL_Theme class.
  * Theme folder structure:
@@ -12,8 +11,8 @@
  * --- 	js
  */
 
-class TPL_Themes {
-
+class TPL_Themes
+{
 	protected $_themes;
 	protected $_themes_names;
 	protected $_pages_names;
@@ -22,12 +21,13 @@ class TPL_Themes {
 	/**
 	 * TPL_Theme function.
 	 * Class costructor
-	 * @access public
 	 * @return void
 	 */
 
-	public function TPL_Themes() {
-		$this->scan_theme_directory();
+	public function __construct() {
+
+		$this->_search_themes();
+
 		add_action( 'admin_notices', array( $this, 'theme_missing_notice' ) ) ;
 
 		if (isset($_GET['edition_id'])) {
@@ -35,17 +35,78 @@ class TPL_Themes {
 		}
 	}
 
+	/**
+	 *
+	 */
+	protected function _search_themes() {
+
+		$themes = array();
+		$default_headers = array(
+			'theme'	=> 'theme',
+			'rule'   => 'rule',
+			'name'	=> 'name'
+		);
+
+		$dirs = TPL_Utils::read_themes();
+		if ( empty( $dirs ) ) {
+			return;
+		}
+
+		foreach ( $dirs as $dir ) {
+
+			$pages = array();
+			$files = TPL_Utils::readFiles( $dir );
+
+			foreach ( $files as $file ) {
+
+				$metadata = get_file_data( $dir . DIRECTORY_SEPARATOR . $file, $default_headers);
+				if ( empty($metadata) ) {
+					continue;
+				}
+
+				if ( !isset( $metadata['theme'] ) || !strlen( $metadata['theme'] ) ) {
+					continue;
+				}
+
+				$theme_name = strtolower($metadata['theme']);
+
+				if ( $metadata['name'] ) {
+					$pages[] = $metadata['name'];
+				}
+
+				unset( $metadata['theme'] );
+				$metadata['filename'] = $file;
+				$themes[$theme_name][] = $metadata;
+			}
+
+			$this->_pages_names = $pages;
+		}
+
+		$this->_themes = $themes;
+		//$this->_themes = array_unique($themes);
+		$this->theme_cheker($this->_themes);
+	}
 
 	/**
-	 * get_themes function.
-	 *
-	 * @access public
-	 * @static
+	 * Get the list of installed themes
 	 * @return array
 	 */
-	public static function get_themes_name() {
-		$model = new self();
-		return $model->_themes_names;
+	public static function get_themes_list() {
+
+		$themes_list = array();
+		$model = new self;
+		if ( !empty( $model->_themes ) ) {
+			ksort( $model->_themes );
+			$themes = array_keys( $model->_themes );
+			foreach ( $themes as $theme ) {
+				$themes_list[] = array(
+					'value' => $theme,
+					'text'  => $theme
+				);
+			}
+		}
+
+		return $themes_list;
 	}
 
 	public static function get_pages_names() {
@@ -96,39 +157,7 @@ class TPL_Themes {
 		return $model->_themes;
 	}
 
-	public function scan_theme_directory() {
-		$directories = TPL_Utils::readThemes(TPL_THEME_PATH);
-		$default_headers = array(
-		   'theme'        	=> 'theme',
-		   'rule'   				=> 'rule',
-		   'name'     			=> 'name',
-		);
-		$themes = array();
-		$pages = array();
-		foreach($directories as $directory) {
-			$files = TPL_Utils::readFiles($directory);
-			$pages_names = array();
-			foreach($files as $file) {
-				$docks = get_file_data($directory. DIRECTORY_SEPARATOR .$file, $default_headers);
-				$docks['filename'] = $file;
-				if($docks['theme']){
-					$themes_names[strtolower($docks['theme'])] = strtolower($docks['theme']);
-				}
-				if($docks['name']) {
-					$pages_names[] = $docks['name'];
-				}
-				$key = strtolower($docks['theme']);
-				unset($docks['theme']);
-				$themes[$key][] = $docks;
 
-				$this->_themes_names = array_unique($themes_names);
-				$this->_themes = $themes;
-				$this->_pages_names = $pages_names;
-
-			}
-		}
-		$this->theme_cheker($this->_themes);
-	}
 	public static function theme_missing($theme_name, $param = '', $filename = '') {
 		if($theme_name && $param) {
 			return $theme_name;

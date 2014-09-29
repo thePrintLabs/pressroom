@@ -1,12 +1,12 @@
 <?php
 define( "TPL_PLUGIN_PATH", dirname(__FILE__ ) . '/../' );
 define( "TPL_LIBS_PATH", dirname(__FILE__) . '/' );
-define( "TPL_VENDORS_PATH", TPL_LIBS_PATH . '/vendors/' );
-define( "TPL_CLASSES_PATH", TPL_PLUGIN_PATH . '/classes/' );
-define( "TPL_THEME_PATH", TPL_PLUGIN_PATH . '/themes/' );
+define( "TPL_VENDORS_PATH", TPL_LIBS_PATH . 'vendors/' );
+define( "TPL_CLASSES_PATH", TPL_PLUGIN_PATH . 'classes/' );
+define( "TPL_THEME_PATH", TPL_PLUGIN_PATH . 'themes/' );
 
 /* API */
-define( "TPL_API_DIR", TPL_PLUGIN_PATH . '/api/' );
+define( "TPL_API_DIR", TPL_PLUGIN_PATH . 'api/' );
 define( "TPL_HPUB_DIR", TPL_API_DIR . 'hpub/' );
 define( "TPL_TMP_DIR", TPL_API_DIR . 'tmp/' );
 define( "TPL_PREVIEW_DIR", TPL_API_DIR . 'preview/' );

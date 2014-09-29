@@ -1,6 +1,8 @@
 <?php
 class TPL_Utils
 {
+	private static $_excluded = array( ".", "..", ".git" , ".DS_Store", "_notes", "Thumbs.db" );
+
 	public function __construct() {}
 
 	/**
@@ -11,28 +13,33 @@ class TPL_Utils
 	 * @param bool $recursive (default: true)
 	 * @return array
 	 */
-	public static function readThemes($directory) {
-		$bad = array(".", "..", ".DS_Store", "_notes", "Thumbs.db");
-		if(is_dir($directory) === false) {
+	public static function read_themes() {
+
+		$themes = array();
+		if ( is_dir( TPL_THEME_PATH ) === false ) {
 			return false;
 		}
+
 		try {
-			$resource = opendir($directory); $found = array();
-			while(false !== ($item = readdir($resource))) {
-				$theme = $directory . DIRECTORY_SEPARATOR . $item;
-				if(in_array($item, $bad))	{
-						continue;
+			$resource = opendir( TPL_THEME_PATH );
+			while ( false !== ( $file = readdir( $resource ) ) ) {
+
+				if ( in_array( $file, self::$_excluded) )	{
+					continue;
 				}
-				if(is_dir($theme)) {
-					$found[] = $theme;
+
+				$theme = TPL_THEME_PATH . $file;
+				if ( is_dir( $theme ) ) {
+					array_push( $themes, $theme );
 				}
 			}
-		}
-		catch(Exception $e) {
-			error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
+
+			return $themes;
+
+		} catch(Exception $e) {
+			error_log( 'Caught exception: ', $e->getMessage(), "\n", 0);
 			return false;
 		}
-		return $found;
 	}
 
 	// public static function readDirectory($directory, $recursive = true, $found = array()) {

@@ -80,7 +80,7 @@ if (!class_exists('TPL_Redux_Framework')) {
 	                    'title'     => __('Theme', 'baker'),
 	                    'subtitle'  => __('Select yout theme', 'redux-framework-demo'),
 	                    'desc'      => __('You can choose your personal theme or create one and then select it.', 'baker'),
-	                    'options'   => TPL_Themes::get_themes_name(),
+	                    'options'   => TPL_Themes::get_themes_list(),
 	                    'default'   => '2'
 	                ),
 	                array(

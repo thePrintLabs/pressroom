@@ -7,12 +7,16 @@ class TPL_Metabox
    public $priority;
    public $fields;
 
-   public function __construct($id, $title, $context, $priority, $fields = array()) {
+   public $post_id;
+
+   public function __construct($id, $title, $context, $priority, $post_id, $fields = array()) {
+
       $this->id = $id;
       $this->title = $title;
       $this->context = $context;
       $this->priority = $priority;
       $this->fields = $fields;
+      $this->post_id = $post_id;
    }
 
    /**
@@ -21,6 +25,7 @@ class TPL_Metabox
     * @void
     */
    public function add_field( $id, $name, $description, $type, $default, $extra = array() ) {
+
       $params = array(
          'id'  	 => $id,
          'name'	 => $name,
@@ -28,73 +33,147 @@ class TPL_Metabox
          'type'	 => $type,
          'default' => $default
       );
-      $field = array_merge($params, $extra);
-      array_push( $this->fields, $field);
+      $field = array_merge( $params, $extra );
+      array_push( $this->fields, $field );
    }
 
    /**
-    * Create a metabox field
-    * @param int $post_id - post ID
-    * @param array $f - metabox field
+    * Save the fields value ​​of the metabox
+    * @void
+    */
+   public function save_values() {
+
+      foreach( $this->fields as $field ) {
+
+         $field_id = $field['id'];
+         $current_value = get_post_meta( $this->post_id, $field_id, true );
+
+         switch ( $field['type'] ) {
+
+            default:
+               $new_value = $_POST[$field[$field_id]];
+               break;
+
+            case 'file':
+               if ( !empty( $_FILES[$field_id]['name'] ) ) {
+
+                  $supported_types = get_allowed_mime_types();
+                  $file_types = wp_check_filetype( basename( $_FILES[$field_id]['name'] ) );
+                  $uploaded_type = $file_types['type'];
+
+                  // Check if the type is supported. If not, throw an error.
+                  if ( in_array( $uploaded_type, $supported_types ) ) {
+
+                     $upload_overrides = array( 'test_form' => false );
+                     $uploaded = wp_handle_upload( $_FILES[$field_id], $upload_overrides );
+
+                     if ( isset( $uploaded['file'] ) ) {
+
+                        $file = $uploaded['file'];
+                        $attachment = array(
+                           'post_mime_type' 	=> $uploaded_type,
+                           'post_title' 		=> $_FILES[$field_id]['name'],
+                           'post_content' 	=> '',
+                           'post_status' 		=> 'inherit'
+                        );
+
+                        $attach_id = wp_insert_attachment( $attachment, $file, $this->post_id );
+
+                        require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+                        $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+                        wp_update_attachment_metadata( $attach_id, $attach_data );
+
+                        if ( $current_value ) {
+                           wp_delete_attachment( $current_value );
+                        }
+
+                        $new_value = $attach_id;
+                     }
+                  }
+               }
+               break;
+
+            case 'date':
+               $new_value = date('Y-m-d', strtotime($_POST[$field_id]));
+               break;
+         }
+
+         if ( $new_value && $new_value != $current_value ) {
+            update_post_meta( $this->post_id, $field_id, $new_value );
+         }
+         elseif ( '' == $new_value && $current_value ) {
+            delete_post_meta( $this->post_id, $field_id, $current_value );
+         }
+      }
+   }
+
+   /**
+    * Covert a metabox field configuration to html element
     * @return string html field
     */
-   public static function metabox_field_to_html( $post_id, $field ) {
-      $f = (object)$field;
-      $meta = get_post_meta( $post_id, $f->id, true);
+   public function fields_to_html() {
 
-      $html = '<tr>
-      <th style="width:20%"><label for="' . $f->id . '">' . $f->name . '</label></th>
-      <td>';
+      $html = '';
+      foreach( $this->fields as $field ) {
 
-      switch ($f->type) {
+         $meta = get_post_meta( $this->post_id, $field['id'], true);
 
-         case 'text':
-            $html.= '<input type="text" name="' . $f->id . '" id="' . $f->id . '" value="' . ( $meta ? $meta : $f->default ) . '" size="30" style="width:97%" /><br>'. $f->desc;
-            break;
+         $html.= '<tr>
+         <th style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
+         <td>';
 
-         case 'textarea':
-            $html.= '<textarea name="' . $f->id . '" id="' . $f->id . '" cols="60" rows="4" style="width:97%">' . ( $meta ? $meta : $f->default ) . '</textarea><br>'. $f->desc;
-            break;
+         switch ($field['type']) {
 
-         case 'select':
-            $html.= '<select name="' . $f->id . '" id="' . $f->id . '">';
-            foreach ( $f->options as $option ) {
-               $html.= '<option '. ( $meta == $option ? 'selected="selected"' : '' ) . '>'. $option . '</option>';
-            }
-            $html.= '</select>';
-            break;
+            case 'text':
+               $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta ? $meta : $field['default'] ) . '" size="30" style="width:97%" /><br>'. $field['desc'];
+               break;
 
-         case 'select_multiple':
-            $html.= '<select multiple name="' . $f->id . '[]" id="' . $f->id . '">';
-            foreach ( $f->options as $option ) {
-               $html.= '<option '. ( in_array( $option, $meta ) ? 'selected="selected"' : '' ) . '>'. $option . '</option>';
-            }
-            $html.= '</select>';
-            break;
+            case 'textarea':
+               $html.= '<textarea name="' . $field['id'] . '" id="' . $field['id'] . '" cols="60" rows="4" style="width:97%">' . ( $meta ? $meta : $field['default'] ) . '</textarea><br>'. $field['desc'];
+               break;
 
-         case 'radio':
-            foreach ( $f->options as $i => $option ) {
-               $html.= ' <input type="radio" id="' . $f->id . '_' . $i .'" name="' . $f->id . '" value="' . $option['value'] . '" ' . ( $meta == $option['value'] ? 'checked="checked"' : '' ) . ' /> <label for="' . $f->id . '_' . $i . '">' . $option['name'] . '</label>';
-            }
-            break;
-
-         case 'checkbox':
-            $html.= '<input type="checkbox" name="' . $f->id . '" id="' . $f->id . '" ' . ( $meta ? 'checked="checked"' : '' ) . ' />';
-            break;
-
-         case 'file':
-            $html.= '<input type="file" name="' . $f->id . '" id="' . $f->id . '" /><br>';
-            if ($meta) {
-               $url = wp_get_attachment_image_src($meta);
-               if ($url) {
-                  $html.= '<img height="200" src="'.$url[0].'">';
+            case 'select':
+               $html.= '<select name="' . $field['id'] . '" id="' . $field['id'] . '">';
+               foreach ( $field['options'] as $option ) {
+                  $html.= '<option value="'. $option['value'] .'" '. ( $meta == $option['value'] ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
                }
-            }
-            break;
+               $html.= '</select>';
+               break;
 
-         case 'date':
-            $html.= '<input type="text" name="' . $f->id . '" id="' . $f->id . '" value="'. ( $meta ? $meta : $f->default ) . '" size="30" style="width:30%" /><br>'. $f->desc;
-            break;
+            case 'select_multiple':
+               $html.= '<select multiple name="' . $field['id'] . '[]" id="' . $field['id'] . '">';
+               foreach ( $field['options'] as $option ) {
+                  $html.= '<option value="'. $option['value'] .'" '. ( in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
+               }
+               $html.= '</select>';
+               break;
+
+            case 'radio':
+               foreach ( $field['options'] as $i => $option ) {
+                  $html.= ' <input type="radio" id="' . $field['id'] . '_' . $i .'" name="' . $field['id'] . '" value="' . $option['value'] . '" ' . ( $meta == $option['value'] ? 'checked="checked"' : '' ) . ' />
+                  <label for="' . $field['id'] . '_' . $i . '">' . $option['name'] . '</label>';
+               }
+               break;
+
+            case 'checkbox':
+               $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta ? 'checked="checked"' : '' ) . ' />';
+               break;
+
+            case 'file':
+               $html.= '<input type="file" name="' . $field['id'] . '" id="' . $field['id'] . '" /><br>';
+               if ($meta) {
+                  $img = wp_get_attachment_image($meta);
+                  if ($img) {
+                     $html.= $img;
+                  }
+               }
+               break;
+
+            case 'date':
+               $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta ? $meta : $field['default'] ) . '" size="30" style="width:30%" /><br>'. $field['desc'];
+               break;
+         }
       }
 
       $html.= '<td></tr>';

@@ -8,7 +8,7 @@
 * Author URI: http://www.theprintlabs.com
 * License: GPLv2
 *
-* 	 _____                                               _____
+*   _____                                               _____
 *  |  __ \                                             |  __ \
 *  | |__) | __ ___  ___ ___ _ __ ___   ___  _ __ ___   | |__) | __ ___
 *  |  ___/ '__/ _ \/ __/ __| '__/ _ \ / _ \| '_ ` _ \  |  ___/ '__/ _ \
@@ -107,11 +107,11 @@ class TPL_Pressroom
 		}
 	}
 
-  /**
-	* Add connection between the edition and the posts
-	*
-	* @void
-	*/
+	/**
+	 * Add connection between the edition and the posts
+	 *
+	 * @void
+	 */
 	public function register_post_connection() {
 
 		$types = array( 'post', TPL_ADB_PACKAGE );

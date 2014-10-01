@@ -1,7 +1,7 @@
 <?php
 class TPL_Utils
 {
-	protected static $_excluded_files = array( ".", "..", ".git", ".gitignore", ".pressignore", ".DS_Store", "_notes", "Thumbs.db", "__MACOSX" );
+	public static $excluded_files = array( ".", "..", ".git", ".gitignore", ".pressignore", ".DS_Store", "_notes", "Thumbs.db", "__MACOSX" );
 
 	public function __construct() {}
 
@@ -75,7 +75,7 @@ class TPL_Utils
 	 */
 	public static function is_allowed_files( $dir, $file ) {
 
-		foreach ( self::$_excluded_files as $excp ) {
+		foreach ( self::$excluded_files as $excp ) {
 			$excp = trim( $excp );
 			if ( strpos( $excp, '*' ) === false ) {
 				if ( $file == $excp || $file . '/' == $excp || '/' . $file == $excp || '/' . $file. '/' == $excp ) {
@@ -102,7 +102,7 @@ class TPL_Utils
 		try {
 			$out = array();
 			$files = scandir( $directory );
-			$files = array_diff( $files, self::$_excluded_files );
+			$files = array_diff( $files, self::$excluded_files );
 			foreach ( $files as $file ) {
 				if ( is_file( $directory . DIRECTORY_SEPARATOR . $file ) ) {
 					$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
@@ -220,7 +220,7 @@ class TPL_Utils
 				}
 
 				$dir = opendir( $source_folder );
-				self::$_excluded_files = array_merge( self::$_excluded_files, self::get_press_ignore( $source_folder ) );
+				self::$excluded_files = array_merge( self::$excluded_files, self::get_press_ignore( $source_folder ) );
 
 				while ( false !== ( $file = readdir( $dir ) ) ) {
 
@@ -299,7 +299,7 @@ class TPL_Utils
 			foreach ( $files as $file ) {
 
 				$info = pathinfo( $file );
-				if ( !in_array( $info['filename'], self::$_excluded_files ) ) {
+				if ( !in_array( $info['filename'], self::$excluded_files ) ) {
 					$file = str_replace('\\', '/', realpath( $file ));
 	            if ( is_dir( $file ) ) {
 						$zip->addEmptyDir( str_replace( $source . '/', '', $flag . $file . '/' ) );

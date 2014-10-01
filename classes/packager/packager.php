@@ -539,10 +539,4 @@ class TPL_Packager
 		$edition_folder = $this->edition_folder;
 		return $edition_folder;
 	}
-
-
-
-
-
-
 }

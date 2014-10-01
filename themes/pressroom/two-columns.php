@@ -1,7 +1,7 @@
 <?php
 
 /*
-* theme: Pressroom
+* theme: Press Room
 * rule: post
 * name: two-columns
 */

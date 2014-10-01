@@ -20,9 +20,12 @@ class TPL_Edition
 		}
 
 		add_action( 'init', array( $this, 'add_edition_post_type' ), 10 );
-		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30 );
+		add_action( 'init', array( 'TPL_Theme', 'search_themes' ), 20 );
+
+		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
 		add_action( 'add_meta_boxes', array( $this, 'add_pressroom_metabox' ), 40 );
-		add_action( 'save_post_'.TPL_EDITION, array( $this, 'save_custom_metaboxes_data'), 40 );
+		add_action( 'save_post_'.TPL_EDITION, array( $this, 'save_edition'), 40 );
+
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
@@ -77,14 +80,10 @@ class TPL_Edition
 		register_post_type( TPL_EDITION , $args );
 	}
 
-
 	/**
-	 * Add one or more custom metabox to edition custom fields
-	 * @void
+	 * Get custom metaboxes configuration
 	 */
-	public function add_custom_metaboxes() {
-
-		global $post;
+	public function get_custom_metaboxes( $post_type, $post ) {
 
 		$e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $post->ID );
 		$e_meta->add_field( '_tpl_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', '' );
@@ -93,7 +92,7 @@ class TPL_Edition
 		$e_meta->add_field( '_tpl_product_id', __( 'Product identifier', 'edition' ), __( 'Product identifier', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_tpl_cover', __( 'Cover image', 'edition' ), __( 'Upload cover image', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 		$e_meta->add_field( '_tpl_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
-		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Themes::get_themes_list() ) );
+		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_tpl_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
 			'options' => array(
 				array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
@@ -106,7 +105,15 @@ class TPL_Edition
 
 		// Add metabox to metaboxes array
 		array_push( $this->_metaboxes, $e_meta );
+	}
 
+	/**
+	 * Add one or more custom metabox to edition custom fields
+	 * @void
+	 */
+	public function add_custom_metaboxes($post_type, $post) {
+
+		$this->get_custom_metaboxes( $post_type, $post );
 		foreach ( $this->_metaboxes as $metabox ) {
 			add_meta_box($metabox->id, $metabox->title, array($this, 'add_custom_metabox_callback'), TPL_EDITION, $metabox->context, $metabox->priority);
 		}
@@ -118,7 +125,7 @@ class TPL_Edition
 	 */
 	public function add_pressroom_metabox() {
 
-		add_meta_box( 'pressroom_metabox', __( 'Connected posts', 'edition' ), array( $this, 'add_pressroom_metabox_callback' ), TPL_EDITION );
+		add_meta_box( 'pressroom_metabox', __( 'Linked posts', 'edition' ), array( $this, 'add_pressroom_metabox_callback' ), TPL_EDITION );
 	}
 
 	/**
@@ -172,7 +179,7 @@ class TPL_Edition
 	 * @param  int $post_id
 	 * @void
 	 */
-	public function save_custom_metaboxes_data($post_id) {
+	public function save_edition( $post_id ) {
 
 		$post = get_post($post_id);
 		if ( !$post || $post->post_type != TPL_EDITION ) {
@@ -190,15 +197,11 @@ class TPL_Edition
 		}
 
 		//Check permissions
-		if ( TPL_EDITION == $_POST['post_type'] ) {
-			if ( !current_user_can( 'edit_page', $post_id ) ) {
-				return $post_id;
-			}
-		}
-		elseif ( !current_user_can('edit_post', $post_id) ) {
+		if ( !current_user_can( 'edit_page', $post_id ) ) {
 			return $post_id;
 		}
 
+		$this->get_custom_metaboxes( TPL_EDITION, $post);
 		foreach ( $this->_metaboxes as $metabox ) {
 			$metabox->save_values();
 		}

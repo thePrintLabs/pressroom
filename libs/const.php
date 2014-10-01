@@ -17,6 +17,7 @@ define( "TPL_SHELF_URI", TPL_PLUGIN_URI . 'api/shelf/' );
 define( "TPL_PLUGIN_ASSETS", TPL_PLUGIN_URI. '/assets/' );
 define( "TPL_HPUB_URI", TPL_PLUGIN_URI . 'api/hpub/' );
 define( "TPL_THEME_URI", TPL_PLUGIN_URI . 'themes/' );
+define( "TPL_PREVIEW_URI", TPL_PLUGIN_URI . 'api/preview/' );
 
 /* Packager */
 define( "TPL_EDITION_MEDIA", 'gfx/' );

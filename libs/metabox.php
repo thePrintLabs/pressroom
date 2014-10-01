@@ -9,7 +9,7 @@ class TPL_Metabox
 
    public $post_id;
 
-   public function __construct($id, $title, $context, $priority, $post_id, $fields = array()) {
+   public function __construct( $id, $title, $context, $priority, $post_id, $fields = array() ) {
 
       $this->id = $id;
       $this->title = $title;
@@ -51,7 +51,7 @@ class TPL_Metabox
          switch ( $field['type'] ) {
 
             default:
-               $new_value = $_POST[$field[$field_id]];
+               $new_value = $_POST[$field_id];
                break;
 
             case 'file':

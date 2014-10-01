@@ -31,7 +31,7 @@ require_once( TPL_CLASSES_PATH . 'edition/editorial_project.php' );
 
 require_once( TPL_CLASSES_PATH . 'press_list.php' );
 require_once( TPL_CLASSES_PATH . 'theme.php' );
-require_once( TPL_CLASSES_PATH . 'packager.php' );
+require_once( TPL_CLASSES_PATH . 'packager/packager.php' );
 require_once( TPL_CLASSES_PATH . 'adbundle.php' );
 require_once( TPL_CLASSES_PATH . 'preview.php' );
 
@@ -124,28 +124,28 @@ class TPL_Pressroom
 				'to' 			=> TPL_EDITION,
 				'sortable' 	=> false,
 				'admin_box' => array(
-				'show' 		=> 'from',
-				'context'	=> 'advanced'
-			),
-			'fields' => array(
-				'state' => array(
-						'title' 			 => 'Post state',
-						'type' 			 => 'checkbox',
-						'default_state' => 1,
+					'show' 		=> 'from',
+					'context'	=> 'advanced'
 				),
-				'template' => array(
-					'title' 		=> '',
-					'type' 		=> 'hidden',
-					'values'		=>	array(),
-				),
-				'order' => array(
+				'fields' => array(
+					'state' => array(
+						'title'		=> __( 'Included in the edition', 'pressroom' ),
+						'type'		=> 'checkbox',
+						'default'	=> 1,
+					),
+					'template' => array(
+						'title' 		=> '',
+						'type' 		=> 'hidden',
+						'values'		=>	array(),
+					),
+					'order' => array(
 						'title'		=> '',
 						'type' 		=> 'hidden',
 						'default' 	=> 0,
 						'values' 	=>	array(),
-				),
-			)
-		));
+					),
+				)
+		) );
 	}
 
 	/**
@@ -157,6 +157,7 @@ class TPL_Pressroom
 		$types = array();
 		if ( !empty( $this->configs ) && isset( $this->configs['custom_post_type'] ) ) {
 			foreach ( $this->configs['custom_post_type'] as $post_type ) {
+
 				array_push( $types, $post_type );
 			}
 		}

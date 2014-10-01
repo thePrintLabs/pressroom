@@ -1,46 +1,9 @@
 <?php
 class TPL_Utils
 {
-	private static $_excluded = array( ".", "..", ".git" , ".DS_Store", "_notes", "Thumbs.db" );
+	protected static $_excluded_files = array( ".", "..", ".git", ".gitignore", ".pressignore", ".DS_Store", "_notes", "Thumbs.db", "__MACOSX" );
 
 	public function __construct() {}
-
-	/**
-	 * readDirectory function.
-	 *
-	 * @access public
-	 * @param mixed $directory
-	 * @param bool $recursive (default: true)
-	 * @return array
-	 */
-	public static function read_themes() {
-
-		$themes = array();
-		if ( is_dir( TPL_THEME_PATH ) === false ) {
-			return false;
-		}
-
-		try {
-			$resource = opendir( TPL_THEME_PATH );
-			while ( false !== ( $file = readdir( $resource ) ) ) {
-
-				if ( in_array( $file, self::$_excluded) )	{
-					continue;
-				}
-
-				$theme = TPL_THEME_PATH . $file;
-				if ( is_dir( $theme ) ) {
-					array_push( $themes, $theme );
-				}
-			}
-
-			return $themes;
-
-		} catch(Exception $e) {
-			error_log( 'Caught exception: ', $e->getMessage(), "\n", 0);
-			return false;
-		}
-	}
 
 	// public static function readDirectory($directory, $recursive = true, $found = array()) {
 	// 	$bad = array(".", "..", ".DS_Store", "_notes", "Thumbs.db");
@@ -72,25 +35,91 @@ class TPL_Utils
 
 
 	/**
-	 * readFiles function.
-	 *
-	 * @access public
-	 * @static
-	 * @param mixed $directory
+	 * Read directory files
+	 * @param string $directory
 	 * @return array
 	 */
-	public static function readFiles($directory) {
+	/*
+	public static function read_files( $directory ) {
+
 		try {
-			$files = scandir($directory);
-			$bad = array(".", "..", ".DS_Store", "_notes", "Thumbs.db");
-			$files = array_diff($files, $bad);
+			$files = scandir( $directory );
+			$files = array_diff( $files, self::$_excluded_files );
 		}
 		catch(Exception $e) {
 			return false;
 		}
 		return $files;
 	}
+	*/
 
+	public static function get_press_ignore( $dir ) {
+
+		$entries = array();
+		if ( substr( $dir, -1 ) === DIRECTORY_SEPARATOR ) {
+			$dir = substr( $dir, 0, -1 );
+		}
+
+		if ( file_exists( $dir . DIRECTORY_SEPARATOR . '.pressignore' ) ) {
+			$entries = file( $dir . DIRECTORY_SEPARATOR . '.pressignore' );
+		}
+
+		return $entries;
+	}
+
+	/**
+	 * Check if a file is allowed in context
+	 * @param  string  $dir
+	 * @param  string  $file
+	 * @return boolean
+	 */
+	public static function is_allowed_files( $dir, $file ) {
+
+		foreach ( self::$_excluded_files as $excp ) {
+			$excp = trim( $excp );
+			if ( strpos( $excp, '*' ) === false ) {
+				if ( $file == $excp || $file . '/' == $excp || '/' . $file == $excp || '/' . $file. '/' == $excp ) {
+					return false;
+				}
+			} else {
+				$regex = str_replace( '*', '[_a-z0-9-]+(\.[_a-z0-9-]+)*', $excp );
+				if ( preg_match( '/' . $regex . '/', $file ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	* Read php files into a directory
+	* @param string $directory
+	* @return array
+	*/
+	public static function read_php_files( $directory ) {
+
+		try {
+			$out = array();
+			$files = scandir( $directory );
+			$files = array_diff( $files, self::$_excluded_files );
+			foreach ( $files as $file ) {
+				if ( is_file( $directory . DIRECTORY_SEPARATOR . $file ) ) {
+					$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
+					if ( $info['extension'] == 'php' ) {
+						array_push( $out, $file );
+					}
+				}
+			}
+			return $out;
+		}
+		catch(Exception $e) {
+			error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
+			return false;
+		}
+	}
+
+	/*
 	public static function read_Html_Files($directory) {
 		try {
 			$files = array();
@@ -111,8 +140,9 @@ class TPL_Utils
 		}
 		return $files;
 	}
+	*/
 
-	public static function TPL_parse_string($str) {
+	public static function parse_string($str) {
 		$str = sanitize_file_name($str);
 		$str = strtolower($str);
 		$str = str_replace(" ","-",$str);
@@ -155,7 +185,11 @@ class TPL_Utils
 	 */
 	public static function make_dir( $basepath, $dir ) {
 
-		$path = $basepath . DIRECTORY_SEPARATOR . TPL_Utils::TPL_parse_string( $dir );
+		if ( substr( $basepath, -1 ) === DIRECTORY_SEPARATOR ) {
+			$basepath = substr( $basepath, 0, -1 );
+		}
+
+		$path = $basepath . DIRECTORY_SEPARATOR . TPL_Utils::parse_string( $dir );
 		if ( is_dir( $path ) ) {
 			return $path;
 		}
@@ -169,85 +203,117 @@ class TPL_Utils
 		return false;
 	}
 
-	public static function TPL_recursive_copy($src, $dst, &$count = 0, &$not_copied = array()) {
-			try {
-				$dir = opendir($src);
-				if(is_writable(dirname($dst))){
-					if(!is_dir($dst)){
-						mkdir($dst);
+	/**
+	 * Copy files recursively
+	 * @param string  $source_folder
+	 * @param string  $destination_folder
+	 * @param integer $count
+	 * @param array   $not_copied
+	 */
+	public static function recursive_copy( $source_folder, $destination_folder, &$count = 0, &$not_copied = array() ) {
+
+		try {
+
+			if ( is_writable( dirname( $destination_folder ) ) ) {
+				if ( !is_dir( $destination_folder ) ) {
+					mkdir( $destination_folder, 0755 );
+				}
+
+				$dir = opendir( $source_folder );
+				self::$_excluded_files = array_merge( self::$_excluded_files, self::get_press_ignore( $source_folder ) );
+
+				while ( false !== ( $file = readdir( $dir ) ) ) {
+
+					if ( !self::is_allowed_files( $source_folder, $file ) ) {
+						continue;
 					}
-					while(false !== ( $file = readdir($dir)) ) {
-							if (( $file != '.' ) && ( $file != '..' )) {
-									$dir_src = $src . DIRECTORY_SEPARATOR . $file;
-									$dir_dst = $dst . DIRECTORY_SEPARATOR . $file;
-									if ( is_dir($dir_src) ) {
-											self::TPL_recursive_copy($dir_src, $dir_dst, $count, $not_copied);
-									}
-									else {
-											if(copy($dir_src, $dir_dst)){
-												$count++;
-											}
-											else {
-												$not_copied[] = $file;
-											}
-									}
-							}
-					}
-					closedir($dir);
-					if($not_copied) {
-						return $not_copied;
+
+					$dir_src = $source_folder . DIRECTORY_SEPARATOR . $file;
+					$dir_dst = $destination_folder . DIRECTORY_SEPARATOR . $file;
+
+					if ( is_dir( $dir_src ) ) {
+						self::recursive_copy( $dir_src, $dir_dst, $count, $not_copied );
 					}
 					else {
-						return $count;
+						if ( copy( $dir_src, $dir_dst ) ) {
+							$count++;
+						}
+						else {
+							array_push( $not_copied, $file );
+						}
 					}
 				}
-			}
-	    catch(Exception $e){
-				error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
-			}
+				closedir($dir);
 
-}
-
-	public static function TPL_getUrls($string) {
-		$regex = '/https?\:\/\/[^\" ]+/i';
-		preg_match_all($regex, $string, $matches);
-		return ($matches[0]);
+				if ( !empty( $not_copied ) ) {
+					return $not_copied;
+				}
+				else {
+					return $count;
+				}
+			}
+		}
+		catch(Exception $e){
+			error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
+			return false;
+		}
 	}
 
+	/**
+	 * Extracts all url from an html string
+	 * @param string $string
+	 */
+	public static function get_urls($string) {
 
-	public static function zipFile($source, $destination, $flag = '')	{
-	    if (!extension_loaded('zip') || !file_exists($source)) {
-	        return false;
-	    }
-	    $zip = new ZipArchive();
-	    if (!$zip->open($destination, ZIPARCHIVE::OVERWRITE)) {
-	        return false;
-	    }
-	    $source = str_replace('\\', '/', realpath($source));
-	    if($flag){
-	        $flag = basename($source) . '/';
-	    }
-	    if (is_dir($source) === true) {
-	        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-					//$files = self::readDirectory($source, true);
-					$bad = array(".", "..", ".DS_Store", "_notes", "Thumbs.db", "__MACOSX");
-	        foreach ($files as $file) {
-						$filename = pathinfo($file);
-						if(!in_array($filename['filename'], $bad)) {
-	            $file = str_replace('\\', '/', realpath($file));
-	            if (is_dir($file) === true) {
-	                $zip->addEmptyDir(str_replace($source . '/', '', $flag.$file . '/'));
-	            }
-	            else if (is_file($file) === true) {
-	                $zip->addFromString(str_replace($source . '/', '', $flag.$file), file_get_contents($file));
-	            }
-						}
-	        }
-	    }
-	    else if (is_file($source) === true) {
-	        $zip->addFromString($flag.basename($source), file_get_contents($source));
-	    }
+		$regex = '/https?\:\/\/[^\" ]+/i';
+		preg_match_all( $regex, $string, $matches );
+		return $matches[0];
+	}
 
-	    return $zip->close();
+	/**
+	 * Create a zip file
+	 * @param  string $source
+	 * @param  string $destination
+	 * @param  string $flag
+	 * @return boolean
+	 */
+	public static function create_zip_file( $source, $destination, $flag = false ) {
+
+		if ( !extension_loaded( 'zip' ) || !file_exists( $source ) ) {
+	        return false;
+		}
+
+		$zip = new ZipArchive();
+		if ( !$zip->open( $destination, ZIPARCHIVE::OVERWRITE ) ) {
+			return false;
+		}
+
+		$source = str_replace( '\\', '/', realpath( $source ) );
+		if ( !$flag ) {
+			$flag = basename( $source ) . '/';
+		}
+
+		if ( is_dir( $source ) ) {
+
+			$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $source ), RecursiveIteratorIterator::SELF_FIRST );
+			foreach ( $files as $file ) {
+
+				$info = pathinfo( $file );
+				if ( !in_array( $info['filename'], self::$_excluded_files ) ) {
+					$file = str_replace('\\', '/', realpath( $file ));
+	            if ( is_dir( $file ) ) {
+						$zip->addEmptyDir( str_replace( $source . '/', '', $flag . $file . '/' ) );
+	            }
+	            elseif ( is_file( $file ) ) {
+						$zip->addFromString( str_replace( $source . '/', '', $flag . $file ), file_get_contents( $file ) );
+	            }
+				}
+			}
+		}
+		elseif ( is_file( $source ) ) {
+			$zip->addFromString( $flag . basename( $source ), file_get_contents( $source ) );
+		}
+
+		return $zip->close();
 	}
 }

@@ -12,12 +12,15 @@ class TPL_Setup
     * @return boolean or array of error messages
     */
    public static function install() {
+
       $errors = array();
       $check_libs = self::_check_php_libs();
       if ( $check_libs )
          array_push( $errors, __( "Missing required extensions: <b>" . implode( ', ', $check_libs ) . "</b>", 'pressroom_setup' ) );
+
       if ( !self::_setup_db_tables() )
          array_push( $errors, __( "Error creating required tables. Check your database permissions.", 'pressroom_setup' ) );
+
       if ( !self::_setup_filesystem() )
          array_push( $errors, __( "Error creating required directory: <b>&quot;".TPL_PLUGIN_PATH."api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
 
@@ -36,6 +39,7 @@ class TPL_Setup
       $errors = array();
       $extensions = array( 'zlib', 'zip', 'libxml' );
       foreach ( $extensions as $extension ) {
+
          if( !extension_loaded( $extension ) ) {
             array_push( $errors, $extension );
          }
@@ -91,7 +95,7 @@ class TPL_Setup
       ) $charset_collate;";
 
       require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
-    	dbDelta( $sql_receipts );
+      dbDelta( $sql_receipts );
       dbDelta( $sql_purchased_issues );
       dbDelta( $sql_apns_tokens  );
 
@@ -105,6 +109,7 @@ class TPL_Setup
     * @return boolean result
     */
    private static function _setup_filesystem() {
+
       $api_dir = TPL_Utils::make_dir( TPL_PLUGIN_PATH, 'api' );
       if ( !$api_dir ) {
          return false;

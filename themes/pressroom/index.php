@@ -1,7 +1,7 @@
 <?php
 
 /*
-* theme: Pressroom
+* theme: Press Room
 * rule: cover
 */
 
@@ -23,7 +23,7 @@
         <?php
         	if ( $posts->have_posts() ) {
 				while ( $posts->have_posts() ) {
-					$posts->the_post(); 
+					$posts->the_post();
 					the_title();
 					the_content();
 				}

@@ -129,7 +129,7 @@ class TPL_Pressroom
 				),
 				'fields' => array(
 					'state' => array(
-						'title'		=> __( 'Included in the edition', 'pressroom' ),
+						'title'		=> __( 'Included in edition', 'pressroom' ),
 						'type'		=> 'checkbox',
 						'default'	=> 1,
 					),

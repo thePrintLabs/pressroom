@@ -85,8 +85,8 @@ class Pressroom_List_Table extends WP_List_Table
          'post_title'   => __( 'Title', 'press_listtable' ),
          'post_author'  => __( 'Author', 'press_listtable' ),
          'post_date'    => __( 'Date', 'press_listtable' ),
-         'state'        => __( 'State', 'press_listtable' ),
-         'template'     => __( 'Template', 'press_listtable' ),
+         'state'        => __( 'Status', 'press_listtable' ),
+         'template'     => __( 'Layout', 'press_listtable' ),
       );
 
       return $columns;
@@ -227,6 +227,10 @@ class Pressroom_List_Table extends WP_List_Table
       $html .= '</select>';
 
       return $html;
+   }
+
+   public function column_post_title( $item ) {
+      echo '<a target="_blank" href="'.get_edit_post_link($item->ID).'">' . $item->post_title . '</a>';
    }
 
 	/**

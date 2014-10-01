@@ -23,7 +23,7 @@ list = {
 
         // Pagination links, sortable link
 
-        $('#pressroom_metaboxe .inside').delegate('.tablenav-pages .pagination-links a, .manage-column.sortable a, .manage-column.sorted a','click', function(e) {
+        $('#pressroom_metabox .inside').delegate('.tablenav-pages .pagination-links a, .manage-column.sortable a, .manage-column.sorted a','click', function(e) {
             // We don't want to actually follow these links
             e.preventDefault();
             // Simple way: use the URL to extract our needed variables
@@ -174,7 +174,7 @@ $('#doaction').on( "click", function(e) {
 
 	e.preventDefault();
 	var posts = new Array();
-	var action_to_do = $('#pressroom_metaboxe .actions select option:selected').val();
+	var action_to_do = $('#pressroom_metabox .actions select option:selected').val();
 	$('.check-column :checked').each(function(){
 
 		posts.push($(this).val());
@@ -197,7 +197,7 @@ $('#doaction').on( "click", function(e) {
 	});
 });
 
-$( "#pressroom_metaboxe .inside" ).delegate(".number_element_input",'change', function(e) {
+$( "#pressroom_metabox .inside" ).delegate(".number_element_input",'change', function(e) {
 
 	e.preventDefault();
 

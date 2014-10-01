@@ -154,7 +154,7 @@ class TPL_Editorial_Project
             echo '<tr class="form-field tpl_repeater" id="tpl_repeater" data-index="'.$i.'">
             <th scope="row" valign="top"><label for="subscription_type">' . ( !$i ? 'Subscription type' : '') . '</label></th>
             <td><input type="text" name="term_meta[subscription_type][' . $i . ']" id="term_meta[subscription_type]" value="' . ( esc_attr( $field ) ? esc_attr( $field ) : "" ) . '"></td>
-            <td>' . ( !$i ? '<a href="#" id="add-subscription">' . $image_add : '<a href="#" id="remove-subscription" class="remove-subscription">' . $img_remove ) . '</a></td>
+            <td>' . ( !$i ? '<a href="#" id="add-subscription">' . $img_add : '<a href="#" id="remove-subscription" class="remove-subscription">' . $img_remove ) . '</a></td>
             </tr>';
             $i++;
          }

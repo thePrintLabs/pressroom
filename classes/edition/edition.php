@@ -11,6 +11,7 @@ class TPL_Edition
 
 	/**
 	 * Register required hooks
+	 *
 	 * @void
 	 */
 	public function __construct() {
@@ -31,11 +32,12 @@ class TPL_Edition
 		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
-		add_action( 'edit_form_advanced', array($this, 'form_add_thickbox' ) );
+		add_action( 'edit_form_advanced', array( $this, 'form_add_thickbox' ) );
 	}
 
 	/**
 	 * Add custom post type edition to worpress
+	 *
 	 * @void
 	 */
 	public function add_edition_post_type() {
@@ -82,6 +84,8 @@ class TPL_Edition
 
 	/**
 	 * Get custom metaboxes configuration
+	 *
+	 * @void
 	 */
 	public function get_custom_metaboxes( $post_type, $post ) {
 
@@ -95,8 +99,8 @@ class TPL_Edition
 		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_tpl_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
 			'options' => array(
-				array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
-				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
+				array( 'value' => 1, 'name' => __( "Paid", 'edition' ) ),
+				array( 'value' => 0, 'name' => __( "Free", 'edition' ) )
 			)
 		) );
 		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Subscription type', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
@@ -109,9 +113,10 @@ class TPL_Edition
 
 	/**
 	 * Add one or more custom metabox to edition custom fields
+	 *
 	 * @void
 	 */
-	public function add_custom_metaboxes($post_type, $post) {
+	public function add_custom_metaboxes( $post_type, $post ) {
 
 		$this->get_custom_metaboxes( $post_type, $post );
 		foreach ( $this->_metaboxes as $metabox ) {
@@ -121,6 +126,7 @@ class TPL_Edition
 
 	/**
 	 * Add required edition posts metabox
+	 *
 	 * @void
 	 */
 	public function add_pressroom_metabox() {
@@ -130,6 +136,7 @@ class TPL_Edition
 
 	/**
 	* Add publication metabox
+	*
 	* @return void
 	*/
 	public function add_publication_metabox() {
@@ -139,7 +146,8 @@ class TPL_Edition
 
 	/**
 	 * Custom metabox callback print html input field
-	 * @echo string
+	 *
+	 * @echo
 	 */
 	public function add_custom_metabox_callback() {
 
@@ -187,7 +195,7 @@ class TPL_Edition
 		}
 
 		//Verify nonce
-		if ( !wp_verify_nonce( $_POST['tpl_edition_nonce'], 'tpl_edition_nonce' ) ) {
+		if ( !isset( $_POST['tpl_edition_nonce'] ) || !wp_verify_nonce( $_POST['tpl_edition_nonce'], 'tpl_edition_nonce' ) ) {
 			return $post_id;
 		}
 
@@ -261,12 +269,15 @@ class TPL_Edition
 	private function _get_subscription_types() {
 
 		$types = array();
-		$terms = get_terms( TPL_EDITORIAL_PROJECT );
+		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
 		foreach ( $terms as $term ) {
 			$term_meta = get_option( "taxonomy_term_" . $term->term_id );
 			$term_types = unserialize( $term_meta['subscription_type'] );
 			foreach ( $term_types as $type ) {
-				array_push( $types, $term_meta['prefix_bundle_id']. '.' . $term_meta['subscription_prefix']. '.' . $type );
+				array_push( $types, array(
+					'value' => $term_meta['prefix_bundle_id']. '.' . $term_meta['subscription_prefix']. '.' . $type,
+					'text'  => $type
+				) );
 			}
 		}
 

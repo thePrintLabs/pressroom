@@ -53,7 +53,6 @@ class TPL_Metabox
             default:
                $new_value = $_POST[$field_id];
                break;
-
             case 'file':
                if ( !empty( $_FILES[$field_id]['name'] ) ) {
 
@@ -91,9 +90,10 @@ class TPL_Metabox
                         $new_value = $attach_id;
                      }
                   }
+               } else {
+                  $new_value = $current_value;
                }
                break;
-
             case 'date':
                $new_value = date('Y-m-d', strtotime($_POST[$field_id]));
                break;
@@ -144,7 +144,7 @@ class TPL_Metabox
             case 'select_multiple':
                $html.= '<select multiple name="' . $field['id'] . '[]" id="' . $field['id'] . '">';
                foreach ( $field['options'] as $option ) {
-                  $html.= '<option value="'. $option['value'] .'" '. ( in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
+                  $html.= '<option value="'. $option['value'] .'" '. ( !empty( $meta ) && in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
                }
                $html.= '</select>';
                break;
@@ -162,10 +162,16 @@ class TPL_Metabox
 
             case 'file':
                $html.= '<input type="file" name="' . $field['id'] . '" id="' . $field['id'] . '" /><br>';
-               if ($meta) {
-                  $img = wp_get_attachment_image($meta);
-                  if ($img) {
+               if ( $meta ) {
+                  $img = wp_get_attachment_image( $meta );
+                  if ( $img ) {
                      $html.= $img;
+                  }
+                  else {
+                     $url = wp_get_attachment_url( $meta );
+                     if ( $url ) {
+                        $html.= '<a href="' . $url . '">' . __( 'Download' ). '</a>';
+                     }
                   }
                }
                break;

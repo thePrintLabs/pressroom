@@ -236,6 +236,7 @@ class Pressroom_List_Table extends WP_List_Table
 	 */
    public function single_row( $item ) {
 
+      static $row_class = '';
       $order_id = p2p_get_meta( $item->p2p_id, 'order', true );
       $row_class = !strlen($row_class) ? ' class="alternate"' : '';
 

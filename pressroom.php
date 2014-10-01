@@ -15,7 +15,7 @@
 *  | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
 *  |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
 *
-*  The PrintLabs ©
+*  thePrintLabs Ltd. ©
 */
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
@@ -40,7 +40,7 @@ class TPL_Pressroom
 	public $configs;
 
 	protected $_edition;
-	protected $_adb_package;
+	protected $_adbundle;
 
 	public function __construct() {
 
@@ -114,7 +114,7 @@ class TPL_Pressroom
 	 */
 	public function register_post_connection() {
 
-		$types = array( 'post', TPL_ADB_PACKAGE );
+		$types = array( 'post', TPL_ADBUNDLE );
 		$custom_types = $this->_load_custom_post_types();
 		$types = array_merge( $types, $custom_types );
 

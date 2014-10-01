@@ -269,6 +269,7 @@ class TPL_Theme
 
 	protected static function _get_theme_name( $theme ) {
 
+		$key = 'theme';
 		$theme_name = array_shift( array_unique( array_map( function( $item ) use ( $key ) {
 			return $item['theme'];
 		}, $theme) ) );

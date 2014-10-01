@@ -3,9 +3,9 @@
 * TPL packager: Book.json
 *
 */
-abstract class TPL_Packager_Book_JSON
+final class TPL_Packager_Book_JSON
 {
-   private $_press_to_baker = array(
+   private static $_press_to_baker = array(
       'tpl-orientation'       => 'orientation',
       'tpl-zoomable'          => 'zoomable',
       'opt-color-background'  => '-baker-background',
@@ -22,37 +22,35 @@ abstract class TPL_Packager_Book_JSON
 
    /**
     * Get all options and html files and save them in the book.json
-    *
+    * @param object $edition_post
+    * @param object $linked_query
+    * @param string $edition_folder
+    * @param string $edition_cover_image
     * @void
     */
-   public function generate_book_json() {
+   public static function generate_book( $edition_post, $linked_query, $edition_folder, $edition_cover_image ) {
 
-      $press_options = $this->_get_pressroom_options();
+      $press_options = self::_get_pressroom_options( $edition_post, $edition_cover_image );
 
-      foreach ( $this->_linked_query->posts as $post ) {
+      foreach ( $linked_query->posts as $post ) {
 
          $post_title = TPL_Utils::parse_string( $post->post_title );
 
          if ( $post->post_type == 'post' || !has_action( 'packager_bookjson_hook_' . $post->post_type ) ) {
 
-            if ( is_file( $this->_edition_folder . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
+            if ( is_file( $edition_folder . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
                $press_options['contents'][] = $post_title . '.html';
             }
             else {
-               $this->_print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $this->_edition_folder . $post_title . '.html' ), 'error' );
+               TPL_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_folder . $post_title . '.html' ), 'error' );
             }
          }
          else {
-            do_action( 'packager_bookjson_hook_' . $post->post_type, $post, $post_title, $this->edition_folder );
+            do_action( 'packager_bookjson_hook_' . $post->post_type, $post, $post_title, $edition_folder );
          }
       }
 
-      if ( $this->_save_json_file( $press_options, 'book.json', $this->_edition_folder ) ) {
-         $this->_print_line( __( 'Created book.json ', 'edition' ), 'success' );
-      }
-      else {
-         $this->_print_line( __( 'Failed to generate book.json ', 'edition' ), 'error' );
-      }
+      return TPL_Packager::save_json_file( $press_options, 'book.json', $edition_folder );
    }
 
    /**
@@ -60,24 +58,21 @@ abstract class TPL_Packager_Book_JSON
     * @param  boolean $shelf
     * @return array
     */
-   protected function _get_pressroom_options( $shelf = false ) {
+   protected static function _get_pressroom_options( $edition_post, $edition_cover_image ) {
 
       global $tpl_pressroom;
 
-      $book_url = TPL_HPUB_URI;
-      if ( !$shelf ) {
-         $book_url = str_replace( array( 'http://', 'https://' ), 'book://', $book_url );
-      }
+      $book_url = str_replace( array( 'http://', 'https://' ), 'book://', $book_url );
 
       $options = array(
          'hpub'   => true,
-         'url'    => $book_url . TPL_Utils::parse_string( $this->_edition_post->post_title . '.hpub' )
+         'url'    => $book_url . TPL_Utils::parse_string( $edition_post->post_title . '.hpub' )
       );
 
       foreach ( $tpl_pressroom->configs as $key => $option ) {
 
-         if ( array_key_exists( $key, $this->_press_to_baker ) ) {
-            $baker_option = $this->_press_to_baker[$key];
+         if ( array_key_exists( $key, self::$_press_to_baker ) ) {
+            $baker_option = self::$_press_to_baker[$key];
             switch ( $key ) {
                case 'tpl-index-height':
                   $options[$baker_option] = (int)$option;
@@ -99,22 +94,22 @@ abstract class TPL_Packager_Book_JSON
          }
       }
 
-      foreach ( $this->_edition_post as $key => $value ) {
+      foreach ( $edition_post as $key => $value ) {
 
-         if ( array_key_exists( $key, $this->_press_to_baker ) ) {
-            $baker_option = $this->_press_to_baker[$key];
+         if ( array_key_exists( $key, self::$_press_to_baker ) ) {
+            $baker_option = self::$_press_to_baker[$key];
             $options[$baker_option] = $value;
          }
       }
 
-      $edition_meta = get_post_custom( $this->_edition_post->ID );
+      $edition_meta = get_post_custom( $edition_post->ID );
       foreach ( $edition_meta as $meta_key => $meta_value ) {
 
-         if ( array_key_exists( $meta_key, $this->_press_to_baker ) ) {
-            $baker_option = $this->_press_to_baker[$meta_key];
+         if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
+            $baker_option = self::$_press_to_baker[$meta_key];
             switch ( $meta_key ) {
                case '_tpl_cover':
-                  $options[$baker_option] = TPL_EDITION_MEDIA . $this->_edition_cover_image;
+                  $options[$baker_option] = TPL_EDITION_MEDIA . $edition_cover_image;
                   break;
                case '_tpl_author':
                case '_tpl_creator':

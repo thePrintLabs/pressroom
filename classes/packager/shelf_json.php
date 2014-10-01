@@ -3,7 +3,7 @@
 * TPL packager: Book.json
 *
 */
-abstract class TPL_Packager_Shelf_JSON
+final class TPL_Packager_Shelf_JSON
 {
    private $_press_to_baker = array(
       'post_name'       => 'name',
@@ -15,13 +15,14 @@ abstract class TPL_Packager_Shelf_JSON
    );
 
    /**
-    * [generate_shelf_json description]
+    * Get all editions belonging to the same editorial projects of the edition
     * @param  string $folder
     */
-   public function generate_shelf_json( $edition_post, $folder ) {
+   public static function generate_shelf( $edition_post ) {
 
       $press_options = array();
-      $terms = wp_get_post_terms( $post->ID, TPL_EDITORIAL_PROJECT );
+      $terms = wp_get_post_terms( $edition_post->ID, TPL_EDITORIAL_PROJECT );
+
       foreach ( $terms as $term ) {
          $args = array(
             'post_type'             => TPL_EDITION,
@@ -35,32 +36,47 @@ abstract class TPL_Packager_Shelf_JSON
          foreach ( $edition_query->posts as $edition_key => $edition ) {
 
             $press_options[$edition_key] = array( 'url' => TPL_HPUB_URI . TPL_Utils::parse_string( $edition->post_title . '.hpub' ) );
+
+            foreach ( $edition as $key => $edition_attribute ) {
+
+               if ( array_key_exists( $key, $this->_press_to_baker ) ) {
+                  $baker_option = $this->_press_to_baker[$key];
+                  $press_options[$edition_key][$baker_option] = $edition_attribute;
+               }
+            }
+
             $meta_fields = get_post_custom( $edition->ID );
 
-            foreach ( $edition as $post_key => $post ) {
-            if(array_key_exists ( $kk, $keys )) {
-               $options[$j][$keys[$kk]] = $post_key;
+            foreach ( $meta_fields as $meta_key => $meta_value ) {
+
+               if ( array_key_exists( $meta_key, $this->_press_to_baker ) ) {
+
+                  $baker_option = $this->_press_to_baker[$meta_key];
+
+                  switch ( $meta_key ) {
+
+                     case '_tpl_date':
+                        if ( isset( $meta_value[0] ) ) {
+                           $press_options[$edition_key][$baker_option] = date( 'Y-m-d H:s:i', strtotime( $meta_value[0] ) );
+                        }
+                        break;
+                     case '_tpl_cover':
+                        if ( isset( $meta_value[0] ) ) {
+                           $cover = wp_get_attachment_url( $meta_field[0] );
+                           $press_options[$edition_key][$baker_option] = $cover;
+                        }
+                        break;
+                     default:
+                        if ( isset( $meta_value[0] ) ) {
+                           $press_options[$edition_key][$baker_option] = $meta_field[0];
+                        }
+                        break;
+                  }
+               }
             }
          }
 
-         foreach($meta_fields as $k => $meta_field) {
-            if(array_key_exists ( $k, $keys )) {
-               if($k == '_tpl_date') {
-                  $options[$j][$keys[$k]] = date('Y-m-d H:s:i',strtotime($meta_field[0]));
-               }
-               else if($k == '_tpl_cover') {
-                  $attachment_id = $meta_field[0];
-                  $cover_url = wp_get_attachment_url($attachment_id);
-                  $options[$j][$keys[$k]] = $cover_url;
-               }
-               else {
-                  $options[$j][$keys[$k]] = $meta_field[0];
-               }
-
-            }
-         }
+         return TPL_Packager::save_json_file( $press_options, $term->slug . '_shelf.json', TPL_SHELF_DIR );
       }
-      $this->save_json($options, $term->slug.'_shelf.json', $folder);
    }
-}
 }

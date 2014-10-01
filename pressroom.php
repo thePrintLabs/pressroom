@@ -40,7 +40,7 @@ class TPL_Pressroom
 	public $configs;
 
 	protected $_edition;
-	protected $_adb_package;
+	protected $_adbundle;
 
 	public function __construct() {
 

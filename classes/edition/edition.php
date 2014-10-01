@@ -295,7 +295,7 @@ class TPL_Edition
 	 */
 	public function cover_columns( $columns ) {
 
-   	$columns["cover"] = "Cover";
+		$columns["cover"] = "Cover";
 		$columns["paid_free"] = "Paid/Free";
 		$columns["previews"] = "Preview";
 
@@ -310,23 +310,23 @@ class TPL_Edition
 	 */
 	public function cover_output_column( $column_name, $id ) {
 
-    switch ($column_name) {
+		switch ($column_name) {
 
-      case 'cover' :
-			$attach_id = get_post_meta( $id, '_tpl_cover', true );
-			echo wp_get_attachment_image( $attach_id );
-         break;
+	      case 'cover' :
+				$attach_id = get_post_meta( $id, '_tpl_cover', true );
+				echo wp_get_attachment_image( $attach_id );
+	         break;
 
-      case 'paid_free' :
-      	echo ( get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free');
-      	break;
+	      case 'paid_free' :
+	      	echo ( get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free');
+	      	break;
 
-		case 'previews':
-			echo '<a target="_blank" href="/wp-admin/?page=preview-page&preview=true&edition_id='.$id.'">View</a>';
-			break;
+			case 'previews':
+				echo '<a target="_blank" href="/wp-admin/?page=preview-page&preview=true&edition_id='.$id.'">View</a>';
+				break;
 
-      default:
-			break;
-   	}
+			default:
+				break;
+		}
 	}
 }

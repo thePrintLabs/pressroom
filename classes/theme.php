@@ -138,6 +138,21 @@ class TPL_Theme
 		return false;
 	}
 
+	/**
+	 * Get current theme uri
+	 * @param  int $edition_id
+	 * @return string or boolean false
+	 */
+	public static function get_theme_uri( $edition_id ) {
+
+		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );
+		if ( $theme ) {
+			return TPL_THEME_URI . $theme . DIRECTORY_SEPARATOR;
+		}
+
+		return false;
+	}
+
 	public static function get_theme_cover( $edition_id ) {
 
 		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );

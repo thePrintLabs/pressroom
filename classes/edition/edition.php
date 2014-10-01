@@ -25,7 +25,7 @@ class TPL_Edition
 
 		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
 		add_action( 'add_meta_boxes', array( $this, 'add_pressroom_metabox' ), 40 );
-		add_action( 'save_post_'.TPL_EDITION, array( $this, 'save_edition'), 40 );
+		add_action( 'save_post_' . TPL_EDITION, array( $this, 'save_edition'), 40 );
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
 
@@ -33,6 +33,13 @@ class TPL_Edition
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
 		add_action( 'edit_form_advanced', array( $this, 'form_add_thickbox' ) );
+<<<<<<< HEAD
+=======
+
+		add_action( 'manage_' . TPL_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
+		add_action( 'manage_' . TPL_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
+
+>>>>>>> FETCH_HEAD
 	}
 
 	/**
@@ -282,5 +289,47 @@ class TPL_Edition
 		}
 
 		return $types;
+	}
+
+	/**
+	 * Add custom columns
+	 * @param  array $columns
+	 * @return array $columns
+	 */
+	public function cover_columns( $columns ) {
+
+   	$columns["cover"] = "Cover";
+		$columns["paid_free"] = "Paid/Free";
+		$columns["previews"] = "Preview";
+
+		return $columns;
+	}
+
+	/**
+	 * Set output for custom columns
+	 * @param  string $column_name
+	 * @param  int $id
+	 * @void
+	 */
+	public function cover_output_column( $column_name, $id ) {
+
+    switch ($column_name) {
+
+      case 'cover' :
+			$attach_id = get_post_meta( $id, '_tpl_cover', true );
+			echo wp_get_attachment_image( $attach_id );
+         break;
+
+      case 'paid_free' :
+      	echo ( get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free');
+      	break;
+
+		case 'previews':
+			echo '<a target="_blank" href="/wp-admin/?page=preview-page&preview=true&edition_id='.$id.'">View</a>';
+			break;
+
+      default:
+			break;
+   	}
 	}
 }

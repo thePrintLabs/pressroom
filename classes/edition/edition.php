@@ -33,13 +33,10 @@ class TPL_Edition
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
 		add_action( 'edit_form_advanced', array( $this, 'form_add_thickbox' ) );
-<<<<<<< HEAD
-=======
 
 		add_action( 'manage_' . TPL_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . TPL_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
->>>>>>> FETCH_HEAD
 	}
 
 	/**

@@ -5,8 +5,8 @@
 		viewportResizeHandleWidth = 14, //Width of the viewport drag-to-resize handle
 		$sgWrapper = jQuery('#sg-gen-container'), //Wrapper around viewport
 		$sgViewport = $('#sg-viewport'), //Viewport element
-		$sizePx = $('.sg-size-px'), //Px size input element in toolbar
-		$sizeEms = $('.sg-size-em'), //Em size input element in toolbar
+		$sizeWidth = $('.sg-size-px'), //Px size input element in toolbar
+		$sizeHeight = $('.sg-size-height'), //Em size input element in toolbar
 		$sizeSwiperSlide = $('.swiper-slide'),
 		$bodySize = 16, //Body size of the document
 		discoID = false,
@@ -14,21 +14,6 @@
 		discoMode = false,
 		hayMode = false,
 		hash = window.location.hash.replace(/^.*?#/,'');
-
-	//URL Form Submission
-	$('#url-form').submit(function(e) {
-		var urlVal = $('#url').val();
-		var regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
-
-		if(regex.test(urlVal)) {
-			return;
-		} else {
-			var newURL = "http://"+urlVal;
-			$('#url').val(newURL);
-			return;
-		}
-
-	});
 
 	$(w).resize(function(){ //Update dimensions on resize
 		sw = document.body.clientWidth;
@@ -63,26 +48,12 @@
 		$(this).parents('ul').toggleClass('active');
 	});
 
-	//Size View Events
-
-	//Click Size Small Button
-	$('#sg-size-s').on("click", function(e){
-		e.preventDefault();
-		fullMode = false;
-		window.location.hash = 's';
-		changeActiveState($(this));
-		sizeSmall();
-	});
-
-	//Click Size Medium Button
 	$('.tdevice a').on("click", function(e){
 		e.preventDefault();
 		fullMode = false;
 		changeActiveState($(this));
 		theight = $(this).data('height');
 		twidth = $(this).data('width');
-		console.log(theight);
-		console.log(twidth);
 		sizeiframe(twidth, true, theight);
 	});
 
@@ -91,10 +62,8 @@
 		updateSizeReading(sw);
 	}
 
-
-
-	//Pixel input
-	$sizePx.on('keydown', function(e){
+	//Pixel width input
+	$sizeWidth.on('keydown', function(e){
 		var val = Math.floor($(this).val());
 
 		if(e.keyCode === 38) { //If the up arrow key is hit
@@ -114,34 +83,29 @@
 		changeActiveState();
 	});
 
-	$sizePx.on('keyup', function(){
+	//Pixel width input
+	$sizeHeight.on('keydown', function(e){
+		var val = Math.floor($(this).val());
+
+		if(e.keyCode === 38) { //If the up arrow key is hit
+			val++;
+			sizeiframe('',false, val);
+		} else if(e.keyCode === 40) { //If the down arrow key is hit
+			val--;
+			sizeiframe('',false, val);
+		} else if(e.keyCode === 13) { //If the Enter key is hit
+			e.preventDefault();
+			sizeiframe('',false, val); //Size Iframe to value of text box
+			$(this).blur();
+		}
+		changeActiveState();
+	});
+
+	$sizeWidth.on('keyup', function(){
 		var val = Math.floor($(this).val());
 		updateSizeReading(val,'px','updateEmInput');
 	});
 
-	//Em input
-	$sizeEms.on('keydown', function(e){
-		var val = parseFloat($(this).val());
-
-		if(e.keyCode === 38) { //If the up arrow key is hit
-			val++;
-			sizeiframe(Math.floor(val*$bodySize),false);
-		} else if(e.keyCode === 40) { //If the down arrow key is hit
-			val--;
-			sizeiframe(Math.floor(val*$bodySize),false);
-		} else if(e.keyCode === 13) { //If the Enter key is hit
-			e.preventDefault();
-			sizeiframe(Math.floor(val*$bodySize)); //Size Iframe to value of text box
-		}
-		changeActiveState();
-
-		window.location.hash = parseInt(val*$bodySize);
-	});
-
-	$sizeEms.on('keyup', function(){
-		var val = parseFloat($(this).val());
-		updateSizeReading(val,'em','updatePxInput');
-	});
 
 	//Resize the viewport
 	//'size' is the target size of the viewport
@@ -149,6 +113,8 @@
 
 	function sizeiframe(size,animate, height) {
 		var theSize;
+
+		size = (size ? size : $('sg-size-px').value);
 
 		if(size>maxViewportWidth) { //If the entered size is larger than the max allowed viewport size, cap value at max vp size
 			theSize = maxViewportWidth;
@@ -176,9 +142,6 @@
 		updateSizeReading(theSize); //Update values in toolbar
 	}
 
-
-
-
 	//Update Pixel and Em inputs
 	//'size' is the input number
 	//'unit' is the type of unit: either px or em. Default is px. Accepted values are 'px' and 'em'
@@ -191,15 +154,6 @@
 			pxSize = size;
 			emSize = size/$bodySize;
 		}
-
-		if (target == 'updatePxInput') {
-			$sizePx.val(pxSize);
-		} else if (target == 'updateEmInput') {
-			$sizeEms.val(emSize.toFixed(2));
-		} else {
-			$sizeEms.val(emSize.toFixed(2));
-			$sizePx.val(pxSize);
-		}
 	}
 
 	function updateViewportWidth(size) {
@@ -208,35 +162,6 @@
 
 		updateSizeReading(size);
 	}
-
-	// handles widening the "viewport"
-	//   1. on "mousedown" store the click location
-	//   2. make a hidden div visible so that it can track mouse movements and make sure the pointer doesn't get lost in the iframe
-	//   3. on "mousemove" calculate the math, save the results to a cookie, and update the viewport
-	$('#sg-rightpull').mousedown(function(event) {
-
-		// capture default data
-		var origClientX = event.clientX;
-		var origViewportWidth = $sgViewport.width();
-
-		fullMode = false;
-
-		// show the cover
-		$("#sg-cover").css("display","block");
-
-		// add the mouse move event and capture data. also update the viewport width
-		$('#sg-cover').mousemove(function(event) {
-
-			viewportWidth = (origClientX > event.clientX) ? origViewportWidth - ((origClientX - event.clientX)*2) : origViewportWidth + ((event.clientX - origClientX)*2);
-
-			if (viewportWidth > minViewportWidth) {
-
-
-				window.location.hash = viewportWidth;
-				sizeiframe(viewportWidth,false);
-			}
-		});
-	});
 
 	// on "mouseup" we unbind the "mousemove" event and hide the cover again
 	$('body').mouseup(function(event) {

@@ -188,8 +188,9 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
+		$preview_url = admin_url( '?page=preview-swiper&preview=true&edition_id=' . get_the_id() );
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
-		echo '<a id="preview_edition" target="_blank" href="' . admin_url() . '?page=preview-page&preview=true&edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
+		echo '<a id="preview_edition" target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
 
 	/**
@@ -327,7 +328,7 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				echo '<a target="_blank" href="/wp-admin/?page=preview-page&preview=true&edition_id='.$id.'">View</a>';
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ).'">View</a>';
 				break;
 
 			default:

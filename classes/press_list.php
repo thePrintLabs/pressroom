@@ -85,6 +85,7 @@ class Pressroom_List_Table extends WP_List_Table
          'post_title'   => __( 'Title', 'press_listtable' ),
          'post_author'  => __( 'Author', 'press_listtable' ),
          'post_date'    => __( 'Date', 'press_listtable' ),
+         'post_type'    => __( 'Post type', 'press_listtable' ),
          'state'        => __( 'Status', 'press_listtable' ),
          'template'     => __( 'Layout', 'press_listtable' ),
       );
@@ -229,8 +230,25 @@ class Pressroom_List_Table extends WP_List_Table
       return $html;
    }
 
+   /**
+    * Override column post title, adding link to post
+    * @param  object $item
+    * @echo
+    */
    public function column_post_title( $item ) {
+
       echo '<a target="_blank" href="'.get_edit_post_link($item->ID).'">' . $item->post_title . '</a>';
+   }
+
+   /**
+    * Post type column
+    * @param  object $item
+    * @echo
+    */
+   public function column_post_type( $item ) {
+
+      $post_type = get_post_type_object($item->post_type);
+      echo $post_type->labels->singular_name;
    }
 
 	/**

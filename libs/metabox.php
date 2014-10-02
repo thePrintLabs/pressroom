@@ -47,11 +47,14 @@ class TPL_Metabox
 
          $field_id = $field['id'];
          $current_value = get_post_meta( $this->post_id, $field_id, true );
+         $new_value = '';
 
          switch ( $field['type'] ) {
 
             default:
-               $new_value = $_POST[$field_id];
+               if ( isset( $_POST[$field_id] ) ) {
+                  $new_value = $_POST[$field_id];
+               }
                break;
             case 'file':
                if ( !empty( $_FILES[$field_id]['name'] ) ) {
@@ -95,7 +98,9 @@ class TPL_Metabox
                }
                break;
             case 'date':
-               $new_value = date('Y-m-d', strtotime($_POST[$field_id]));
+               if ( isset( $_POST[$field_id] ) ) {
+                  $new_value = date('Y-m-d', strtotime($_POST[$field_id]));
+               }
                break;
          }
 

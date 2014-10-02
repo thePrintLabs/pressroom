@@ -9,6 +9,7 @@ class TPL_Setup
 
    /**
     * Plugin installation
+    *
     * @return boolean or array of error messages
     */
    public static function install() {
@@ -22,7 +23,7 @@ class TPL_Setup
          array_push( $errors, __( "Error creating required tables. Check your database permissions.", 'pressroom_setup' ) );
 
       if ( !self::_setup_filesystem() )
-         array_push( $errors, __( "Error creating required directory: <b>&quot;".TPL_PLUGIN_PATH."api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
+         array_push( $errors, __( "Error creating required directory: <b>&quot;" . TPL_PLUGIN_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
 
       if ( !empty( $errors ) )
          return $errors;
@@ -36,6 +37,7 @@ class TPL_Setup
     * @return boolean or array of errors
     */
    private static function _check_php_libs() {
+
       $errors = array();
       $extensions = array( 'zlib', 'zip', 'libxml' );
       foreach ( $extensions as $extension ) {
@@ -53,9 +55,11 @@ class TPL_Setup
 
    /**
     * Install supporting tables
-    * @return boolean result
+    *
+    * @return boolean
     */
    private static function _setup_db_tables() {
+
       global $wpdb;
       $table_receipts = $wpdb->prefix . TPL_TABLE_RECEIPTS;
       $table_purchased_issues = $wpdb->prefix . TPL_TABLE_PURCHASED_ISSUES;
@@ -106,7 +110,8 @@ class TPL_Setup
 
    /**
     * Install the plugin folders
-    * @return boolean result
+    *
+    * @return boolean
     */
    private static function _setup_filesystem() {
 

@@ -5,7 +5,7 @@
 */
 final class TPL_Packager_Shelf_JSON
 {
-   private $_press_to_baker = array(
+   private static $_press_to_baker = array(
       'post_name'       => 'name',
       'post_title'      => 'title',
       'post_content'    => 'info',
@@ -39,8 +39,8 @@ final class TPL_Packager_Shelf_JSON
 
             foreach ( $edition as $key => $edition_attribute ) {
 
-               if ( array_key_exists( $key, $this->_press_to_baker ) ) {
-                  $baker_option = $this->_press_to_baker[$key];
+               if ( array_key_exists( $key, self::$_press_to_baker ) ) {
+                  $baker_option = self::$_press_to_baker[$key];
                   $press_options[$edition_key][$baker_option] = $edition_attribute;
                }
             }
@@ -49,9 +49,9 @@ final class TPL_Packager_Shelf_JSON
 
             foreach ( $meta_fields as $meta_key => $meta_value ) {
 
-               if ( array_key_exists( $meta_key, $this->_press_to_baker ) ) {
+               if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
 
-                  $baker_option = $this->_press_to_baker[$meta_key];
+                  $baker_option = self::$_press_to_baker[$meta_key];
 
                   switch ( $meta_key ) {
 
@@ -62,13 +62,13 @@ final class TPL_Packager_Shelf_JSON
                         break;
                      case '_tpl_cover':
                         if ( isset( $meta_value[0] ) ) {
-                           $cover = wp_get_attachment_url( $meta_field[0] );
+                           $cover = wp_get_attachment_url( $meta_value[0] );
                            $press_options[$edition_key][$baker_option] = $cover;
                         }
                         break;
                      default:
                         if ( isset( $meta_value[0] ) ) {
-                           $press_options[$edition_key][$baker_option] = $meta_field[0];
+                           $press_options[$edition_key][$baker_option] = $meta_value[0];
                         }
                         break;
                   }

@@ -204,32 +204,61 @@ class TPL_Utils
 	}
 
 	/**
+	 * Remove a directory
+	 * @param string $dir
+	 * @void
+	 */
+	public static function remove_dir( $dir ) {
+
+		if ( is_dir( $dir ) ) {
+
+			$objects = scandir( $dir );
+
+			foreach ( $objects as $object ) {
+
+				if ( $object != "." && $object != ".." ) {
+
+					if ( filetype( $dir . DIRECTORY_SEPARATOR . $object ) == "dir" ) {
+						TPL_Utils::remove_dir( $dir . DIRECTORY_SEPARATOR . $object );
+					}
+					else {
+						unlink( $dir . DIRECTORY_SEPARATOR . $object );
+					}
+				}
+			}
+
+			reset( $objects );
+			rmdir( $dir );
+		}
+	}
+
+	/**
 	 * Copy files recursively
-	 * @param string  $source_folder
-	 * @param string  $destination_folder
+	 * @param string  $source_dir
+	 * @param string  $destination_dir
 	 * @param integer $count
 	 * @param array   $not_copied
 	 */
-	public static function recursive_copy( $source_folder, $destination_folder, &$count = 0, &$not_copied = array() ) {
+	public static function recursive_copy( $source_dir, $destination_dir, &$count = 0, &$not_copied = array() ) {
 
 		try {
 
-			if ( is_writable( dirname( $destination_folder ) ) ) {
-				if ( !is_dir( $destination_folder ) ) {
-					mkdir( $destination_folder, 0755 );
+			if ( is_writable( dirname( $destination_dir ) ) ) {
+				if ( !is_dir( $destination_dir ) ) {
+					mkdir( $destination_dir, 0755 );
 				}
 
-				$dir = opendir( $source_folder );
-				self::$excluded_files = array_merge( self::$excluded_files, self::get_press_ignore( $source_folder ) );
+				$dir = opendir( $source_dir );
+				self::$excluded_files = array_merge( self::$excluded_files, self::get_press_ignore( $source_dir ) );
 
 				while ( false !== ( $file = readdir( $dir ) ) ) {
 
-					if ( !self::is_allowed_files( $source_folder, $file ) ) {
+					if ( !self::is_allowed_files( $source_dir, $file ) ) {
 						continue;
 					}
 
-					$dir_src = $source_folder . DIRECTORY_SEPARATOR . $file;
-					$dir_dst = $destination_folder . DIRECTORY_SEPARATOR . $file;
+					$dir_src = $source_dir . DIRECTORY_SEPARATOR . $file;
+					$dir_dst = $destination_dir . DIRECTORY_SEPARATOR . $file;
 
 					if ( is_dir( $dir_src ) ) {
 						self::recursive_copy( $dir_src, $dir_dst, $count, $not_copied );

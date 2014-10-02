@@ -135,7 +135,10 @@ class TPL_Edition
 	 */
 	public function add_pressroom_metabox() {
 
-		add_meta_box( 'pressroom_metabox', __( 'Linked posts', 'edition' ), array( $this, 'add_pressroom_metabox_callback' ), TPL_EDITION );
+		if ( TPL_Pressroom::is_edit_page() ) {
+
+			add_meta_box( 'pressroom_metabox', __( 'Linked posts', 'edition' ), array( $this, 'add_pressroom_metabox_callback' ), TPL_EDITION );
+		}
 	}
 
 	/**
@@ -145,7 +148,10 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox() {
 
-		add_meta_box( 'edition_metabox_side', __( 'Publication', 'edition' ), array( $this, 'add_publication_metabox_callback' ), TPL_EDITION, 'side', 'low' );
+		if ( TPL_Pressroom::is_edit_page() ) {
+
+			add_meta_box( 'edition_metabox_side', __( 'Publication', 'edition' ), array( $this, 'add_publication_metabox_callback' ), TPL_EDITION, 'side', 'low' );
+		}
 	}
 
 	/**
@@ -182,7 +188,7 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
-		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="thickbox button button-primary button-large">' . __( "Publish", "edition" ) . '</a> ';
+		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
 		echo '<a id="preview_edition" target="_blank" href="' . admin_url() . '?page=preview-page&preview=true&edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
 
@@ -226,7 +232,6 @@ class TPL_Edition
 	public function ajax_publishing_callback() {
 
 		$packager = new TPL_Packager();
-		$packager->verbose = true;
 		echo '<style>
 		#publishing_popup .error .label {background: #c22d26;}
 		#publishing_popup .success .label {background: #7dc42a;}

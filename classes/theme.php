@@ -16,15 +16,9 @@ class TPL_Theme
 	protected static $_themes = array();
 	protected static $_errors = array();
 
-	//protected $_pages_names;
-	//protected $_edition_post;
-
 	public function __construct() {
 
 		$this->search_themes();
-		//if (isset($_GET['edition_id'])) {
-		//	$this->_edition_post = get_post($_GET['edition_id']);
-		//}
 	}
 
 	/**
@@ -69,7 +63,6 @@ class TPL_Theme
 
 					$themes[$theme_name][] = $metadata;
 				}
-				//$this->_pages_names = $pages;
 			}
 		}
 
@@ -80,6 +73,7 @@ class TPL_Theme
 
 	/**
 	 * Get the list of installed themes
+	 *
 	 * @return array
 	 */
 	public static function get_themes_list() {
@@ -153,6 +147,11 @@ class TPL_Theme
 		return false;
 	}
 
+	/**
+	 * Get the path of cover edition
+	 * @param  int $edition_id
+	 * @return string or boolean false
+	 */
 	public static function get_theme_cover( $edition_id ) {
 
 		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );
@@ -168,6 +167,12 @@ class TPL_Theme
 		return false;
 	}
 
+	/**
+	 * Get the path of the template of a page edition
+	 * @param  int $edition_id
+	 * @param  int $post_id
+	 * @return string or boolean false
+	 */
 	public static function get_theme_page( $edition_id, $post_id ) {
 
 		$template = p2p_get_meta( $post_id, 'template', true );
@@ -215,6 +220,7 @@ class TPL_Theme
 
 	/**
 	 * Validate themes array and check if all property is set to theme pages
+	 * 
 	 * @void
 	 */
 	protected static function _validate_themes() {
@@ -282,29 +288,18 @@ class TPL_Theme
 		return $html;
 	}
 
+	/**
+	 * Get template name by key
+	 * @param  string $theme
+	 * @return string
+	 */
 	protected static function _get_theme_name( $theme ) {
 
 		$key = 'theme';
 		$theme_name = array_unique( array_map( function( $item ) use ( $key ) {
-			return $item['theme'];
+			return $item[$key];
 		}, $theme) );
 
 		return $theme_name[0];
 	}
-
-	/*
-	public static function get_pages_names() {
-		$model = new self();
-		return $model->_pages_names;
-	}
-
-	/*
-
-
-
-
-
-	*/
-
-
 }

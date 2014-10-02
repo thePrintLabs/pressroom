@@ -14,8 +14,15 @@ class TPL_ADBundle
 
 		add_action( 'init', array( $this, 'add_adbundle_post_type' ), 20 );
 		add_action( 'post_edit_form_tag', array( $this, 'form_add_enctype' ) );
-		add_action( 'save_post_' . TPL_ADBUNDLE, array( $this, 'save_adbundle' ), 40 );
+		add_action( 'save_post_' . TPL_AD_BUNDLE, array( $this, 'save_adbundle' ), 40 );
 		add_filter( 'add_meta_boxes', array( $this, 'add_adbundle_metaboxes' ), 40, 2 );
+
+		// Packager hooks
+		add_action( 'packager_run_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'packager_generate_book_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_book' ), 10 );
+
+		// Preview hooks
+		// add_action( 'preview_hook_' . TPL_ADB_PACKAGE, array( $this, 'preview_adb_package' ), 10, 3 );
 	}
 
 	/**
@@ -61,7 +68,7 @@ class TPL_ADBundle
 			'capability_type'     => 'post',
 		);
 
-		register_post_type( TPL_ADBUNDLE, $args );
+		register_post_type( TPL_AD_BUNDLE, $args );
 	}
 
 	/**
@@ -88,7 +95,7 @@ class TPL_ADBundle
 
 		$this->get_custom_metaboxes( $post_type, $post );
 		foreach ( $this->_metaboxes as $metabox ) {
-			add_meta_box($metabox->id, $metabox->title, array($this, 'add_adbundle_metabox_callback'), TPL_ADBUNDLE, $metabox->context, $metabox->priority);
+			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_adbundle_metabox_callback' ), TPL_AD_BUNDLE, $metabox->context, $metabox->priority );
 		}
 	}
 
@@ -125,8 +132,8 @@ class TPL_ADBundle
 	 */
 	public function save_adbundle( $post_id ) {
 
-		$post = get_post($post_id);
-		if ( !$post || $post->post_type != TPL_ADBUNDLE ) {
+		$post = get_post( $post_id );
+		if ( !$post || $post->post_type != TPL_AD_BUNDLE ) {
 			return;
 		}
 
@@ -136,7 +143,7 @@ class TPL_ADBundle
 		}
 
 		//Check autosave
-		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $post_id;
 		}
 
@@ -145,9 +152,93 @@ class TPL_ADBundle
 			return $post_id;
 		}
 
-		$this->get_custom_metaboxes( TPL_ADBUNDLE, $post);
+		$this->get_custom_metaboxes( TPL_AD_BUNDLE, $post);
 		foreach ( $this->_metaboxes as $metabox ) {
 			$metabox->save_values();
 		}
+	}
+
+	/**
+	 * Add AdBundle support to packager
+	 * @param  object $post
+	 * @param  string $edition_dir
+	 * @void
+	 */
+	public function adb_packager_run( $post, $edition_dir ) {
+
+		$attachment = self::get_adb_attachment( $post->ID );
+		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
+
+			$zip = new ZipArchive;
+			$adb_attached_file = get_attached_file( $attachment->ID );
+
+			if ( $zip->open( $adb_attached_file ) ) {
+
+				$adb_title = TPL_Utils::parse_string( $post->post_title );
+				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE . DIRECTORY_SEPARATOR . $adb_title ) ) {
+					TPL_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $adb_attached_file, 'success' );
+				} else {
+					TPL_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $adb_attached_file, 'error' );
+				}
+				$zip->close();
+
+			}
+			else {
+				TPL_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $adb_attached_file, 'error' );
+			}
+		}
+	}
+
+	/**
+	 * [add_adb_bookjson description]
+	 * @param object $post
+	 * @param string $edition_dir
+	 * @void
+	 */
+	public function adb_packager_book( &$args ) {
+
+		list( $press_options, $post, $edition_dir ) = $args;
+
+		$adb_index = get_post_meta( $post->ID, '_tpl_html_file', true );
+		$adb_dir = TPL_Utils::parse_string( $post->post_title );
+
+		$file_index = $edition_dir . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+		if ( is_file( $file_index ) ) {
+			$press_options['contents'][] = TPL_AD_BUNDLE . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+			$args[0] = $press_options;
+		}
+		else {
+			TPL_Packager::print_line( sprintf( __( "Can't find file %s. It won't add to book.json. See the wiki to know how to make an add bundle", 'edition' ), $file_index ), 'error' );
+		}
+	}
+
+	/*
+	public function preview_adb_package($post_id, $post_title, $edition_folder) {
+		$this->get_linked_attachment($post_id, $edition_folder, false);
+		$indexfile = get_post_meta( $post_id, '_tpl_html_file' );
+		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
+		if(is_file($path_index)) {
+			$final_post = file_get_contents($path_index);
+			$this->html_preview = $final_post;
+		}
+	}
+	*/
+
+	/**
+	 * Get adbundle zip attachment
+	 * @param  int $adb_id
+	 * @return object or boolean false
+	 */
+	public static function get_adb_attachment( $adb_id ) {
+
+		$attachment_id = get_post_meta( $adb_id, '_tpl_zip', true );
+		if ( $attachment_id ) {
+			$attachment = get_post($attachment_id);
+			if ( $attachment ) {
+				return $attachment;
+			}
+		}
+
+		return false;
 	}
 }

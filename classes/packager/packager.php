@@ -12,27 +12,14 @@ class TPL_Packager
 	public static $verbose = true;
 
 	protected $_edition_post;
-	protected $_edition_folder;
+	protected $_edition_dir;
 	protected $_edition_cover_image;
 
 	protected $_linked_query;
 	protected $_posts_attachments = array();
 
-	/*
-	protected $_array_order = array();
-	public 		$json_options;
-
-	public		$html_preview = array();
-	*/
-
 	public function __construct() {
-		/*
-		add_action( 'packager_attachment_hook_' . TPL_ADB_PACKAGE, array( $this, 'adb_hook' ), 10, 4 );
-		add_action( 'packager_bookjson_hook_' . TPL_ADB_PACKAGE, array( $this, 'add_adb_bookjson' ), 10, 3 );
-		add_action( 'packager_hook_' . TPL_ADB_PACKAGE, array( $this, 'adb_package' ), 10, 3 );
-		add_action( 'preview_hook_' . TPL_ADB_PACKAGE, array( $this, 'preview_adb_package' ), 10, 3 );
 
-		*/
 		$this->_get_linked_posts();
 	}
 
@@ -58,27 +45,29 @@ class TPL_Packager
 		}
 
 		// Create edition folder
-		$edition_folder = TPL_Utils::make_dir( TPL_TMP_DIR, $this->_edition_post->post_title );
-		if ( !$edition_folder ) {
+		$edition_dir = TPL_Utils::make_dir( TPL_TMP_DIR, $this->_edition_post->post_title );
+		if ( !$edition_dir ) {
 			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . TPL_Utils::parse_string( $this->_edition_post->post_title ), 'error' );
 			ob_end_flush();
 			return;
 		}
 
-		$this->_edition_folder = $edition_folder;
-		self::print_line( __( 'Create folder ', 'edition' ) . $edition_folder, 'success' );
+		$this->_edition_dir = $edition_dir;
+		self::print_line( __( 'Create folder ', 'edition' ) . $edition_dir, 'success' );
 
 		// Get associated theme
-		$theme_folder = TPL_Theme::get_theme_path( $this->_edition_post->ID );
-		if ( !$theme_folder ) {
+		$theme_dir = TPL_Theme::get_theme_path( $this->_edition_post->ID );
+		if ( !$theme_dir ) {
 			self::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
 
 		// Download all assets
-		$downloaded_assets = $this->_download_assets( $theme_folder . 'assets' );
+		$downloaded_assets = $this->_download_assets( $theme_dir . 'assets' );
 		if ( !$downloaded_assets ) {
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
@@ -87,6 +76,7 @@ class TPL_Packager
 		$cover = $this->_cover_parse();
 		if ( !$cover ) {
 			self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
@@ -96,6 +86,7 @@ class TPL_Packager
 		// Save cover html file
 		if ( !$this->_save_html_file( $cover, 'index' ) ) {
 			self::print_line( __( 'Failed to save cover file', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
@@ -112,54 +103,61 @@ class TPL_Packager
 			// Rewrite post url
 			$parsed_post = $this->_rewrite_url( $parsed_post );
 
-			if ( $post->post_type == 'post' || !has_action( 'packager_hook_' . $post->post_type ) ) {
+			if ( $post->post_type == 'post' || !has_action( 'packager_run_' . $post->post_type ) ) {
 				if ( !$this->_save_html_file( $parsed_post, $post->post_title ) ) {
 					self::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
 					continue;
 				}
 			}
 			else {
-				do_action( 'packager_hook_' . $post->post_type, $post->ID, $this->_edition_folder );
+				do_action( 'packager_run_' . $post->post_type, $post, $this->_edition_dir );
 			}
 
 			self::print_line(__('Adding ', 'edition') . $post->post_title);
 		}
 
-		$media_folder = TPL_Utils::make_dir( $edition_folder, TPL_EDITION_MEDIA );
-		if ( !$media_folder ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA, 'error' );
+		$media_dir = TPL_Utils::make_dir( $edition_dir, TPL_EDITION_MEDIA );
+		if ( !$media_dir ) {
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA, 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
 
-		$this->_save_posts_attachments( $media_folder );
+		$this->_save_posts_attachments( $media_dir );
 
 		$this->_save_cover_image();
 
-		if ( !TPL_Packager_Book_JSON::generate_book( $this->_edition_post, $this->_linked_query, $this->_edition_folder, $this->_edition_cover_image ) ) {
+		if ( !TPL_Packager_Book_JSON::generate_book( $this->_edition_post, $this->_linked_query, $this->_edition_dir, $this->_edition_cover_image ) ) {
 			self::print_line( __( 'Failed to generate book.json ', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
 
 		self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
 
-		$hpub_package = TPL_Packager_HPUB_Package::build( $this->_edition_post, $this->_edition_folder );
+		$hpub_package = TPL_Packager_HPUB_Package::build( $this->_edition_post, $this->_edition_dir );
 		if ( $hpub_package ) {
 			self::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
 		} else {
 			self::print_line( __( 'Failed to create hpub package ', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
 
 		if ( !TPL_Packager_Shelf_JSON::generate_shelf( $this->_edition_post ) ) {
 			self::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
 		}
 
 		self::print_line( __( 'Created shelf.json ', 'edition' ), 'success' );
+
+		$this->_clean_temp_dir();
+
 		self::print_line(__('Done', 'edition'), 'success');
 
 		ob_end_flush();
@@ -233,25 +231,25 @@ class TPL_Packager
 
 	/**
 	 * Download assets into package folder
-	 * @param  stirng $theme_assets_folder
+	 * @param  stirng $theme_assets_dir
 	 * @return boolean
 	 */
-	protected function _download_assets( $theme_assets_folder ) {
+	protected function _download_assets( $theme_assets_dir ) {
 
-		$edition_assets_folder = TPL_Utils::make_dir( $this->_edition_folder, 'assets' );
-		if ( !$edition_assets_folder ) {
+		$edition_assets_dir = TPL_Utils::make_dir( $this->_edition_dir, 'assets' );
+		if ( !$edition_assets_dir ) {
 			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . DIRECTORY_SEPARATOR . 'assets', 'error');
 			return false;
 		}
 
-		self::print_line( __( 'Created folder ', 'edition' ) . $edition_assets_folder, 'success' );
+		self::print_line( __( 'Created folder ', 'edition' ) . $edition_assets_dir, 'success' );
 
-		if ( !is_dir( $theme_assets_folder ) ) {
-			self::print_line( __( 'Error: Can\'t read assets folder ', 'edition' ) . $theme_assets_folder, 'error' );
+		if ( !is_dir( $theme_assets_dir ) ) {
+			self::print_line( __( 'Error: Can\'t read assets folder ', 'edition' ) . $theme_assets_dir, 'error' );
 			return false;
 		}
 
-		$copied_files = TPL_Utils::recursive_copy( $theme_assets_folder, $edition_assets_folder );
+		$copied_files = TPL_Utils::recursive_copy( $theme_assets_dir, $edition_assets_dir );
 		if ( is_array( $copied_files ) ) {
 			foreach ( $copied_files as $file ) {
 				self::print_line( sprintf( __( 'Error: Can\'t copy file %s ', 'edition' ), $file ), 'error' );
@@ -353,7 +351,7 @@ class TPL_Packager
 			}
 
 			if ( !empty( $post_rewrite_urls ) ) {
-				$html = str_replace( array_keys( $post_rewrite_urls ), $this->_posts_urls, $html );
+				$html = str_replace( array_keys( $post_rewrite_urls ), $post_rewrite_urls, $html );
 			}
 		}
 
@@ -367,22 +365,22 @@ class TPL_Packager
 	 */
 	protected function _save_html_file( $post, $filename ) {
 
-		return file_put_contents( $this->_edition_folder . DIRECTORY_SEPARATOR . TPL_Utils::parse_string( $filename ) . '.html', $post);
+		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_Utils::parse_string( $filename ) . '.html', $post);
 	}
 
 	/**
 	 * Copy attachments into the package folder
 	 * @param  array $attachments
-	 * @param  string $media_folder path of the package folder
+	 * @param  string $media_dir path of the package folder
 	 * @void
 	 */
-	protected function _save_posts_attachments( $media_folder ) {
+	protected function _save_posts_attachments( $media_dir ) {
 
 		if ( !empty( $this->_posts_attachments ) ) {
 			$attachments = array_unique( $this->_posts_attachments );
 			foreach ( $attachments as $filename => $url ) {
 
-				if ( copy( $url, $media_folder . DIRECTORY_SEPARATOR . $filename ) ) {
+				if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
 					self::print_line( __( 'Copied ', 'edition' ) . $url, 'success' );
 				}
 				else {
@@ -420,7 +418,7 @@ class TPL_Packager
 		if ( $edition_cover && !empty( $edition_cover ) ) {
 			$path = get_attached_file( $edition_cover[0] );
 			$info = pathinfo($path);
-			if ( copy( $path, $this->_edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $info['basename'] ) ) {
+			if ( copy( $path, $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $info['basename'] ) ) {
 				$this->_edition_cover_image = $info['basename'];
 				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $path ), 'success' );
 			}
@@ -430,113 +428,14 @@ class TPL_Packager
 		}
 	}
 
-	/******************************************************/
-	/* SPOSTARE															*/
-	/******************************************************/
-
 	/**
-	* Return an array of attachment with metadata
-	* @param  string $guid          attachment url
-	* @param  int $attachment_id
-	*/
-	public function get_attachment_metadata($url, $attachment_id) {
-		$metadata = wp_get_attachment_metadata($attachment_id, true);
-		$attached = get_attached_file($attachment_id);
-		$path = pathinfo($attached);
-		if($metadata) {
-			$this->_attachments[$path['basename']] = $attached;
-			if(array_key_exists('sizes', $metadata)){ //image
-				foreach($metadata['sizes'] as $k => $size) {
-					$filepath = $path['dirname'] . DIRECTORY_SEPARATOR . $size['file'];
-					$this->_attachments[$size['file']] = $filepath;
-				}
-			}
-		}
-		else {
-			//not an image
-			$this->_attachments[$path['basename']] = $attached;
-		}
-	}
-	/**
-	* Get all attachment linked to the post
-	* @param  int $parent_id post id
-	*/
-	public function get_linked_attachment($parent_id, $edition_folder, $verbose) {
+	 * Clean the temporary files folder
+	 *
+	 * @void
+	 */
+	protected function _clean_temp_dir() {
 
-		$attachments = get_posts( array(
-			'post_type' => 'attachment',
-			'posts_per_page' => -1,
-			'post_parent' => $parent_id,
-		) );
-
-		$parent = get_post($parent_id);
-
-		if ($attachments) {
-			foreach ($attachments as $attachment) {
-				if ($parent->post_type == 'post') {
-					$this->get_attachment_metadata($attachment->guid,$attachment->ID);
-				} else {
-					do_action('packager_attachment_hook_' . $parent->post_type, $attachment, $edition_folder, $parent_id, $verbose);
-				}
-			}
-		}
-	}
-
-	public function adb_hook($attachment, $edition_folder, $parent_id, $verbose) {
-		if( $attachment->post_mime_type == 'application/zip') { //check for zip adb_package file
-			$this->extract_adb($attachment, $edition_folder, $parent_id, $verbose);
-		}
-	}
-
-	/**
-	* extract .zip file
-	* @param  array $attachment     wordpress $post type attachment
-	* @param  string $edition_folder
-	*/
-	public function extract_adb($attachment, $edition_folder, $adb_id, $verbose = true) {
-		$this->verbose = $verbose;
-		$attached = get_attached_file($attachment->ID);
-		$zip = new ZipArchive;
-		if ($zip->open($attached) === true) {
-				$adb = get_post($adb_id);
-				$adb_title = TPL_Utils::TPL_parse_string($adb->post_title);
-				$adb_folder = $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_ADB;
-				$zip->extractTo($adb_folder . $adb_title);
-				$zip->close();
-				self::print_line(__('Unzipped file ', 'edition') . $attached, 'success');
-		}
-		else {
-				self::print_line(__('Failed to unzip file', 'edition') . $attached, 'error');
-		}
-	}
-
-	public function adb_package($post_id, $edition_folder) {
-		$this->get_linked_attachment($post_id, $edition_folder, true);
-	}
-
-	public function preview_adb_package($post_id, $post_title, $edition_folder) {
-		$this->get_linked_attachment($post_id, $edition_folder, false);
-		$indexfile = get_post_meta( $post_id, '_tpl_html_file' );
-		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_ADB  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
-		if(is_file($path_index)) {
-			$final_post = file_get_contents($path_index);
-			$this->html_preview = $final_post;
-		}
-	}
-
-	public function add_adb_bookjson($post, $post_title, $edition_folder) {
-		$indexfile = get_post_meta( $post->ID, '_tpl_html_file' );
-		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_EDITION_ADB  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
-		if(is_file($path_index)){
-			$this->json_options['contents'][] = TPL_EDITION_ADB . $post_title . DIRECTORY_SEPARATOR . $indexfile[0];
-		}
-		else {
-			self::print_line(sprintf(__('Can\'t find file %s. It won\'t add to book.json. See the wiki to know how to make an add bundle', 'edition'), $path_index), 'error');
-		}
-	}
-
-	public function get_edition_folder() {
-		$edition_folder = $this->edition_folder;
-		return $edition_folder;
+		self::print_line(__('Cleaning temporary files ', 'edition') );
+		TPL_Utils::remove_dir( $this->_edition_dir );
 	}
 }

@@ -114,7 +114,7 @@ class TPL_Pressroom
 	 */
 	public function register_post_connection() {
 
-		$types = array( 'post', TPL_ADBUNDLE );
+		$types = array( 'post', TPL_AD_BUNDLE );
 		$custom_types = $this->_load_custom_post_types();
 		$types = array_merge( $types, $custom_types );
 
@@ -146,6 +146,21 @@ class TPL_Pressroom
 					),
 				)
 		) );
+	}
+
+	/**
+	 * Determine if is add or edit page
+	 * @param  string  $new_edit
+	 * @return boolean
+	 */
+	public static function is_edit_page() {
+
+		global $pagenow;
+    	if ( !is_admin() ) {
+			return false;
+		}
+
+		return in_array( $pagenow, array( 'post.php' ) );
 	}
 
 	/**

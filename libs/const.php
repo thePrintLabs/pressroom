@@ -34,5 +34,4 @@ define( "TPL_TABLE_PURCHASED_ISSUES", 'tpl_purchased_issues' );
 define( "TPL_TABLE_APNS_TOKENS", 'tpl_apns_tokens' );
 
 /* ADBundle */
-define( "TPL_ADBUNDLE", 'tpl_adbundle' );
-define( "TPL_EDITION_ADB", 'adb_package' );
+define( "TPL_AD_BUNDLE", 'tpl_adbundle' );

@@ -24,11 +24,11 @@ final class TPL_Packager_Book_JSON
     * Get all options and html files and save them in the book.json
     * @param object $edition_post
     * @param object $linked_query
-    * @param string $edition_folder
+    * @param string $edition_dir
     * @param string $edition_cover_image
     * @void
     */
-   public static function generate_book( $edition_post, $linked_query, $edition_folder, $edition_cover_image ) {
+   public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image ) {
 
       $press_options = self::_get_pressroom_options( $edition_post, $edition_cover_image );
 
@@ -36,21 +36,22 @@ final class TPL_Packager_Book_JSON
 
          $post_title = TPL_Utils::parse_string( $post->post_title );
 
-         if ( $post->post_type == 'post' || !has_action( 'packager_bookjson_hook_' . $post->post_type ) ) {
+         if ( $post->post_type == 'post' || !has_action( 'packager_generate_book_' . $post->post_type ) ) {
 
-            if ( is_file( $edition_folder . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
+            if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
                $press_options['contents'][] = $post_title . '.html';
             }
             else {
-               TPL_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_folder . $post_title . '.html' ), 'error' );
+               TPL_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
             }
          }
          else {
-            do_action( 'packager_bookjson_hook_' . $post->post_type, $post, $post_title, $edition_folder );
+            $args = array( $press_options, $post, $edition_dir );
+            do_action_ref_array( 'packager_generate_book_' . $post->post_type, array( &$args ) );
          }
       }
 
-      return TPL_Packager::save_json_file( $press_options, 'book.json', $edition_folder );
+      return TPL_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
    }
 
    /**
@@ -62,7 +63,7 @@ final class TPL_Packager_Book_JSON
 
       global $tpl_pressroom;
 
-      $book_url = str_replace( array( 'http://', 'https://' ), 'book://', $book_url );
+      $book_url = str_replace( array( 'http://', 'https://' ), 'book://', TPL_HPUB_URI );
 
       $options = array(
          'hpub'   => true,

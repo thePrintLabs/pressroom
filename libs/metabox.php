@@ -165,6 +165,13 @@ class TPL_Metabox
                $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta ? 'checked="checked"' : '' ) . ' />';
                break;
 
+            case 'checkbox_list':
+               foreach ( $field['options'] as $i => $option ) {
+                  $html.= '<input type="checkbox" name="' . $field['id'] . '[]" id="' . $field['id'] . '_' . $i . '" value="'. $option['value'] .'" '. ( !empty( $meta ) && in_array( $option['value'], $meta ) ? 'checked="checked"' : '' ) . ' />
+                  <label for="' . $field['id'] . '_' . $i . '">'. $option['text'] . '</label><br/>';
+               }
+               break;
+
             case 'file':
                $html.= '<input type="file" name="' . $field['id'] . '" id="' . $field['id'] . '" /><br>';
                if ( $meta ) {

@@ -79,7 +79,7 @@ class TPL_ADBundle
 	public function get_custom_metaboxes( $post_type, $post ) {
 
 		$adb_meta = new TPL_Metabox( 'adbundle_metabox', __( 'Ad Bundle metabox', 'adbundle' ), 'normal', 'high', $post->ID );
-		$adb_meta->add_field( '_tpl_html_file', __( 'Html file', 'adbundle' ), __( 'The HTML file from within the ZIP that will be used in the edition.', 'adbundle' ), 'text', '' );
+		$adb_meta->add_field( '_tpl_html_file', __( 'Html file', 'adbundle' ), __( 'The HTML file from within the ZIP that will be used in the edition.', 'adbundle' ), 'text', 'index.html' );
 		$adb_meta->add_field( '_tpl_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 
 		// Add metabox to metaboxes array

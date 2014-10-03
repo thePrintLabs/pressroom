@@ -217,11 +217,11 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
          $this->args = array(
 
              'opt_name'          => 'tpl_options',					//global variable with option data
-             'display_name'      => 'TPL - Pressroom Option page',
+             'display_name'      => 'PressRoom Option page',
              'display_version'   => '0.1',
              'menu_type'         => 'menu',                  	//Specify if the admin menu should appear or not. Options: menu or submenu (Under appearance only)
              'allow_sub_menu'    => true,                    	// Show the sections below the admin menu item or not
-             'menu_title'        => __( 'TPL - Pressroom', 'pressroom' ),
+             'menu_title'        => __( 'PressRoom', 'pressroom' ),
              'page_title'        => __( 'Sample Options', 'pressroom' ),
              'async_typography'  => false,                    	// Use a asynchronous font on the front end or font string
              'admin_bar'         => true,                    	// Show the panel pages on the admin bar

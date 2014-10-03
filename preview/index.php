@@ -8,6 +8,7 @@ $url = $_GET['url'];
   <title></title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../assets/css/reset.css">
   <link rel="stylesheet" href="assets/css/ish.css">
   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
 </head>

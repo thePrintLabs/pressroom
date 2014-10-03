@@ -1,0 +1,29 @@
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+$body-font-size:    21px;
+$body-line-height:  1.5;
+$scale-factor:      1.333;
+$ie8compatability:  true;
+
+html { 
+	@include khtml(); 
+}
+
+body { 
+	@include kbody(); 
+}
+
+h1 { @include ktype(5, 1, 1); }
+h2 { @include ktype(4, 1, 1); }
+h3 { @include ktype(3, 1, 1); }
+h4 { @include ktype(2, 1, 1); }
+h5 { @include ktype(1, 1, 0); }
+h6 { 
+@include ktype(0, 1, 0);
+    font-weight: normal;
+    text-transform: capitalize;
+}
+p, ul, ol {@include ktype(0,1,1);}
+small { @include ktype(-1,0,1); }

@@ -6,31 +6,32 @@ html{
 .device {
   position: relative;
 }
-.device .arrow-left {
-  background: url(../img/arrows.png) no-repeat left top;
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  margin-top: -15px;
+
+.device .arrow-left,
+.device .arrow-right {
   width: 17px;
   height: 30px;
+  position: absolute;
+  top: 50%;
+  z-index: 100;
+  background-image: url(../img/arrows.png);
+  background-repeat: no-repeat;
+}
+
+.device .arrow-left {
+  left: 10px;
+  background-position: left top;
 }
 .device .arrow-right {
-  background: url(../img/arrows.png) no-repeat left bottom;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  margin-top: -15px;
-  width: 17px;
-  height: 30px;
+  right: 10px;  
+  background-position: left bottom;
 }
+
 .swiper-container {
   height: auto;
-  width: 96%;
   background: #fff;
 }
 .content-slide {
-  padding: 20px;
   color: #fff;
 }
 .title {
@@ -41,8 +42,6 @@ html{
   position: absolute;
   left: 0;
   text-align: center;
-  bottom:5px;
-  width: 96%;
 }
 .swiper-pagination-switch {
   display: inline-block;
@@ -57,29 +56,10 @@ html{
 .swiper-active-switch {
   background: #fff;
 }
-.swiper-scrollbar {
-  background:none;
-  position:absolute;
-  right:3px;
-  top:0;
-  height:auto;
-  width:5px;
-}
-.swiper-scrollbar .swiper-scrollbar-drag {
-  background:rgba(255,255,255,0.3);
-}
-#adminmenuwrap, #adminmenuback, #wpadminbar{
-  display: none !important
-}
-#wpcontent, #wpfooter {
-  margin: 0 !important;
-}
 
-/*hack for bootstrap compatibility*/
-#wpbody-content *, #wpbody-content *:before, #wpbody-content *:after {
-    box-sizing: unset!important;
-}
-.swiper-slide {
-   overflow-y: scroll;
-   overflow-x: hidden;
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

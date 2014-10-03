@@ -1,0 +1,319 @@
+/* ==========================================================================
+   VENDOR
+   ========================================================================== */
+/*  Syntax Quick Reference
+  --------------------------
+  column($ratios: 1, $offset: 0, $cycle: 0, $uncycle: 0, $gutter: $jeet-gutter)
+  span($ratio: 1, $offset: 0)
+  shift($ratios: 0, $col_or_span: column, $gutter: $jeet-gutter)
+  unshift()
+  edit()
+  center($max_width: 1410px, $pad: 0)
+  stack($pad: 0, $align: false)
+  unstack()
+  align($direction: both)
+  cf()
+*/
+/**
+ * Grid settings.
+ * All values are defaults and can therefore be easily overidden.
+ */
+/**
+ * List functions courtesy of the wonderful folks at Team Sass.
+ * Check out their awesome grid: Singularity.
+ */
+/**
+ * Get  percentage from a given ratio.
+ * @param {number} [$ratio=1] - The column ratio of the element.
+ * @returns {number} - The percentage value.
+ */
+/**
+ * Work out the column widths based on the ratio and gutter sizes.
+ * @param {number} [$ratios=1] - The column ratio of the element.
+ * @param {number} [$gutter=$jeet-gutter] - The gutter for the column.
+ * @returns {list} $width $gutter - A list containing the with and gutter for the element.
+ */
+/**
+ * Get the set layout direction for the project.
+ * @returns {string} $direction - The layout direction.
+ */
+/**
+ * Replace a specified list value with a new value (uses built in set-nth() if available)
+ * @param {list} $list - The list of values you want to alter.
+ * @param {number} $index - The index of the list item you want to replace.
+ * @param {*} $value - The value you want to replace $index with.
+ * @returns {list} $list - The list with the value replaced or removed.
+ * @warn if an invalid index is supplied.
+ */
+/**
+ * Reverse a list (progressively enhanced for Sass 3.3)
+ * @param {list} $list - The list of values you want to reverse.
+ * @returns {list} $result - The reversed list.
+ */
+/**
+ * Get the opposite direction to a given value.
+ * @param {string} $dir - The direction you want the opposite of.
+ * @returns {string} - The opposite direction to $dir.
+ * @warn if an incorrect string is provided.
+ */
+/**
+ * Style an element as a column with a gutter.
+ * @param {number} [$ratios=1] - A width relative to its container as a fraction.
+ * @param {number} [$offset=0] - A offset specified as a fraction (see $ratios).
+ * @param {number} [$cycle=0] - Easily create an nth column grid where $cycle equals the number of columns.
+ * @param {number} [$uncycle=0] - Undo a previous cycle value to allow for a new one.
+ * @param {number} [$gutter=$jeet-gutter] - Specify the gutter width as a percentage of the containers width.
+ */
+/**
+ * An alias for the column mixin.
+ * @param [$args...] - All arguments get passed through to column().
+ */
+/**
+ * Get the width of a column and nothing else.
+ * @param {number} [$ratios=1] - A width relative to its container as a fraction.
+ * @param {number} [$gutter=$jeet-gutter] - Specify the gutter width as a percentage of the containers width.
+ */
+/**
+ * Get the gutter size of a column and nothing else.
+ * @param {number} [ratios=1] - A width relative to its container as a fraction.
+ * @param {number} [gutter=jeet.gutter] - Specify the gutter width as a percentage of the containers width.
+ */
+/**
+ * An alias for the column-width function.
+ * @param [$args...] - All arguments get passed through to column().
+ */
+/**
+ * An alias for the column-gutter function.
+ * @param [$args...] - All arguments get passed through to column().
+ */
+/**
+ * Style an element as a column without any gutters for a seamless row.
+ * @param {number} [$ratios=1] - A width relative to its container as a fraction.
+ * @param {number} [$offset=0] - A offset specified as a fraction (see $ratios).
+ * @param {number} [cycle=0] - Easily create an nth column grid where cycle equals the number of columns.
+ * @param {number} [uncycle=0] - Undo a previous cycle value to allow for a new one.
+ */
+/**
+ * Reorder columns without altering the HTML.
+ * @param {number} [$ratios=0] - Specify how far along you want the element to move.
+ * @param {string} [$col-or-span=column] - Specify whether the element has a gutter or not.
+ * @param {number} [$gutter=$jeet-gutter] - Specify the gutter width as a percentage of the containers width.
+ */
+/**
+ * Reset an element that has had shift() applied to it.
+ */
+/**
+ * View the grid and its layers for easy debugging.
+ * @param {string} [$color=black] - The background tint applied.
+ * @param {boolean} [$important=false] - Whether to apply the style as !important.
+ */
+/**
+ *  Alias for edit().
+ */
+/**
+ * Horizontally center an element.
+ * @param {number} [$max-width=1410px] - The max width the element can be.
+ * @param {number} [$pad=0] - Specify the element's left and right padding.
+ */
+/**
+ * Uncenter an element.
+ */
+/**
+ * Stack an element so that nothing is either side of it.
+ * @param {number} [$pad=0] - Specify the element's left and right padding.
+ * @param {boolean/string} [$align=false] - Specify the text align for the element.
+ */
+/**
+ * Unstack an element.
+ */
+/**
+ * Center an element on either or both axes.
+ * @requires A parent container with relative positioning.
+ * @param {string} [$direction=both] - Specify which axes to center the element on.
+ */
+/**
+ * Apply a clearfix to an element.
+ */
+/* Vars */
+/* Utilities */
+/* Mixins */
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+/* ==========================================================================
+   webkit specific optimizations
+   ========================================================================== */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_webkit\.scss}line{font-family:\000039}}
+* {
+  /* Prevent any object from being highlighted upon touch event*/
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_webkit\.scss}line{font-family:\0000314}}
+a, a:link, a:hover, a:visited, img {
+  -webkit-touch-callout: none;
+}
+
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
+/* ==========================================================================
+   COLORS
+   ========================================================================== */
+/* ==========================================================================
+   Project Font Families
+   ========================================================================== */
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000310}}
+html {
+  font-size: 21px;
+  line-height: 32px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000314}}
+body {
+  font-size: 21px;
+  line-height: 32px;
+  font-size: 1rem;
+  line-height: 1.5238095rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000318}}
+h1 {
+  font-size: 89px;
+  font-size: 4.2380952rem;
+  line-height: 96px;
+  line-height: 4.5714286rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 32px;
+  margin-bottom: 1.5238095rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000319}}
+h2 {
+  font-size: 67px;
+  font-size: 3.1904762rem;
+  line-height: 96px;
+  line-height: 4.5714286rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 32px;
+  margin-bottom: 1.5238095rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000320}}
+h3 {
+  font-size: 50px;
+  font-size: 2.3809524rem;
+  line-height: 64px;
+  line-height: 3.047619rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 32px;
+  margin-bottom: 1.5238095rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000321}}
+h4 {
+  font-size: 38px;
+  font-size: 1.8095238rem;
+  line-height: 64px;
+  line-height: 3.047619rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 32px;
+  margin-bottom: 1.5238095rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000322}}
+h5 {
+  font-size: 28px;
+  font-size: 1.3333333rem;
+  line-height: 32px;
+  line-height: 1.5238095rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 0px;
+  margin-bottom: 0rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000323}}
+h6 {
+  font-size: 21px;
+  font-size: 1rem;
+  line-height: 32px;
+  line-height: 1.5238095rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 0px;
+  margin-bottom: 0rem;
+  font-weight: normal;
+  text-transform: capitalize;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000328}}
+p, ul, ol {
+  font-size: 21px;
+  font-size: 1rem;
+  line-height: 32px;
+  line-height: 1.5238095rem;
+  margin-top: 32px;
+  margin-top: 1.5238095rem;
+  margin-bottom: 32px;
+  margin-bottom: 1.5238095rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000329}}
+small {
+  font-size: 16px;
+  font-size: 0.7619048rem;
+  line-height: 32px;
+  line-height: 1.5238095rem;
+  margin-top: 0px;
+  margin-top: 0rem;
+  margin-bottom: 32px;
+  margin-bottom: 1.5238095rem;
+}
+
+/* ==========================================================================
+   UTILITY
+   ========================================================================== */
+/* ==========================================================================
+  COMPONENTS
+  ========================================================================== */
+/* ==========================================================================
+  LAYOUT
+  ========================================================================== */
+/* ==========================================================================
+   GRID
+   ========================================================================== */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\000035}}
+.wrapper {
+  *zoom: 1;
+  width: auto;
+  max-width: 996px;
+  float: none;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/bower_components\/jeet\/scss\/jeet\/_grid\.scss}line{font-family:\00003344}}
+.wrapper:before, .wrapper:after {
+  content: '';
+  display: table;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/bower_components\/jeet\/scss\/jeet\/_grid\.scss}line{font-family:\00003349}}
+.wrapper:after {
+  clear: both;
+}
+
+/* ==========================================================================
+  PAGES
+  ========================================================================== */
+
+/*# sourceMappingURL=styles.css.map */

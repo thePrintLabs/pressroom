@@ -2,7 +2,7 @@
 	var sw = document.body.clientWidth, //Viewport Width
 		minViewportWidth = 240, //Minimum Size for Viewport
 		maxViewportWidth = 2600, //Maxiumum Size for Viewport
-		viewportResizeHandleWidth = 14, //Width of the viewport drag-to-resize handle
+		viewportResizeHandleWidth = 0, //Width of the viewport drag-to-resize handle
 		$sgWrapper = jQuery('#sg-gen-container'), //Wrapper around viewport
 		$sgViewport = $('#sg-viewport'), //Viewport element
 		$sizeWidth = $('.sg-size-px'), //Px size input element in toolbar
@@ -158,7 +158,8 @@
 
 	function updateViewportWidth(size) {
 		$sgViewport.width(size);
-		$sgWrapper.width(size*1 + 14);
+		// $sgWrapper.width(size*1 + 14);
+		$sgWrapper.width(size*1);
 
 		updateSizeReading(size);
 	}
@@ -172,7 +173,8 @@
 	// capture the viewport width that was loaded and modify it so it fits with the pull bar
 	var origViewportWidth = $sgViewport.width();
 	$sgWrapper.width(origViewportWidth);
-	$sgViewport.width(origViewportWidth - 14);
+	// $sgViewport.width(origViewportWidth - 14);
+	$sgViewport.width(origViewportWidth);
 	updateSizeReading($sgViewport.width());
 
 

@@ -1,0 +1,33 @@
+{
+  "name": "presstheme",
+  "version": "1.0.0",
+  "description": "opinionated pressroom theme",
+  "author": "theprintlabs",
+  "homepage": "http://press-room.io",
+  "repository": {
+    "type": "git",
+    "url": "http://"
+  },
+  "bugs": {
+    "url": "http://"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-sass": "~0.7.3",
+    "grunt-contrib-cssmin": "~0.9.0",
+    "grunt-rsync": "~0.6.1"
+  }
+}

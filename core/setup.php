@@ -122,8 +122,8 @@ class TPL_Setup
 
       TPL_Utils::make_dir( TPL_API_DIR, 'hpub' );
       TPL_Utils::make_dir( TPL_API_DIR, 'tmp' );
-      TPL_Utils::make_dir( TPL_API_DIR, 'preview' );
       TPL_Utils::make_dir( TPL_API_DIR, 'shelf' );
+      TPL_Utils::make_dir( TPL_TMP_DIR, 'preview' );
 
       return true;
    }

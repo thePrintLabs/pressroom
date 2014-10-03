@@ -136,11 +136,12 @@ class TPL_Pressroom
 				'sortable' 	=> false,
 				'admin_box' => array(
 					'show' 		=> 'from',
-					'context'	=> 'advanced'
+					'context'	=> 'side',
+					'priority'	=> 'high'
 				),
 				'fields' => array(
 					'state' => array(
-						'title'		=> __( 'Included in edition', 'pressroom' ),
+						'title'		=> __( 'Included', 'pressroom' ),
 						'type'		=> 'checkbox',
 						'default'	=> 1,
 					),

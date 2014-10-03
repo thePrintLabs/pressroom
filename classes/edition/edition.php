@@ -104,8 +104,8 @@ class TPL_Edition
 		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_tpl_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
 			'options' => array(
-				array( 'value' => 1, 'name' => __( "Paid", 'edition' ) ),
-				array( 'value' => 0, 'name' => __( "Free", 'edition' ) )
+				array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
+				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
 			)
 		) );
 		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Subscription type', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
@@ -342,7 +342,7 @@ class TPL_Edition
 				break;
 
 	      case 'paid_free' :
-	      	echo get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free';
+	      	echo get_post_meta( $id, '_tpl_edition_free', true ) ? 'Free' : 'Paid';
 	      	break;
 
 			case 'previews':

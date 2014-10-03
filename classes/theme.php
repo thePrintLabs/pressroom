@@ -124,7 +124,7 @@ class TPL_Theme
 	 */
 	public static function get_theme_path( $edition_id ) {
 
-		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );
+		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
 		if ( $theme ) {
 			return TPL_THEME_PATH . $theme . DIRECTORY_SEPARATOR;
 		}
@@ -139,7 +139,7 @@ class TPL_Theme
 	 */
 	public static function get_theme_uri( $edition_id ) {
 
-		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );
+		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
 		if ( $theme ) {
 			return TPL_THEME_URI . $theme . DIRECTORY_SEPARATOR;
 		}
@@ -154,7 +154,7 @@ class TPL_Theme
 	 */
 	public static function get_theme_cover( $edition_id ) {
 
-		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );
+		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
 		$themes = self::get_themes();
 		$files = $themes[$theme];
 		foreach ( $files as $file ) {
@@ -176,7 +176,7 @@ class TPL_Theme
 	public static function get_theme_page( $edition_id, $post_id ) {
 
 		$template = p2p_get_meta( $post_id, 'template', true );
-		$theme = get_post_meta( $edition_id, '_tpl_themes_select', true );
+		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
 		if ( $template && $theme ) {
 			return TPL_THEME_PATH . $theme . DIRECTORY_SEPARATOR . $template;
 		}

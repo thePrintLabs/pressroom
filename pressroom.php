@@ -1,6 +1,6 @@
 <?php
 /**
-* Plugin Name: PressRoom Pro
+* Plugin Name: Pressroom Pro
 * Plugin URI: https://bitbucket.org/theprintlabs/tpl-baker-wp-plugin/wiki/Home
 * Description: Wordpress Pressroom.
 * Version: 1.0
@@ -125,7 +125,7 @@ class TPL_Pressroom
 	 */
 	public function register_post_connection() {
 
-		$types = array( 'post', TPL_AD_BUNDLE );
+		$types = array( 'post', 'page' );
 		$custom_types = $this->_load_custom_post_types();
 		$types = array_merge( $types, $custom_types );
 
@@ -137,11 +137,16 @@ class TPL_Pressroom
 				'title' => array(
     				'from'	=> __( 'Included into edition', 'pressroom' )
     			),
+				'to_labels' => array(
+      			'singular_name'	=> __( 'Edition', 'pressroom' ),
+      			'search_items' 	=> __( 'Search edition', 'pressroom' ),
+      			'not_found'			=> __( 'No editions found.', 'pressroom' ),
+      			'create'				=> __( 'Select an edition', 'pressroom' ),
+  				),
 				'admin_box' => array(
 					'show' 		=> 'from',
 					'context'	=> 'side',
 					'priority'	=> 'high',
-
 				),
 				'fields' => array(
 					'state' => array(
@@ -174,7 +179,7 @@ class TPL_Pressroom
 		$connection = p2p_get_connection( $p2p_id );
 		if ( $connection->p2p_type == 'edition_post' ) {
 			$themes = TPL_Theme::get_themes();
-			$theme_code = get_post_meta( $connection->p2p_to, '_tpl_themes_select', true );
+			$theme_code = get_post_meta( $connection->p2p_to, '_pr_theme_select', true );
 			if ( $theme_code && $themes ) {
 				$pages = $themes[$theme_code];
 				foreach ( $pages as $page ) {
@@ -242,4 +247,3 @@ class TPL_Pressroom
 
 /* instantiate the plugin class */
 $tpl_pressroom = new TPL_Pressroom();
-//$tpl_preview = new TPL_Preview();

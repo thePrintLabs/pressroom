@@ -103,7 +103,7 @@ class TPL_Packager
 			// Rewrite post url
 			$parsed_post = $this->_rewrite_url( $parsed_post );
 
-			if ( $post->post_type == 'post' || !has_action( 'packager_run_' . $post->post_type ) ) {
+			if ( !has_action( 'packager_run_' . $post->post_type ) ) {
 				if ( !$this->_save_html_file( $parsed_post, $post->post_title ) ) {
 					self::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
 					continue;
@@ -430,21 +430,6 @@ class TPL_Packager
 				self::print_line( sprintf( __( 'Can\'t copy cover image %s ', 'edition' ), $edition_cover_path ), 'error' );
 			}
 		}
-
-		/*
-		$edition_cover = get_post_custom_values( '_tpl_cover', $this->_edition_post->ID );
-		if ( $edition_cover && !empty( $edition_cover ) ) {
-			$path = get_attached_file( $edition_cover[0] );
-			$info = pathinfo($path);
-			if ( copy( $path, $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $info['basename'] ) ) {
-				$this->_edition_cover_image = $info['basename'];
-				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $path ), 'success' );
-			}
-			else {
-				self::print_line( sprintf( __( 'Can\'t copy cover image %s ', 'edition' ), $path ), 'error' );
-			}
-		}
-		*/
 	}
 
 	/**

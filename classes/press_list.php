@@ -212,7 +212,7 @@ class Pressroom_List_Table extends WP_List_Table
 
       $template = p2p_get_meta( $item->p2p_id, 'template', true );
 		$themes = TPL_Theme::get_themes();
-      $current_theme = get_post_meta( $this->_edition_post->ID, '_tpl_themes_select', true );
+      $current_theme = get_post_meta( $this->_edition_post->ID, '_pr_theme_select', true );
 
       $html = '<select class="presslist-template">';
 		if ( $current_theme ) {

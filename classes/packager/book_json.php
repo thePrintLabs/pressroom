@@ -13,10 +13,10 @@ final class TPL_Packager_Book_JSON
       'tpl-index-bounce'      => '-baker-index-bounce',
       'tpl-index-height'      => '-baker-index-height',
       'tpl-media-autoplay'	 	=> '-baker-media-autoplay',
-      '_tpl_author'           => 'author',
-      '_tpl_creator'          => 'creator',
-      '_tpl_cover'            => 'cover',
-      '_tpl_date'             => 'date',
+      '_pr_author'            => 'author',
+      '_pr_creator'           => 'creator',
+      '_pr_cover'             => 'cover',
+      '_pr_date'              => 'date',
       'post_title'            => 'title',
    );
 
@@ -36,7 +36,7 @@ final class TPL_Packager_Book_JSON
 
          $post_title = TPL_Utils::sanitize_string( $post->post_title );
 
-         if ( $post->post_type == 'post' || !has_action( 'packager_generate_book_' . $post->post_type ) ) {
+         if ( !has_action( 'packager_generate_book_' . $post->post_type ) ) {
 
             if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
                $press_options['contents'][] = $post_title . '.html';
@@ -110,11 +110,11 @@ final class TPL_Packager_Book_JSON
          if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
             $baker_option = self::$_press_to_baker[$meta_key];
             switch ( $meta_key ) {
-               case '_tpl_cover':
+               case '_pr_cover':
                   $options[$baker_option] = TPL_EDITION_MEDIA . $edition_cover_image;
                   break;
-               case '_tpl_author':
-               case '_tpl_creator':
+               case '_pr_author':
+               case '_pr_creator':
                   if ( isset( $meta_value[0] ) && !empty( $meta_value[0] ) ) {
                      $authors = explode( ',', $meta_value[0] );
                      foreach ( $authors as $author ) {

@@ -170,7 +170,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
             'icon'      => 'el-icon-star',
             'fields'    => array(
                array(
-                   'id'        => 'tpl-custom-post-type',
+                   'id'        => 'custom_post_type',
                    'type'      => 'multi_text',
                    'title'     => __( 'Custom post type', 'pressroom' ),
                    'subtitle'  => __( 'Select your custom post type', 'pressroom' ),

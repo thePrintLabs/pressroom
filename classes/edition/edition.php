@@ -95,20 +95,19 @@ class TPL_Edition
 	public function get_custom_metaboxes( $post_type, $post ) {
 
 		$e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $post->ID );
-		$e_meta->add_field( '_tpl_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_tpl_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_tpl_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_tpl_product_id', __( 'Product identifier', 'edition' ), __( 'Product identifier', 'edition' ), 'text', '' );
-		//$e_meta->add_field( '_tpl_cover', __( 'Cover image', 'edition' ), __( 'Upload cover image', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
-		$e_meta->add_field( '_tpl_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
-		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
-		$e_meta->add_field( '_tpl_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
+		$e_meta->add_field( '_pr_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', '' );
+		$e_meta->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', '' );
+		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
+		$e_meta->add_field( '_pr_product_id', __( 'Product identifier', 'edition' ), __( 'Product identifier', 'edition' ), 'text', '' );
+		$e_meta->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
+		$e_meta->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
+		$e_meta->add_field( '_pr_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
 			'options' => array(
 				array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
 				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
 			)
 		) );
-		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'checkbox_list', '', array(
+		$e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'checkbox_list', '', array(
 			'options' => $this->_get_subscription_types()
 		) );
 
@@ -227,7 +226,7 @@ class TPL_Edition
 			$metabox->save_values();
 		}
 
-		$edition_theme = get_post_meta( $post_id, '_tpl_themes_select', true );
+		$edition_theme = get_post_meta( $post_id, '_pr_theme_select', true );
 		if ( !$edition_theme ) {
 			if ( TPL_Pressroom::is_edit_page() ) {
 				$url = admin_url( 'post.php?post=' . $post_id . '&action=edit&pmtype=error&pmcode=theme' );
@@ -342,7 +341,7 @@ class TPL_Edition
 				break;
 
 	      case 'paid_free' :
-	      	echo get_post_meta( $id, '_tpl_edition_free', true ) ? 'Free' : 'Paid';
+	      	echo get_post_meta( $id, '_pr_edition_free', true ) ? 'Free' : 'Paid';
 	      	break;
 
 			case 'previews':

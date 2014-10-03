@@ -9,8 +9,8 @@ final class TPL_Packager_Shelf_JSON
       'post_name'       => 'name',
       'post_title'      => 'title',
       'post_content'    => 'info',
-      '_tpl_date'       => 'date',
-      '_tpl_product_id' => 'product_id'
+      '_pr_date'        => 'date',
+      '_pr_product_id'  => 'product_id'
    );
 
    /**
@@ -62,15 +62,15 @@ final class TPL_Packager_Shelf_JSON
 
                   switch ( $meta_key ) {
 
-                     case '_tpl_date':
+                     case '_pr_date':
                         if ( isset( $meta_value[0] ) ) {
                            $press_options[$edition_key][$baker_option] = date( 'Y-m-d H:s:i', strtotime( $meta_value[0] ) );
                         }
                         break;
-                     case '_tpl_product_id':
+                     case '_pr_product_id':
                         if ( isset( $meta_value[0] ) ) {
                            $press_options[$edition_key][$baker_option] = $meta_value[0];
-                           if ( isset( $meta_fields['_tpl_edition_free'] ) && $meta_fields['_tpl_edition_free'][0] == 1 ) {
+                           if ( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) {
                                  unset( $press_options[$edition_key][$baker_option] );
                            }
                         }

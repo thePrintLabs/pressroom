@@ -79,8 +79,8 @@ class TPL_ADBundle
 	public function get_custom_metaboxes( $post_type, $post ) {
 
 		$adb_meta = new TPL_Metabox( 'adbundle_metabox', __( 'Ad Bundle metabox', 'adbundle' ), 'normal', 'high', $post->ID );
-		$adb_meta->add_field( '_tpl_html_file', __( 'Html file', 'adbundle' ), __( 'The HTML file from within the ZIP that will be used in the edition.', 'adbundle' ), 'text', 'index.html' );
-		$adb_meta->add_field( '_tpl_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
+		$adb_meta->add_field( '_pr_html_file', __( 'Html file', 'adbundle' ), __( 'The HTML file from within the ZIP that will be used in the edition.', 'adbundle' ), 'text', 'index.html' );
+		$adb_meta->add_field( '_pr_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 
 		// Add metabox to metaboxes array
 		array_push( $this->_metaboxes, $adb_meta );
@@ -199,7 +199,7 @@ class TPL_ADBundle
 
 		list( $press_options, $post, $edition_dir ) = $args;
 
-		$adb_index = get_post_meta( $post->ID, '_tpl_html_file', true );
+		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$adb_dir = TPL_Utils::sanitize_string( $post->post_title );
 
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
@@ -215,7 +215,7 @@ class TPL_ADBundle
 	/*
 	public function preview_adb_package($post_id, $post_title, $edition_folder) {
 		$this->get_linked_attachment($post_id, $edition_folder, false);
-		$indexfile = get_post_meta( $post_id, '_tpl_html_file' );
+		$indexfile = get_post_meta( $post_id, '_pr_html_file' );
 		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
 		if(is_file($path_index)) {
 			$final_post = file_get_contents($path_index);
@@ -231,7 +231,7 @@ class TPL_ADBundle
 	 */
 	public static function get_adb_attachment( $adb_id ) {
 
-		$attachment_id = get_post_meta( $adb_id, '_tpl_zip', true );
+		$attachment_id = get_post_meta( $adb_id, '_pr_zip', true );
 		if ( $attachment_id ) {
 			$attachment = get_post($attachment_id);
 			if ( $attachment ) {

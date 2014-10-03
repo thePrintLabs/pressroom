@@ -33,11 +33,11 @@ class TPL_ADBundle
 	public function add_adbundle_post_type() {
 
 		$labels = array(
-			'name'                => _x( 'Ad Bundle', 'Ad Bundle General Name', 'adbundle' ),
+			'name'                => _x( 'Ad Bundles', 'Ad Bundle General Name', 'adbundle' ),
 			'singular_name'       => _x( 'Ad Bundle', 'Ad Bundle Singular Name', 'adbundle' ),
-			'menu_name'           => __( 'Ad Bundle', 'adbundle' ),
+			'menu_name'           => __( 'Ad Bundles', 'adbundle' ),
 			'parent_item_colon'   => __( 'Parent Ad Bundle:', 'adbundle' ),
-			'all_items'           => __( 'All Ad Bundle ', 'adbundle' ),
+			'all_items'           => __( 'All Ad Bundles ', 'adbundle' ),
 			'view_item'           => __( 'View Ad Bundle', 'adbundle' ),
 			'add_new_item'        => __( 'Add New Ad Bundle', 'adbundle' ),
 			'add_new'             => __( 'Add New', 'adbundle' ),

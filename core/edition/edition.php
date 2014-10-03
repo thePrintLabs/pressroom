@@ -50,7 +50,7 @@ class TPL_Edition
 		$labels = array(
 			'name'                => _x( 'Editions', 'Post Type General Name', 'edition' ),
 			'singular_name'       => _x( 'Edition', 'Post Type Singular Name', 'edition' ),
-			'menu_name'           => __( 'Edition', 'edition' ),
+			'menu_name'           => __( 'Editions', 'edition' ),
 			'parent_item_colon'   => __( 'Parent edition:', 'edition' ),
 			'all_items'           => __( 'All editions', 'edition' ),
 			'view_item'           => __( 'View edition', 'edition' ),

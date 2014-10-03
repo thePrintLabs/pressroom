@@ -10,7 +10,7 @@ define( "TPL_EXTENSIONS_PATH", TPL_PLUGIN_PATH . 'extensions/' );
 define( "TPL_API_DIR", TPL_PLUGIN_PATH . 'api/' );
 define( "TPL_HPUB_DIR", TPL_API_DIR . 'hpub/' );
 define( "TPL_TMP_DIR", TPL_API_DIR . 'tmp/' );
-define( "TPL_PREVIEW_DIR", TPL_API_DIR . 'preview/' );
+define( "TPL_PREVIEW_DIR", TPL_TMP_DIR . 'preview/' );
 define( "TPL_SHELF_DIR", TPL_API_DIR . 'shelf/' );
 
 define( "TPL_PLUGIN_URI", plugin_dir_url(TPL_LIBS_PATH) );
@@ -18,7 +18,7 @@ define( "TPL_SHELF_URI", TPL_PLUGIN_URI . 'api/shelf/' );
 define( "TPL_PLUGIN_ASSETS", TPL_PLUGIN_URI. 'assets/' );
 define( "TPL_HPUB_URI", TPL_PLUGIN_URI . 'api/hpub/' );
 define( "TPL_THEME_URI", TPL_PLUGIN_URI . 'themes/' );
-define( "TPL_PREVIEW_URI", TPL_PLUGIN_URI . 'api/preview/' );
+define( "TPL_PREVIEW_URI", TPL_PLUGIN_URI . 'api/tmp/preview/' );
 
 /* Packager */
 define( "TPL_EDITION_MEDIA", 'gfx/' );

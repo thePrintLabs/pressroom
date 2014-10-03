@@ -26,8 +26,11 @@ class TPL_Preview {
 
         $edition_folder = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $this->_edition_post->post_title );
         $index = $this->html_write_preview( $preview_html, $edition_folder, TPL_Utils::sanitize_string( $this->_edition_post->post_title ) );
-        $preview = file_get_contents( $index );
-        echo $preview;
+        //$preview = file_get_contents( $index );
+        //echo $preview;
+
+        $preview_url = TPL_PREVIEW_URI . TPL_Utils::sanitize_string( $this->_edition_post->post_title ) . '/index.html';
+        wp_redirect( $preview_url );
     }
 
     /**
@@ -160,7 +163,9 @@ class TPL_Preview {
 
         $html_slide = '
             <div id="item-[count]" class="swiper-slide">
+               <frame>
                 <div class="content-slider">[final_post]</div>
+               </frame>
             </div>';
 
         $index = $edition_folder . DIRECTORY_SEPARATOR . 'index.html';
@@ -295,13 +300,13 @@ class TPL_Preview {
 
       $final_post = $this->rewrite_url( $parsed_post );
 
-      if ( !has_action('pr_preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
+      if ( !has_action('pr_preview_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
          $html_preview = $final_post;
       }
       else {
          $html_preview = '';
-         $args = array( $html_preview, $connected_post );
-         do_action_ref_array( 'pr_preview_hook_' . $connected_post->post_type, array( &$args ) );
+         $args = array( $html_preview, $this->_edition_post, $connected_post );
+         do_action_ref_array( 'pr_preview_' . $connected_post->post_type, array( &$args ) );
          $html_preview = $args[0];
       }
 

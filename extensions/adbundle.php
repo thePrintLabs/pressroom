@@ -22,7 +22,7 @@ class TPL_ADBundle
 		add_action( 'pr_packager_generate_book_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_book' ), 10 );
 
 		// Preview hooks
-		add_action( 'pr_pressroom_preview_' . TPL_AD_BUNDLE, array( $this, 'adb_preview' ), 10, 2 );
+		add_action( 'pr_preview_' . TPL_AD_BUNDLE, array( $this, 'adb_preview' ), 10, 3 );
 	}
 
 	/**
@@ -212,27 +212,32 @@ class TPL_ADBundle
 		}
 	}
 
+	/**
+	 * [adb_preview description]
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	public function adb_preview( &$args ) {
 
-		list( $html, $post ) = $args;
+		list( $html, $edition, $post ) = $args;
 
 		$attachment = self::get_adb_attachment( $post->ID );
+
 		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
 
 			$zip = new ZipArchive;
 			$adb_attached_file = get_attached_file( $attachment->ID );
-
 			if ( $zip->open( $adb_attached_file ) ) {
 
+				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition->post_title );
 				$adb_title = TPL_Utils::sanitize_string( $post->post_title );
-				if ( $zip->extractTo( TPL_TMP_DIR . $adb_title ) ) {
+				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . $adb_title ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
 					if ( $index_file ) {
-						$index_path = TPL_TMP_DIR . $adb_title . DIRECTORY_SEPARATOR . $index_file;
+						$index_path = $edition_dir . DIRECTORY_SEPARATOR . $adb_title . DIRECTORY_SEPARATOR . $index_file;
 						if ( file_exists( $index_path ) ) {
-							$html = file_get_contents( $index_path );
-							$args[0] = $html;
+							$args[0] = file_get_contents( $index_path );
 						}
 					}
 				}

@@ -48,7 +48,7 @@ final class TPL_Packager_Shelf_JSON
             if ( $edition_cover_id ) {
                $edition_cover = wp_get_attachment_image_src( $edition_cover_id, 'thumbnail_size' );
                if ( $edition_cover ) {
-                  $press_options[$edition_key]['cover'] = $edition_cover;
+                  $press_options[$edition_key]['cover'] = $edition_cover[0];
                }
             }
 

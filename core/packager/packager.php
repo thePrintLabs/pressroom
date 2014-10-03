@@ -3,9 +3,9 @@
 * TPL packager class.
 *
 */
-require_once( TPL_CLASSES_PATH . '/packager/book_json.php' );
-require_once( TPL_CLASSES_PATH . '/packager/shelf_json.php' );
-require_once( TPL_CLASSES_PATH . '/packager/hpub_package.php' );
+require_once( TPL_CORE_PATH . '/packager/book_json.php' );
+require_once( TPL_CORE_PATH . '/packager/shelf_json.php' );
+require_once( TPL_CORE_PATH . '/packager/hpub_package.php' );
 
 class TPL_Packager
 {
@@ -103,14 +103,14 @@ class TPL_Packager
 			// Rewrite post url
 			$parsed_post = $this->_rewrite_url( $parsed_post );
 
-			if ( !has_action( 'packager_run_' . $post->post_type ) ) {
+			if ( !has_action( 'pr_packager_run_' . $post->post_type ) ) {
 				if ( !$this->_save_html_file( $parsed_post, $post->post_title ) ) {
 					self::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
 					continue;
 				}
 			}
 			else {
-				do_action( 'packager_run_' . $post->post_type, $post, $this->_edition_dir );
+				do_action( 'pr_packager_run_' . $post->post_type, $post, $this->_edition_dir );
 			}
 
 			self::print_line(__('Adding ', 'edition') . $post->post_title);

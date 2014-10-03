@@ -2,8 +2,9 @@
 define( "TPL_PLUGIN_PATH", dirname(__FILE__ ) . '/../' );
 define( "TPL_LIBS_PATH", dirname(__FILE__) . '/' );
 define( "TPL_VENDORS_PATH", TPL_LIBS_PATH . 'vendors/' );
-define( "TPL_CLASSES_PATH", TPL_PLUGIN_PATH . 'classes/' );
+define( "TPL_CORE_PATH", TPL_PLUGIN_PATH . 'core/' );
 define( "TPL_THEME_PATH", TPL_PLUGIN_PATH . 'themes/' );
+define( "TPL_EXTENSIONS_PATH", TPL_PLUGIN_PATH . 'extensions/' );
 
 /* API */
 define( "TPL_API_DIR", TPL_PLUGIN_PATH . 'api/' );

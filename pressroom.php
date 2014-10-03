@@ -22,25 +22,24 @@ if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
 require_once( 'libs/const.php' );
 require_once( TPL_LIBS_PATH . 'utils.php' );
-require_once( TPL_CLASSES_PATH . 'setup.php' );
-require_once( TPL_CLASSES_PATH . 'config/redux.php' );
-require_once( TPL_CLASSES_PATH . 'config/tgm.php' );
+require_once( TPL_CORE_PATH . 'setup.php' );
+require_once( TPL_CORE_PATH . 'config/redux.php' );
+require_once( TPL_CORE_PATH . 'config/tgm.php' );
 
-require_once( TPL_CLASSES_PATH . 'edition/edition.php' );
-require_once( TPL_CLASSES_PATH . 'edition/editorial_project.php' );
+require_once( TPL_CORE_PATH . 'edition/edition.php' );
+require_once( TPL_CORE_PATH . 'edition/editorial_project.php' );
 
-require_once( TPL_CLASSES_PATH . 'press_list.php' );
-require_once( TPL_CLASSES_PATH . 'theme.php' );
-require_once( TPL_CLASSES_PATH . 'packager/packager.php' );
-require_once( TPL_CLASSES_PATH . 'adbundle.php' );
-require_once( TPL_CLASSES_PATH . 'preview.php' );
+require_once( TPL_CORE_PATH . 'press_list.php' );
+require_once( TPL_CORE_PATH . 'theme.php' );
+require_once( TPL_CORE_PATH . 'packager/packager.php' );
+
+require_once( TPL_CORE_PATH . 'preview.php' );
 
 class TPL_Pressroom
 {
 	public $configs;
 
 	protected $_edition;
-	protected $_adbundle;
 
 	public function __construct() {
 
@@ -48,10 +47,11 @@ class TPL_Pressroom
 			return;
 		}
 
-		$this->load_configs();
+		$this->_load_configs();
 
-		$this->instance_edition();
-		$this->instance_adbundle();
+		$this->_load_extensions();
+
+		$this->_instance_edition();
 
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
@@ -82,41 +82,6 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function plugin_deactivation() {}
-
-	/**
-	 * Load plugin configuration settings
-	 * @void
-	 */
-	public function load_configs() {
-
-		if ( is_null( $this->configs ) ) {
-			$this->configs = get_option('tpl_options', array(
-				'custom_post_type' => array()
-			));
-		}
-	}
-
-	/**
-	 * Instance a new edition object
-	 * @void
-	 */
-	public function instance_edition() {
-
-		if ( is_null( $this->_edition ) ) {
-			$this->_edition = new TPL_Edition;
-		}
-	}
-
-	/**
-	 * Instance a new adbundle object
-	 * @void
-	 */
-	public function instance_adbundle() {
-
-		if ( is_null( $this->_adbundle ) ) {
-			$this->_adbundle = new TPL_ADBundle();
-		}
-	}
 
 	/**
 	 * Add connection between the edition and the posts
@@ -228,6 +193,31 @@ class TPL_Pressroom
 	}
 
 	/**
+	 * Load plugin configuration settings
+	 * @void
+	 */
+	protected function _load_configs() {
+
+		if ( is_null( $this->configs ) ) {
+			$this->configs = get_option('tpl_options', array(
+				'custom_post_type' => array()
+			));
+		}
+	}
+
+	protected function _load_extensions() {
+
+		if ( is_dir( TPL_EXTENSIONS_PATH ) ) {
+			$files = TPL_Utils::search_files( TPL_EXTENSIONS_PATH, 'php' );
+			if ( !empty( $files ) ) {
+				foreach ( $files as $file ) {
+					require_once TPL_EXTENSIONS_PATH . $file;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Load custom post types configured in settings page
 	 * @return array - custom post types
 	 */
@@ -242,6 +232,17 @@ class TPL_Pressroom
 		}
 
 		return $types;
+	}
+
+	/**
+	* Instance a new edition object
+	* @void
+	*/
+	protected function _instance_edition() {
+
+		if ( is_null( $this->_edition ) ) {
+			$this->_edition = new TPL_Edition;
+		}
 	}
 }
 

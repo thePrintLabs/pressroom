@@ -295,17 +295,14 @@ class TPL_Preview {
 
       $final_post = $this->rewrite_url( $parsed_post );
 
-      if ( !has_action('preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
-
+      if ( !has_action('pr_preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
          $html_preview = $final_post;
-
       }
       else {
-
-         $post_title = TPL_Utils::sanitize_string($connected_post->post_title);
-
-         do_action('preview_hook_' . $connected_post->post_type, $connected_post->ID, $post_title, $this->edition_folder);
-
+         $html_preview = '';
+         $args = array( $html_preview, $connected_post );
+         do_action_ref_array( 'pr_preview_hook_' . $connected_post->post_type, array( &$args ) );
+         $html_preview = $args[0];
       }
 
       return $html_preview;

@@ -36,7 +36,7 @@ final class TPL_Packager_Book_JSON
 
          $post_title = TPL_Utils::sanitize_string( $post->post_title );
 
-         if ( !has_action( 'packager_generate_book_' . $post->post_type ) ) {
+         if ( !has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
 
             if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
                $press_options['contents'][] = $post_title . '.html';
@@ -47,7 +47,7 @@ final class TPL_Packager_Book_JSON
          }
          else {
             $args = array( $press_options, $post, $edition_dir );
-            do_action_ref_array( 'packager_generate_book_' . $post->post_type, array( &$args ) );
+            do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$args ) );
             $press_options = $args[0];
          }
       }

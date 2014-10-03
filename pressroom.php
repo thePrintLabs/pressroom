@@ -1,7 +1,7 @@
 <?php
 /**
 * Plugin Name: Pressroom Pro
-* Plugin URI: 
+* Plugin URI:
 * Description: Wordpress Pressroom.
 * Version: 1.0
 * Author: ThePrintLabs

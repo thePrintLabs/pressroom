@@ -116,10 +116,10 @@ body {
   @media all and (min-width: 44em) {
     .sg-acc-handle:after {
       float: none; } }
-.sg-acc-handle.active {
+.sg-acc-handle:hover {
   color: white;
   background: rgba(255, 255, 255, 0.05); }
-  .sg-acc-handle.active:after {
+  .sg-acc-handle:hover:after {
     content: ' -'; }
 .sg-acc-handle.sg-icon:after {
   content: ""; }
@@ -133,7 +133,7 @@ body {
   -ms-transition: max-height 0.5s ease-out;
   -o-transition: max-height 0.5s ease-out;
   transition: max-height 0.5s ease-out; }
-  .sg-acc-panel.active {
+  .sg-acc-panel:hover {
     max-height: 50em; }
   .sg-acc-panel.sg-right {
     position: absolute;
@@ -147,11 +147,11 @@ body {
   top: 0;
   right: 0;
   z-index: 2; }
-  .sg-controls .sg-acc-panel.active {
+  .sg-controls .sg-acc-panel:hover {
     max-height: 17em; }
   .sg-controls .sg-nav-phases .sg-acc-panel {
     min-width: 0; }
-    .sg-controls .sg-nav-phases .sg-acc-panel.active {
+    .sg-controls .sg-nav-phases .sg-acc-panel:hover {
       max-height: none; }
 
 .sg-control-trigger {
@@ -623,6 +623,9 @@ body {
     content: " +";
     float: right;
     font-size: 70%;
+}
+#reset:after {
+   content: "";
 }
 @media all and (min-width: 48em) {
 .sg-acc-handle:after {

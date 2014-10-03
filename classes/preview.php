@@ -1,5 +1,4 @@
 <?php
-
 class TPL_Preview {
     protected $_connected_query;
     protected $_edition_post;
@@ -84,7 +83,6 @@ class TPL_Preview {
             <script src="' . TPL_PLUGIN_ASSETS.'js/jquery-2.0.3.min.js"></script>
             <script src="' . TPL_PLUGIN_ASSETS.'js/idangerous.swiper.js"></script>
             <script src="' . TPL_PLUGIN_ASSETS.'js/iscroll.js"></script>\
-            <script src="' . TPL_PLUGIN_ASSETS.'js/preview.js"></script>
             <script>
             function lazy() {
                 var data = {
@@ -107,7 +105,7 @@ class TPL_Preview {
             var myScroll;
             var mySwiper = new Swiper(".swiper-container",{
                 mode:"horizontal",
-                simulateTouch: false, 
+                simulateTouch: false,
                 grabCursor: false,
                 roundLengths: true,
                 calculateHeight: false,
@@ -118,7 +116,7 @@ class TPL_Preview {
                     initScroll(0);
 
                 },
-                onSlideChangeStart: function(){ 
+                onSlideChangeStart: function(){
                     initScroll(mySwiper.activeIndex);
                 }
             });
@@ -153,7 +151,7 @@ class TPL_Preview {
                     bounce: false,
                     preventDefault: false
                 });
-            } 
+            }
 
             </script>
             </body>
@@ -247,9 +245,12 @@ class TPL_Preview {
       if($html) {
          $theme_folder = TPL_Theme::get_theme_uri( $_GET['edition_id'] ); //get current theme folder
 
-         $dom = new domDocument;
+         $dom = new domDocument();
+
+         libxml_use_internal_errors(true);
 
          $dom->loadHTML( $html );
+
 
          $links = $dom->getElementsByTagName( 'link' );
 

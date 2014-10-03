@@ -34,12 +34,18 @@
 	}
 
 	/* Pattern Lab accordion dropdown */
-	$('.sg-acc-handle').on("click", function(e){
+	$('.sg-acc-handle').hover(function(e){
 		var $this = $(this),
 			$panel = $this.next('.sg-acc-panel');
 		e.preventDefault();
 		$this.toggleClass('active');
 		$panel.toggleClass('active');
+	});
+
+	// Reset size
+	$('#reset').on("click", function(e){
+		e.preventDefault();
+		sizeFull();
 	});
 
 	//Size Trigger

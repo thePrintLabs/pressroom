@@ -22,7 +22,7 @@ class TPL_ADBundle
 		add_action( 'pr_packager_generate_book_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_book' ), 10 );
 
 		// Preview hooks
-		add_action( 'pr_pressroom_preview_' . TPL_ADB_PACKAGE, array( $this, 'adb_preview' ), 10, 2 );
+		add_action( 'pr_pressroom_preview_' . TPL_AD_BUNDLE, array( $this, 'adb_preview' ), 10, 2 );
 	}
 
 	/**

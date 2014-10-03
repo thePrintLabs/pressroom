@@ -47,7 +47,7 @@ class TPL_Packager
 		// Create edition folder
 		$edition_dir = TPL_Utils::make_dir( TPL_TMP_DIR, $this->_edition_post->post_title );
 		if ( !$edition_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . TPL_Utils::parse_string( $this->_edition_post->post_title ), 'error' );
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . TPL_Utils::sanitize_string( $this->_edition_post->post_title ), 'error' );
 			ob_end_flush();
 			return;
 		}
@@ -330,7 +330,7 @@ class TPL_Packager
 						foreach( $this->_linked_query->posts as $post ) {
 
 							if ( $post->ID == $post_id ) {
-								$path = TPL_Utils::parse_string( $post->post_title ) . '.' . $extension;
+								$path = TPL_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
 								$post_rewrite_urls[$url] = $path;
 							}
 						}
@@ -365,7 +365,7 @@ class TPL_Packager
 	 */
 	protected function _save_html_file( $post, $filename ) {
 
-		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_Utils::parse_string( $filename ) . '.html', $post);
+		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string( $filename ) . '.html', $post);
 	}
 
 	/**
@@ -414,6 +414,24 @@ class TPL_Packager
 	 */
 	protected function _save_cover_image() {
 
+		$edition_cover_id = get_post_thumbnail_id( $this->_edition_post->ID );
+		if ( $edition_cover_id ) {
+
+			$upload_dir = wp_upload_dir();
+			$edition_cover_metadata = wp_get_attachment_metadata( $edition_cover_id );
+			$edition_cover_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $edition_cover_metadata['file'];
+			$info = pathinfo( $edition_cover_path );
+
+			if ( copy( $edition_cover_path, $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $info['basename'] ) ) {
+				$this->_edition_cover_image = $info['basename'];
+				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $edition_cover_path ), 'success' );
+			}
+			else {
+				self::print_line( sprintf( __( 'Can\'t copy cover image %s ', 'edition' ), $edition_cover_path ), 'error' );
+			}
+		}
+
+		/*
 		$edition_cover = get_post_custom_values( '_tpl_cover', $this->_edition_post->ID );
 		if ( $edition_cover && !empty( $edition_cover ) ) {
 			$path = get_attached_file( $edition_cover[0] );
@@ -426,6 +444,7 @@ class TPL_Packager
 				self::print_line( sprintf( __( 'Can\'t copy cover image %s ', 'edition' ), $path ), 'error' );
 			}
 		}
+		*/
 	}
 
 	/**

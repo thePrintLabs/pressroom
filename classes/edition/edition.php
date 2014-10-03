@@ -99,7 +99,7 @@ class TPL_Edition
 		$e_meta->add_field( '_tpl_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_tpl_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_tpl_product_id', __( 'Product identifier', 'edition' ), __( 'Product identifier', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_tpl_cover', __( 'Cover image', 'edition' ), __( 'Upload cover image', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
+		//$e_meta->add_field( '_tpl_cover', __( 'Cover image', 'edition' ), __( 'Upload cover image', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 		$e_meta->add_field( '_tpl_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
 		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_tpl_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
@@ -226,6 +226,17 @@ class TPL_Edition
 		foreach ( $this->_metaboxes as $metabox ) {
 			$metabox->save_values();
 		}
+
+		$edition_theme = get_post_meta( $post_id, '_tpl_themes_select', true );
+		if ( !$edition_theme ) {
+			if ( TPL_Pressroom::is_edit_page() ) {
+				$url = admin_url( 'post.php?post=' . $post_id . '&action=edit&pmtype=error&pmcode=theme' );
+			} else {
+				$url = admin_url( 'post-new.php?post_type=' . TPL_EDITION . '&pmtype=error&pmcode=theme' );
+			}
+			wp_redirect( $url );
+			exit;
+		}
 	}
 
 	/**
@@ -284,7 +295,7 @@ class TPL_Edition
 		add_thickbox();
 	}
 
-	private function _get_subscription_types() {
+	protected function _get_subscription_types() {
 
 		$types = array();
 		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
@@ -327,16 +338,15 @@ class TPL_Edition
 		switch ($column_name) {
 
 	      case 'cover' :
-				$attach_id = get_post_meta( $id, '_tpl_cover', true );
-				echo wp_get_attachment_image( $attach_id );
-	         break;
+				echo get_the_post_thumbnail( $id, 'thumbnail' );
+				break;
 
 	      case 'paid_free' :
-	      	echo ( get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free');
+	      	echo get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free';
 	      	break;
 
 			case 'previews':
-				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ).'">View</a>';
+				//echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ).'">View</a>';
 				break;
 
 			default:

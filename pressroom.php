@@ -54,11 +54,15 @@ class TPL_Pressroom
 		$this->instance_adbundle();
 
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
+		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
+		add_action( 'admin_notices', array( $this, 'check_pressroom_notice' ), 20 );
 		add_action( 'p2p_init', array( $this, 'register_post_connection' ) );
+		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
 	}
 
 	/**
-	 * Activation hook
+	 * Activation plugin
+	 *
 	 * @void
 	 */
 	public function plugin_activation() {
@@ -71,6 +75,13 @@ class TPL_Pressroom
 			wp_die( $html, __( 'Pressroom activation error', 'pressroom_setup' ), ('back_link=true') );
 		}
 	}
+
+	/**
+	 * Deactivation plugin
+	 *
+	 * @void
+	 */
+	public function plugin_deactivation() {}
 
 	/**
 	 * Load plugin configuration settings
@@ -146,6 +157,49 @@ class TPL_Pressroom
 					),
 				)
 		) );
+	}
+
+	/**
+	 * Add default theme template to post connection
+	 * @param  int $p2p_id
+	 * @void
+	 */
+	public function post_connection_add_default_theme( $p2p_id ) {
+
+		$connection = p2p_get_connection( $p2p_id );
+		if ( $connection->p2p_type == 'edition_post' ) {
+			$themes = TPL_Theme::get_themes();
+			$theme_code = get_post_meta( $connection->p2p_to, '_tpl_themes_select', true );
+			if ( $theme_code && $themes ) {
+				$pages = $themes[$theme_code];
+				foreach ( $pages as $page ) {
+					if ( $page['rule'] == 'post' ) {
+						p2p_add_meta( $p2p_id, 'template', $page['filename'] );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Check admin notices and display
+	 * @echo
+	 */
+	public function check_pressroom_notice() {
+
+		if ( isset( $_GET['pmtype'] ) && isset( $_GET['pmcode'] ) ) {
+
+			$msg_type = $_GET['pmtype'];
+			$msg_code = $_GET['pmcode'];
+
+			echo '<div class="' . $msg_type . '"><p>';
+			switch ( $msg_code ) {
+				case 'theme':
+					echo _e( '<b>Error:</b> You must specify a theme for edition!', 'pressroom_notice' );
+					break;
+			}
+			echo '</p></div>';
+		}
 	}
 
 	/**

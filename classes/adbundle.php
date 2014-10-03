@@ -174,7 +174,7 @@ class TPL_ADBundle
 
 			if ( $zip->open( $adb_attached_file ) ) {
 
-				$adb_title = TPL_Utils::parse_string( $post->post_title );
+				$adb_title = TPL_Utils::sanitize_string( $post->post_title );
 				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE . DIRECTORY_SEPARATOR . $adb_title ) ) {
 					TPL_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $adb_attached_file, 'success' );
 				} else {
@@ -200,7 +200,7 @@ class TPL_ADBundle
 		list( $press_options, $post, $edition_dir ) = $args;
 
 		$adb_index = get_post_meta( $post->ID, '_tpl_html_file', true );
-		$adb_dir = TPL_Utils::parse_string( $post->post_title );
+		$adb_dir = TPL_Utils::sanitize_string( $post->post_title );
 
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {

@@ -34,7 +34,7 @@ final class TPL_Packager_Book_JSON
 
       foreach ( $linked_query->posts as $post ) {
 
-         $post_title = TPL_Utils::parse_string( $post->post_title );
+         $post_title = TPL_Utils::sanitize_string( $post->post_title );
 
          if ( $post->post_type == 'post' || !has_action( 'packager_generate_book_' . $post->post_type ) ) {
 
@@ -67,7 +67,7 @@ final class TPL_Packager_Book_JSON
 
       $options = array(
          'hpub'   => true,
-         'url'    => $book_url . TPL_Utils::parse_string( $edition_post->post_title . '.hpub' )
+         'url'    => $book_url . TPL_Utils::sanitize_string( $edition_post->post_title . '.hpub' )
       );
 
       foreach ( $tpl_pressroom->configs as $key => $option ) {

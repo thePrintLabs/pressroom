@@ -5,54 +5,12 @@ class TPL_Utils
 
 	public function __construct() {}
 
-	// public static function readDirectory($directory, $recursive = true, $found = array()) {
-	// 	$bad = array(".", "..", ".DS_Store", "_notes", "Thumbs.db");
-	// 	if(is_dir($directory) === false) {
-	// 		return false;
-	// 	}
-	// 	try {
-	// 		$resource = opendir($directory);
-	// 		while(false !== ($item = readdir($resource))) {
-	// 			if(in_array($item, $bad)) {
-	// 					continue;
-	// 			}
-	// 			$item_dir = $directory . DIRECTORY_SEPARATOR . $item;
-	// 			if($recursive === true && is_dir($item_dir)) {
-	// 				echo "aaa".$item_dir;
-	// 				$found[] = self::readDirectory($item_dir, true, $found);
-	// 			}
-	// 			else {
-	// 				$found[] = $item_dir;
-	// 			}
-	// 		}
-	// 	}
-	// 	catch(Exception $e) {
-	// 		error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
-	// 		return false;
-	// 	}
-	// 	return $found;
-	// }
-
-
 	/**
-	 * Read directory files
-	 * @param string $directory
-	 * @return array
+	 * Check .pressignore in a directory
+	 * @param  string  $dir
+	 * @param  string  $file
+	 * @return boolean
 	 */
-	/*
-	public static function read_files( $directory ) {
-
-		try {
-			$files = scandir( $directory );
-			$files = array_diff( $files, self::$_excluded_files );
-		}
-		catch(Exception $e) {
-			return false;
-		}
-		return $files;
-	}
-	*/
-
 	public static function get_press_ignore( $dir ) {
 
 		$entries = array();
@@ -93,88 +51,37 @@ class TPL_Utils
 	}
 
 	/**
-	* Read php files into a directory
+	* Search files in a directory
 	* @param string $directory
+	* @param string $extension
 	* @return array
 	*/
-	public static function read_php_files( $directory ) {
+	public static function search_files( $directory, $extension = '*' ) {
 
+		$out = array();
 		try {
-			$out = array();
 			$files = scandir( $directory );
-			$files = array_diff( $files, self::$excluded_files );
+			$files = array_diff( $files, self::$_excluded_files );
 			foreach ( $files as $file ) {
+
 				if ( is_file( $directory . DIRECTORY_SEPARATOR . $file ) ) {
-					$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
-					if ( $info['extension'] == 'php' ) {
+					if ( strlen( $extension ) && $extension != '*' ) {
+						$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
+						if ( strtolower( $info['extension'] ) == strtolower( $extension ) ) {
+							array_push( $out, $file );
+						}
+					}
+					else {
 						array_push( $out, $file );
 					}
 				}
 			}
-			return $out;
 		}
 		catch(Exception $e) {
-			error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
-			return false;
+			error_log( 'Pressroom error: ' . $e->getMessage() );
 		}
-	}
 
-	/*
-	public static function read_Html_Files($directory) {
-		try {
-			$files = array();
-			$scans = scandir($directory);
-			$html = array('html');
-			foreach($scans as $scan) {
-				if(is_file($directory. DIRECTORY_SEPARATOR . $scan)){
-					$scan = pathinfo($directory. DIRECTORY_SEPARATOR . $scan);
-					if(in_array($scan['extension'], $html)){
-						$files[] = $scan['filename'];
-					}
-				}
-			}
-		}
-		catch(Exception $e) {
-			error_log( 'Caught exception: ',  $e->getMessage(), "\n",0);
-			return false;
-		}
-		return $files;
-	}
-	*/
-
-	public static function parse_string($str) {
-		$str = sanitize_file_name($str);
-		$str = strtolower($str);
-		$str = str_replace(" ","-",$str);
-		$str = str_replace("'","-",$str);
-		$str = str_replace("\"","",$str);
-		$str = str_replace("_","-",$str);
-		$str = str_replace("à","a",$str);
-		$str = str_replace("è","e",$str);
-		$str = str_replace("ì","i",$str);
-		$str = str_replace("ò","o",$str);
-		$str = str_replace("ù","u",$str);
-		$str = str_replace("á","a",$str);
-		$str = str_replace("é","e",$str);
-		$str = str_replace("í","i",$str);
-		$str = str_replace("ó","o",$str);
-		$str = str_replace("ú","u",$str);
-		$str = str_replace("ü","ue",$str);
-		$str = str_replace("ä","ae",$str);
-		$str = str_replace("ö","oe",$str);
-		$str = str_replace("ï","i",$str);
-		$str = str_replace("ë","e",$str);
-		$str = str_replace("ß","ss",$str);
-		$str = str_replace("ã","a",$str);
-		$str = str_replace("î","i",$str);
-		$str = str_replace("û","u",$str);
-		$str = str_replace("ñ","n",$str);
-		$str = str_replace("ê","e",$str);
-		$str = str_replace("â","a",$str);
-		$str = preg_replace("/[^a-zA-Z0-9\-\.]/", "", $str);
-		$str = trim($str,'-');
-		$str = preg_replace("/\-(\-)+/", "-", $str);
-		return $str;
+		return $out;
 	}
 
 	/**
@@ -189,7 +96,7 @@ class TPL_Utils
 			$basepath = substr( $basepath, 0, -1 );
 		}
 
-		$path = $basepath . DIRECTORY_SEPARATOR . TPL_Utils::parse_string( $dir );
+		$path = $basepath . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string( $dir );
 		if ( is_dir( $path ) ) {
 			return $path;
 		}
@@ -344,5 +251,51 @@ class TPL_Utils
 		}
 
 		return $zip->close();
+	}
+
+	/**
+	 * Extends sanitize wp method replacing latin1 characters
+	 * @param  string $str
+	 * @return string
+	 */
+	public static function sanitize_string($str) {
+
+		$str = sanitize_file_name($str);
+		$str = strtolower($str);
+
+		$replacements = array(
+			' ' 	=> '-',
+			'\'' 	=> '-',
+			'"' 	=> '',
+			'_'	=> '-',
+			'à'	=> 'a',
+			'è'	=> 'e',
+			'ì'	=> 'i',
+			'ò'	=> 'o',
+			'ù'	=> 'u',
+			'á'	=> 'a',
+			'é'	=> 'e',
+			'í'	=> 'i',
+			'ó'	=> 'o',
+			'ú'	=> 'u',
+			'ü'	=> 'ue',
+			'ä'	=> 'ae',
+			'ö'	=> 'oe',
+			'ï'	=> 'i',
+			'ë'	=> 'e',
+			'ß'	=> 'ss',
+			'ã'	=> 'a',
+			'î'	=> 'i',
+			'û'	=> 'u',
+			'ñ'	=> 'n',
+			'ê'	=> 'e',
+			'â'	=> 'a',
+		);
+		$str = str_replace( array_keys( $replacements ), $replacements, $str);
+		$str = preg_replace("/[^a-zA-Z0-9\-\.]/", "", $str);
+		$str = trim($str,'-');
+		$str = preg_replace("/\-(\-)+/", "-", $str);
+
+		return $str;
 	}
 }

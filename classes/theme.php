@@ -45,7 +45,7 @@ class TPL_Theme
 			foreach ( $dirs as $dir ) {
 
 				$pages = array();
-				$files = TPL_Utils::read_php_files( $dir );
+				$files = TPL_Utils::search_files( $dir, 'php' );
 				foreach ( $files as $file ) {
 
 					$metadata = get_file_data( $dir . DIRECTORY_SEPARATOR . $file, $default_headers);
@@ -55,7 +55,7 @@ class TPL_Theme
 
 					$metadata['theme_path'] = basename( $dir );
 					$metadata['filename'] = $file;
-					$theme_name = TPL_Utils::parse_string( $metadata['theme_path'] );
+					$theme_name = TPL_Utils::sanitize_string( $metadata['theme_path'] );
 
 					if ( $metadata['name'] ) {
 						$pages[] = $metadata['name'];
@@ -220,7 +220,7 @@ class TPL_Theme
 
 	/**
 	 * Validate themes array and check if all property is set to theme pages
-	 * 
+	 *
 	 * @void
 	 */
 	protected static function _validate_themes() {

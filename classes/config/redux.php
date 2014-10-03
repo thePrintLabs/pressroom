@@ -68,7 +68,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
             'icon'      => 'el-icon-home',
             'fields'    => array(
                array(
-                  'id'        => 'tpl-theme',
+                  'id'        => 'pr-theme',
                   'type'      => 'select',
                   'title'     => __( 'Theme', 'pressroom' ),
                   'subtitle'  => __( 'Select yout theme', 'pressroom' ),
@@ -77,7 +77,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
                   'default'   => '2'
                ),
                array(
-                  'id'            => 'tpl-maxnumer',
+                  'id'            => 'pr-maxnumer',
                   'type'          => 'slider',
                   'title'         => __( 'Max number of edition', 'pressroom' ),
                   'default'       => 100,
@@ -96,7 +96,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
             'icon'      => 'el-icon-book',
             'fields'    => array(
                array(
-                  'id'        => 'tpl-orientation',
+                  'id'        => 'pr-orientation',
                   'type'      => 'button_set',
                   'title'     => __( 'Orientation', 'pressroom' ),
                   'subtitle'  => __( 'Select screen orientation', 'pressroom' ),
@@ -108,7 +108,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
                   ),
                ),
                array(
-                  'id'        => 'tpl-zoomable',
+                  'id'        => 'pr-zoomable',
                   'type'      => 'checkbox',
                   'title'     => __( 'Zoomable', 'pressroom' ),
                   'subtitle'  => __( 'If checked enable zoom on page', 'pressroom' ),
@@ -124,21 +124,21 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
                   'validate'  => 'color',
                ),
                array(
-                  'id'        => 'tpl-vertical-bounce',
+                  'id'        => 'pr-vertical-bounce',
                   'type'      => 'checkbox',
                   'title'     => __( 'Vertical Bounce', 'pressroom' ),
                   'subtitle'  => __( 'If checked enable vertical bounce', 'pressroom' ),
                   'default'   => 0
                ),
                array(
-                  'id'        => 'tpl-index-bounce',
+                  'id'        => 'pr-index-bounce',
                   'type'      => 'checkbox',
                   'title'     => __( 'Index bounce', 'pressroom' ),
                   'subtitle'  => __( 'If checked enable index bounce', 'pressroom' ),
                   'default'   => 0
                 ),
                array(
-                  'id'            => 'tpl-index-height',
+                  'id'            => 'pr-index-height',
                   'type'          => 'slider',
                   'title'         => __( 'Index height', 'pressroom' ),
                   'default'       => 150,
@@ -148,7 +148,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
                   'display_value' => 'text'
                ),
                array(
-                  'id'        => 'tpl-media-autoplay',
+                  'id'        => 'pr-media-autoplay',
                   'type'      => 'checkbox',
                   'title'     => __( 'Media autoplay', 'pressroom' ),
                   'subtitle'  => __( 'If checked enable media autoplay', 'pressroom' ),
@@ -237,7 +237,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
              'menu_icon'         => '',                      // Specify a custom URL to an icon
              'last_tab'          => '',                      // Force your panel to always open to a specific tab (by id)
              'page_icon'         => 'icon-themes',           // Icon displayed in the admin panel next to your menu_title
-             'page_slug'         => 'tpl-options',              // Page slug used to denote the panel
+             'page_slug'         => 'pr-options',              // Page slug used to denote the panel
              'save_defaults'     => true,                    // On load save the defaults to DB before user clicks save or not
              'default_show'      => false,                   // If true, shows the default value next to each field that is not the default value.
              'default_mark'      => '',                      // What to print by the field's title if the value shown is default. Suggested: *

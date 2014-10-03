@@ -1,7 +1,7 @@
 <?php
 /**
 * Plugin Name: Pressroom Pro
-* Plugin URI: https://bitbucket.org/theprintlabs/tpl-baker-wp-plugin/wiki/Home
+* Plugin URI: 
 * Description: Wordpress Pressroom.
 * Version: 1.0
 * Author: ThePrintLabs

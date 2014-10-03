@@ -47,7 +47,7 @@ class TPL_Packager
 		// Create edition folder
 		$edition_dir = TPL_Utils::make_dir( TPL_TMP_DIR, $this->_edition_post->post_title );
 		if ( !$edition_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . TPL_Utils::parse_string( $this->_edition_post->post_title ), 'error' );
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . TPL_Utils::sanitize_string( $this->_edition_post->post_title ), 'error' );
 			ob_end_flush();
 			return;
 		}
@@ -330,7 +330,7 @@ class TPL_Packager
 						foreach( $this->_linked_query->posts as $post ) {
 
 							if ( $post->ID == $post_id ) {
-								$path = TPL_Utils::parse_string( $post->post_title ) . '.' . $extension;
+								$path = TPL_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
 								$post_rewrite_urls[$url] = $path;
 							}
 						}
@@ -365,7 +365,7 @@ class TPL_Packager
 	 */
 	protected function _save_html_file( $post, $filename ) {
 
-		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_Utils::parse_string( $filename ) . '.html', $post);
+		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string( $filename ) . '.html', $post);
 	}
 
 	/**

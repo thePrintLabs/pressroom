@@ -35,7 +35,7 @@ final class TPL_Packager_Shelf_JSON
 
          foreach ( $edition_query->posts as $edition_key => $edition ) {
 
-            $press_options[$edition_key] = array( 'url' => TPL_HPUB_URI . TPL_Utils::parse_string( $edition->post_title . '.hpub' ) );
+            $press_options[$edition_key] = array( 'url' => TPL_HPUB_URI . TPL_Utils::sanitize_string( $edition->post_title . '.hpub' ) );
 
             foreach ( $edition as $key => $edition_attribute ) {
 

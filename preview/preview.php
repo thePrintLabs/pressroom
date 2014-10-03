@@ -41,7 +41,7 @@ class TPL_Preview {
 
     $edition_folder = TPL_Utils::make_dir(TPL_PREVIEW_DIR, $this->_edition_post->post_title);
 
-    $index = $this->html_write_preview($preview_html, $edition_folder, TPL_Utils::parse_string($this->_edition_post->post_title));
+    $index = $this->html_write_preview($preview_html, $edition_folder, TPL_Utils::sanitize_string($this->_edition_post->post_title));
     $preview = file_get_contents($index);
     echo $preview;
   }
@@ -351,7 +351,7 @@ class TPL_Preview {
       $html_preview = $final_post;
     }
     else {
-      $post_title = TPL_Utils::parse_string($connected_post->post_title);
+      $post_title = TPL_Utils::sanitize_string($connected_post->post_title);
       do_action('preview_hook_' . $connected_post->post_type, $connected_post->ID, $post_title, $this->edition_folder);
     }
     return $html_preview;

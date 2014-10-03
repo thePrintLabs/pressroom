@@ -6,15 +6,28 @@ class TPL_Preview {
 
   public function __construct() {
     if(isset($_GET['preview'])) {
-      add_action( 'admin_enqueue_scripts', array( $this, 'preview_register_styles' ) );
-      add_action( 'admin_enqueue_scripts', array( $this,'preview_register_script' ) );
+      add_action( 'admin_print_scripts', array( $this, 'preview_register_styles' ) );
+      add_action( 'admin_print_styles', array( $this,'preview_register_script' ) );
       add_action( 'admin_footer', array( $this,'preview_script' ) );
       add_action( 'wp_ajax_next_slide_ajax', array( $this ,'next_slide_ajax_callback' ) );
       add_action( 'wp_loaded', array( $this,'get_connected_data' ) );
       add_action( 'admin_menu', array( $this,'init_preview') );
-      add_filter( 'admin_footer_text', array( $this, 'remove_footer') );
+      add_filter( 'admin_footer_text', array( $this, 'remove_footer' ) );
+      add_action( 'admin_print_scripts', array( $this, 'remove_scripts' ) );
+      add_action( 'admin_print_styles', array( $this, 'remove_styles' ) );
       $this->_theme = new TPL_Theme();
     }
+  }
+
+  public function remove_scripts() {
+     global $wp_scripts;
+     $wp_scripts->queue = array();
+
+  }
+
+  public function remove_styles(){
+     global $wp_styles;
+     $wp_styles->queue = array();
   }
 
   public function init_preview() {
@@ -65,6 +78,9 @@ class TPL_Preview {
       <title></title>
       <meta name="description" content="">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="'.TPL_PLUGIN_ASSETS . 'css/preview.css">
+      <link rel="stylesheet" href="'.TPL_PLUGIN_ASSETS . 'css/idangerous.swiper.css">
+      <link rel="stylesheet" href="'.TPL_PLUGIN_ASSETS . 'css/ish.css">
       </head>
       <body>
       <div class="device">
@@ -76,6 +92,68 @@ class TPL_Preview {
       </div>
       </div>
       </div>
+      <script src="'.TPL_PLUGIN_ASSETS.'js/jquery-2.0.3.min.js"></script>
+      <script src="'.TPL_PLUGIN_ASSETS.'js/idangerous.swiper.min.js"></script>
+      <script src="'.TPL_PLUGIN_ASSETS.'js/preview.js"></script>
+      <script>
+      function lazy() {
+        var data = {
+          "action" : "next_slide_ajax",
+          "edition_id" : "'.$_GET['edition_id'].'",
+          "number" : mySwiper.activeIndex,
+          "preview": true,
+
+        };
+
+        jQuery.get(ajaxurl, data, function(response) {
+          if(response) {
+            var slide_init = \'<div class="swiper-container swiper-in-slider swiper-in-slider-new">\'+response+\'</div><div class="swiper-scrollbar"></div>\';
+            mySwiper.appendSlide(slide_init);
+            mySwiper.resizeFix();
+            mySwiper.reInit();
+            fixPagesHeight();
+          }
+          else {
+            console.log("all loaded");
+          }
+        });
+      }
+
+
+      var mySwiper = new Swiper(".swiper-container",{
+        mode:"horizontal",
+        scrollContainer:false,
+        mousewheelControl:false,
+        loop:true,
+        grabCursor: true,
+        roundLengths: true,
+        calculateHeight: true,
+        paginationClickable: true,
+        onSlideNext: function(){
+          lazy();
+       },
+      });
+
+
+      $(".arrow-left").on("click", function(e){
+        e.preventDefault();
+        mySwiper.swipePrev();
+        fixPagesHeight();
+      })
+      $(".arrow-right").on("click", function(e){
+        e.preventDefault();
+        mySwiper.swipeNext();
+        fixPagesHeight();
+      });
+
+     function fixPagesHeight(){
+        $(\'.device\').css({height:$(window).height()})
+        $(\'.swiper-slide\').css({height:$(window).height()})
+        $(\'.swiper-wrapper\').css({height:$(window).height()})
+     }
+      $(window).on(\'resize\',function(){fixPagesHeight()})
+
+      </script>
       </body>
       </html>';
     $html_slide = '

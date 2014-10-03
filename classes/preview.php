@@ -1,58 +1,41 @@
 <?php
 
 class TPL_Preview {
-  protected $_connected_query;
-  protected $_edition_post;
+   protected $_connected_query;
+   protected $_edition_post;
 
-  public function __construct() {
+   public function __construct() {
 
-      // add_action( 'admin_enqueue_scripts', array( $this, 'preview_register_styles' ) );
-      // add_action( 'admin_enqueue_scripts', array( $this,'preview_register_script' ) );
-      // add_action( 'admin_footer', array( $this,'preview_script' ) );
       add_action( 'wp_ajax_next_slide_ajax', array( $this ,'next_slide_ajax_callback' ) );
-      //add_action( 'wp_loaded', array( $this,'get_connected_data' ), 10 );
-      //add_action( 'wp_loaded', array( $this,'init_preview_swiper' ), 20 );
-      // add_action( 'admin_menu', array( $this,'init_preview') );
-      // add_filter( 'admin_footer_text', array( $this, 'remove_footer') );
       $this->_theme = new TPL_Theme();
-  }
-
-  // public function init_preview() {
-  //   add_submenu_page( null, 'Preview screen', 'Preview', 'manage_options', 'preview-swiper', array($this, 'init_preview_swiper'));
-  // }
-
-  public function init_preview_swiper() {
-   $this->get_connected_data();
-   $count_data = count($this->_connected_query->posts);
-
-   $preview_html = array();
-   for($i=0; $i< $count_data; $i++) {
-      array_push($preview_html, $this->get_post_html($i));
    }
 
-   $edition_folder = TPL_Utils::make_dir(TPL_PREVIEW_DIR, $this->_edition_post->post_title);
-   $index = $this->html_write_preview($preview_html, $edition_folder, TPL_Utils::sanitize_string($this->_edition_post->post_title));
-   $preview = file_get_contents($index);
-   echo $preview;
-  }
+   public function init_preview_swiper() {
 
-  /**
-   * hack for removing wordpress footer
-   * @void
-   */
-  public function remove_footer() {
+      $this->get_connected_data();
+      $count_data = count( $this->_connected_query->posts );
 
-  }
+      $preview_html = array();
+      for( $i=0; $i< $count_data; $i++ ) {
+         array_push( $preview_html, $this->get_post_html( $i ) );
+      }
 
-  public function next_slide_ajax_callback() {
-    $preview = new self;
-    $preview->get_connected_data();
-    $slide = $preview->get_post_html($_GET['number']);
-    if($slide) {
-      echo $slide;
-    }
-    die();
-  }
+      $edition_folder = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $this->_edition_post->post_title );
+      $index = $this->html_write_preview($preview_html, $edition_folder, TPL_Utils::sanitize_string($this->_edition_post->post_title));
+      $preview = file_get_contents($index);
+      echo $preview;
+   }
+
+
+   public function next_slide_ajax_callback() {
+      $preview = new self;
+      $preview->get_connected_data();
+      $slide = $preview->get_post_html( $_GET['number'] );
+      if( $slide ) {
+         echo $slide;
+      }
+      die();
+   }
 
   /**
   * Save the html output into unique file and prepare
@@ -132,6 +115,13 @@ class TPL_Preview {
         mySwiper.swipeNext();
       });
 
+      function fixPagesHeight(){
+         $(".device").css({height:$(window).height()})
+         $(".swiper-slide").css({height:$(window).height()})
+         $(".swiper-wrapper").css({height:$(window).height()})
+      }
+      $(window).on("resize",function(){fixPagesHeight()})
+
 
 
       </script>
@@ -139,13 +129,7 @@ class TPL_Preview {
       </html>';
     $html_slide = '
       <div class="swiper-slide">
-      <div class="swiper-container swiper-in-slider">
-      <div class="swiper-wrapper">
-      <div class="swiper-slide">
       <div class="content-slider">[final_post]</div>
-      </div>
-      </div>
-      </div>
       <div class="swiper-scrollbar"></div>
       </div>';
     $index = $edition_folder . DIRECTORY_SEPARATOR . 'index.html';

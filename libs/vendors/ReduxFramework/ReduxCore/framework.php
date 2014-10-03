@@ -71,14 +71,14 @@
             public static $wp_content_url;
             public static $base_wp_content_url;
             public static $_properties;
-            public static $_is_plugin   = true;
+            public static $_is_plugin   = false;
             public static $_as_plugin   = false;
             // public static $_instance    = null;
 
             static function init() {
 
                 global $wp_filesystem;
-                
+
                 // Windows-proof constants: replace backward by forward slashes. Thanks to: @peterbouwmeester
                 self::$_dir           = trailingslashit( Redux_Helpers::cleanFilePath( dirname( __FILE__ ) ) );
                 $wp_content_dir       = trailingslashit( Redux_Helpers::cleanFilePath( WP_CONTENT_DIR ) );
@@ -103,11 +103,11 @@
                     // Create the directory
                     $wp_filesystem->mkdir( self::$_upload_dir );
                 }
-                
+
             }
 
             // ::init()
-            
+
             public $framework_url = 'http://www.reduxframework.com/';
             public static $instance = null;
             public $admin_notices = array();
@@ -205,7 +205,7 @@
                 // Enable network admin when using network database mode
                 'network_sites'      => true,
                 // Enable sites as well as admin when using network database mode
-                
+
                 'hide_reset'         => false,
                 'hints'              => array(
                     'icon'          => 'icon-question-sign',
@@ -372,7 +372,7 @@
                     // Set the default values
                     $this->_default_cleanup();
 
-                    // Internataionalization 
+                    // Internataionalization
                     $this->_internationalization();
 
                     // Register extra extensions
@@ -1330,8 +1330,8 @@
 
                                 if ( isset( $section['customizer_only'] ) && $section['customizer_only'] == true ){
                                     continue;
-                                }                                
-                                
+                                }
+
                                 add_submenu_page(
                                     $this->args['page_slug'],
                                     $section['title'],
@@ -1588,7 +1588,7 @@
                         'spacing',
                         'typography',
                         'color_scheme'
-                        
+
                     ) ) ) {
 
                     // select2 CSS
@@ -1723,7 +1723,7 @@
 
                 // Load wp-color-picker for color, color_gradient, link_color, border, background and typography
                 if ( Redux_Helpers::isFieldInUseByType( $this->fields, array(
-                        'background',    
+                        'background',
                         'color',
                         'color_gradient',
                         'link_color',
@@ -1737,8 +1737,8 @@
                         array(),
                         filemtime( self::$_dir . 'assets/css/color-picker/color-picker.css' ),
                         'all'
-                    );                    
-                    
+                    );
+
                     wp_enqueue_script( 'wp-color-picker' );
                     wp_enqueue_style( 'wp-color-picker' );
                 }
@@ -1859,7 +1859,7 @@
                 $this->localize_data['fonts']          = $this->fonts;
                 $this->localize_data['required_child'] = $this->required_child;
                 $this->localize_data['fields']         = $this->fields;
-                
+
                 if ( isset( $this->font_groups['google'] ) ) {
                     $this->localize_data['googlefonts'] = $this->font_groups['google'];
                 }
@@ -1889,39 +1889,39 @@
                 $this->localize_data['fieldsHidden'] = $this->fieldsHidden;
                 $this->localize_data['options']      = $this->options;
                 $this->localize_data['defaults']     = $this->options_defaults;
-                
+
                 /**
                  * Save pending string
                  * filter 'redux/{opt_name}/localize/save_pending
                  *
                  * @param       string        save_pending string
-                 */                
+                 */
                 $save_pending   = apply_filters("redux/{$this->args['opt_name']}/localize/save_pending", __( 'You have changes that are not saved. Would you like to save them now?', 'redux-framework' ));
-                
+
                 /**
                  * Reset all string
                  * filter 'redux/{opt_name}/localize/reset
                  *
                  * @param       string        reset all string
-                 */                
+                 */
                 $reset_all      = apply_filters("redux/{$this->args['opt_name']}/localize/reset", __( 'Are you sure? Resetting will lose all custom values.', 'redux-framework' ));
-                
+
                 /**
                  * Reset section string
                  * filter 'redux/{opt_name}/localize/reset_section
                  *
                  * @param       string        reset section string
-                 */                
+                 */
                 $reset_section  = apply_filters("redux/{$this->args['opt_name']}/localize/reset_section", __( 'Are you sure? Resetting will lose all custom values in this section.', 'redux-framework' ));
-                
+
                 /**
                  * Preset confirm string
                  * filter 'redux/{opt_name}/localize/preset
                  *
                  * @param       string        preset confirm string
-                 */                
+                 */
                 $preset_confirm = apply_filters("redux/{$this->args['opt_name']}/localize/preset", __( 'Your current options will be replaced with the values of this preset. Would you like to proceed?', 'redux-framework' ));
-                
+
                 $this->localize_data['args']         = array(
                     'save_pending'          => $save_pending,
                     'reset_confirm'         => $reset_all,
@@ -2378,8 +2378,8 @@
 
                             if ( isset( $field['customizer_only'] ) && $field['customizer_only'] == true ) {
                                 continue; // ok
-                            }                            
-                            
+                            }
+
                             /**
                              * filter 'redux/options/{opt_name}/field/{field.id}'
                              *
@@ -3327,14 +3327,14 @@
                 echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __( 'Expand', 'redux-framework' ) . '</a>';
                 echo '<div class="redux-action_bar">';
                 submit_button( __( 'Save Changes', 'redux-framework' ), 'primary', 'redux_save', false );
-                
+
                 if (false === $this->args['hide_reset']) {
                     echo '&nbsp;';
                     submit_button( __( 'Reset Section', 'redux-framework' ), 'secondary', $this->args['opt_name'] . '[defaults-section]', false );
                     echo '&nbsp;';
                     submit_button( __( 'Reset All', 'redux-framework' ), 'secondary', $this->args['opt_name'] . '[defaults]', false );
                 }
-                
+
                 echo '</div>';
 
                 echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'redux-framework' ) . '">&nbsp;</div>';
@@ -3456,8 +3456,8 @@
 
                     if ( isset($section['customizer_only']) && $section['customizer_only'] == true ) {
                         continue;
-                    }                    
-                    
+                    }
+
                     if ( false == $skip_sec ) {
                         echo $this->section_menu( $k, $section );
                         $skip_sec = false;
@@ -3510,8 +3510,8 @@
                 foreach ( $this->sections as $k => $section ) {
                     if ( isset($section['customizer_only']) && $section['customizer_only'] == true ) {
                         continue;
-                    }                    
-                    
+                    }
+
                     //$active = ( ( is_numeric($this->current_tab) && $this->current_tab == $k ) || ( !is_numeric($this->current_tab) && $this->current_tab === $k )  ) ? ' style="display: block;"' : '';
                     $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
                     echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
@@ -3560,7 +3560,7 @@
                 // Import / Export output
                 if ( true == $this->args['show_import_export'] && false == $this->import_export->is_field ) {
                     $this->import_export->enqueue();
-                    
+
                     echo '<fieldset id="' . $this->args['opt_name'] . '-import_export_core" class="redux-field-container redux-field redux-field-init redux-container-import_export" data-id="import_export_core" data-type="import_export">';
                     $this->import_export->render();
                     echo '</fieldset>';
@@ -3635,14 +3635,14 @@
 
                 echo '<div class="redux-action_bar">';
                 submit_button( __( 'Save Changes', 'redux-framework' ), 'primary', 'redux_save', false );
-                
+
                 if (false === $this->args['hide_reset']) {
                     echo '&nbsp;';
                     submit_button( __( 'Reset Section', 'redux-framework' ), 'secondary', $this->args['opt_name'] . '[defaults-section]', false );
                     echo '&nbsp;';
                     submit_button( __( 'Reset All', 'redux-framework' ), 'secondary', $this->args['opt_name'] . '[defaults]', false );
                 }
-                
+
                 echo '</div>';
 
                 echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'redux-framework' ) . '">&nbsp;</div>';

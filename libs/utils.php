@@ -61,7 +61,7 @@ class TPL_Utils
 		$out = array();
 		try {
 			$files = scandir( $directory );
-			$files = array_diff( $files, self::$_excluded_files );
+			$files = array_diff( $files, self::$excluded_files );
 			foreach ( $files as $file ) {
 
 				if ( is_file( $directory . DIRECTORY_SEPARATOR . $file ) ) {

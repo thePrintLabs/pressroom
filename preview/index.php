@@ -82,18 +82,6 @@ $url = $_GET['url'];
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
 <script src="assets/js/ish_init.js"></script>
-<script src="assets/js/iscroll.js"></script>
 <!--end iFrame-->
 </body>
-<script>
-   function init_iscroll() {
-
-      var myScroll = new IScroll('.swiper-slide', { mouseWheel: true });
-      document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-   }
-
-   $(function(){
-      init_iscroll();
-   });
-</script>
 </html>

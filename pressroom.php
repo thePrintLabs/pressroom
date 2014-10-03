@@ -33,7 +33,7 @@ require_once( TPL_CLASSES_PATH . 'press_list.php' );
 require_once( TPL_CLASSES_PATH . 'theme.php' );
 require_once( TPL_CLASSES_PATH . 'packager/packager.php' );
 require_once( TPL_CLASSES_PATH . 'adbundle.php' );
-require_once( TPL_PLUGIN_PATH . '/preview/preview.php' );
+require_once( TPL_CLASSES_PATH . 'preview.php' );
 
 class TPL_Pressroom
 {
@@ -183,4 +183,4 @@ class TPL_Pressroom
 
 /* instantiate the plugin class */
 $tpl_pressroom = new TPL_Pressroom();
-$tpl_preview = new TPL_Preview();
+//$tpl_preview = new TPL_Preview();

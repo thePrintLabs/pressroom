@@ -94,6 +94,3 @@ body {
 #wpbody-content *, #wpbody-content *:before, #wpbody-content *:after {
     box-sizing: unset!important;
 }
-.swiper-slide {
-   overflow-y: scroll;
-}

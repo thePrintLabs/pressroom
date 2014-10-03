@@ -28,6 +28,7 @@ class TPL_Edition
 		add_action( 'save_post_' . TPL_EDITION, array( $this, 'save_edition'), 40 );
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
+		add_action( 'wp_ajax_preview', array( $this, 'ajax_preview_callback' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
 
@@ -188,7 +189,8 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
-		$preview_url = admin_url( '?page=preview-swiper&preview=true&edition_id=' . get_the_id() );
+		//$preview_url = admin_url( '?page=preview-swiper&preview=true&edition_id=' . get_the_id() );
+		$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
 		echo '<a id="preview_edition" target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
@@ -245,6 +247,12 @@ class TPL_Edition
 		$packager->run();
 		echo '</div>';
 		exit;
+	}
+
+	public function ajax_preview_callback() {
+		$preview = new TPL_Preview();
+		$preview->init_preview_swiper();
+		die();
 	}
 
 	/**

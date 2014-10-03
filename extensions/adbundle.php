@@ -230,12 +230,11 @@ class TPL_ADBundle
 			if ( $zip->open( $adb_attached_file ) ) {
 
 				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition->post_title );
-				$adb_title = TPL_Utils::sanitize_string( $post->post_title );
 				if ( $zip->extractTo( $edition_dir ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
 					if ( $index_file ) {
-						$index_path = $edition_dir . DIRECTORY_SEPARATOR . $adb_title . DIRECTORY_SEPARATOR . $index_file;
+						$index_path = $edition_dir . DIRECTORY_SEPARATOR . $index_file;
 						if ( file_exists( $index_path ) ) {
 							$args[0] = file_get_contents( $index_path );
 						}

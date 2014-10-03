@@ -216,7 +216,18 @@ $( "#pressroom_metabox .inside" ).delegate(".number_element_input",'change', fun
 	list.update( data );
 });
 
-  jQuery('#_pr_date').datepicker({
-      dateFormat : 'yy-mm-dd'
-  });
+jQuery('#_pr_date').datepicker({
+   dateFormat : 'yy-mm-dd'
+});
+
+$('#theme_refresh').on( "click", function(e) {
+   e.preventDefault();
+   var data = {
+      'action' : 'refresh_cache_theme',
+   };
+
+   jQuery.post(ajaxurl, data, function(response) {
+   });
+});
+
 })(jQuery);

@@ -22,6 +22,7 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
          else {
             add_action( 'plugins_loaded', array( $this, 'initSettings' ), 10 );
          }
+         add_action( 'wp_ajax_refresh_cache_theme', array( $this, 'refresh_cache_theme' ) );
       }
 
       /**
@@ -72,7 +73,8 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
                   'type'      => 'select',
                   'title'     => __( 'Theme', 'pressroom' ),
                   'subtitle'  => __( 'Select yout theme', 'pressroom' ),
-                  'desc'      => __( 'You can choose your personal theme or create one and then select it.', 'pressroom' ),
+                  'desc'      => __( 'You can choose your personal theme or create one and then select it.<br/>
+                  <a href="#" class="button button-primary" id="theme_refresh">Flush themes cache</a>', 'pressroom' ),
                   'options'   => $themes,
                   'default'   => '2'
                ),
@@ -289,6 +291,10 @@ if ( !class_exists('TPL_Redux_Framework' ) ) {
              'title' => 'Visit us on GitHub',
              'icon'  => 'el-icon-github'
          );
+      }
+      public function refresh_cache_theme() {
+         delete_option( 'pressroom_themes' );
+         die();
       }
    }
    $reduxConfig = new TPL_Redux_Framework();

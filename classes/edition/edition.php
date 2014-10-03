@@ -104,11 +104,11 @@ class TPL_Edition
 		$e_meta->add_field( '_tpl_themes_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_tpl_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
 			'options' => array(
-				array( 'value' => 1, 'name' => __( "Paid", 'edition' ) ),
-				array( 'value' => 0, 'name' => __( "Free", 'edition' ) )
+				array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
+				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
 			)
 		) );
-		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Subscription type', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
+		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'checkbox_list', '', array(
 			'options' => $this->_get_subscription_types()
 		) );
 
@@ -342,11 +342,12 @@ class TPL_Edition
 				break;
 
 	      case 'paid_free' :
-	      	echo get_post_meta( $id, '_tpl_edition_free', true ) ? 'Paid' : 'Free';
+	      	echo get_post_meta( $id, '_tpl_edition_free', true ) ? 'Free' : 'Paid';
 	      	break;
 
 			case 'previews':
-				//echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ).'">View</a>';
+				$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" >View</a>';
 				break;
 
 			default:

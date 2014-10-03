@@ -48,6 +48,7 @@ final class TPL_Packager_Book_JSON
          else {
             $args = array( $press_options, $post, $edition_dir );
             do_action_ref_array( 'packager_generate_book_' . $post->post_type, array( &$args ) );
+            $press_options = $args[0];
          }
       }
 

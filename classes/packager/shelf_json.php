@@ -10,7 +10,6 @@ final class TPL_Packager_Shelf_JSON
       'post_title'      => 'title',
       'post_content'    => 'info',
       '_tpl_date'       => 'date',
-      '_tpl_cover'      => 'cover',
       '_tpl_product_id' => 'product_id'
    );
 
@@ -45,6 +44,14 @@ final class TPL_Packager_Shelf_JSON
                }
             }
 
+            $edition_cover_id = get_post_thumbnail_id( $edition->ID );
+            if ( $edition_cover_id ) {
+               $edition_cover = wp_get_attachment_image_src( $edition_cover_id, 'thumbnail_size' );
+               if ( $edition_cover ) {
+                  $press_options[$edition_key]['cover'] = $edition_cover[0];
+               }
+            }
+
             $meta_fields = get_post_custom( $edition->ID );
 
             foreach ( $meta_fields as $meta_key => $meta_value ) {
@@ -60,10 +67,12 @@ final class TPL_Packager_Shelf_JSON
                            $press_options[$edition_key][$baker_option] = date( 'Y-m-d H:s:i', strtotime( $meta_value[0] ) );
                         }
                         break;
-                     case '_tpl_cover':
+                     case '_tpl_product_id':
                         if ( isset( $meta_value[0] ) ) {
-                           $cover = wp_get_attachment_url( $meta_value[0] );
-                           $press_options[$edition_key][$baker_option] = $cover;
+                           $press_options[$edition_key][$baker_option] = $meta_value[0];
+                           if ( isset( $meta_fields['_tpl_edition_free'] ) && $meta_fields['_tpl_edition_free'][0] == 1 ) {
+                                 unset( $press_options[$edition_key][$baker_option] );
+                           }
                         }
                         break;
                      default:

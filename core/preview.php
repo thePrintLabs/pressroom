@@ -29,7 +29,7 @@ class TPL_Preview {
         //$preview = file_get_contents( $index );
         //echo $preview;
 
-        $preview_url = TPL_PREVIEW_URI . TPL_Utils::sanitize_string( $this->_edition_post->post_title ) . '/index.html';
+        $preview_url = TPL_PREVIEW_URI . TPL_Utils::sanitize_string( $this->_edition_post->post_title ) . '/pr_preview.html';
         wp_redirect( $preview_url );
     }
 
@@ -168,7 +168,7 @@ class TPL_Preview {
                </frame>
             </div>';
 
-        $index = $edition_folder . DIRECTORY_SEPARATOR . 'index.html';
+        $index = $edition_folder . DIRECTORY_SEPARATOR . 'pr_preview.html';
 
         $html_replaced = '';
 

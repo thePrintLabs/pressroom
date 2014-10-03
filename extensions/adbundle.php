@@ -231,7 +231,7 @@ class TPL_ADBundle
 
 				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition->post_title );
 				$adb_title = TPL_Utils::sanitize_string( $post->post_title );
-				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . $adb_title ) ) {
+				if ( $zip->extractTo( $edition_dir ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
 					if ( $index_file ) {

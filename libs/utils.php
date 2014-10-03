@@ -210,10 +210,10 @@ class TPL_Utils
 	 * Create a zip file
 	 * @param  string $source
 	 * @param  string $destination
-	 * @param  string $flag
+	 * @param  string $basepath - null to auto create
 	 * @return boolean
 	 */
-	public static function create_zip_file( $source, $destination, $flag = false ) {
+	public static function create_zip_file( $source, $destination, $basepath = null ) {
 
 		if ( !extension_loaded( 'zip' ) || !file_exists( $source ) ) {
 	        return false;
@@ -225,29 +225,28 @@ class TPL_Utils
 		}
 
 		$source = str_replace( '\\', '/', realpath( $source ) );
-		if ( !$flag ) {
-			$flag = basename( $source ) . '/';
+		if ( is_null( $basepath ) ) {
+			$basepath = basename( $source ) . '/';
 		}
 
 		if ( is_dir( $source ) ) {
-
 			$files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $source ), RecursiveIteratorIterator::SELF_FIRST );
 			foreach ( $files as $file ) {
 
 				$info = pathinfo( $file );
-				if ( !in_array( $info['filename'], self::$excluded_files ) ) {
+				if ( !in_array( $info['basename'], self::$excluded_files ) ) {
 					$file = str_replace('\\', '/', realpath( $file ));
 	            if ( is_dir( $file ) ) {
-						$zip->addEmptyDir( str_replace( $source . '/', '', $flag . $file . '/' ) );
+						$zip->addEmptyDir( str_replace( $source . '/', '', $basepath . $file . '/' ) );
 	            }
 	            elseif ( is_file( $file ) ) {
-						$zip->addFromString( str_replace( $source . '/', '', $flag . $file ), file_get_contents( $file ) );
+						$zip->addFromString( str_replace( $source . '/', '', $basepath . $file ), file_get_contents( $file ) );
 	            }
 				}
 			}
 		}
 		elseif ( is_file( $source ) ) {
-			$zip->addFromString( $flag . basename( $source ), file_get_contents( $source ) );
+			$zip->addFromString( $basepath . basename( $source ), file_get_contents( $source ) );
 		}
 
 		return $zip->close();

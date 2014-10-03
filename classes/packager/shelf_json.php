@@ -70,7 +70,7 @@ final class TPL_Packager_Shelf_JSON
                         if ( isset( $meta_value[0] ) ) {
                            $press_options[$edition_key][$baker_option] = $meta_value[0];
                            if ( isset( $meta_fields['_tpl_edition_free'] ) && $meta_fields['_tpl_edition_free'][0] == 1 ) {
-                                 $press_options[$edition_key][$baker_option] = '';
+                                 unset( $press_options[$edition_key][$baker_option] );
                            }
                         }
                         break;

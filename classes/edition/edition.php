@@ -346,7 +346,8 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				//echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ).'">View</a>';
+				$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" >View</a>';
 				break;
 
 			default:

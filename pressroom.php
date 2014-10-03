@@ -1,6 +1,6 @@
 <?php
 /**
-* Plugin Name: TPL - Pressroom Pro
+* Plugin Name: PressRoom Pro
 * Plugin URI: https://bitbucket.org/theprintlabs/tpl-baker-wp-plugin/wiki/Home
 * Description: Wordpress Pressroom.
 * Version: 1.0
@@ -134,10 +134,14 @@ class TPL_Pressroom
 				'from'	 	=> $types,
 				'to' 			=> TPL_EDITION,
 				'sortable' 	=> false,
+				'title' => array(
+    				'from'	=> __( 'Included into edition', 'pressroom' )
+    			),
 				'admin_box' => array(
 					'show' 		=> 'from',
 					'context'	=> 'side',
-					'priority'	=> 'high'
+					'priority'	=> 'high',
+
 				),
 				'fields' => array(
 					'state' => array(

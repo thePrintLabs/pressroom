@@ -108,7 +108,7 @@ class TPL_Edition
 				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
 			)
 		) );
-		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Subscription type', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
+		$e_meta->add_field( '_tpl_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'checkbox_list', '', array(
 			'options' => $this->_get_subscription_types()
 		) );
 

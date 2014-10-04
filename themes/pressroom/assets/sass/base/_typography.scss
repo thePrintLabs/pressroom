@@ -3,19 +3,22 @@
    ========================================================================== */
 
 $body-font-size:    21px;
-$body-line-height:  1.5;
+$body-line-height:  1.333;
 $scale-factor:      1.333;
 $ie8compatability:  true;
 
 html { 
-	@include khtml(); 
+	@include khtml(4);
+	@include mq($from: tablet) {
+		@include khtml();
+	}	 
 }
 
 body { 
 	@include kbody(); 
 }
 
-h1 { @include ktype(5, 1, 1); }
+h1 { @include ktype(4, 1, 1); }
 h2 { @include ktype(4, 1, 1); }
 h3 { @include ktype(3, 1, 1); }
 h4 { @include ktype(2, 1, 1); }
@@ -25,5 +28,45 @@ h6 {
     font-weight: normal;
     text-transform: capitalize;
 }
-p, ul, ol {@include ktype(0,1,1);}
-small { @include ktype(-1,0,1); }
+
+p, ul, ol {
+	@include ktype(0,0,1);
+}
+
+p.intro {
+	@include remType(28px, 40px);
+}
+small, aside { 
+	@include remType(17px, 26px); 
+	display: block
+}
+
+p > small {
+	padding: 0;
+}
+
+p:empty {
+	display: none
+}
+
+figure + p,
+figure + p:empty {
+	@include ktype(0,0,1);
+	display: block;
+}
+
+.alignnone {
+
+}
+
+.alignleft {
+
+}
+
+.alignright {
+
+}
+
+.aligncenter {
+
+}

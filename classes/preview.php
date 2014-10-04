@@ -57,7 +57,7 @@ class TPL_Preview {
     * @param  string $filename
     */
     public function html_write_preview( $html_posts, $edition_folder, $title ) {
-
+        // <link rel="stylesheet" type="text/css" href="' . TPL_PLUGIN_ASSETS . 'css/reset.css">
         $swiper_open= '
             <!DOCTYPE html>
             <head>
@@ -66,14 +66,13 @@ class TPL_Preview {
             <title></title>
             <meta name="description" content="">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" type="text/css" href="' . TPL_PLUGIN_ASSETS . 'css/reset.css">
             <link rel="stylesheet" type="text/css" href="' . TPL_PLUGIN_ASSETS . 'css/preview.css">
             <link rel="stylesheet" type="text/css" href="' . TPL_PLUGIN_ASSETS . 'css/idangerous.swiper.css">
             </head>
             <body>
             <div class="device">
-            <a class="arrow-left" href="#"></a>
-            <a class="arrow-right" href="#"></a>
+            <div class="circle circle--left"><a class="arrow-left" href="#"></a></div>
+            <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
             <div class="swiper-container">
             <div class="swiper-wrapper">';
 

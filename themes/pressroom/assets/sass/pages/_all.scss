@@ -1,0 +1,32 @@
+body {
+	background-color: $grey;
+	color: $black;
+}
+
+html,
+body,
+.container,
+.wrapper,
+article {
+	height: 100%
+}
+
+// .content-slider {
+// 	height: inherit;
+// }
+
+.cover__image {
+	background-repeat: no-repeat;
+	background-size: cover;
+	min-height: 100vh;
+    position: relative;
+}
+
+.cover + .main {
+	margin-top: 2rem;
+}
+
+.cover h1 {
+	@include scut-center-transform;
+}
+

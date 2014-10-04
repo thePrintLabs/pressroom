@@ -7,23 +7,53 @@ html{
   position: relative;
 }
 
-.device .arrow-left,
-.device .arrow-right {
-  width: 17px;
-  height: 30px;
+.device .circle {
   position: absolute;
   top: 50%;
   z-index: 100;
+  height: 2em;
+  width: 2em;
+  display: inline-block;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, .4);
+}
+
+.device .circle--right {
+  right: 1rem;
+}
+
+.device .circle--left {
+  left: 1rem; 
+}
+
+.device .circle--right,
+.device .circle--left {
+    -webkit-transition: all 300ms;
+     -moz-transition: all 300ms;
+      -ms-transition: all 300ms;
+       -o-transition: all 300ms;
+          transition: all 300ms;
+}
+
+.device .circle--right:hover,
+.device .circle--left:hover {
+  background-color: rgba(255, 255, 255, .7);
+}
+
+.device .arrow-left,
+.device .arrow-right {
+  display: block;
+  width: 17px;
+  height: 30px;
+  margin: 6px auto 0;
   background-image: url(../img/arrows.png);
   background-repeat: no-repeat;
 }
 
 .device .arrow-left {
-  left: 10px;
-  background-position: left top;
+  background-position: right top;
 }
-.device .arrow-right {
-  right: 10px;  
+.device .arrow-right { 
   background-position: left bottom;
 }
 

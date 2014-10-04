@@ -2,7 +2,6 @@
   "name": "pressroom default theme",
   "dependencies": {
     "jquery": "~2.1.1",
-    "normalize-css": "~3.0.1",
     "swiper": "~2.6.1",
     "textFit": "~2.1.0",
     "modernizer": "~2.8.2",

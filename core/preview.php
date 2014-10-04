@@ -16,16 +16,10 @@ class TPL_Preview {
     */
     public function init_preview_swiper() {
 
-        $this->get_connected_data();
-        $count_data = count( $this->_connected_query->posts );
-
-        $preview_html = array();
-        for( $i=0; $i< $count_data; $i++ ) {
-            array_push( $preview_html, $this->get_post_html( $i ) );
-        }
+         $this->get_connected_data();
 
         $edition_folder = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $this->_edition_post->post_title );
-        $index = $this->html_write_preview( $preview_html, $edition_folder, TPL_Utils::sanitize_string( $this->_edition_post->post_title ) );
+        $index = $this->html_write_preview( $edition_folder, TPL_Utils::sanitize_string( $this->_edition_post->post_title ) );
         //$preview = file_get_contents( $index );
         //echo $preview;
 
@@ -58,7 +52,7 @@ class TPL_Preview {
     * @param  string $parsed_post    post html parsed
     * @param  string $filename
     */
-    public function html_write_preview( $html_posts, $edition_folder, $title ) {
+    public function html_write_preview( $edition_folder, $title ) {
         // <link rel="stylesheet" type="text/css" href="' . TPL_PLUGIN_ASSETS . 'css/reset.css">
         $swiper_open= '
             <!DOCTYPE html>
@@ -162,22 +156,27 @@ class TPL_Preview {
 
         $html_slide = '
             <div id="item-[count]" class="swiper-slide">
-               <frame>
-                <div class="content-slider">[final_post]</div>
-               </frame>
+                <div class="content-slider" style="height:100%"><iframe height="100%" width="100%" frameborder="0" src="[iframe_src]"></iframe></div>
             </div>';
 
         $index = $edition_folder . DIRECTORY_SEPARATOR . 'pr_preview.html';
 
         $html_replaced = '';
 
-        foreach( $html_posts as $key=> $post) {
 
-            $html_replaced .= str_replace(array('[final_post]', '[count]'),array($post, $key), $html_slide );
-
+        $preview_html = array();
+        $html_iframe = '';
+        foreach( $this->_connected_query->posts as $k => $post ) {
+            // array_push( $preview_html, $this->get_post_html( $i ) );
+            $iframe_src = TPL_PREVIEW_URI . TPL_Utils::sanitize_string($this->_edition_post->post_title) . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string($post->post_title) . '.html';
+            $iframe_path = $edition_folder . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string($post->post_title) . '.html';
+            //var_dump($iframe_src);
+            $html_iframe .= str_replace(array('[iframe_src]', '[count]'),array($iframe_src, $k), $html_slide );
+            file_put_contents($iframe_path, $this->get_post_html( $k ));
         }
 
-        file_put_contents($index, $swiper_open . $html_replaced . $swiper_close);
+
+        file_put_contents($index, $swiper_open . $html_iframe . $swiper_close);
 
         return $index;
         }

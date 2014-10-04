@@ -1,5 +1,4 @@
 <?php
-
 class TPL_Preview {
     protected $_connected_query;
     protected $_edition_post;
@@ -27,8 +26,11 @@ class TPL_Preview {
 
         $edition_folder = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $this->_edition_post->post_title );
         $index = $this->html_write_preview( $preview_html, $edition_folder, TPL_Utils::sanitize_string( $this->_edition_post->post_title ) );
-        $preview = file_get_contents( $index );
-        echo $preview;
+        //$preview = file_get_contents( $index );
+        //echo $preview;
+
+        $preview_url = TPL_PREVIEW_URI . TPL_Utils::sanitize_string( $this->_edition_post->post_title ) . '/pr_preview.html';
+        wp_redirect( $preview_url );
     }
 
     /**
@@ -83,7 +85,6 @@ class TPL_Preview {
             <script src="' . TPL_PLUGIN_ASSETS.'js/jquery-2.0.3.min.js"></script>
             <script src="' . TPL_PLUGIN_ASSETS.'js/idangerous.swiper.js"></script>
             <script src="' . TPL_PLUGIN_ASSETS.'js/iscroll.js"></script>\
-            <script src="' . TPL_PLUGIN_ASSETS.'js/preview.js"></script>
             <script>
             function lazy() {
                 var data = {
@@ -106,7 +107,7 @@ class TPL_Preview {
             var myScroll;
             var mySwiper = new Swiper(".swiper-container",{
                 mode:"horizontal",
-                simulateTouch: false, 
+                simulateTouch: false,
                 grabCursor: false,
                 roundLengths: true,
                 calculateHeight: false,
@@ -117,7 +118,7 @@ class TPL_Preview {
                     initScroll(0);
 
                 },
-                onSlideChangeStart: function(){ 
+                onSlideChangeStart: function(){
                     initScroll(mySwiper.activeIndex);
                 }
             });
@@ -152,7 +153,7 @@ class TPL_Preview {
                     bounce: false,
                     preventDefault: false
                 });
-            } 
+            }
 
             </script>
             </body>
@@ -161,10 +162,12 @@ class TPL_Preview {
 
         $html_slide = '
             <div id="item-[count]" class="swiper-slide">
+               <frame>
                 <div class="content-slider">[final_post]</div>
+               </frame>
             </div>';
 
-        $index = $edition_folder . DIRECTORY_SEPARATOR . 'index.html';
+        $index = $edition_folder . DIRECTORY_SEPARATOR . 'pr_preview.html';
 
         $html_replaced = '';
 
@@ -246,9 +249,12 @@ class TPL_Preview {
       if($html) {
          $theme_folder = TPL_Theme::get_theme_uri( $_GET['edition_id'] ); //get current theme folder
 
-         $dom = new domDocument;
+         $dom = new domDocument();
+
+         libxml_use_internal_errors(true);
 
          $dom->loadHTML( $html );
+
 
          $links = $dom->getElementsByTagName( 'link' );
 
@@ -293,17 +299,14 @@ class TPL_Preview {
 
       $final_post = $this->rewrite_url( $parsed_post );
 
-      if ( !has_action('preview_hook_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
-
+      if ( !has_action('pr_preview_' . $connected_post->post_type ) || $connected_post->post_type == 'post' ) {
          $html_preview = $final_post;
-
       }
       else {
-
-         $post_title = TPL_Utils::sanitize_string($connected_post->post_title);
-
-         do_action('preview_hook_' . $connected_post->post_type, $connected_post->ID, $post_title, $this->edition_folder);
-
+         $html_preview = '';
+         $args = array( $html_preview, $this->_edition_post, $connected_post );
+         do_action_ref_array( 'pr_preview_' . $connected_post->post_type, array( &$args ) );
+         $html_preview = $args[0];
       }
 
       return $html_preview;

@@ -67,7 +67,7 @@ class TPL_Utils
 				if ( is_file( $directory . DIRECTORY_SEPARATOR . $file ) ) {
 					if ( strlen( $extension ) && $extension != '*' ) {
 						$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
-						if ( strtolower( $info['extension'] ) == strtolower( $extension ) ) {
+						if ( isset( $info['extension'] ) && strtolower( $info['extension'] ) == strtolower( $extension ) ) {
 							array_push( $out, $file );
 						}
 					}

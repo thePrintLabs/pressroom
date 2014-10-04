@@ -50,7 +50,7 @@ class TPL_Edition
 		$labels = array(
 			'name'                => _x( 'Editions', 'Post Type General Name', 'edition' ),
 			'singular_name'       => _x( 'Edition', 'Post Type Singular Name', 'edition' ),
-			'menu_name'           => __( 'Edition', 'edition' ),
+			'menu_name'           => __( 'Editions', 'edition' ),
 			'parent_item_colon'   => __( 'Parent edition:', 'edition' ),
 			'all_items'           => __( 'All editions', 'edition' ),
 			'view_item'           => __( 'View edition', 'edition' ),
@@ -188,7 +188,6 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
-		//$preview_url = admin_url( '?page=preview-swiper&preview=true&edition_id=' . get_the_id() );
 		$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
 		echo '<a id="preview_edition" target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
@@ -262,7 +261,7 @@ class TPL_Edition
 	public function ajax_preview_callback() {
 		$preview = new TPL_Preview();
 		$preview->init_preview_swiper();
-		die();
+		exit;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 /**
- * TPL_ADBundle class.
- */
+* TPL_ADBundle class.
+*/
 class TPL_ADBundle
 {
 	protected $_metaboxes = array();
@@ -18,26 +18,26 @@ class TPL_ADBundle
 		add_filter( 'add_meta_boxes', array( $this, 'add_adbundle_metaboxes' ), 40, 2 );
 
 		// Packager hooks
-		add_action( 'packager_run_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_run' ), 10, 2 );
-		add_action( 'packager_generate_book_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_book' ), 10 );
+		add_action( 'pr_packager_run_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_generate_book_' . TPL_AD_BUNDLE, array( $this, 'adb_packager_book' ), 10 );
 
 		// Preview hooks
-		// add_action( 'preview_hook_' . TPL_ADB_PACKAGE, array( $this, 'preview_adb_package' ), 10, 3 );
+		add_action( 'pr_preview_' . TPL_AD_BUNDLE, array( $this, 'adb_preview' ), 10, 3 );
 	}
 
 	/**
-	 * Add custom post type ad bundle to worpress
-	 *
-	 * @void
-	 */
+	* Add custom post type ad bundle to worpress
+	*
+	* @void
+	*/
 	public function add_adbundle_post_type() {
 
 		$labels = array(
-			'name'                => _x( 'Ad Bundle', 'Ad Bundle General Name', 'adbundle' ),
+			'name'                => _x( 'Ad Bundles', 'Ad Bundle General Name', 'adbundle' ),
 			'singular_name'       => _x( 'Ad Bundle', 'Ad Bundle Singular Name', 'adbundle' ),
-			'menu_name'           => __( 'Ad Bundle', 'adbundle' ),
+			'menu_name'           => __( 'Ad Bundles', 'adbundle' ),
 			'parent_item_colon'   => __( 'Parent Ad Bundle:', 'adbundle' ),
-			'all_items'           => __( 'All Ad Bundle ', 'adbundle' ),
+			'all_items'           => __( 'All Ad Bundles ', 'adbundle' ),
 			'view_item'           => __( 'View Ad Bundle', 'adbundle' ),
 			'add_new_item'        => __( 'Add New Ad Bundle', 'adbundle' ),
 			'add_new'             => __( 'Add New', 'adbundle' ),
@@ -87,10 +87,10 @@ class TPL_ADBundle
 	}
 
 	/**
-	 * Define the metabox and field configurations.
-	 *
-	 * @void
-	 */
+	* Define the metabox and field configurations.
+	*
+	* @void
+	*/
 	public function add_adbundle_metaboxes( $post_type, $post ) {
 
 		$this->get_custom_metaboxes( $post_type, $post );
@@ -100,10 +100,10 @@ class TPL_ADBundle
 	}
 
 	/**
-	 * Custom metabox callback print html input field
-	 *
-	 * @echo
-	 */
+	* Custom metabox callback print html input field
+	*
+	* @echo
+	*/
 	public function add_adbundle_metabox_callback() {
 
 		echo '<input type="hidden" name="tpl_adbundle_nonce" value="' . wp_create_nonce('tpl_adbundle_nonce'). '" />';
@@ -117,19 +117,19 @@ class TPL_ADBundle
 	}
 
 	/**
-	 * Add enctype to form for fileupload
-	 * @echo
-	 */
+	* Add enctype to form for fileupload
+	* @echo
+	*/
 	public function form_add_enctype() {
 
 		echo ' enctype="multipart/form-data"';
 	}
 
 	/**
-	 * Save metabox form data
-	 * @param  int $post_id
-	 * @void
-	 */
+	* Save metabox form data
+	* @param  int $post_id
+	* @void
+	*/
 	public function save_adbundle( $post_id ) {
 
 		$post = get_post( $post_id );
@@ -159,11 +159,11 @@ class TPL_ADBundle
 	}
 
 	/**
-	 * Add AdBundle support to packager
-	 * @param  object $post
-	 * @param  string $edition_dir
-	 * @void
-	 */
+	* Add AdBundle support to packager
+	* @param  object $post
+	* @param  string $edition_dir
+	* @void
+	*/
 	public function adb_packager_run( $post, $edition_dir ) {
 
 		$attachment = self::get_adb_attachment( $post->ID );
@@ -190,11 +190,11 @@ class TPL_ADBundle
 	}
 
 	/**
-	 * [add_adb_bookjson description]
-	 * @param object $post
-	 * @param string $edition_dir
-	 * @void
-	 */
+	* [add_adb_bookjson description]
+	* @param object $post
+	* @param string $edition_dir
+	* @void
+	*/
 	public function adb_packager_book( &$args ) {
 
 		list( $press_options, $post, $edition_dir ) = $args;
@@ -212,23 +212,44 @@ class TPL_ADBundle
 		}
 	}
 
-	/*
-	public function preview_adb_package($post_id, $post_title, $edition_folder) {
-		$this->get_linked_attachment($post_id, $edition_folder, false);
-		$indexfile = get_post_meta( $post_id, '_pr_html_file' );
-		$path_index = $edition_folder . DIRECTORY_SEPARATOR . TPL_AD_BUNDLE  . $post_title . DIRECTORY_SEPARATOR .$indexfile[0];
-		if(is_file($path_index)) {
-			$final_post = file_get_contents($path_index);
-			$this->html_preview = $final_post;
+	/**
+	 * [adb_preview description]
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
+	public function adb_preview( &$args ) {
+
+		list( $html, $edition, $post ) = $args;
+
+		$attachment = self::get_adb_attachment( $post->ID );
+
+		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
+
+			$zip = new ZipArchive;
+			$adb_attached_file = get_attached_file( $attachment->ID );
+			if ( $zip->open( $adb_attached_file ) ) {
+
+				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition->post_title );
+				if ( $zip->extractTo( $edition_dir ) ) {
+
+					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
+					if ( $index_file ) {
+						$index_path = $edition_dir . DIRECTORY_SEPARATOR . $index_file;
+						if ( file_exists( $index_path ) ) {
+							$args[0] = file_get_contents( $index_path );
+						}
+					}
+				}
+				$zip->close();
+			}
 		}
 	}
-	*/
 
 	/**
-	 * Get adbundle zip attachment
-	 * @param  int $adb_id
-	 * @return object or boolean false
-	 */
+	* Get adbundle zip attachment
+	* @param  int $adb_id
+	* @return object or boolean false
+	*/
 	public static function get_adb_attachment( $adb_id ) {
 
 		$attachment_id = get_post_meta( $adb_id, '_pr_zip', true );
@@ -242,3 +263,5 @@ class TPL_ADBundle
 		return false;
 	}
 }
+
+$tpl_adbundle = new TPL_ADBundle;

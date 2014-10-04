@@ -45,15 +45,7 @@ $url = $_GET['url'];
           </ol>
       </li>
       <li id="desktop" >
-          <a class="sg-acc-handle group-device " title="Desktop"><i class="fa fa-2x fa-desktop"></i>Desktop</a>
-          <ol class="sg-acc-panel">
-            <li ><a class="sg-acc-handle" data-width="1920" data-height="1080"  href="#">21.5' iMac <small></small><span>21.5"</span></a></li>
-            <li ><a class="sg-acc-handle" data-width="2560" data-height="1440"  href="#">27' iMac <small></small><span>27"</span></a></li>
-            <li class="divider"></li>
-            <li class="tdevice"><a class="sg-acc-handle" data-width="1600" data-height="900" href="#">Aspire ZC-605 <small></small><span>19.5"</span></a></li>
-            <li class="tdevice"><a class="sg-acc-handle" data-width="1920" data-height="1080"  href="#">Aspire 7600U <small></small><span>27"</span></a></li>
-            <li class="divider"></li>
-        </ol>
+          <a id="reset" class="sg-acc-handle group-device " title="Desktop"><i class="fa fa-2x fa-desktop"></i>Desktop</a>
       </li>
     <ol>
     <div class="sg-controls" id="sg-controls">

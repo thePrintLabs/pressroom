@@ -25,20 +25,23 @@ endif;
         <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="assets/css/styles.css">
     </head>
-    <body>
+    <body class="<?php echo $post->post_name; ?>">
         <div class="container"> 
             <!-- <div class="wrapper"> -->
                 <article>
                     <?php if($image): ?>
                     <header class="cover">
                         <div class="cover__image" style="background-image: url('<?php echo $image[0]; ?>');">
+                            <div class="overlay check"></div>
+                            <div class="cover__wrapper">
                     <?php else: ?>
                         <header class="wrapper">
                     <?php endif; ?>
-                            <h1>
+                            <h1 class="cover__title check">
                             <?php the_title(); ?>
                             </h1>
                     <?php if($image): ?>
+                            </div>
                         </div>
                     </header>
                     <?php else: ?>
@@ -48,8 +51,8 @@ endif;
                         <?php the_content(); ?>
                     </div>
                 </article>
-                <!-- <a href="<?=home_url($path = 'example')?>">post me</a> -->
             <!-- </div> -->
         </div>
+    <script type="text/javascript" src="assets/js/scripts.min.js"></script>
     </body>
 </html>

@@ -156,7 +156,7 @@ class TPL_Packager
 
 		self::print_line( __( 'Created shelf.json ', 'edition' ), 'success' );
 
-		$this->_clean_temp_dir();
+		// $this->_clean_temp_dir();
 
 		self::print_line(__('Done', 'edition'), 'success');
 

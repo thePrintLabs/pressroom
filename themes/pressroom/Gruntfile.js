@@ -9,6 +9,7 @@ module.exports = function(grunt) {
       all: [
         'Gruntfile.js',
         'assets/js/*.js',
+        'assets/js/source/*.js',
         '!assets/js/scripts.min.js'
       ]
     },
@@ -66,12 +67,10 @@ module.exports = function(grunt) {
           'assets/js/scripts.min.js': [
           'assets/bower_components/modernizer/modernizr.js',
           'assets/bower_components/jquery/dist/jquery.min.js',
-          'assets/bower_components/photoset-grid/jquery.photoset-grid.min.js',
-          'assets/bower_components/RWD-FitText.js/jquery.fittext.min.js',
-          'assets/bower_components/enquire/dist/enquire.min.js',
-          'assets/bower_components/snapjs/src/snap.js',
-          'assets/bower_components/blueimp-gallery/js/blueimp-gallery.min.js',
-          'assets/bower_components/iscroll/build/iscroll.js',
+          'assets/bower_components/textFit/textFit.min.js',
+          'assets/bower_components/backgroundCheck/background-check.min.js',
+          'assets/bower_components/mobile-detect/mobile-detect.min.js',
+          'assets/bower_components/mobile-detect/mobile-detect-modernizr.js',
           'assets/js/source/main.js'
           ]
         }

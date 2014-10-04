@@ -15,10 +15,29 @@ html {
 }
 
 body { 
+	font-family: $font-sans;
 	@include kbody(); 
 }
 
-h1 { @include ktype(4, 1, 1); }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $font-serif;
+	font-style:   normal;
+	&.alt {
+		@extend %alt;
+	}
+}
+
+h1 { 
+	@include ktype(3, 1, 1);
+	@include mq($from: fablet) {
+		@include ktype(4, 1, 1);
+	} 
+}
 h2 { @include ktype(4, 1, 1); }
 h3 { @include ktype(3, 1, 1); }
 h4 { @include ktype(2, 1, 1); }

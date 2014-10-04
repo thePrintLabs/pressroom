@@ -5,6 +5,7 @@
 * rule: post
 * name: two-columns
 */
+
 ?>
 <!DOCTYPE html>
     <head>

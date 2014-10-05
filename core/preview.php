@@ -16,15 +16,18 @@ class TPL_Preview {
     */
     public function init_preview_swiper() {
 
-         $this->get_connected_data();
+      $this->get_connected_data();
+      $post_title = TPL_Utils::sanitize_string( $this->_edition_post->post_title );
+      $edition_folder = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $this->_edition_post->post_title );
+      $index = $this->html_write_preview( $edition_folder, $post_title );
+      $source = TPL_Theme::get_theme_path($this->_edition_post->ID) . 'assets/fonts';
 
-        $edition_folder = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $this->_edition_post->post_title );
-        $index = $this->html_write_preview( $edition_folder, TPL_Utils::sanitize_string( $this->_edition_post->post_title ) );
-        //$preview = file_get_contents( $index );
-        //echo $preview;
+      TPL_Utils::recursive_copy($source , $edition_folder . DIRECTORY_SEPARATOR . 'fonts');
+      //$preview = file_get_contents( $index );
+      //echo $preview;
 
-        $preview_url = TPL_PREVIEW_URI . TPL_Utils::sanitize_string( $this->_edition_post->post_title ) . '/pr_preview.html';
-        wp_redirect( $preview_url );
+      $preview_url = TPL_PREVIEW_URI . TPL_Utils::sanitize_string( $this->_edition_post->post_title ) . '/pr_preview.html';
+      wp_redirect( $preview_url );
     }
 
     /**
@@ -78,7 +81,7 @@ class TPL_Preview {
             </div>
             <script src="' . TPL_PLUGIN_ASSETS.'js/jquery-2.0.3.min.js"></script>
             <script src="' . TPL_PLUGIN_ASSETS.'js/idangerous.swiper.js"></script>
-            <script src="' . TPL_PLUGIN_ASSETS.'js/iscroll.js"></script>\
+            <script src="' . TPL_PLUGIN_ASSETS.'js/iscroll.js"></script>
             <script>
             function lazy() {
                 var data = {

@@ -17,7 +17,7 @@ function remove_empty_p($content){
  		Wrap images in a <figure> tag
  */
 
-add_filter('the_content', 'filter_images', 30, 1);
+// add_filter('the_content', 'filter_images', 30, 1);
 
 function filter_images($content){
     return preg_replace('/<img (.*) \/>\s*/iU', '<figure><img \1 /></figure>', $content);
@@ -71,7 +71,7 @@ function another_filter_images($content){
 
     preg_match_all( "#<img.*?class\s*=((\"|')+(.*?)(\"|'))+(.*?)src\s*=((\"|')+(.*?)(\"|'))+(.*?)>#i", $content, $images );
     foreach ($images[0] as $k => $img) {
-      $content = str_replace($img, '<p class="'.$images[3][$k].' image"><a href="'.$images[8][$k].'" class="img-gallery" data-gallery data-share="">'.$img.'</a></p>', $content);
+      $content = str_replace($img, '<figure class="'.$images[3][$k].' image">'.$img.'</figure>', $content);
       //$content = str_replace($img, '<figure class="'.$images[3][$k].'"><a href="'.$images[8][$k].'" class="img-gallery" data-gallery data-share="">'.$img.'</a></figure>', $content);
     }
     return $content;

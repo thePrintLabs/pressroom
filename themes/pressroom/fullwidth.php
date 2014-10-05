@@ -13,6 +13,7 @@ $image_id =  get_post_thumbnail_id();
 if($image_id):
     $attached_image = wp_get_attachment_metadata($image_id);
     $image = wp_get_attachment_image_src($image_id, 'full');
+    $coverClass = get_field('cover_overlay'); 
 endif;
 
 ?>
@@ -32,7 +33,7 @@ endif;
                     <?php if($image): ?>
                     <header class="cover">
                         <div class="cover__image" style="background-image: url('<?php echo $image[0]; ?>');">
-                            <div class="overlay"></div>
+                            <div class="cover__overlay <?php echo 'cover__overlay--'.$coverClass; ?> check"></div>
                             <div class="cover__wrapper">
                     <?php else: ?>
                         <header class="wrapper">

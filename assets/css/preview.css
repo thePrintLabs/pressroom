@@ -49,18 +49,18 @@ body {
 .device .arrow-left,
 .device .arrow-right {
   display: block;
-  width: 17px;
-  height: 30px;
-  margin: 6px auto 0;
-  background-image: url(../img/arrows.png);
+  width: 44px;
+  height: 44px;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxOCA5MCIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTggOTAiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5bGluZSBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgcG9pbnRzPSIxNSwzNiAxLDIyIDE1LDggIi8+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBwb2ludHM9IjIsODIgMTYsNjggMiw1NCAiLz48L3N2Zz4=);
   background-repeat: no-repeat;
+  background-size: 18px 90px;
 }
 
 .device .arrow-left {
-  background-position: right top;
+  background-position: center top;
 }
 .device .arrow-right { 
-  background-position: left bottom;
+  background-position: center bottom;
 }
 
 .swiper-container {

@@ -10,12 +10,14 @@ $url = $_GET['url'];
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../assets/css/reset.css">
   <link rel="stylesheet" href="assets/css/ish.css">
-  <link rel="stylesheet" href="assets/css/font-awesome.min.css">
 </head>
 <header class="sg-header" role="banner">
   <a class="sg-nav-toggle" href="#sg-nav-container"><span class="icon-menu"></span>Menu</a>
   <div id="sg-nav-container" class="sg-nav-container">
     <ol class="sg-nav">
+      <li id="phone" >
+      <a class="logo" title="PressRoom">pressroom</a>
+      </li>
       <li id="phone" >
           <a class="sg-acc-handle group-device" title="Phone"><i class="fa fa-2x fa-mobile"></i>Phone</a>
           <ol class="sg-acc-panel">
@@ -45,7 +47,7 @@ $url = $_GET['url'];
           </ol>
       </li>
       <li id="desktop" >
-          <a id="reset" class="sg-acc-handle group-device " title="Desktop"><i class="fa fa-2x fa-desktop"></i>Desktop</a>
+          <a id="reset" class="sg-acc-handle group-device " title="Desktop">Reset</a>
       </li>
     <ol>
     <div class="sg-controls" id="sg-controls">
@@ -54,7 +56,7 @@ $url = $_GET['url'];
           <li class="sg-size">
             <div class="sg-current-size">
               <form id="sg-form">
-                Width <input type="text" class="sg-input sg-size-px" value="320">
+                Width <input type="text" class="sg-input sg-size-px" value="">
                 Height <input type="text" class="sg-input sg-size-height" value="">
               </form>
             </div><!--end #sg-current-size-->

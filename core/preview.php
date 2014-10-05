@@ -156,7 +156,7 @@ class TPL_Preview {
 
         $html_slide = '
             <div id="item-[count]" class="swiper-slide">
-                <div class="content-slider" style="height:100%"><iframe height="100%" width="100%" frameborder="0" src="[iframe_src]"></iframe></div>
+                <div class="content-slider" style="height:100%"><iframe height="100%" width="100%" frameborder="0" src="[iframe_src]" sandobx="allow-scripts"></iframe></div>
             </div>';
 
         $index = $edition_folder . DIRECTORY_SEPARATOR . 'pr_preview.html';

@@ -3,6 +3,12 @@ html{
    overflow: hidden;
 }
 
+html, 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .device {
   position: relative;
 }

@@ -68,7 +68,7 @@ module.exports = function(grunt) {
           'assets/bower_components/modernizer/modernizr.js',
           'assets/bower_components/jquery/dist/jquery.min.js',
           'assets/bower_components/textFit/textFit.min.js',
-          'assets/bower_components/backgroundCheck/background-check.min.js',
+          'assets/bower_components/backgroundCheck/background-check.js',
           'assets/bower_components/mobile-detect/mobile-detect.min.js',
           'assets/bower_components/mobile-detect/mobile-detect-modernizr.js',
           'assets/js/source/main.js'

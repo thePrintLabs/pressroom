@@ -1,6 +1,12 @@
-BackgroundCheck.init({
-  targets: '.check',
-  images: '.cover__image'
+$checkItem = $('.cover__image');
+
+document.addEventListener('DOMContentLoaded', function () {
+	if ($checkItem.length > 0){
+		BackgroundCheck.init({
+			targets: '.check',
+			images: '.cover__image'
+		});
+	}
 });
 
 textFit(document.getElementsByClassName('cover__title')[0], {minFontSize:10, maxFontSize: 150});

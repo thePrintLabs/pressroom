@@ -32,7 +32,7 @@ endif;
                     <?php if($image): ?>
                     <header class="cover">
                         <div class="cover__image" style="background-image: url('<?php echo $image[0]; ?>');">
-                            <div class="overlay check"></div>
+                            <div class="overlay"></div>
                             <div class="cover__wrapper">
                     <?php else: ?>
                         <header class="wrapper">

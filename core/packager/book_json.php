@@ -6,13 +6,13 @@
 final class TPL_Packager_Book_JSON
 {
    private static $_press_to_baker = array(
-      'tpl-orientation'       => 'orientation',
-      'tpl-zoomable'          => 'zoomable',
+      'pr-orientation'       => 'orientation',
+      'pr-zoomable'          => 'zoomable',
       'opt-color-background'  => '-baker-background',
-      'tpl-vertical-bounce' 	=> '-baker-vertical-bounce',
-      'tpl-index-bounce'      => '-baker-index-bounce',
-      'tpl-index-height'      => '-baker-index-height',
-      'tpl-media-autoplay'	 	=> '-baker-media-autoplay',
+      'pr-vertical-bounce' 	=> '-baker-vertical-bounce',
+      'pr-index-bounce'      => '-baker-index-bounce',
+      'pr-index-height'      => '-baker-index-height',
+      'pr-media-autoplay'	 	=> '-baker-media-autoplay',
       '_pr_author'            => 'author',
       '_pr_creator'           => 'creator',
       '_pr_cover'             => 'cover',
@@ -76,17 +76,18 @@ final class TPL_Packager_Book_JSON
          if ( array_key_exists( $key, self::$_press_to_baker ) ) {
             $baker_option = self::$_press_to_baker[$key];
             switch ( $key ) {
-               case 'tpl-index-height':
+               case 'pr-index-height':
                   $options[$baker_option] = (int)$option;
+                  echo"height";
                   break;
-               case 'tpl-orientation':
+               case 'pr-orientation':
                   $options[$baker_option] = strtolower($option);
                   break;
-               case 'tpl-zoomable':
-               case 'tpl-vertical-bounce':
-               case 'tpl-vertical-bounce':
-               case 'tpl-index-bounce':
-               case 'tpl-media-autoplay':
+               case 'pr-zoomable':
+               case 'pr-vertical-bounce':
+               case 'pr-vertical-bounce':
+               case 'pr-index-bounce':
+               case 'pr-media-autoplay':
                   $options[$baker_option] = (bool)$option;
                   break;
                default:

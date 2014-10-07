@@ -4,15 +4,7 @@ require_once('../../../../wp-load.php');
 if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
 
   $edition_id = (int)$_GET['edition_id'];
-
-  $connected = p2p_get_connections( P2P_EDITION_CONNECTION, array(
-    'to' => get_post( $edition_id )
-  ));
-
-  $posts_id = array();
-  foreach ( $connected as $conn ) {
-    array_push( $posts_id, $conn->p2p_from );
-  }
+  $posts_id = TPL_Preview::init( $edition_id );
 }
 
 ?>

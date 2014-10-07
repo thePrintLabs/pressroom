@@ -228,26 +228,13 @@ class TPL_Packager
 			return array();
 		}
 
-		$this->_edition_post = get_post( (int)$_GET['edition_id'] );
+		$this->_edition_post = get_post( $_GET['edition_id'] );
 
-		$args = array(
-			'connected_type'			=> 'edition_post',
-			'connected_items' 		=> $this->_edition_post,
-			'nopaging'					=> true,
-			'connected_orderby' 		=> 'order',
-			'connected_order' 		=> 'asc',
-			'connected_order_num' 	=> true,
-			'connected_meta'			=> array(
-				array(
-					'key'		=> 'state',
-					'value'	=> 1,
-					'type'	=> 'numeric'
-				)
-			)
-		);
-
-		$linked_query = new WP_Query($args);
-		$this->_linked_query = $linked_query;
+		$this->_linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array( array(
+				'key'		=> 'state',
+				'value'	=> 1,
+				'type'	=> 'numeric'
+		) ) );
 	}
 
 	/**

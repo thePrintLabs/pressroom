@@ -17,141 +17,130 @@ if( !class_exists( 'WP_Screen' ) ) {
  */
 class Pressroom_List_Table extends WP_List_Table
 {
-   protected $_edition_post;
-	protected $_per_page;
+  protected $_edition_id;
+  protected $_per_page;
 
-   public function __construct() {
+  public function __construct() {
 
-      if ( !is_admin() ) {
-         return;
-      }
+    if ( !is_admin() ) {
+       return;
+    }
 
-      parent::__construct( array(
-         'singular'  => __( 'post', 'edition' ),
-         'plural'    => __( 'posts', 'edition' ),
-         'screen'	   => 'tpl_edition',
-         'ajax'      => true,
-      ) );
+    parent::__construct( array(
+       'singular'  => __( 'post', 'edition' ),
+       'plural'    => __( 'posts', 'edition' ),
+       'screen'	   => 'tpl_edition',
+       'ajax'      => true,
+    ) );
 
-      add_action( 'wp_ajax_presslist', array( $this, 'presslist_ajax_callback' ) );
-      add_action( 'wp_ajax_register_template', array( $this, 'ajax_register_template_callback' ) );
-      add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
-      add_action( 'wp_ajax_bulk_presslist', array( $this, 'ajax_bulk_callback' ) );
-      add_action( 'wp_ajax_update-custom-post-order', array( $this, 'ajax_update_post_order' ) );
-      add_action( 'admin_enqueue_scripts', array( $this, 'add_presslist_scripts' ) );
-   }
+    add_action( 'wp_ajax_presslist', array( $this, 'presslist_ajax_callback' ) );
+    add_action( 'wp_ajax_register_template', array( $this, 'ajax_register_template_callback' ) );
+    add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
+    add_action( 'wp_ajax_bulk_presslist', array( $this, 'ajax_bulk_callback' ) );
+    add_action( 'wp_ajax_update-custom-post-order', array( $this, 'ajax_update_post_order' ) );
+    add_action( 'admin_enqueue_scripts', array( $this, 'add_presslist_scripts' ) );
+  }
 
-   /**
-    *
-    * Override default prepare item setting pagination
-    *
-    * @return void
-    */
-   public function prepare_items() {
+  /**
+  *
+  * Override default prepare item setting pagination
+  *
+  * @return void
+  */
+  public function prepare_items() {
 
-      $sortable = '';
-      $hidden = array();
-      $data = $this->get_linked_posts();
-      $columns = $this->get_columns();
-      //$sortable = $this->get_sortable_columns();
+    $sortable = '';
+    $hidden = array();
+    $data = $this->get_linked_posts();
+    $columns = $this->get_columns();
+    //$sortable = $this->get_sortable_columns();
 
-      $this->_column_headers = array( $columns, $hidden, $sortable );
+    $this->_column_headers = array( $columns, $hidden, $sortable );
 
-      $per_page = !empty( $_REQUEST['post_per_page'] ) ? $_REQUEST['post_per_page'] : 5;
-      $this->_per_page = $per_page;
-      $current_page = $this->get_pagenum();
-      $total_items = count( $data );
-      $data = array_slice( $data, ($current_page - 1) * $per_page , $per_page );
-      $this->items = $data;
+    $per_page = !empty( $_REQUEST['post_per_page'] ) ? $_REQUEST['post_per_page'] : 5;
+    $this->_per_page = $per_page;
+    $current_page = $this->get_pagenum();
+    $total_items = count( $data );
+    $data = array_slice( $data, ($current_page - 1) * $per_page , $per_page );
+    $this->items = $data;
 
-      $this->set_pagination_args( array(
-         'total_items'  => $total_items,
-         'per_page'     => $per_page,
-         'total_pages'  => ceil( $total_items / $per_page ),
-         'orderby'      => !empty( $_REQUEST['orderby'] ) && strlen( $_REQUEST['orderby'] ) ? $_REQUEST['orderby'] : 'title',
-         'order'        => !empty( $_REQUEST['order'] ) && strlen( $_REQUEST['order'] ) ? $_REQUEST['order'] : 'asc',
-      ) );
-   }
+    $this->set_pagination_args( array(
+       'total_items'  => $total_items,
+       'per_page'     => $per_page,
+       'total_pages'  => ceil( $total_items / $per_page ),
+       'orderby'      => !empty( $_REQUEST['orderby'] ) && strlen( $_REQUEST['orderby'] ) ? $_REQUEST['orderby'] : 'title',
+       'order'        => !empty( $_REQUEST['order'] ) && strlen( $_REQUEST['order'] ) ? $_REQUEST['order'] : 'asc',
+    ) );
+  }
 
-   /**
-    *	Columns configuration array
-    *
-    * @return array
-    */
-   public function get_columns() {
+  /**
+   *	Columns configuration array
+   *
+   * @return array
+   */
+  public function get_columns() {
 
-      $columns = array(
-         'cb'           => '<input type="checkbox" />',
-         'post_title'   => __( 'Title', 'press_listtable' ),
-         'post_author'  => __( 'Author', 'press_listtable' ),
-         'post_date'    => __( 'Date', 'press_listtable' ),
-         'post_type'    => __( 'Post type', 'press_listtable' ),
-         'state'        => __( 'Status', 'press_listtable' ),
-         'template'     => __( 'Layout', 'press_listtable' ),
-      );
+    $columns = array(
+       'cb'           => '<input type="checkbox" />',
+       'post_title'   => __( 'Title', 'press_listtable' ),
+       'post_author'  => __( 'Author', 'press_listtable' ),
+       'post_date'    => __( 'Date', 'press_listtable' ),
+       'post_type'    => __( 'Post type', 'press_listtable' ),
+       'state'        => __( 'Status', 'press_listtable' ),
+       'template'     => __( 'Layout', 'press_listtable' ),
+    );
 
-      return $columns;
-   }
+    return $columns;
+  }
 
-	// /**
-	//  * no_items function.
-	//  * Function for display not posts found
-	//  * @access public
-	//  * @return void
-	//  */
-   //
-	// public function no_items() {
-	// 	_e( 'No posts found, dude.' );
-	// }
+  /**
+   * Override default bulk actions
+   *
+   * @return array
+   */
+  public function get_bulk_actions() {
+    $actions = array(
+       'include'    => 'include',
+       'exclude'    => 'exclude',
+    );
 
-   /**
-    * Override default bulk actions
-    *
-    * @return array
-    */
-   public function get_bulk_actions() {
-      $actions = array(
-         'include'    => 'include',
-         'exclude'    => 'exclude',
-      );
+    return $actions;
+  }
 
-      return $actions;
-   }
+  /**
+   * Define default columns for table list
+   * @param mixed $item
+   * @param mixed $column_name
+   * @return void
+   */
+  public function column_default( $item, $column_name ) {
 
-	/**
-	 * Define default columns for table list
-	 * @param mixed $item
-	 * @param mixed $column_name
-	 * @return void
-	 */
-   public function column_default( $item, $column_name ) {
+    switch( $column_name ) {
 
-      switch( $column_name ) {
+      case 'post_title':
+  		case 'post_author':
+  		case 'post_date':
+        return $item->$column_name;
+  		default:
+        return print_r( $item, true );
+    }
+  }
 
-         case 'post_title':
-			case 'post_author':
-			case 'post_date':
-   			return $item->$column_name;
-			default:
-            return print_r( $item, true );
-		}
-	}
+  /**
+   * get_sortable_columns function.
+   * Define sortable columns
+   *
+   * @return array
+   */
+  public function get_sortable_columns() {
 
-   /**
-    * get_sortable_columns function.
-    * Define sortable columns
-    *
-    * @return array
-    */
-   public function get_sortable_columns() {
-
-      $sortable_columns = array(
-         'post_title'  => array( 'post_title', false ),
+    $sortable_columns = array(
+      'post_title'  => array( 'post_title', false ),
 			'post_author' => array( 'post_author', false ),
 			'post_date'   => array( 'post_date', false )
 		);
 
-      return $sortable_columns;
+    return $sortable_columns;
 	}
 
 	/**
@@ -162,16 +151,16 @@ class Pressroom_List_Table extends WP_List_Table
 	 * @param mixed $b
 	 * @return void
 	 */
-   public function usort_reorder( $a, $b ) {
-		// If no sort, default to title
+  public function usort_reorder( $a, $b ) {
+	  // If no sort, default to title
 		$orderby = !empty( $_GET['orderby'] ) ? $_GET['orderby'] : 'title';
 		// If no order, default to asc
 		$order = !empty($_GET['order'] ) ? $_GET['order'] : 'asc';
 		// Determine sort order
 		$result = strcmp( $a->$orderby, $b->$orderby );
 		// Send final sort direction to usort
-      return ( $order === 'asc' ) ? $result : -$result;
-	}
+    return ( $order === 'asc' ) ? $result : -$result;
+  }
 
 	/**
 	 * Override cb column
@@ -212,7 +201,7 @@ class Pressroom_List_Table extends WP_List_Table
 
       $template = p2p_get_meta( $item->p2p_id, 'template', true );
 		$themes = TPL_Theme::get_themes();
-      $current_theme = get_post_meta( $this->_edition_post->ID, '_pr_theme_select', true );
+      $current_theme = get_post_meta( $this->_edition_id, '_pr_theme_select', true );
 
       $html = '<select class="presslist-template">';
 		if ( $current_theme ) {
@@ -555,35 +544,28 @@ class Pressroom_List_Table extends WP_List_Table
     *
     * @return array
     */
-   public function get_linked_posts() {
+  public function get_linked_posts() {
 
-      if ( isset( $_GET['edition_id'] ) ) {
-         $this->_edition_post = get_post( (int)$_GET['edition_id'] );
+    global $post;
+    if ( isset( $_GET['edition_id'] ) ) {
+      $this->_edition_id = (int)$_GET['edition_id'];
+    }
+    else {
+      $this->_edition_id = $post->ID;
+    }
+
+    $data = array();
+    $posts = TPL_Edition::get_linked_posts( $_GET['edition_id'] );
+    foreach ( $posts as $related ) {
+
+      if ( $related->post_author ) {
+        $related->post_author = get_the_author_meta( 'display_name', $related->post_author );
       }
-      else {
-         $this->_edition_post = get_post();
-      }
+      array_push( $data, $related );
+    }
 
-      $linked_query = new WP_Query( array(
-         'connected_type'        => 'edition_post',
-         'connected_items'       => $this->_edition_post,
-         'nopaging'              => true,
-         'connected_orderby'     => 'order',
-         'connected_order'       => 'asc',
-         'connected_order_num'   => true,
-      ) );
-
-      $data = array();
-      foreach ( $linked_query->posts as $related ) {
-
-         if ( $related->post_author ) {
-            $related->post_author = get_the_author_meta( 'display_name', $related->post_author );
-         }
-         array_push( $data, $related );
-      }
-
-      return $data;
-   }
+    return $data;
+  }
 }
 
 $pressroom_list_table = new Pressroom_List_Table();

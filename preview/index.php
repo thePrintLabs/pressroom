@@ -1,16 +1,21 @@
 <?php
-$url = $_GET['url'];
+if ( !isset( $_GET['edition_id'] ) || !strlen( $_GET['edition_id'] ) ) {
+  return;
+}
+
+$preview_url = 'preview.php?edition_id=' . $_GET['edition_id'];
 ?>
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title></title>
+  <title>Pressroom - Preview</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../assets/css/reset.css">
   <link rel="stylesheet" href="assets/css/ish.css">
 </head>
+<body>
 <header class="sg-header" role="banner">
   <a class="sg-nav-toggle" href="#sg-nav-container"><span class="icon-menu"></span>Menu</a>
   <div id="sg-nav-container" class="sg-nav-container">
@@ -66,17 +71,13 @@ $url = $_GET['url'];
     </div>
   </div>
 </header>
-<body>
-<!-- Iframe -->
 <div id="sg-vp-wrap">
   <div id="sg-cover"></div>
   <div id="sg-gen-container">
-    <iframe id="sg-viewport" src="<?php echo $url ?>" sandbox="allow-same-origin allow-scripts allow-top-navigation">
-    </iframe>
+    <iframe id="sg-viewport" src="<?php echo $preview_url ?>" sandbox="allow-same-origin allow-scripts allow-top-navigation"></iframe>
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
 <script src="assets/js/ish_init.js"></script>
-<!--end iFrame-->
 </body>
 </html>

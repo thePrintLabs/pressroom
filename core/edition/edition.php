@@ -124,6 +124,7 @@ class TPL_Edition
 
 		$this->get_custom_metaboxes( $post_type, $post );
 		foreach ( $this->_metaboxes as $metabox ) {
+
 			add_meta_box($metabox->id, $metabox->title, array($this, 'add_custom_metabox_callback'), TPL_EDITION, $metabox->context, $metabox->priority);
 		}
 	}
@@ -165,6 +166,7 @@ class TPL_Edition
 		echo '<table class="form-table">';
 
 		foreach ( $this->_metaboxes as $metabox ) {
+
 			echo $metabox->fields_to_html();
 		}
 
@@ -188,9 +190,9 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
-		$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
+		//$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
-		echo '<a id="preview_edition" target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
+		echo '<a id="preview_edition" target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?edition_id='. get_the_id() .'" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
 
 	/**
@@ -222,6 +224,7 @@ class TPL_Edition
 
 		$this->get_custom_metaboxes( TPL_EDITION, $post);
 		foreach ( $this->_metaboxes as $metabox ) {
+
 			$metabox->save_values();
 		}
 
@@ -293,14 +296,35 @@ class TPL_Edition
 		add_thickbox();
 	}
 
+	/**
+	* Get linked posts
+	* @param int $edition_id
+	* @return array of objects
+	*/
+	public static function get_linked_posts( $edition_id ) {
+
+		$linked_query = new WP_Query( array(
+			'connected_type'        => P2P_EDITION_CONNECTION,
+			'connected_items'       => get_post( $edition_id ),
+			'nopaging'              => true,
+			'connected_orderby'     => 'order',
+			'connected_order'       => 'asc',
+			'connected_order_num'   => true,
+		) );
+
+		return $linked_query->posts;
+	}
+
 	protected function _get_subscription_types() {
 
 		$types = array();
 		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
 		foreach ( $terms as $term ) {
+
 			$term_meta = get_option( "taxonomy_term_" . $term->term_id );
 			$term_types = unserialize( $term_meta['subscription_type'] );
 			foreach ( $term_types as $type ) {
+
 				array_push( $types, array(
 					'value' => $term_meta['prefix_bundle_id']. '.' . $term_meta['subscription_prefix']. '.' . $type,
 					'text'  => $type
@@ -344,8 +368,8 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
-				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?url='. urlencode( $preview_url ) .'" >View</a>';
+				//$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?edition_id='. get_the_id() . '" >View</a>';
 				break;
 
 			default:

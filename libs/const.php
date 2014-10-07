@@ -25,6 +25,7 @@ define( "TPL_EDITION_MEDIA", 'gfx/' );
 
 /* Custom posts type */
 define( "TPL_EDITION", 'tpl_edition' );
+define( "P2P_EDITION_CONNECTION", 'edition_post' );
 
 /* Custom taxonomies */
 define( "TPL_EDITORIAL_PROJECT", 'tpl_editorial_project' );

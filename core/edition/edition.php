@@ -301,18 +301,24 @@ class TPL_Edition
 	* @param int $edition_id
 	* @return array of objects
 	*/
-	public static function get_linked_posts( $edition_id ) {
+	public static function get_linked_posts( $edition_id, $post_meta = array() ) {
 
-		$linked_query = new WP_Query( array(
+		$args = array(
 			'connected_type'        => P2P_EDITION_CONNECTION,
 			'connected_items'       => get_post( $edition_id ),
 			'nopaging'              => true,
 			'connected_orderby'     => 'order',
 			'connected_order'       => 'asc',
 			'connected_order_num'   => true,
-		) );
+		);
 
-		return $linked_query->posts;
+		if ( !empty( $post_meta) ) {
+			$args = array_merge( $args, $post_meta );
+		}
+
+		$linked_query = new WP_Query( $args );
+
+		return $linked_query;
 	}
 
 	protected function _get_subscription_types() {

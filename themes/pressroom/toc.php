@@ -22,12 +22,12 @@
         <h1>Hello Pressroom</h1>
         <?php
           if ( $posts->have_posts() ) {
-        while ( $posts->have_posts() ) {
-          $posts->the_post();
-          the_title();
-          the_content();
-        }
-      }
+            while ( $posts->have_posts() ) {
+              $posts->the_post();
+              the_title();
+              the_content();
+            }
+          }
         ?>
     </body>
 </html>

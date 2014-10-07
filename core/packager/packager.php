@@ -93,6 +93,27 @@ class TPL_Packager
 
 		self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
 
+		// Parse html of cover index.php file
+		$toc = $this->_toc_parse();
+		if ( !$toc ) {
+			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
+			ob_end_flush();
+			return;
+		}
+
+		// Rewrite cover url
+		$toc = $this->_rewrite_url($toc);
+		// Save cover html file
+		if ( !$this->_save_html_file( $toc, 'toc' ) ) {
+			self::print_line( __( 'Failed to save toc file', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
+			ob_end_flush();
+			return;
+		}
+
+		self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
+
 		foreach ( $this->_linked_query->posts as $post ) {
 			// Parse post content
 			$parsed_post = $this->_post_parse( $post );
@@ -278,6 +299,27 @@ class TPL_Packager
 		ob_start();
 		$posts = $this->_linked_query;
 		require_once($cover);
+		$output = ob_get_contents();
+		ob_end_clean();
+
+		return $output;
+	}
+
+	/**
+	* Parse toc file
+	*
+	* @return string or boolean false
+	*/
+	protected function _toc_parse() {
+
+		$toc = TPL_Theme::get_theme_toc( $this->_edition_post->ID );
+		if ( !$toc ) {
+			return false;
+		}
+
+		ob_start();
+		$posts = $this->_linked_query;
+		require_once($toc);
 		$output = ob_get_contents();
 		ob_end_clean();
 

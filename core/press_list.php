@@ -555,7 +555,7 @@ class Pressroom_List_Table extends WP_List_Table
     }
 
     $data = array();
-    $query_post = TPL_Edition::get_linked_posts( $_GET['edition_id'] );
+    $query_post = TPL_Edition::get_linked_posts( $this->_edition_id );
     foreach ( $query_post->posts as $related ) {
 
       if ( $related->post_author ) {

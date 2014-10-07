@@ -190,9 +190,8 @@ class TPL_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
-		//$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
-		echo '<a id="preview_edition" target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?edition_id='. get_the_id() .'" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
+		echo '<a id="preview_edition" target="_blank" href="' . TPL_PLUGIN_URI . 'preview/index.php?edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
 
 	/**
@@ -304,9 +303,9 @@ class TPL_Edition
 	public static function get_linked_posts( $edition_id, $post_meta = array() ) {
 
 		$args = array(
-			'connected_direction' 	=> 'to',
 			'connected_type'        => P2P_EDITION_CONNECTION,
 			'connected_items'       => get_post( $edition_id ),
+			'connected_direction'		=> 'from',
 			'nopaging'              => true,
 			'connected_orderby'     => 'order',
 			'connected_order'       => 'asc',
@@ -375,8 +374,7 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				//$preview_url = admin_url('admin-ajax.php') . '?action=preview&edition_id=' . get_the_id();
-				echo '<a target="_blank" href="'. TPL_PLUGIN_URI .'preview/index.php?edition_id='. get_the_id() . '" >View</a>';
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI . 'preview/index.php?edition_id=' . get_the_id() . '" >View</a>';
 				break;
 
 			default:

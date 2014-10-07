@@ -23,26 +23,27 @@ class TPL_Preview {
       'to' => $edition,
     ));
 
-    $posts_id = array();
+    $linked_posts = array();
     foreach ( $connected as $conn ) {
 
       $visible = p2p_get_meta( $conn->p2p_id, 'state', true );
       if ( $visible ) {
         $order = p2p_get_meta( $conn->p2p_id, 'order', true );
-        $posts_id[$order] = $conn->p2p_from;
+        $linked_posts[$order] = $conn->p2p_from;
       }
     }
-    ksort( $posts_id );
+    ksort( $linked_posts );
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
     if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
 
       $font_path = TPL_Theme::get_theme_path( $edition->ID ) . 'assets/fonts';
       TPL_Utils::recursive_copy( $font_path, TPL_PREVIEW_DIR . DIRECTORY_SEPARATOR . $edition_dir . DIRECTORY_SEPARATOR . 'fonts');
-      file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', self::toc_parse() );
+
+      self::draw_toc( $edition, $linked_posts );
     }
 
-    return $posts_id;
+    return $linked_posts;
   }
 
   /**
@@ -90,6 +91,35 @@ class TPL_Preview {
   }
 
   /**
+   * Draw toc html file
+   * @param object $edition
+   * @param array $linked_posts
+   * @return string or boolean false
+   */
+  public static function draw_toc( $edition, $linked_posts ) {
+
+    $toc = TPL_Theme::get_theme_toc( $edition->ID );
+    if ( !$toc ) {
+      return false;
+    }
+
+    ob_start();
+    $posts = new WP_Query( array(
+      'post_type'   => 'any',
+      'post_status' => 'any',
+      'post__in'    => $linked_posts,
+      'nopaging'  => true
+    ) );
+
+    require_once($toc);
+    $output = ob_get_contents();
+    ob_end_clean();
+
+    $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
+    file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', $output );
+  }
+
+  /**
    * Parsing html
    * @param object $edition
    * @param object $connected_post
@@ -115,35 +145,6 @@ class TPL_Preview {
     $output = ob_get_contents();
     wp_reset_postdata();
     ob_end_clean();
-    return $output;
-  }
-
-  /**
-  * Parse toc file
-  *
-  * @return string or boolean false
-  */
-  protected function toc_parse() {
-
-    $linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array( 'connected_meta' => array(
-      'key'=> 'state',
-      'value'=> 1,
-      'type'=> 'numeric'
-      ) )
-    );
-
-    $toc = TPL_Theme::get_theme_toc( $_GET['edition_id'] );
-    if ( !$toc ) {
-      return false;
-    }
-
-    ob_start();
-    $posts = $linked_query;
-    var_dump($posts);
-    require_once($toc);
-    $output = ob_get_contents();
-    ob_end_clean();
-
     return $output;
   }
 

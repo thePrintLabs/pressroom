@@ -20,13 +20,19 @@ class TPL_Preview {
     }
 
     $connected = p2p_get_connections( P2P_EDITION_CONNECTION, array(
-      'to' => $edition
+      'to' => $edition,
     ));
 
     $posts_id = array();
     foreach ( $connected as $conn ) {
-      array_push( $posts_id, $conn->p2p_from );
+
+      $visible = p2p_get_meta( $conn->p2p_id, 'state', true );
+      if ( $visible ) {
+        $order = p2p_get_meta( $conn->p2p_id, 'order', true );
+        $posts_id[$order] = $conn->p2p_from;
+      }
     }
+    ksort( $posts_id );
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
     if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
@@ -59,24 +65,26 @@ class TPL_Preview {
       return;
     }
 
-    $html = self::parse_html( $edition, $post );
-    $html = self::rewrite_html_url( $edition, $html );
-
+    $page_url = '';
     if ( has_action( 'pr_preview_' . $post->post_type ) ) {
 
-      $custom_html = '';
-      $args = array( $custom_html, $post );
+      $args = array( '', $edition, $post );
       do_action_ref_array( 'pr_preview_' . $post->post_type, array( &$args ) );
-      $custom_html = $args[0];
-      $html.= $custom_html;
+      $page_url = $args[0];
+    }
+    else {
+      $html = self::parse_html( $edition, $post );
+      $html = self::rewrite_html_url( $edition, $html );
+
+      $filename =  TPL_Utils::sanitize_string( $post->post_title ) . '.html';
+      $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
+      if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
+        file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
+        $page_url = TPL_PREVIEW_URI . $edition_dir . '/' . $filename;
+      }
     }
 
-    $filename =  TPL_Utils::sanitize_string( $post->post_title ) . '.html';
-    $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
-    if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
-      file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
-      echo TPL_PREVIEW_URI . $edition_dir . '/' . $filename;
-    }
+    echo $page_url;
     exit;
   }
 

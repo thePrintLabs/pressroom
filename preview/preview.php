@@ -1,11 +1,16 @@
 <?php
 require_once('../../../../wp-load.php');
 
-if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
-
-  $edition_id = (int)$_GET['edition_id'];
-  $posts_id = TPL_Preview::init( $edition_id );
+if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
+  return;
 }
+
+const CONCURRENT_PAGES = 3;
+
+$edition_id = (int)$_GET['edition_id'];
+$linked_posts = TPL_Preview::init( $edition_id );
+$num_max_slides = count( $linked_posts );
+$num_init_slides = min( $num_max_slides, CONCURRENT_PAGES );
 
 ?>
 <!DOCTYPE html>
@@ -23,48 +28,68 @@ if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
 <div class="circle circle--left"><a class="arrow-left" href="#"></a></div>
 <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
 <div class="swiper-container">
-  <div class="swiper-wrapper"></div>
+  <div class="swiper-wrapper">
+<?php
+  for ( $i = 0; $i < $num_max_slides; $i++ ):
+?>
+    <div id="item-<?php echo $i; ?>" class="swiper-slide" data-hash="slide<?php echo $i; ?>"></div>
+<?php
+  endfor;
+?>
+  </div>
+  <div class="swiper-scrollbar"></div>
 </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
 <script src="assets/js/idangerous.swiper.min.js"></script>
 <script src="assets/js/idangerous.swiper.hashnav.js"></script>
+<script src="assets/js/idangerous.swiper.progress.js"></script>
 <script src="assets/js/iscroll.js"></script>
 <script type="text/javascript">
 
-  var posts = [<?php echo implode( ',', $posts_id ); ?>];
+  var limitPosts = <?php echo $num_init_slides; ?>;
+  var posts = [<?php echo implode( ',', $linked_posts ); ?>];
   var prScroll;
   var prSwiper;
 
-  function lazyLoad(page) {
-    jQuery.get('<?php echo admin_url( 'admin-ajax.php'); ?>', {
-      'post_id'     : posts[page],
-      'edition_id'  : <?php echo $edition_id; ?>,
-      'page'        : page,
-      'action'      : 'preview_draw_page'
-    }, function(src) {
-      if (src) {
-        prSwiper.appendSlide( '<div class="swiper-container swiper-in-slider swiper-in-slider-new">\
-        <div id="item-' + page + '" class="swiper-slide" data-hash="slide' + page + '">\
-        <div class="content-slider" style="height:100%">\
-        <iframe height="100%" width="100%" frameborder="0" sandobx="allow-scripts" src="' + src + '"></iframe></div>\
-        </div>\
-        </div>\
-        <div class="swiper-scrollbar"></div>' );
+  function lazyLoad(page, max){
+    if (page < max - 1){
+      return $.get('<?php echo admin_url( 'admin-ajax.php'); ?>', {
+        'post_id'     : posts[page],
+        'edition_id'  : <?php echo $edition_id; ?>,
+        'page'        : page,
+        'action'      : 'preview_draw_page'
+      }, function(src) {
+        if (src) {
+          addPage(page, src);
+        }
+      }).then(function(){
+        lazyLoad(page+1, max);
+      });
+    } else {
+        return $.get('<?php echo admin_url( 'admin-ajax.php'); ?>', {
+          'post_id'     : posts[page],
+          'edition_id'  : <?php echo $edition_id; ?>,
+          'page'        : page,
+          'action'      : 'preview_draw_page'
+        }, function(src) {
+          if (src) {
+            addPage(page, src);
+          }
+        });
+    }
+  }
 
-        prSwiper.resizeFix();
-        prSwiper.reInit();
-        fixPagesHeight();
+  function addPage(page, src) {
+    $('#item-'+page).html('<iframe height="100%" width="100%" frameborder="0" src="' + src + '"></iframe>');
 
-        prSwiper.swipeNext();
-      }
-    });
+    prSwiper.resizeFix();
+    //prSwiper.reInit();
+    //fixPagesHeight();
   }
 
   function fixPagesHeight(){
-    $(".device").css({height:$(window).height()})
-    $(".swiper-slide").css({height:$(window).height()})
-    $(".swiper-wrapper").css({height:$(window).height()})
+    $('.device, .swiper-slide, .swiper-wrapper').css({height:$(window).height()})
   }
 
   function initScroll(index) {
@@ -74,11 +99,11 @@ if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
     }
 
     prScroll = new IScroll('#item-'+index, {
-        mouseWheel: true,
-        scrollbars: true,
-        interactiveScrollbars: true,
-        bounce: false,
-        preventDefault: false
+      mouseWheel: true,
+      scrollbars: true,
+      interactiveScrollbars: true,
+      bounce: false,
+      preventDefault: false
     });
   }
 
@@ -94,13 +119,29 @@ if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
       paginationClickable: true,
       keyboardControl: true,
       hashNav: true,
+      //cssWidthAndHeight: true,
       progress: true,
-      onFirstInit: function (){
-        fixPagesHeight();
-        lazyLoad(0);
+      onFirstInit: function(swiper) {
+        $(".circle--left").hide();
+        lazyLoad(0, limitPosts);
+      },
+      onSlideChangeStart: function(swiper) {
+        if ( swiper.activeIndex == swiper.slides.length - 1 ) {
+          $(".circle--right").hide();
+        } else if ( swiper.activeIndex == 0 ) {
+          $(".circle--left").hide();
+        } else {
+          $(".circle--left, .circle--right").show();
+        }
+
+        if ( limitPosts < posts.length && swiper.activeIndex + 1 == limitPosts - 1 ) {
+          var min = Math.min( <?php echo CONCURRENT_PAGES; ?>, posts.length - limitPosts);
+          lazyLoad(limitPosts, limitPosts + min);
+          limitPosts += min;
+        }
       },
       onSlideChangeEnd: function(swiper) {
-        initScroll(prSwiper.activeIndex);
+        initScroll(swiper.activeIndex);
       },
       onProgressChange: function(swiper){
         for (var i = 0; i < swiper.slides.length; i++){
@@ -129,6 +170,7 @@ if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
           swiper.setTransition(swiper.slides[i], swiper.params.speed);
         }
       }
+
     });
 
     // Set Z-Indexes
@@ -143,16 +185,11 @@ if ( isset( $_GET['edition_id']) && strlen( $_GET['edition_id'] ) ) {
 
     $(".arrow-right").on("click", function(e){
       e.preventDefault();
-      if( prSwiper.slides.length < posts.length
-        && posts[prSwiper.activeIndex + 1] ) {
-        lazyLoad(prSwiper.activeIndex + 1);
-      }
       prSwiper.swipeNext();
     });
+
+    $(window).on("resize",function(){fixPagesHeight()});
   });
-
-
-  $(window).on("resize",function(){fixPagesHeight()});
 </script>
 </body>
 </html>

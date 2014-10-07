@@ -33,6 +33,7 @@ class TPL_Preview {
 
       $font_path = TPL_Theme::get_theme_path( $edition->ID ) . 'assets/fonts';
       TPL_Utils::recursive_copy( $font_path, TPL_PREVIEW_DIR . DIRECTORY_SEPARATOR . $edition_dir . DIRECTORY_SEPARATOR . 'fonts');
+      file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', self::toc_parse() );
     }
 
     return $posts_id;
@@ -106,6 +107,35 @@ class TPL_Preview {
     $output = ob_get_contents();
     wp_reset_postdata();
     ob_end_clean();
+    return $output;
+  }
+
+  /**
+  * Parse toc file
+  *
+  * @return string or boolean false
+  */
+  protected function toc_parse() {
+
+    $linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array( 'connected_meta' => array(
+      'key'=> 'state',
+      'value'=> 1,
+      'type'=> 'numeric'
+      ) )
+    );
+
+    $toc = TPL_Theme::get_theme_toc( $_GET['edition_id'] );
+    if ( !$toc ) {
+      return false;
+    }
+
+    ob_start();
+    $posts = $linked_query;
+    var_dump($posts);
+    require_once($toc);
+    $output = ob_get_contents();
+    ob_end_clean();
+
     return $output;
   }
 

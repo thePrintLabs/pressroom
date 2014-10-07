@@ -304,6 +304,7 @@ class TPL_Edition
 	public static function get_linked_posts( $edition_id, $post_meta = array() ) {
 
 		$args = array(
+			'connected_direction' 	=> 'to',
 			'connected_type'        => P2P_EDITION_CONNECTION,
 			'connected_items'       => get_post( $edition_id ),
 			'nopaging'              => true,

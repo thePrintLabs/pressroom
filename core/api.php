@@ -47,6 +47,8 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
       'post_type'   => 'any',
       'post_status' => 'any',
       'post__in'    => $linked_posts_id,
+      'orderby' => 'post__in',
+      'posts_per_page' => -1,
       'nopaging'    => true
     ) );
     return $posts;

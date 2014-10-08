@@ -4,11 +4,19 @@ body {
 	width: 100%;
 }
 
+.cover {
+	width: 100%;
+	height: 100%;
+	overflow:hidden;
+}
+
 .cover__image {
 	background-repeat: no-repeat;
 	background-size: cover;
-	min-height: 100vh;
+	// background-attachment: fixed;
+	min-height: 82vh;
     position: relative;
+    overflow: hidden;
 }
 
 .cover + .main {
@@ -21,8 +29,8 @@ body {
     // desktop: 980px,
     // wide:    1300px
 
-h1.cover__title {
-	line-height: 1.2em;
+h1.cover__title--resize {
+	line-height: 1.4em;
 	width: mq-get-breakpoint-width(basic);
 	padding: 0 2rem;
 	@include mq($from: mobile) {
@@ -52,7 +60,7 @@ h1.cover__title {
 			color: white;
 		}
 		&.background--complex {
-			color: gray;
+			color: white;
 		}
 	}
 }

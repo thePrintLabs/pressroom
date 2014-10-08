@@ -168,6 +168,26 @@ class TPL_Theme
 	}
 
 	/**
+	* Get the path of toc edition
+	* @param  int $edition_id
+	* @return string or boolean false
+	*/
+	public static function get_theme_toc( $edition_id ) {
+
+		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
+		$themes = self::get_themes();
+		$files = $themes[$theme];
+		foreach ( $files as $file ) {
+			if ( $file['rule'] == 'toc') {
+				$toc = $file['filename'];
+				return TPL_THEME_PATH . $theme . DIRECTORY_SEPARATOR . $toc;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get the path of the template of a page edition
 	 * @param  int $edition_id
 	 * @param  int $post_id
@@ -233,6 +253,7 @@ class TPL_Theme
 		foreach ( self::$_themes as $k => $theme ) {
 
 			$cover = array();
+			$toc = array();
 			$theme_name = self::_get_theme_name( $theme );
 
 			foreach ( $theme as $page ) {
@@ -243,6 +264,9 @@ class TPL_Theme
 				elseif ( $page['rule'] == 'cover' ) {
 					array_push( $cover, $page['rule'] );
 				}
+				elseif ( $page['rule'] == 'toc' ) {
+					array_push( $toc, $page['rule'] );
+				}
 				elseif ( !strlen( $page['name'] ) ) {
 					array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'name', $page['filename'] ) );
 				}
@@ -250,6 +274,9 @@ class TPL_Theme
 
 			if ( empty( $cover ) ) {
 				array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'cover' ) );
+			}
+			if ( empty( $toc ) ) {
+				array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'toc' ) );
 			}
 		}
 

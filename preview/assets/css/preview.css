@@ -3,14 +3,10 @@ html{
    overflow: hidden;
 }
 
-html, 
+html,
 body {
   margin: 0;
   padding: 0;
-}
-
-.device {
-  position: relative;
 }
 
 .device .circle {
@@ -29,7 +25,7 @@ body {
 }
 
 .device .circle--left {
-  left: 1rem; 
+  left: 1rem;
 }
 
 .device .circle--right,
@@ -59,7 +55,7 @@ body {
 .device .arrow-left {
   background-position: center top;
 }
-.device .arrow-right { 
+.device .arrow-right {
   background-position: center bottom;
 }
 
@@ -93,9 +89,23 @@ body {
   background: #fff;
 }
 
-body {
+iframe {
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
+  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+
+}
+
+#sg-gen-container .toc {
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   background: rgba(255,255,255,0.95);
+   z-index: 999;
+}
+#sg-gen-container {
+   overflow: hidden;
 }

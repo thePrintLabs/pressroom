@@ -32,14 +32,15 @@ require_once( TPL_CORE_PATH . 'edition/editorial_project.php' );
 require_once( TPL_CORE_PATH . 'press_list.php' );
 require_once( TPL_CORE_PATH . 'theme.php' );
 require_once( TPL_CORE_PATH . 'packager/packager.php' );
-
 require_once( TPL_CORE_PATH . 'preview.php' );
+
+require_once( TPL_CORE_PATH . 'api.php' );
 
 class TPL_Pressroom
 {
 	public $configs;
-
-	protected $_edition;
+	public $edition;
+	public $preview;
 
 	public function __construct() {
 
@@ -52,6 +53,7 @@ class TPL_Pressroom
 		$this->_load_extensions();
 
 		$this->_instance_edition();
+		$this->_instance_preview();
 
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
@@ -95,7 +97,7 @@ class TPL_Pressroom
 		$types = array_merge( $types, $custom_types );
 
 		p2p_register_connection_type( array(
-				'name' 		=> 'edition_post',
+				'name' 		=> P2P_EDITION_CONNECTION,
 				'from'	 	=> $types,
 				'to' 			=> TPL_EDITION,
 				'sortable' 	=> false,
@@ -142,7 +144,7 @@ class TPL_Pressroom
 	public function post_connection_add_default_theme( $p2p_id ) {
 
 		$connection = p2p_get_connection( $p2p_id );
-		if ( $connection->p2p_type == 'edition_post' ) {
+		if ( $connection->p2p_type == P2P_EDITION_CONNECTION ) {
 			$themes = TPL_Theme::get_themes();
 			$theme_code = get_post_meta( $connection->p2p_to, '_pr_theme_select', true );
 			if ( $theme_code && $themes ) {
@@ -196,7 +198,7 @@ class TPL_Pressroom
 	 * Load plugin configuration settings
 	 * @void
 	 */
-	protected function _load_configs() {
+	public function _load_configs() {
 
 		if ( is_null( $this->configs ) ) {
 			$this->configs = get_option('tpl_options', array(
@@ -240,8 +242,19 @@ class TPL_Pressroom
 	*/
 	protected function _instance_edition() {
 
-		if ( is_null( $this->_edition ) ) {
-			$this->_edition = new TPL_Edition;
+		if ( is_null( $this->edition ) ) {
+			$this->edition = new TPL_Edition;
+		}
+	}
+
+	/**
+	* Instance a new edition object
+	* @void
+	*/
+	protected function _instance_preview() {
+
+		if ( is_null( $this->preview ) ) {
+			$this->preview = new TPL_Preview;
 		}
 	}
 }

@@ -219,7 +219,7 @@ class TPL_ADBundle
 	 */
 	public function adb_preview( &$args ) {
 
-		list( $html, $edition, $post ) = $args;
+		list( $url, $edition, $post ) = $args;
 
 		$attachment = self::get_adb_attachment( $post->ID );
 
@@ -229,15 +229,17 @@ class TPL_ADBundle
 			$adb_attached_file = get_attached_file( $attachment->ID );
 			if ( $zip->open( $adb_attached_file ) ) {
 
-				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition->post_title );
-				if ( $zip->extractTo( $edition_dir ) ) {
+				$edition_name = TPL_Utils::sanitize_string( $edition->post_title );
+				$adb_name = TPL_Utils::sanitize_string( $post->post_title );
+
+				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_name );
+				$adb_dir = TPL_Utils::make_dir( $edition_dir, $adb_name );
+
+				if ( $zip->extractTo( $adb_dir ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
-					if ( $index_file ) {
-						$index_path = $edition_dir . DIRECTORY_SEPARATOR . $index_file;
-						if ( file_exists( $index_path ) ) {
-							$args[0] = file_get_contents( $index_path );
-						}
+					if ( $index_file && file_exists( $adb_dir . DIRECTORY_SEPARATOR . $index_file ) ) {
+						$args[0] = TPL_PREVIEW_URI . $edition_name . '/' . $adb_name . '/' . $index_file;
 					}
 				}
 				$zip->close();

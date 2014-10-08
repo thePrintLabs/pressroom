@@ -214,9 +214,11 @@ $configs = $tpl_pressroom->configs;
       $( "#toc" ).height( height );
       if( height > 0 ) {
          document.getElementById('toc').setAttribute( 'data-height', 0 );
+         $('#fire-toc').html('Close Toc');
       }
       else {
          document.getElementById('toc').setAttribute( 'data-height', <?php echo $configs['pr-index-height'] ?> );
+         $('#fire-toc').html('Open Toc');
       }
    });
   });

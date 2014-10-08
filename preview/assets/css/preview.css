@@ -99,7 +99,7 @@ iframe {
 
 }
 
-#sg-viewport .toc {
+#sg-gen-container .toc {
    position: absolute;
    bottom: 0;
    width: 100%;

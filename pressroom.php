@@ -198,7 +198,7 @@ class TPL_Pressroom
 	 * Load plugin configuration settings
 	 * @void
 	 */
-	protected function _load_configs() {
+	public function _load_configs() {
 
 		if ( is_null( $this->configs ) ) {
 			$this->configs = get_option('tpl_options', array(

@@ -13,6 +13,8 @@ $num_max_slides = count( $linked_posts );
 $num_init_slides = min( $num_max_slides, CONCURRENT_PAGES );
 $edition = get_post( $edition_id );
 $edition_name = TPL_Utils::sanitize_string($edition->post_title);
+$tpl_pressroom->_load_configs();
+$configs = $tpl_pressroom->configs;
 
 ?>
 <!DOCTYPE html>
@@ -65,6 +67,9 @@ $edition_name = TPL_Utils::sanitize_string($edition->post_title);
       <li id="desktop" >
           <a id="reset" class="sg-acc-handle group-device" title="Desktop">Reset</a>
       </li>
+      <li>
+         <a id="fire-toc" href="#" title="Open toc bar">Open Toc</a>
+      </li>
     <ol>
     <div class="sg-controls" id="sg-controls">
       <div class="sg-control-content">
@@ -101,9 +106,9 @@ $edition_name = TPL_Utils::sanitize_string($edition->post_title);
           </div>
           <div class="swiper-scrollbar"></div>
         </div>
-        <div class="toc"><iframe height="150px" width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
       </div>
     </div>
+    <div class="toc"><iframe height="<?php echo $configs['pr-index-height']?>" width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
@@ -203,6 +208,11 @@ $edition_name = TPL_Utils::sanitize_string($edition->post_title);
       e.preventDefault();
       prSwiper.swipeNext();
     });
+    $( "#fire-toc" ).click(function(e) {
+      event.preventDefault();
+     $( ".toc" ).slideToggle( "slow", function() {
+     });
+   });
   });
 </script>
 </body>

@@ -108,7 +108,7 @@ $configs = $tpl_pressroom->configs;
         </div>
       </div>
     </div>
-    <div class="toc"><iframe height="<?php echo $configs['pr-index-height'] ?>" width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
+    <div id="toc" data-height="<?php echo $configs['pr-index-height'] ?>"><iframe height="0"  width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
@@ -210,8 +210,16 @@ $configs = $tpl_pressroom->configs;
     });
     $( "#fire-toc" ).click(function(e) {
       event.preventDefault();
-     $( ".toc" ).slideToggle( "slow", function() {
-     });
+      var height = document.getElementById('toc').getAttribute( 'data-height' );
+      $( "#toc" ).height( height );
+      if( height > 0 ) {
+         document.getElementById('toc').setAttribute( 'data-height', 0 );
+         $('#fire-toc').html('Close Toc');
+      }
+      else {
+         document.getElementById('toc').setAttribute( 'data-height', <?php echo $configs['pr-index-height'] ?> );
+         $('#fire-toc').html('Open Toc');
+      }
    });
   });
 </script>

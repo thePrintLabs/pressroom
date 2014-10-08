@@ -34,6 +34,8 @@ require_once( TPL_CORE_PATH . 'theme.php' );
 require_once( TPL_CORE_PATH . 'packager/packager.php' );
 require_once( TPL_CORE_PATH . 'preview.php' );
 
+require_once( TPL_CORE_PATH . 'api.php' );
+
 class TPL_Pressroom
 {
 	public $configs;

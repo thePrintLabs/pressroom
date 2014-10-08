@@ -1,72 +1,75 @@
 (function(w){
 	var sw = document.body.clientWidth, //Viewport Width
+		sh = Math.max( window.innerHeight, document.body.clientHeight ), //Viewport Width
 		minViewportWidth = 240, //Minimum Size for Viewport
 		maxViewportWidth = 2600, //Maxiumum Size for Viewport
 		viewportResizeHandleWidth = 0, //Width of the viewport drag-to-resize handle
-		$sgWrapper = jQuery('#sg-gen-container'), //Wrapper around viewport
+		$sgWrapper = $('#sg-gen-container'), //Wrapper around viewport
 		$sgViewport = $('#sg-viewport'), //Viewport element
 		$sizeWidth = $('.sg-size-px'), //Px size input element in toolbar
 		$sizeHeight = $('.sg-size-height'), //Em size input element in toolbar
-		$sizeSwiperSlide = $('.swiper-slide'),
 		$bodySize = 16, //Body size of the document
-		discoID = false,
-		fullMode = false,
-		discoMode = false,
-		hayMode = false,
-		hash = window.location.hash.replace(/^.*?#/,'');
-
-	$(w).resize(function(){ //Update dimensions on resize
-		sw = document.body.clientWidth;
-
-		if(fullMode == true) {
-			sizeFull();
-		}
-	});
-
-	/* Nav Active State */
-	function changeActiveState(link) {
-		var $activeLink = link;
-		$('.sg-size-options a').removeClass('active');
-
-		if(link) {
-			$activeLink.addClass('active');
-		}
-	}
-
-	/* Pattern Lab accordion dropdown */
-	$('.sg-acc-handle').hover(function(e){
-		var $this = $(this),
-			$panel = $this.next('.sg-acc-panel');
-		e.preventDefault();
-		$this.toggleClass('active');
-		$panel.toggleClass('active');
-	});
-
-	// Reset size
-	$('#reset').on("click", function(e){
-		e.preventDefault();
-		sizeFull();
-	});
-
-	//Size Trigger
-	$('#sg-size-toggle').on("click", function(e){
-		e.preventDefault();
-		$(this).parents('ul').toggleClass('active');
-	});
-
-	$('.tdevice a').on("click", function(e){
-		e.preventDefault();
 		fullMode = false;
-		changeActiveState($(this));
-		theight = $(this).data('height');
-		twidth = $(this).data('width');
-		sizeiframe(twidth, true, theight);
-	});
 
-	function sizeFull() {
-		sizeiframe(sw, false);
-		updateSizeReading(sw);
-	}
+		$(w).resize(function(){ //Update dimensions on resize
+			sw = document.body.clientWidth;
+			sh = Math.max( window.innerHeight, document.body.clientHeight );
+			if(fullMode == true) {
+				sizeFull();
+			}
+		});
+
+		/* Nav Active State */
+		function changeActiveState(link) {
+			var $activeLink = link;
+			$('.sg-size-options a').removeClass('active');
+
+			if(link) {
+				$activeLink.addClass('active');
+			}
+		}
+
+		/* Pattern Lab accordion dropdown */
+		$('.sg-acc-handle').hover(function(e){
+			var $this = $(this),
+				$panel = $this.next('.sg-acc-panel');
+			e.preventDefault();
+			$this.toggleClass('active');
+			$panel.toggleClass('active');
+		});
+
+		// Reset size
+		$('#reset').on("click", function(e){
+			e.preventDefault();
+			sw = document.body.clientWidth;
+			sh = Math.max( window.innerHeight, document.body.clientHeight );
+			sizeFull();
+		});
+
+		//Size Trigger
+		$('#sg-size-toggle').on("click", function(e){
+			e.preventDefault();
+			$(this).parents('ul').toggleClass('active');
+		});
+
+		$('.tdevice a').on("click", function(e){
+			e.preventDefault();
+			fullMode = false;
+			var agent = $(this).data('agent');
+			navigator.__defineGetter__('userAgent', function(){
+    		return agent;
+			});
+
+			changeActiveState($(this));
+			theight = $(this).data('height');
+			twidth = $(this).data('width');
+			sizeiframe(twidth, true, theight);
+		});
+
+		function sizeFull() {
+			sizeiframe(sw, false, sh);
+			updateSizeReading(sw);
+		}
 
 	//Pixel width input
 	$sizeWidth.on('keydown', function(e){
@@ -75,15 +78,12 @@
 		if(e.keyCode === 38) { //If the up arrow key is hit
 			val++;
 			sizeiframe(val,false);
-			window.location.hash = val;
 		} else if(e.keyCode === 40) { //If the down arrow key is hit
 			val--;
 			sizeiframe(val,false);
-			window.location.hash = val;
 		} else if(e.keyCode === 13) { //If the Enter key is hit
 			e.preventDefault();
 			sizeiframe(val); //Size Iframe to value of text box
-			window.location.hash = val;
 			$(this).blur();
 		}
 		changeActiveState();
@@ -146,6 +146,11 @@
 		$sgViewport.height(height);
 
 		updateSizeReading(theSize); //Update values in toolbar
+
+		setInterval(function(){
+			prSwiper.reInit();
+			prSwiper.resizeFix();
+		}, 1000);
 	}
 
 	//Update Pixel and Em inputs
@@ -160,14 +165,6 @@
 			pxSize = size;
 			emSize = size/$bodySize;
 		}
-	}
-
-	function updateViewportWidth(size) {
-		$sgViewport.width(size);
-		// $sgWrapper.width(size*1 + 14);
-		$sgWrapper.width(size*1);
-
-		updateSizeReading(size);
 	}
 
 	// on "mouseup" we unbind the "mousemove" event and hide the cover again

@@ -9,10 +9,6 @@ body {
   padding: 0;
 }
 
-.device {
-  position: relative;
-}
-
 .device .circle {
   position: absolute;
   top: 50%;

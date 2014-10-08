@@ -20,6 +20,8 @@ class TPL_Edition
 			return;
 		}
 
+		add_theme_support( 'post-thumbnails', array( TPL_EDITION ) );
+
 		add_action( 'init', array( $this, 'add_edition_post_type' ), 10 );
 		add_action( 'init', array( 'TPL_Theme', 'search_themes' ), 20 );
 
@@ -191,7 +193,7 @@ class TPL_Edition
 	public function add_publication_metabox_callback() {
 
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
-		echo '<a id="preview_edition" target="_blank" href="' . TPL_PLUGIN_URI . 'preview/index.php?edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
+		echo '<a id="preview_edition" target="_blank" href="' . TPL_PLUGIN_URI . 'preview/edition.php?edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
 
 	/**
@@ -305,7 +307,6 @@ class TPL_Edition
 		$args = array(
 			'connected_type'        => P2P_EDITION_CONNECTION,
 			'connected_items'       => get_post( $edition_id ),
-			'connected_direction'		=> 'from',
 			'nopaging'              => true,
 			'connected_orderby'     => 'order',
 			'connected_order'       => 'asc',
@@ -374,7 +375,7 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				echo '<a target="_blank" href="'. TPL_PLUGIN_URI . 'preview/index.php?edition_id=' . get_the_id() . '" >View</a>';
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI . 'preview/edition.php?edition_id=' . get_the_id() . '" >View</a>';
 				break;
 
 			default:

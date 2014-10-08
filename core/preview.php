@@ -19,20 +19,10 @@ class TPL_Preview {
       return;
     }
 
-    $connected = p2p_get_connections( P2P_EDITION_CONNECTION, array(
-      'to' => $edition,
-    ));
-
-    $linked_posts = array();
-    foreach ( $connected as $conn ) {
-
-      $visible = p2p_get_meta( $conn->p2p_id, 'state', true );
-      if ( $visible ) {
-        $order = p2p_get_meta( $conn->p2p_id, 'order', true );
-        $linked_posts[$order] = $conn->p2p_from;
-      }
+    $linked_posts = pr_get_edition_posts_id( $edition );
+    if ( empty( $linked_posts ) ) {
+      return;
     }
-    ksort( $linked_posts );
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
     if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
@@ -104,12 +94,7 @@ class TPL_Preview {
     }
 
     ob_start();
-    $posts = new WP_Query( array(
-      'post_type'   => 'any',
-      'post_status' => 'any',
-      'post__in'    => $linked_posts,
-      'nopaging'  => true
-    ) );
+    $posts = pr_get_edition_posts( $edition );
 
     require_once($toc);
     $output = ob_get_contents();
@@ -149,7 +134,7 @@ class TPL_Preview {
   }
 
   /**
-   * rewrite html url for preview
+   * Rewrite html url for preview
    * @param object $edition
    * @param  string $html
    * @return string $html
@@ -181,5 +166,4 @@ class TPL_Preview {
 
     return $html;
   }
-
 }

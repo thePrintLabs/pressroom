@@ -6,6 +6,7 @@ if($image_id):
     $image = wp_get_attachment_image_src($image_id, 'full');
     $coverClass = 'cover__overlay--'.get_field('cover_overlay').' check';
     $titleClass = 'cover__title cover__title--resize check'; 
+    $metaClass = 'check'; 
 else:
     $titleClass = 'article__title'; 
 endif;

@@ -20,6 +20,11 @@
                     <h1 class="<?php echo $titleClass; ?>">
                     <?php the_title(); ?>
                     </h1>
+                    <div class="entry-meta <?php echo $metaClass; ?>">
+                    	<p>
+                    	<?php the_author(); ?>
+                    	</p>
+                    </div>
             <?php if($image): ?>
                     </div>
                 </div>

@@ -576,6 +576,39 @@ p:empty {
   COMPONENTS
   ========================================================================== */
 /* ==========================================================================
+   ENTRY META
+   ========================================================================== */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\000035}}
+.entry-meta {
+  text-align: center;
+  padding-top: 0.3em;
+  padding-bottom: 0.1em;
+  width: 93%;
+  margin: 0 auto;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000311}}
+.entry-meta.background--dark {
+  color: white;
+  border-top: 4px double rgba(255, 255, 255, 0.3);
+  border-bottom: 4px double rgba(255, 255, 255, 0.3);
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000316}}
+.entry-meta.background--light {
+  color: #222;
+  border-top: 4px double rgba(0, 0, 0, 0.3);
+  border-bottom: 4px double rgba(0, 0, 0, 0.3);
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000321}}
+.entry-meta p {
+  margin: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000323}}
+.entry-meta p:before {
+  font-style: italic;
+  content: 'di ';
+}
+
+/* ==========================================================================
   LAYOUT
   ========================================================================== */
 /* ==========================================================================

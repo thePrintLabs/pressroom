@@ -108,7 +108,7 @@ $configs = $tpl_pressroom->configs;
         </div>
       </div>
     </div>
-    <div id="toc" data-height="<?php echo $configs['pr-index-height'] ?>"><iframe height="0"  width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
+    <div id="toc" style="height: 0" data-height="<?php echo $configs['pr-index-height'] ?>"><iframe width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>

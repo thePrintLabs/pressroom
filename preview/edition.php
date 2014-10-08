@@ -11,6 +11,8 @@ $edition_id = (int)$_GET['edition_id'];
 $linked_posts = TPL_Preview::init( $edition_id );
 $num_max_slides = count( $linked_posts );
 $num_init_slides = min( $num_max_slides, CONCURRENT_PAGES );
+$edition = get_post( $edition_id );
+$edition_name = TPL_Utils::sanitize_string($edition->post_title);
 
 ?>
 <!DOCTYPE html>
@@ -99,6 +101,7 @@ $num_init_slides = min( $num_max_slides, CONCURRENT_PAGES );
           </div>
           <div class="swiper-scrollbar"></div>
         </div>
+        <div class="toc"><iframe height="150px" width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
       </div>
     </div>
   </div>

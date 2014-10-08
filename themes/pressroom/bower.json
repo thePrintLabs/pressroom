@@ -13,6 +13,10 @@
     "jeet": "~6.1.2",
     "geoffgraham.animate.scss": "*",
     "backgroundCheck": "~1.2.2",
-    "mobile-detect": "~0.4.0"
+    "mobile-detect": "~0.4.0",
+    "fluidvids": "~2.4.1",
+    "fastclick": "~1.0.3",
+    "FitVids": "~1.1.0",
+    "skrollr": "~0.6.27"
   }
 }

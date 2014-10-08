@@ -8,7 +8,6 @@ module.exports = function(grunt) {
       },
       all: [
         'Gruntfile.js',
-        'assets/js/*.js',
         'assets/js/source/*.js',
         '!assets/js/scripts.min.js'
       ]
@@ -69,8 +68,9 @@ module.exports = function(grunt) {
           'assets/bower_components/jquery/dist/jquery.min.js',
           'assets/bower_components/textFit/textFit.min.js',
           'assets/bower_components/backgroundCheck/background-check.js',
-          'assets/bower_components/mobile-detect/mobile-detect.min.js',
-          'assets/bower_components/mobile-detect/mobile-detect-modernizr.js',
+          'assets/bower_components/FitVids/jquery.fitvids.js',
+          'assets/bower_components/fastclick/lib/fastclick.js',
+          'assets/bower_components/skrollr/dist/skrollr.min.js',
           'assets/js/source/main.js'
           ]
         }
@@ -78,26 +78,42 @@ module.exports = function(grunt) {
     },
     rsync: {
         options: {
-            args: ["--verbose --update"],
-            exclude: ['node_modules', 'assets/sass', 'assets/bk*', 'assets/bower_components', 'assets/css', '.*', '.sass-cache/', 'Gemfile', 'Gemfile.lock', 'Gruntfile.js', '*.md','screenshot.png', 'lang', 'package.json', 'bower.json'],
+            args: ["--verbose"],
+            exclude: ['node_modules', '.bowerrc', '.editorconfig', '.gitignore', '.jshintrc','assets/sass', 'assets/bk*', 'assets/js/source', 'assets/bower_components', '*.map', '.*', '.sass-cache/', 'Gemfile', 'version.json', 'Gemfile.lock', 'Gruntfile.js', '*.md', 'screenshot.png', 'lang', 'package.json', 'bower.json'],
             recursive: true
         },
         stage: {
             options: {
-                src: "",
-                dest: "",
-                host: "",
+                src: "../pressroom/",
+                dest: "/var/www/wordpress/wp-content/plugins/pressroom-pro/themes/pressroom",
+                host: "root@app.press-room.io",
                 syncDestIgnoreExcl: false
             }
         },
         prod: {
             options: {
                 src: "../pressroom/",
-                dest: "",
-                host: "",
+                dest: "/var/www/wordpress/wp-content/plugins/pressroom-pro/themes/pressroom",
+                host: "root@app.press-room.io",
                 syncDestIgnoreExcl: false
             }
         }
+    },
+    ver: {
+      myapp: {
+        phases: [
+          {
+            files: [
+              'assets/css/styles.css',
+              'assets/js/scripts.min.js'
+            ],
+            references: [
+              'fullwidth.php'
+            ]
+          }
+        ],
+        versionFile: 'version.json'
+      }
     },
     watch: {
       js: {
@@ -135,8 +151,8 @@ module.exports = function(grunt) {
     },
     clean: {
       dist: [
-        'assets/css/styles.min.css',
-        'assets/js/scripts.min.js'
+        'assets/css/styles.*.css',
+        'assets/js/scripts.*.js'
       ]
     }
   });
@@ -149,16 +165,17 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks("grunt-rsync");
+  grunt.loadNpmTasks('grunt-ver');
 
   // Register tasks
   grunt.registerTask('default', [
     'clean',
-    'sass',
+    'sass:dev',
     'uglify',
-    'cssmin'
+    'ver:myapp',
   ]);
   grunt.registerTask('dev', [
     'watch'
   ]);
-  grunt.registerTask('dploy', ['rsync:prod']);
+  grunt.registerTask('dploy', ['rsync:stage']);
 };

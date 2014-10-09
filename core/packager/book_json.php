@@ -78,7 +78,6 @@ final class TPL_Packager_Book_JSON
             switch ( $key ) {
                case 'pr-index-height':
                   $options[$baker_option] = (int)$option;
-                  echo"height";
                   break;
                case 'pr-orientation':
                   $options[$baker_option] = strtolower($option);

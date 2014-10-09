@@ -96,9 +96,11 @@ class TPL_Preview {
     ob_start();
     $posts = pr_get_edition_posts( $edition );
 
-    require_once($toc);
+    require_once( $toc );
     $output = ob_get_contents();
     ob_end_clean();
+
+    $output = self::rewrite_toc_url($output);
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
     file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', $output );
@@ -165,5 +167,20 @@ class TPL_Preview {
     }
 
     return $html;
+  }
+
+  public static function rewrite_toc_url( $html ) {
+     if ( $html ) {
+        $links = TPL_Utils::get_urls( $html );
+
+        foreach ( $links as $link ) {
+
+          $post_id = url_to_postid( $link );
+          if ( $post_id ) {
+             $html = str_replace( $link, '#slide' . $post_id, $html );
+          }
+        }
+     }
+     return $html;
   }
 }

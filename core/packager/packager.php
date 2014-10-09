@@ -208,11 +208,16 @@ class TPL_Packager
 		}
 
 		$this->_edition_post = get_post( $_GET['edition_id'] );
-		$this->_linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array( 'connected_meta' => array(
-				'key'		=> 'state',
-				'value'	=> 1,
-				'type'	=> 'numeric'
-		) ) );
+
+		$this->_linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array(
+			'connected_meta' => array(
+				array(
+					'key'		=> 'state',
+					'value'	=> 1,
+					'type'	=> 'numeric'
+				)
+			)
+		) );
 	}
 
 	/**

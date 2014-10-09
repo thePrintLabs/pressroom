@@ -311,6 +311,7 @@ class TPL_Edition
 			'connected_orderby'     => 'order',
 			'connected_order'       => 'asc',
 			'connected_order_num'   => true,
+			'cardinality'						=> 'one-to-many'
 		);
 
 		if ( !empty( $post_meta) ) {
@@ -318,7 +319,6 @@ class TPL_Edition
 		}
 
 		$linked_query = new WP_Query( $args );
-
 		return $linked_query;
 	}
 

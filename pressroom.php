@@ -198,7 +198,7 @@ class TPL_Pressroom
 	 * Load plugin configuration settings
 	 * @void
 	 */
-	public function _load_configs() {
+	protected function _load_configs() {
 
 		if ( is_null( $this->configs ) ) {
 			$this->configs = get_option('tpl_options', array(
@@ -213,7 +213,7 @@ class TPL_Pressroom
 			$files = TPL_Utils::search_files( TPL_EXTENSIONS_PATH, 'php' );
 			if ( !empty( $files ) ) {
 				foreach ( $files as $file ) {
-					require_once TPL_EXTENSIONS_PATH . $file;
+					require_once( $file );
 				}
 			}
 		}

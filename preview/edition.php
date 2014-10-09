@@ -217,7 +217,7 @@ $index_height = pr_get_option( 'pr-index-height' );
          $('#fire-toc').html('Close Toc');
       }
       else {
-         document.getElementById('toc').setAttribute( 'data-height', <?php echo $configs['pr-index-height'] ?> );
+         document.getElementById('toc').setAttribute( 'data-height', <?php echo $index_height ?> );
          $('#fire-toc').html('Open Toc');
       }
    });

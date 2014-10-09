@@ -176,7 +176,6 @@ class TPL_Preview {
         foreach ( $links as $link ) {
 
           $post_id = url_to_postid( $link );
-          echo "banana".$post_id. " ";
           if ( $post_id ) {
              $html = str_replace( $link, '#slide' . $post_id, $html );
           }

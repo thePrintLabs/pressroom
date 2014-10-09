@@ -35,7 +35,7 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
  * Get posts linked to an edition
  * @param int or object $edition
  * @param boolean $only_enabled
- * @return array
+ * @return array or boolean false
  */
 function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
@@ -55,4 +55,19 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
   }
 
   return false;
+}
+
+/**
+ * Get single option from pressroom option array
+ * @param  string $option
+ * @return mixed or boolean false
+ */
+function pr_get_option( $option ) {
+
+   $configs = get_option( 'tpl_options' );
+   if( isset( $configs[$option] ) ) {
+      return $configs[$option];
+   }
+
+   return false;
 }

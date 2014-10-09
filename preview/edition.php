@@ -13,8 +13,8 @@ $num_max_slides = count( $linked_posts );
 $num_init_slides = min( $num_max_slides, CONCURRENT_PAGES );
 $edition = get_post( $edition_id );
 $edition_name = TPL_Utils::sanitize_string( $edition->post_title );
-$tpl_pressroom->_load_configs();
-$configs = $tpl_pressroom->configs;
+
+$index_height = pr_get_option( 'pr-index-height' );
 
 ?>
 <!DOCTYPE html>
@@ -108,7 +108,7 @@ $configs = $tpl_pressroom->configs;
         </div>
       </div>
     </div>
-    <div id="toc" style="height: 0" data-height="<?php echo $configs['pr-index-height'] ?>"><iframe width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
+    <div id="toc" style="height: 0" data-height="<?php echo $index_height ?>"><iframe width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe></div>
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>

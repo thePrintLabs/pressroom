@@ -58,7 +58,6 @@ class TPL_Utils
 	*/
 	public static function search_files( $directory, $extension = '*', $recursive = false, &$out = array() ) {
 
-		//$out = array();
 		try {
 			$files = scandir( $directory );
 			$files = array_diff( $files, self::$excluded_files );

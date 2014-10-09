@@ -1,0 +1,63 @@
+#toc {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+}
+
+.swiper-container {
+	width: 100%;
+	overflow-x: scroll;
+}
+
+.toc__item {
+	background-color: #ddd; 
+	position: relative;
+	header {
+		width: inherit;
+		height: inherit;
+	}
+}
+
+#toc .swiper-slide-active {
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0px 1px 0 1px;
+}
+
+.toc__item.cover__image {
+	min-height: 100vh;
+}
+
+.toc__title {
+	padding: 1rem 2rem;
+	margin: 0;
+	@include remType(28px, 40px);
+	position: absolute;
+	// top: 2rem;
+	// left: 2rem;
+	z-index: 100;
+	word-wrap: break-word;
+	width: inherit;
+	height: inherit;
+	@extend %line-clamp;
+}
+
+// .item__overlay {
+// 	@extend %fullScreen;
+// }
+
+// .item__overlay--simple {
+// 	transition: all 1s ease-in-out;
+// 	@extend %fullScreen;
+// 	&.background--light {
+// 		background-color: rgba(255, 255, 255, 0.5);
+// 	}
+// 	&.background--dark {
+// 		color: white;
+// 		background-color: rgba(0, 0, 0, 0.5);
+// 	}
+// 	&.background--complex {
+// 		color: white;
+// 		background-color: rgba(0, 0, 0, 0.5);
+// 	}
+// }

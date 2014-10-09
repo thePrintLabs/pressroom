@@ -15,7 +15,8 @@ module.exports = function(grunt) {
     sass: {
         dev: {
             files: {
-                'assets/css/styles.css': 'assets/sass/styles.scss'
+                'assets/css/styles.css': 'assets/sass/styles.scss',
+                'assets/css/toc.css': 'assets/sass/toc.scss'
             },
             options: {
                 bundleExec: true,
@@ -72,13 +73,21 @@ module.exports = function(grunt) {
           'assets/bower_components/fastclick/lib/fastclick.js',
           'assets/bower_components/skrollr/dist/skrollr.min.js',
           'assets/js/source/main.js'
+          ],
+          'assets/js/toc.min.js': [
+          'assets/bower_components/modernizer/modernizr.js',
+          'assets/bower_components/jquery/dist/jquery.min.js',
+          'assets/bower_components/textFit/textFit.min.js',
+          'assets/bower_components/backgroundCheck/background-check.js',
+          'assets/bower_components/swiper/src/idangerous.swiper.js',
+          'assets/js/source/_toc__init.js'
           ]
         }
       }
     },
     rsync: {
         options: {
-            args: ["--verbose"],
+            args: ["--verbose --no-p --no-g --chmod=ugo=rwX"],
             exclude: ['node_modules', '.bowerrc', '.editorconfig', '.gitignore', '.jshintrc','assets/sass', 'assets/bk*', 'assets/js/source', 'assets/bower_components', '*.map', '.*', '.sass-cache/', 'Gemfile', 'version.json', 'Gemfile.lock', 'Gruntfile.js', '*.md', 'screenshot.png', 'lang', 'package.json', 'bower.json'],
             recursive: true
         },
@@ -86,7 +95,7 @@ module.exports = function(grunt) {
             options: {
                 src: "../pressroom/",
                 dest: "/var/www/wordpress/wp-content/plugins/pressroom-pro/themes/pressroom",
-                host: "root@app.press-room.io",
+                host: "tpl@app.press-room.io",
                 syncDestIgnoreExcl: false
             }
         },
@@ -94,7 +103,7 @@ module.exports = function(grunt) {
             options: {
                 src: "../pressroom/",
                 dest: "/var/www/wordpress/wp-content/plugins/pressroom-pro/themes/pressroom",
-                host: "root@app.press-room.io",
+                host: "tpl@app.press-room.io",
                 syncDestIgnoreExcl: false
             }
         }

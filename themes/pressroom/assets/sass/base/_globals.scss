@@ -4,9 +4,9 @@
 *, 
 *:before, 
 *:after {
-	-moz-box-sizing: border-box; 
-	-webkit-box-sizing: border-box; 
-	box-sizing: border-box;
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 *{
@@ -19,8 +19,14 @@ html {
 }
 
 body {
-	padding: 0;
-  	margin: 0;
+  padding: 0;
+    margin: 0;
+}
+
+%line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
 }
 
 h1,
@@ -78,5 +84,5 @@ a, a:link, a:hover, a:visited, img {
 ::-moz-focus-inner {border:0;}
 
 a:active,a:focus {
-	outline: none;
+  outline: none;
 }

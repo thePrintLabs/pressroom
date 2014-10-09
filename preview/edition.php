@@ -209,7 +209,7 @@ $index_height = pr_get_option( 'pr-index-height' );
       prSwiper.swipeNext();
     });
     $( "#fire-toc" ).click(function(e) {
-      event.preventDefault();
+      e.preventDefault();
       var height = document.getElementById('toc').getAttribute( 'data-height' );
       $( "#toc" ).height( height );
       if( height > 0 ) {

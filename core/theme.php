@@ -44,22 +44,17 @@ class TPL_Theme
 
 			foreach ( $dirs as $dir ) {
 
-				$pages = array();
-				$files = TPL_Utils::search_files( $dir, 'php' );
+				$files = TPL_Utils::search_files( $dir, 'php', true );
 				foreach ( $files as $file ) {
 
-					$metadata = get_file_data( $dir . DIRECTORY_SEPARATOR . $file, $default_headers);
-					if ( empty($metadata) ) {
+					$metadata = get_file_data( $file, $default_headers);
+					if ( !strlen( $metadata['theme'] ) && !strlen( $metadata['rule'] )  && !strlen( $metadata['name'] ) ) {
 						continue;
 					}
 
 					$metadata['theme_path'] = basename( $dir );
 					$metadata['filename'] = $file;
 					$theme_name = TPL_Utils::sanitize_string( $metadata['theme_path'] );
-
-					if ( $metadata['name'] ) {
-						$pages[] = $metadata['name'];
-					}
 
 					$themes[$theme_name][] = $metadata;
 				}
@@ -160,7 +155,7 @@ class TPL_Theme
 		foreach ( $files as $file ) {
 			if ( $file['rule'] == 'cover') {
 				$cover = $file['filename'];
-				return TPL_THEME_PATH . $theme . DIRECTORY_SEPARATOR . $cover;
+				return $cover;
 			}
 		}
 
@@ -180,7 +175,7 @@ class TPL_Theme
 		foreach ( $files as $file ) {
 			if ( $file['rule'] == 'toc') {
 				$toc = $file['filename'];
-				return TPL_THEME_PATH . $theme . DIRECTORY_SEPARATOR . $toc;
+				return $toc;
 			}
 		}
 
@@ -196,9 +191,8 @@ class TPL_Theme
 	public static function get_theme_page( $edition_id, $post_id ) {
 
 		$template = p2p_get_meta( $post_id, 'template', true );
-		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
-		if ( $template && $theme ) {
-			return TPL_THEME_PATH . $theme . DIRECTORY_SEPARATOR . $template;
+		if ( $template ) {
+			return $template;
 		}
 
 		return false;

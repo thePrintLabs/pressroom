@@ -56,9 +56,9 @@ class TPL_Utils
 	* @param string $extension
 	* @return array
 	*/
-	public static function search_files( $directory, $extension = '*' ) {
+	public static function search_files( $directory, $extension = '*', $recursive = false, &$out = array() ) {
 
-		$out = array();
+		//$out = array();
 		try {
 			$files = scandir( $directory );
 			$files = array_diff( $files, self::$excluded_files );
@@ -68,12 +68,15 @@ class TPL_Utils
 					if ( strlen( $extension ) && $extension != '*' ) {
 						$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
 						if ( isset( $info['extension'] ) && strtolower( $info['extension'] ) == strtolower( $extension ) ) {
-							array_push( $out, $file );
+							array_push( $out, $directory . DIRECTORY_SEPARATOR . $file );
 						}
 					}
 					else {
-						array_push( $out, $file );
+						array_push( $out, $directory . DIRECTORY_SEPARATOR . $file );
 					}
+				}
+				else if( is_dir( $directory . DIRECTORY_SEPARATOR . $file ) && $recursive ) {
+					self::search_files( $directory . DIRECTORY_SEPARATOR . $file, $extension, true, $out );
 				}
 			}
 		}

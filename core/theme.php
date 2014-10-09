@@ -53,7 +53,7 @@ class TPL_Theme
 					}
 
 					$metadata['theme_path'] = basename( $dir );
-					$metadata['filename'] = $file;
+					$metadata['filename'] = str_replace( TPL_THEME_PATH, '', $file );
 					$theme_name = TPL_Utils::sanitize_string( $metadata['theme_path'] );
 
 					$themes[$theme_name][] = $metadata;
@@ -155,7 +155,7 @@ class TPL_Theme
 		foreach ( $files as $file ) {
 			if ( $file['rule'] == 'cover') {
 				$cover = $file['filename'];
-				return $cover;
+				return TPL_THEME_PATH . $cover;
 			}
 		}
 
@@ -175,7 +175,7 @@ class TPL_Theme
 		foreach ( $files as $file ) {
 			if ( $file['rule'] == 'toc') {
 				$toc = $file['filename'];
-				return $toc;
+				return TPL_THEME_PATH . $toc;
 			}
 		}
 
@@ -192,7 +192,7 @@ class TPL_Theme
 
 		$template = p2p_get_meta( $post_id, 'template', true );
 		if ( $template ) {
-			return $template;
+			return TPL_THEME_PATH . $template;
 		}
 
 		return false;

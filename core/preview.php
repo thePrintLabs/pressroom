@@ -100,7 +100,8 @@ class TPL_Preview {
     $output = ob_get_contents();
     ob_end_clean();
 
-    $output = self::rewrite_toc_url($output);
+    $output = self::rewrite_html_url( $edition, $output );
+    $output = self::rewrite_toc_url( $output, $edition->ID );
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
     file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', $output );
@@ -169,7 +170,7 @@ class TPL_Preview {
     return $html;
   }
 
-  public static function rewrite_toc_url( $html ) {
+  public static function rewrite_toc_url( $html, $edition_id ) {
      if ( $html ) {
         $links = TPL_Utils::get_urls( $html );
 
@@ -177,7 +178,7 @@ class TPL_Preview {
 
           $post_id = url_to_postid( $link );
           if ( $post_id ) {
-             $html = str_replace( $link, '#slide' . $post_id, $html );
+             $html = str_replace( $link, TPL_PLUGIN_URI . 'preview/edition.php?edition_id='.$edition_id.'#slide' . $post_id, $html );
           }
         }
      }

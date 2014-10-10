@@ -40,7 +40,8 @@
 }
 
 .article__title,
-blockquote 
+blockquote,
+.aligned 
 {
 	@extend %wide-wrap;
 }

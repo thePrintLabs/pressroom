@@ -10,7 +10,7 @@
 require_once('inc/function.php');
 require('components/coverimage.php');
 
-$stylesheet = 'styles.css'
+$stylesheet = 'assets/css/styles.css';
 
 ?>
 <!DOCTYPE html>

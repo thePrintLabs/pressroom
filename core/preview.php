@@ -27,7 +27,7 @@ class TPL_Preview {
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
     if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
 
-      $font_path = TPL_Theme::get_theme_path( $edition->ID ) . 'assets/fonts';
+      $font_path = TPL_Theme::get_theme_path( $edition->ID ) . 'assets' . DIRECTORY_SEPARATOR . 'fonts';
       TPL_Utils::recursive_copy( $font_path, TPL_PREVIEW_DIR . DIRECTORY_SEPARATOR . $edition_dir . DIRECTORY_SEPARATOR . 'fonts');
 
       self::draw_toc( $edition, $linked_posts );
@@ -72,7 +72,7 @@ class TPL_Preview {
       $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
       if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
         file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
-        $page_url = TPL_PREVIEW_URI . $edition_dir . '/' . $filename;
+        $page_url = TPL_PREVIEW_URI . $edition_dir . DIRECTORY_SEPARATOR . $filename;
       }
     }
 
@@ -170,10 +170,15 @@ class TPL_Preview {
     return $html;
   }
 
+  /**
+   * Rewrite toc url for preview with hashtag
+   * @param  string $html
+   * @param  int $edition_id
+   * @return string $html
+   */
   public static function rewrite_toc_url( $html, $edition_id ) {
      if ( $html ) {
         $links = TPL_Utils::get_urls( $html );
-
         foreach ( $links as $link ) {
 
           $post_id = url_to_postid( $link );
@@ -182,6 +187,7 @@ class TPL_Preview {
           }
         }
      }
+
      return $html;
   }
 }

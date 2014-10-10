@@ -1,7 +1,9 @@
 #toc {
 	margin: 0;
 	padding: 0;
-	background: transparent;
+	background: red;
+	height: 100%;
+	width: 100%;
 }
 
 .swiper-container {
@@ -12,6 +14,7 @@
 .toc__item {
 	background-color: #ddd; 
 	position: relative;
+	width: 33.33333333333333333333%;
 	header {
 		width: inherit;
 		height: inherit;

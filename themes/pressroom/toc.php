@@ -10,13 +10,20 @@
 // temporary fix to enable wp hook & filters inside PR-themes
 require_once('inc/function.php');
 
-$stylesheet = '../../../../themes/pressroom/assets/css/toc.css';
-require('partials/head.php'); 
-?> 
+$stylesheet = 'assets/css/toc.css';
+?>
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title><?php the_title(); ?></title>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="viewport" content="width=1536, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="<?php echo $stylesheet; ?>">
+    </head> 
     <body id="toc" class="<?php echo $post->post_name; ?>">
-        <div class="swiper-container" style="height:<?php // echo pr_get_option( 'pr-index-height' ); ?>">
+        <div class="swiper-container" style="height:<?php echo pr_get_option( 'pr-index-height' ).'px; width: 100%;'; ?>">
             <div class="swiper-wrapper">
-
                 <?php
                 if ( $posts->have_posts() ):
                     while ( $posts->have_posts() ):
@@ -44,6 +51,6 @@ require('partials/head.php');
                 <?php endwhile; endif; ?>
             </div>
         </div>
-        <script type="text/javascript" src="../../../../themes/pressroom/assets/js/toc.min.js"></script>
+        <script type="text/javascript" src="assets/js/toc.min.js"></script>
     </body>
 </html>

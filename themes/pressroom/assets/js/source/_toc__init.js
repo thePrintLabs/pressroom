@@ -1,10 +1,9 @@
 var tocSwiper = new Swiper('.swiper-container', { 
 	slideElement:'article',
 	slidesPerView: 3,
-	loop: true,
+	resizeReInit: true,
 	resistance: '100%',
 	roundLengths: true,
-	centeredSlides: true,
 	onSlideChangeEnd: function() {
 	  BackgroundCheck.refresh();
 	}

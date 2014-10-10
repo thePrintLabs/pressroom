@@ -23,6 +23,10 @@ Swiper.prototype.plugins.hashNav = function (swiper, params) {
         }
     }
 
+    $(window).on('hashchange', function() {
+      swipeToHash(true);
+    });
+
     //Plugin Hooks
     return {
         onSwiperCreated : function (args) {

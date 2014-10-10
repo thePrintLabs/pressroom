@@ -9,8 +9,7 @@ const CONCURRENT_PAGES = 3;
 
 $edition_id = (int)$_GET['edition_id'];
 $linked_posts = TPL_Preview::init( $edition_id );
-$num_max_slides = count( $linked_posts );
-$num_init_slides = min( $num_max_slides, CONCURRENT_PAGES );
+$num_init_slides = min( count( $linked_posts ), CONCURRENT_PAGES );
 $edition = get_post( $edition_id );
 $edition_name = TPL_Utils::sanitize_string( $edition->post_title );
 
@@ -97,11 +96,12 @@ $index_height = pr_get_option( 'pr-index-height' );
         <div class="swiper-container">
           <div class="swiper-wrapper">
             <?php
-            for ( $i = 0; $i < $num_max_slides; $i++ ):
+            $i = 0;
+            foreach ( $linked_posts as $linked_post ):
             ?>
-            <div id="item-<?php echo $i; ?>" class="swiper-slide" data-hash="slide<?php echo $i; ?>"></div>
+            <div id="item-<?php echo $i++; ?>" class="swiper-slide" data-hash="slide<?php echo $linked_post; ?>"></div>
             <?php
-            endfor;
+            endforeach;
             ?>
           </div>
           <div class="swiper-scrollbar"></div>
@@ -112,7 +112,6 @@ $index_height = pr_get_option( 'pr-index-height' );
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
-<script src="assets/js/ish_init.js"></script>
 <script src="assets/js/idangerous.swiper.min.js"></script>
 <script src="assets/js/idangerous.swiper.hashnav.js"></script>
 <!--<script src="assets/js/iscroll.js"></script>-->
@@ -174,6 +173,7 @@ $index_height = pr_get_option( 'pr-index-height' );
       paginationClickable: true,
       keyboardControl: true,
       hashNav: true,
+      speed : 500,
       initialSlide: 0,
       onFirstInit: function(swiper) {
         $(".circle--left").hide();
@@ -223,5 +223,6 @@ $index_height = pr_get_option( 'pr-index-height' );
    });
   });
 </script>
+<script src="assets/js/ish_init.js"></script>
 </body>
 </html>

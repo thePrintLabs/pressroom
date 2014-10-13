@@ -126,27 +126,27 @@ list = {
 // Show time!
 list.init();
 
-$( ".wp-list-table tbody" ).delegate( ".presslist-state", "click", function(e) {
+$( ".wp-list-table tbody" ).delegate( ".presslist-status", "click", function(e) {
 
 	e.preventDefault();
 	el = jQuery(this);
 	index = el.data('index');
-	state = el.data('state');
+	status = el.data('status');
 
 	var data = {
-		'state': state,
+		'status': status,
 		'id': index,
 		'action' : 'presslist'
 	};
 
 	jQuery.post(ajaxurl, data, function(response) {
-		if(state) {
+		if(status) {
 			el.find('i').addClass('icon-eye-off').removeClass('icon-eye');
-			el.data('state',0);
+			el.data('status',0);
 		}
 		else {
 			el.find('i').addClass('icon-eye').removeClass('icon-eye-off');;
-			el.data('state',1);
+			el.data('status',1);
 		}
 
 	});
@@ -180,10 +180,10 @@ $('#doaction').on( "click", function(e) {
 		posts.push($(this).val());
 		var el = $('#r_'+$(this).val());
 
-		var state = (action_to_do == 'include' ? 0 : 1 );
-		el.find('i').addClass((state == 0 ? 'icon-eye' : 'icon-eye-off' ));
-		el.find('i').removeClass((state == 0 ? 'icon-eye-off' : 'icon-eye' ));
-		el.attr('data-state', (state == 0 ? 1 : 0));
+		var status = (action_to_do == 'include' ? 0 : 1 );
+		el.find('i').addClass((status == 0 ? 'icon-eye' : 'icon-eye-off' ));
+		el.find('i').removeClass((status == 0 ? 'icon-eye-off' : 'icon-eye' ));
+		el.attr('data-status', (status == 0 ? 1 : 0));
 	});
 
 	var data = {

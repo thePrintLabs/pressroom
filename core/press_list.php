@@ -86,7 +86,7 @@ class Pressroom_List_Table extends WP_List_Table
        'post_author'  => __( 'Author', 'press_listtable' ),
        'post_date'    => __( 'Date', 'press_listtable' ),
        'post_type'    => __( 'Post type', 'press_listtable' ),
-       'state'        => __( 'Status', 'press_listtable' ),
+       'status'        => __( 'Status', 'press_listtable' ),
        'template'     => __( 'Layout', 'press_listtable' ),
     );
 
@@ -175,21 +175,21 @@ class Pressroom_List_Table extends WP_List_Table
 	}
 
 	/**
-	 * Define post state columns
+	 * Define post status columns
 	 * @param object $item
 	 * @return string
 	 */
-   public function column_state( $item ) {
+   public function column_status( $item ) {
 
-      $state = p2p_get_meta( $item->p2p_id, 'state', true );
-		if ( $state ) {
-         $state_label = '<i class="icon-eye"></i>';
+      $status = p2p_get_meta( $item->p2p_id, 'status', true );
+		if ( $status ) {
+         $status_label = '<i class="icon-eye"></i>';
 		}
 		else {
-			$state_label = '<i class="icon-eye-off"></i>';
+			$status_label = '<i class="icon-eye-off"></i>';
 		}
 
-      return '<a id="r_' . $item->p2p_id . '" class="presslist-state" data-state="' . $state .'" data-index="' . $item->p2p_id . '" href="#">' . __( $state_label, 'edition' ).'</a>';
+      return '<a id="r_' . $item->p2p_id . '" class="presslist-status" data-status="' . $status .'" data-index="' . $item->p2p_id . '" href="#">' . __( $status_label, 'edition' ).'</a>';
 	}
 
 	/**
@@ -430,10 +430,10 @@ class Pressroom_List_Table extends WP_List_Table
          foreach ( $_POST['connected_posts'] as $post_id ) {
 
             if ( $_POST['action_to_do'] === 'include' ) {
-               p2p_update_meta( $post_id, 'state', 1 );
+               p2p_update_meta( $post_id, 'status', 1 );
             }
             else {
-               p2p_update_meta( $post_id, 'state', 0 );
+               p2p_update_meta( $post_id, 'status', 0 );
             }
          }
       }
@@ -454,13 +454,13 @@ class Pressroom_List_Table extends WP_List_Table
    }
 
 	/**
-	 * Update post state related with current edition
+	 * Update post status related with current edition
 	 * @access public
 	 * @return void
 	 */
 	public function presslist_ajax_callback() {
 
-      if ( p2p_update_meta( $_POST['id'], 'state', ( $_POST['state'] ? 0 : 1 ) ) ) {
+      if ( p2p_update_meta( $_POST['id'], 'status', ( $_POST['status'] ? 0 : 1 ) ) ) {
          echo 'updated';
 		}
       exit;

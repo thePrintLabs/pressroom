@@ -233,7 +233,7 @@ class TPL_Packager
 		$this->_linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array(
 			'connected_meta' => array(
 				array(
-					'key'		=> 'state',
+					'key'		=> 'status',
 					'value'	=> 1,
 					'type'	=> 'numeric'
 				)

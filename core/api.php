@@ -16,7 +16,7 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
   foreach ( $connected as $conn ) {
 
     if ( $only_enabled ) {
-      $visible = p2p_get_meta( $conn->p2p_id, 'state', true );
+      $visible = p2p_get_meta( $conn->p2p_id, 'status', true );
       if ( !$visible ) {
         continue;
       }

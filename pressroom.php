@@ -60,6 +60,7 @@ class TPL_Pressroom
 		add_action( 'admin_notices', array( $this, 'check_pressroom_notice' ), 20 );
 		add_action( 'p2p_init', array( $this, 'register_post_connection' ) );
 		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
+		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
 	}
 
 	/**
@@ -178,6 +179,19 @@ class TPL_Pressroom
 			echo '</p></div>';
 		}
 	}
+
+	/**
+   * Unset theme root to exclude custom filter override
+   * @param string $path
+   */
+  public function set_theme_root( $path ) {
+
+    if ( isset( $_GET['pr_no_theme'] ) ) {
+      return TPL_THEME_PATH;
+    }
+
+    return $path;
+  }
 
 	/**
 	 * Determine if is add or edit page

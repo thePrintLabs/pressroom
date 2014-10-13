@@ -128,7 +128,8 @@ $index_height = pr_get_option( 'pr-index-height' );
       'post_id'     : posts[page],
       'edition_id'  : <?php echo $edition_id; ?>,
       'page'        : page,
-      'action'      : 'preview_draw_page'
+      'action'      : 'preview_draw_page',
+      'pr_no_theme' : true,
     }, function(src) {
       if (src) {
         addPage(page, src);

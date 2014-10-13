@@ -227,6 +227,7 @@ $('#theme_refresh').on( "click", function(e) {
    };
 
    jQuery.post(ajaxurl, data, function(response) {
+     alert('Flushed');
    });
 });
 

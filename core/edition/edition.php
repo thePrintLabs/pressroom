@@ -30,7 +30,6 @@ class TPL_Edition
 		add_action( 'save_post_' . TPL_EDITION, array( $this, 'save_edition'), 40 );
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
-		add_action( 'wp_ajax_preview', array( $this, 'ajax_preview_callback' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
 
@@ -262,12 +261,6 @@ class TPL_Edition
 		exit;
 	}
 
-	public function ajax_preview_callback() {
-		$preview = new TPL_Preview();
-		$preview->init_preview_swiper();
-		exit;
-	}
-
 	/**
 	 * Add jQuery datepicker script and css styles
 	 * @void
@@ -298,19 +291,44 @@ class TPL_Edition
 	}
 
 	/**
-	* Get linked posts
-	* @param int $edition_id
-	* @return array of objects
-	*/
-	public static function get_linked_posts( $edition_id, $post_meta = array() ) {
+	 * Get linked posts
+	 * @param object or int $edition
+	 * @return array of objects
+	 */
+	public static function get_linked_posts( $edition, $post_meta = array() ) {
 
 		$args = array(
 			'connected_type'        => P2P_EDITION_CONNECTION,
-			'connected_items'       => get_post( $edition_id ),
+			'connected_items'       => is_int( $edition ) ? get_post( $edition ) : $edition,
 			'nopaging'              => true,
 			'connected_orderby'     => 'order',
 			'connected_order'       => 'asc',
 			'connected_order_num'   => true,
+			'cardinality'						=> 'one-to-many'
+		);
+
+		if ( !empty( $post_meta) ) {
+			$args = array_merge( $args, $post_meta );
+		}
+
+		$linked_query = new WP_Query( $args );
+		return $linked_query;
+	}
+
+	/**
+	 * Get linked editions
+	 * @param object or int $post
+	 * @return array of objects
+	 */
+	public static function get_linked_editions( $post, $post_meta = array() ) {
+
+		$args = array(
+			'connected_type'        => P2P_EDITION_CONNECTION,
+			'connected_items'       => is_int( $post ) ? get_post( $post ) : $post,
+			'connected_direction'		=> 'from',
+			'nopaging'              => true,
+			'orderby'     					=> 'post_title',
+			'order'									=> 'asc',
 			'cardinality'						=> 'one-to-many'
 		);
 

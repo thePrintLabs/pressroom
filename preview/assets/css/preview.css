@@ -70,10 +70,14 @@ body {
   font-size: 25px;
   margin-bottom: 10px;
 }
+
 .pagination {
   position: absolute;
   left: 0;
   text-align: center;
+  bottom:5px;
+  width: 100%;
+  z-index: 10;
 }
 .swiper-pagination-switch {
   display: inline-block;
@@ -89,24 +93,14 @@ body {
   background: #fff;
 }
 
-iframe {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-}
-
 #sg-gen-container #toc {
    position: absolute;
    bottom: 0;
    width: 100%;
    background: rgba(255,255,255,1);
    z-index: 999;
-   transition: height 1000ms;
 }
+
 #sg-gen-container {
    overflow: hidden;
 }

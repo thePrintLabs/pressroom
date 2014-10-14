@@ -122,7 +122,7 @@ class TPL_Preview {
     }
 
     $template = TPL_Theme::get_theme_page( $edition->ID, $p2p_id );
-    if ( !$template ) {
+    if ( !$template || !file_exists( $template ) ) {
       return false;
     }
 
@@ -184,7 +184,7 @@ class TPL_Preview {
 
           $post_id = url_to_postid( $link );
           if ( $post_id ) {
-             $html = str_replace( $link, TPL_PLUGIN_URI . 'preview/edition.php?edition_id=' . $edition_id . '#slide' . $post_id, $html );
+             $html = str_replace( $link, TPL_PLUGIN_URI . 'preview/reader.php?edition_id=' . $edition_id . '#item-' . $post_id, $html );
           }
         }
      }
@@ -229,7 +229,7 @@ class TPL_Preview {
     var e = document.getElementById("pr_prw_edition_id"),
     edition = e.options[e.selectedIndex].value,
     post = ' . $post->ID . ';
-    window.open("' . TPL_PLUGIN_URI . 'preview/page.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
+    window.open("' . TPL_PLUGIN_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
     }, false);
     </script>';
   }

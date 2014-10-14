@@ -393,7 +393,7 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				echo '<a target="_blank" href="'. TPL_PLUGIN_URI . 'preview/edition.php?edition_id=' . get_the_id() . '" >View</a>';
+				echo '<a target="_blank" href="'. TPL_PLUGIN_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >View</a>';
 				break;
 
 			default:

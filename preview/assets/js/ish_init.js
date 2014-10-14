@@ -42,7 +42,8 @@
 		$('#reset').on("click", function(e){
 			e.preventDefault();
 			sw = document.body.clientWidth;
-			sh = Math.max( window.innerHeight, document.body.clientHeight );
+			sh = $(window).height() - $('.sg-header').height();
+			fixPagesHeight();
 			sizeFull();
 		});
 

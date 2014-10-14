@@ -1,15 +1,37 @@
 <?php
+const CONCURRENT_PAGES = 3;
 require_once('../../../../wp-load.php');
+if ( !defined( 'WP_ADMIN' ) ) {
+  define( 'WP_ADMIN', true );
+}
 
-if ( !isset( $_GET['edition_id'] ) || !isset( $_GET['post_id'] ) ) {
-  return;
+if ( !is_admin() || !is_user_logged_in() ) {
+  wp_redirect( home_url('/login') );
+}
+
+if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
+  wp_die( __( "<b>Error getting required params. Please check your url address.</b>", 'pressroom' ) );
 }
 
 $edition_id = (int)$_GET['edition_id'];
-$post_id = (int)$_GET['post_id'];
+
+if ( !isset( $_GET['post_id'] ) || !strlen( $_GET['post_id'] ) ) {
+  $linked_posts = TPL_Preview::init( $edition_id );
+  $concurrent_slides = min( count( $linked_posts ), CONCURRENT_PAGES );
+}
+else {
+  $linked_posts = array( (int)$_GET['post_id'] );
+  $concurrent_slides = 1;
+}
+
+if ( empty( $linked_posts ) ) {
+  wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
+  <li>Check if the edition with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
+}
 
 $edition = get_post( $edition_id );
 $edition_name = TPL_Utils::sanitize_string( $edition->post_title );
+$index_height = pr_get_option( 'pr-index-height' );
 
 ?>
 <!DOCTYPE html>
@@ -87,76 +109,34 @@ $edition_name = TPL_Utils::sanitize_string( $edition->post_title );
   <div id="sg-gen-container">
     <div id="sg-viewport">
       <div class="device">
-        <div class="swiper-container">
+        <div class="circle circle--left"><a class="arrow-left" href="#"></a></div>
+        <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
+        <div class="swiper-pages swiper-container" id="reader"
+          data-edition="<?php echo $edition_id; ?>"
+          data-conpages="<?php echo $concurrent_slides; ?>"
+          data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
           <div class="swiper-wrapper">
-            <div id="item-0" class="swiper-slide" data-hash="slide<?php echo $post_id; ?>"></div>
+            <?php
+            foreach ( $linked_posts as $post_id ):
+            ?>
+            <div data-post="<?php echo $post_id; ?>" class="swiper-slide" data-hash="item-<?php echo $post_id; ?>"></div>
+            <?php
+            endforeach;
+            ?>
           </div>
-          <div class="swiper-scrollbar"></div>
         </div>
+        <div class="pagination"></div>
       </div>
+    </div>
+    <div id="toc" style="height:<?php echo $index_height ?>px;display:none">
+      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe>
     </div>
   </div>
 </div>
 <script src="assets/js/jquery-2.0.3.min.js"></script>
 <script src="assets/js/idangerous.swiper.min.js"></script>
-<script src="assets/js/idangerous.swiper.hashnav.js"></script>
-<!--<script src="assets/js/iscroll.js"></script>-->
-<script type="text/javascript">
-  var prScroll;
-  var prSwiper;
-
-  function lazyLoad(){
-
-    return $.get('<?php echo admin_url( 'admin-ajax.php'); ?>', {
-      'post_id'     : <?php echo $post_id; ?>,
-      'edition_id'  : <?php echo $edition_id; ?>,
-      'action'      : 'preview_draw_page'
-    }, function(src) {
-      if (src) {
-        $('#item-0').html('<iframe height="100%" width="100%" frameborder="0" src="' + src + '"></iframe>');
-        prSwiper.resizeFix();
-      }
-    });
-  }
-
-  // function initScroll(index) {
-  //
-  //   if ( prScroll ) {
-  //       prScroll.destroy();
-  //   }
-  //
-  //   prScroll = new IScroll('#item-'+index, {
-  //     mouseWheel: true,
-  //     scrollbars: true,
-  //     interactiveScrollbars: true,
-  //     bounce: false,
-  //     preventDefault: false
-  //   });
-  // }
-
-  $(function() {
-
-    prSwiper = new Swiper(".swiper-container",{
-      mode: "horizontal",
-      loop: false,
-      simulateTouch: false,
-      grabCursor: false,
-      roundLengths: true,
-      calculateHeight: false,
-      paginationClickable: true,
-      keyboardControl: true,
-      hashNav: true,
-      speed : 500,
-      initialSlide: 0,
-      onFirstInit: function(swiper) {
-        lazyLoad();
-      },
-      onSlideChangeEnd: function(swiper) {
-        //initScroll(swiper.activeIndex);
-      },
-    });
-  });
-</script>
+<script src="assets/js/idangerous.swiper.hashnav.min.js"></script>
+<script src="assets/js/tpl.reader.js"></script>
 <script src="assets/js/ish_init.js"></script>
 </body>
 </html>

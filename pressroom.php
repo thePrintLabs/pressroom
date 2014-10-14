@@ -1,22 +1,22 @@
 <?php
 /**
-* Plugin Name: Pressroom Pro
-* Plugin URI:
-* Description: Wordpress Pressroom.
-* Version: 1.0
-* Author: ThePrintLabs
-* Author URI: http://www.theprintlabs.com
-* License: GPLv2
-*
-*   _____                                               _____
-*  |  __ \                                             |  __ \
-*  | |__) | __ ___  ___ ___ _ __ ___   ___  _ __ ___   | |__) | __ ___
-*  |  ___/ '__/ _ \/ __/ __| '__/ _ \ / _ \| '_ ` _ \  |  ___/ '__/ _ \
-*  | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
-*  |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
-*
-*  thePrintLabs Ltd. ©
-*/
+ * Plugin Name: Pressroom Pro
+ * Plugin URI:
+ * Description: Wordpress Pressroom.
+ * Version: 1.0
+ * Author: ThePrintLabs
+ * Author URI: http://www.theprintlabs.com
+ * License: GPLv2
+ *
+ *   _____                                               _____
+ *  |  __ \                                             |  __ \
+ *  | |__) | __ ___  ___ ___ _ __ ___   ___  _ __ ___   | |__) | __ ___
+ *  |  ___/ '__/ _ \/ __/ __| '__/ _ \ / _ \| '_ ` _ \  |  ___/ '__/ _ \
+ *  | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
+ *  |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
+ *
+ *  thePrintLabs Ltd. ©
+ */
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
@@ -93,9 +93,7 @@ class TPL_Pressroom
 	 */
 	public function register_post_connection() {
 
-		$types = array( 'post', 'page' );
-		$custom_types = $this->_load_custom_post_types();
-		$types = array_merge( $types, $custom_types );
+		$types = $this->get_allowed_post_types();
 
 		p2p_register_connection_type( array(
 				'name' 		=> P2P_EDITION_CONNECTION,
@@ -192,6 +190,19 @@ class TPL_Pressroom
 
     return $path;
   }
+
+	/*
+	 * Get all allowed post types
+	 * @return array
+	 */
+	public function get_allowed_post_types() {
+
+		$types = array( 'post', 'page' );
+		$custom_types = $this->_load_custom_post_types();
+		$types = array_merge( $types, $custom_types );
+
+		return $types;
+	}
 
 	/**
 	 * Determine if is add or edit page

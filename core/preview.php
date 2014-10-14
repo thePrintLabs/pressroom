@@ -4,6 +4,7 @@ class TPL_Preview {
 
   public function __construct() {
 
+    add_action( 'add_meta_boxes', array( $this, 'add_preview_metabox' ), 10 );
     add_action( 'wp_ajax_preview_draw_page', array( $this, 'draw_page' ), 10 );
   }
 
@@ -183,11 +184,53 @@ class TPL_Preview {
 
           $post_id = url_to_postid( $link );
           if ( $post_id ) {
-             $html = str_replace( $link, TPL_PLUGIN_URI . 'preview/edition.php?edition_id='.$edition_id.'#slide' . $post_id, $html );
+             $html = str_replace( $link, TPL_PLUGIN_URI . 'preview/edition.php?edition_id=' . $edition_id . '#slide' . $post_id, $html );
           }
         }
      }
-
      return $html;
+  }
+
+  /**
+   * Add preview metabox
+   *
+   * @return void
+   */
+  public function add_preview_metabox() {
+
+    global $tpl_pressroom;
+    $post_types = $tpl_pressroom->get_allowed_post_types();
+    foreach ( $post_types as $type ) {
+      add_meta_box( 'pr_preview_metabox', __( 'Preview', 'edition' ), array( $this, 'add_preview_metabox_callback' ), $type, 'side', 'low' );
+    }
+  }
+
+  /**
+   * Preview metabox callback print html box
+   *
+   * @echo
+   */
+  public function add_preview_metabox_callback( $post ) {
+
+    $editions = TPL_Edition::get_linked_editions( $post );
+    echo '<label for="post_status">' . __("Choose an edition:", 'pressroom') . '</label>
+    <div id="post-preview-select">
+    <select name="pr_prw_edition_id" id="pr_prw_edition_id">';
+    foreach ( $editions->posts as $edition ) {
+      echo '<option value="' . $edition->ID . '">' . $edition->post_title . '</option>';
+    }
+    echo '</select>
+    </div>
+    <hr/>
+    <button type="button" id="preview_post" target="_blank" class="button button-primary button-large">' . __( "Preview", "pressroom" ) . '</button>
+    <script type="text/javascript">
+    window.addEventListener("load", function() {
+    document.getElementById("preview_post").onclick = function(e){
+    var e = document.getElementById("pr_prw_edition_id"),
+    edition = e.options[e.selectedIndex].value,
+    post = ' . $post->ID . ';
+    window.open("' . TPL_PLUGIN_URI . 'preview/page.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
+    }, false);
+    </script>';
   }
 }

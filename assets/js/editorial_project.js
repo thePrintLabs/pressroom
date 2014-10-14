@@ -35,3 +35,7 @@ jQuery( ".form-table" ).delegate( ".remove-subscription", "click", function(e) {
   e.preventDefault();
   jQuery(this).parent().parent().remove();
 });
+
+jQuery(document).ready(function($){
+    jQuery('.tpl-color-picker').wpColorPicker();
+});

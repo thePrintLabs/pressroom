@@ -14,7 +14,7 @@ class TPL_Editorial_Project
       add_action( 'init', array( $this, 'add_editorial_project_taxonomy' ) );
       add_filter( 'manage_edit-' . TPL_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
       add_filter( 'manage_' . TPL_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
-      add_action( TPL_EDITORIAL_PROJECT . '_add_form_fields', array( $this, 'add_form_meta_fields' ) );
+      //add_action( TPL_EDITORIAL_PROJECT . '_add_form_fields', array( $this, 'add_form_meta_fields' ) );
       add_action( TPL_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
       add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
@@ -107,19 +107,19 @@ class TPL_Editorial_Project
     *
     * @echo
     */
-   public function add_form_meta_fields() {
-
-      echo '<div class="form-field">
-      <label for="term_meta[prefix_bundle_id]">Prefix bundle id</label>
-      <input type="text" name="term_meta[prefix_bundle_id]" id="term_meta[prefix_bundle_id]" value="">
-      <label for="term_meta[single_edition_prefix]">Single edition prefix</label>
-      <input type="text" name="term_meta[single_edition_prefix]" id="term_meta[single_edition_prefix]" value="">
-      <label for="term_meta[subscription_prefix]">Subscription prefix</label>
-      <input type="text" name="term_meta[subscription_prefix]" id="term_meta[subscription_prefix]" value="">
-      <label for="term_meta[subscription_type]">Subscription type</label>
-      <input type="text" name="term_meta[subscription_type]" id="term_meta[subscription_type]" value="">
-      </div>';
-   }
+  //  public function add_form_meta_fields() {
+  //
+  //     echo '<div class="form-field">
+  //     <label for="term_meta[prefix_bundle_id]">Prefix bundle id</label>
+  //     <input type="text" name="term_meta[prefix_bundle_id]" id="term_meta[prefix_bundle_id]" value="">
+  //     <label for="term_meta[single_edition_prefix]">Single edition prefix</label>
+  //     <input type="text" name="term_meta[single_edition_prefix]" id="term_meta[single_edition_prefix]" value="">
+  //     <label for="term_meta[subscription_prefix]">Subscription prefix</label>
+  //     <input type="text" name="term_meta[subscription_prefix]" id="term_meta[subscription_prefix]" value="">
+  //     <label for="term_meta[subscription_type]">Subscription type</label>
+  //     <input type="text" name="term_meta[subscription_type]" id="term_meta[subscription_type]" value="">
+  //     </div>';
+  //  }
 
    /**
     * Define the custom meta fields for new entry
@@ -134,7 +134,50 @@ class TPL_Editorial_Project
       $img_add = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAACdGdVrAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAOPAAADjwGKNpDpAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAAxQTFRF////AAAAAAAAAAAA+IwCTQAAAAN0Uk5TADhjOVJIxwAAACFJREFUCJljYGBgv8AAAhRRoaHRT0NDGf6DAYyCClLFBgAZCSHpoJBTcAAAAABJRU5ErkJggg435f5aefc9ece0446a6ae170863f50a3"/>';
       $img_remove = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAZCAYAAAArK+5dAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAO3AAADtwB+LUWtAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAA4SURBVEiJY/z//z8DLQETTU0ftWDUgqFhASMDA4MHrS2gaVYe+nEw9C2gfSoarQ9GLRi1gPYWAADB5Ae3h3/zOwAAAABJRU5ErkJgggafaa68760bfc367f77f3e9abf6847fcd"/>';
 
-      echo '<tr class="form-field">
+      echo '
+      <tr class="form-field">
+      <th scope="row" valign="top"><label>Orientation</label></th>
+      <td>
+      <input type="radio" name="term_meta[pr_orientation]" id="orientation_horizontal" value="horizontal" '.( esc_attr( $term_meta["pr_orientation"] ) == 'horizontal' ? "checked" : "").'><label for="orientation_horizontal">Horizontal</label>
+      <input type="radio" name="term_meta[pr_orientation]" id="orientation_vertical" value="vertical" '.( esc_attr( $term_meta["pr_orientation"] ) == 'vertical' ? "checked" : "").'><label for="orientation_vertical">Vertical</label>
+      <input type="radio" name="term_meta[pr_orientation]" id="orientation_both" value="both" '.( esc_attr( $term_meta["pr_orientation"] ) == 'both' ? "checked" : "").'><label for="orientation_both">Both</label>
+      </td>
+      </tr>
+      <tr>
+      <th scope="row" valign="top"><label for="zoomable">Zoomable</label></th>
+      <td>
+      <input type="checkbox" name="term_meta[pr_zoomable]" id="zoomable" '.( esc_attr( $term_meta["pr_zoomable"] ) == "on" ? "checked" : "").'>
+      </td>
+      </tr>
+      <tr>
+      <th scope="row" valign="top"><label for="color-picker">Body Background Color</label></th>
+      <td>
+      <input type="text" value="#eeeeee" class="tpl-color-picker" data-default-color="#ffffff" />
+      </td>
+      </tr>
+      <tr>
+      <th scope="row" valign="top"><label for="vertical-bounce">Vertical Bounce</label></th>
+      <td>
+      <input type="checkbox" name="term_meta[pr_verticle_bounce]" id="vertical-bounce" '.( esc_attr( $term_meta["pr_verticle_bounce"] ) == "on" ? "checked" : "").'>
+      </td>
+      </tr>
+      <tr>
+      <th scope="row" valign="top"><label for="index-bounce">Index bounce</label></th>
+      <td>
+      <input type="checkbox" name="term_meta[pr_index_bounce]" id="index-bounce" '.( esc_attr( $term_meta["pr_index_bounce"] ) == "on" ? "checked" : "").'>
+      </td>
+      </tr>
+      <tr class="form-field">
+      <th scope="row" valign="top"><label for="index-height">Index height</label></th>
+      <td><input type="number" name="term_meta[pr_index_height]" id="index-height" value="' . ( esc_attr( $term_meta["pr_index_height"] ) ? esc_attr( $term_meta["pr_index_height"] ) : "" ) . '"></td>
+      </tr>
+      <tr>
+      <th scope="row" valign="top"><label for="media-autoplay">Media autoplay</label></th>
+      <td>
+      <input type="checkbox" name="term_meta[pr_media_autoplay]" id="media-autoplay" '.( esc_attr( $term_meta["pr_media_autoplay"] ) == "on" ? "checked" : "").'>
+      </td>
+      </tr>
+      <tr class="form-field">
       <th scope="row" valign="top"><label for="prefix_bundle_id">Prefix bundle id</label></th>
       <td><input type="text" name="term_meta[prefix_bundle_id]" id="term_meta[prefix_bundle_id]" value="' . ( esc_attr( $term_meta["prefix_bundle_id"] ) ? esc_attr( $term_meta["prefix_bundle_id"] ) : "" ) . '"></td>
       </tr>
@@ -151,7 +194,7 @@ class TPL_Editorial_Project
          $i = 0;
          foreach ( $subscription_types as $field ) {
 
-            echo '<tr class="form-field tpl_repeater" id="tpl_repeater" data-index="'.$i.'">
+            echo '<tr class="form-field pr_repeater" id="pr_repeater" data-index="'.$i.'">
             <th scope="row" valign="top"><label for="subscription_type">' . ( !$i ? 'Subscription type' : '') . '</label></th>
             <td><input type="text" name="term_meta[subscription_type][' . $i . ']" id="term_meta[subscription_type]" value="' . ( esc_attr( $field ) ? esc_attr( $field ) : "" ) . '"></td>
             <td>' . ( !$i ? '<a href="#" id="add-subscription">' . $img_add : '<a href="#" id="remove-subscription" class="remove-subscription">' . $img_remove ) . '</a></td>
@@ -160,7 +203,7 @@ class TPL_Editorial_Project
          }
       }
       else {
-         echo '<tr class="form-field tpl_repeater" id="tpl_repeater" data-index="0">
+         echo '<tr class="form-field pr_repeater" id="pr_repeater" data-index="0">
          <th scope="row" valign="top"><label for="subscription_type">Subscription type</label></th>
          <td><input type="text" name="term_meta[subscription_type][0]" id="term_meta[subscription_type]" value="' . ( esc_attr( $term_meta["subscription_type"] ) ? esc_attr( $term_meta["subscription_type"] ) : "" ) . '"></td>
          <td><a href="#" id="add-subscription">' . $img_add . '</a></td>
@@ -179,9 +222,9 @@ class TPL_Editorial_Project
          return;
       }
 
+
       $term_meta = get_option( 'taxonomy_term_' . $term_id );
       $term_keys = array_keys( $_POST['term_meta'] );
-
       foreach ( $term_keys as $key ) {
          if ( isset( $_POST['term_meta'][$key] ) ) {
             if ( $key == 'subscription_type' ) {
@@ -195,6 +238,22 @@ class TPL_Editorial_Project
          }
       }
 
+      if ( !isset( $_POST['term_meta']['pr_zoomable'] ) ) {
+         $term_meta['pr_zoomable'] = '';
+      }
+
+      if ( !isset( $_POST['term_meta']['pr_verticle_bounce'] ) ) {
+         $term_meta['pr_verticle_bounce'] = '';
+      }
+
+      if ( !isset( $_POST['term_meta']['pr_index_bounce'] ) ) {
+         $term_meta['pr_index_bounce'] = '';
+      }
+
+      if ( !isset( $_POST['term_meta']['pr_media_autoplay'] ) ) {
+         $term_meta['pr_media_autoplay'] = '';
+      }
+
       update_option( 'taxonomy_term_' . $term_id, $term_meta );
    }
 
@@ -202,8 +261,13 @@ class TPL_Editorial_Project
     * Add required scripts
     */
    public function add_form_scripts() {
-      wp_register_script( 'editorial_project', TPL_PLUGIN_ASSETS . '/js/editorial_project.js', array( 'jquery' ), '1.0', true );
+      wp_register_script( 'editorial_project', TPL_PLUGIN_ASSETS . '/js/editorial_project.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
       wp_enqueue_script( 'editorial_project' );
+
+       // Css rules for Color Picker
+       wp_enqueue_style( 'wp-color-picker' );
+
+
    }
 }
 

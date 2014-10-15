@@ -88,8 +88,8 @@ $index_height = pr_get_option( 'pr-index-height' );
           <li class="sg-nav-global">
             <a class="sg-acc-handle s-menu">iPad</a>
             <ol class="sg-acc-panel sg-sub-nav">
-              <li class="tdevice"><a data-width="1024" data-height="768" data-agent="ipad" href="#">portrait</a></li>
-              <li class="tdevice"><a data-width="768" data-height="1024" data-agent="ipad" href="#">landscape</a></li>
+              <li class="tdevice"><a data-width="768" data-height="1024" data-agent="ipad" href="#">portrait</a></li>
+              <li class="tdevice"><a data-width="1024" data-height="768" data-agent="ipad" href="#">landscape</a></li>
             </ol>
           </li>
         </ol>

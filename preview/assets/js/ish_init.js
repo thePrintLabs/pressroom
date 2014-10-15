@@ -1,6 +1,7 @@
 (function(w){
 	var sw = document.body.clientWidth, //Viewport Width
 		sh = $(window).height() - $('.sg-header').height(), //Viewport Width
+		userAgent = navigator.userAgent,
 		minViewportWidth = 320, //Minimum Size for Viewport
 		maxViewportWidth = 2480, //Maxiumum Size for Viewport
 		viewportResizeHandleWidth = 0, //Width of the viewport drag-to-resize handle
@@ -44,14 +45,10 @@
 			sw = document.body.clientWidth;
 			sh = $(window).height() - $('.sg-header').height();
 			fixPagesHeight();
-			sizeFull();
-			$( '.swiper-slide' ).each(function(){
-				var st = $(this).data("status");
-				if ( st == "loaded" ) {
-					$iframe = $(this).children('iframe');
-					$iframe.attr('src', $iframe.attr('src'));
-				}
+			navigator.__defineGetter__('userAgent', function(){
+				return userAgent;
 			});
+			sizeFull();
 		});
 
 		$('#resize-submit').on("click", function(e){
@@ -70,7 +67,7 @@
 				$('#sg-size-height').removeClass('error');
 			}
 			navigator.__defineGetter__('userAgent', function(){
-				return 'custom';
+				return userAgent;
 			});
 			sizeiframe($w, true, $h);
 		});

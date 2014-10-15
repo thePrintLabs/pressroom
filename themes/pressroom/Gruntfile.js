@@ -71,7 +71,7 @@ module.exports = function(grunt) {
           'assets/bower_components/backgroundCheck/background-check.js',
           'assets/bower_components/FitVids/jquery.fitvids.js',
           'assets/bower_components/fastclick/lib/fastclick.js',
-          'assets/bower_components/skrollr/dist/skrollr.min.js',
+          // 'assets/bower_components/skrollr/dist/skrollr.min.js',
           'assets/js/source/main.js'
           ],
           'assets/js/toc.min.js': [

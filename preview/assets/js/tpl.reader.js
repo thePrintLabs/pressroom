@@ -1,6 +1,8 @@
 var prSwiper;
 function fixPagesHeight(){
   $('.swiper-pages').css({ height: $(window).height() - $('.sg-header').height() });
+  prSwiper.reInit();
+  prSwiper.resizeFix();
 }
 
 $(function(){
@@ -18,12 +20,16 @@ $(function(){
       }, function(s) {
         if (s) {
           var $iframe = $("<iframe>", {src: s, "height": "100%", "width": "100%", "frameborder": 0});
-          $item.data("status", "loaded").append($iframe).hide().fadeIn(1000, function(){
-            prSwiper.resizeFix();
-
+          $iframe.load(function(){
             var $head = $iframe.contents().find("head");
             $head.append($('<style>body{-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}</style>'));
+            prSwiper.resizeFix();
+            console.log( 'User Agent: ' + navigator.userAgent );
           });
+          $item.data("status", "loaded").append($iframe);
+          //.hide().fadeIn(1000, function(){
+            //
+          //});
         }
       }).then(function(){
         if (i < m - 1 ) {
@@ -132,6 +138,5 @@ $(function(){
     }
   }
 
-  $(window).on('resize',function(){fixPagesHeight()});
   fixPagesHeight();
 });

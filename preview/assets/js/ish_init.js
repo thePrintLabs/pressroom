@@ -1,40 +1,40 @@
 (function(w){
 	var sw = document.body.clientWidth, //Viewport Width
-		sh = Math.max( window.innerHeight, document.body.clientHeight ), //Viewport Width
-		minViewportWidth = 240, //Minimum Size for Viewport
-		maxViewportWidth = 2600, //Maxiumum Size for Viewport
+		sh = $(window).height() - $('.sg-header').height(), //Viewport Width
+		minViewportWidth = 320, //Minimum Size for Viewport
+		maxViewportWidth = 2480, //Maxiumum Size for Viewport
 		viewportResizeHandleWidth = 0, //Width of the viewport drag-to-resize handle
 		$sgWrapper = $('#sg-gen-container'), //Wrapper around viewport
 		$sgViewport = $('#sg-viewport'), //Viewport element
 		$sizeWidth = $('.sg-size-px'), //Px size input element in toolbar
 		$sizeHeight = $('.sg-size-height'), //Em size input element in toolbar
 		$bodySize = 16, //Body size of the document
-		fullMode = false;
+		fullMode = true;
 
-		$(w).resize(function(){ //Update dimensions on resize
+		//Update dimensions on resize
+		$(w).resize(function() {
 			sw = document.body.clientWidth;
 			sh = Math.max( window.innerHeight, document.body.clientHeight );
-			if(fullMode == true) {
+			if (fullMode == true) {
 				sizeFull();
 			}
+
+			fixPagesHeight();
 		});
 
-		/* Nav Active State */
-		function changeActiveState(link) {
-			var $activeLink = link;
-			$('.sg-size-options a').removeClass('active');
-
-			if(link) {
-				$activeLink.addClass('active');
-			}
-		}
-
 		/* Pattern Lab accordion dropdown */
-		$('.sg-acc-handle').hover(function(e){
-			var $this = $(this),
-				$panel = $this.next('.sg-acc-panel');
+		$('.s-menu').click(function(e){
 			e.preventDefault();
-			$this.toggleClass('active');
+			var $panel = $(this).next('.sg-acc-panel');
+			$( ".s-menu, .sg-acc-panel" ).siblings().removeClass('active');
+			$(this).toggleClass('active');
+			$panel.toggleClass('active');
+		});
+
+		$('.o-menu').hover(function(e){
+			e.preventDefault();
+			var $panel = $(this).next('.sg-acc-panel');
+			$(this).toggleClass('active');
 			$panel.toggleClass('active');
 		});
 
@@ -45,13 +45,36 @@
 			sh = $(window).height() - $('.sg-header').height();
 			fixPagesHeight();
 			sizeFull();
+			$( '.swiper-slide' ).each(function(){
+				var st = $(this).data("status");
+				if ( st == "loaded" ) {
+					$iframe = $(this).children('iframe');
+					$iframe.attr('src', $iframe.attr('src'));
+				}
+			});
 		});
 
-		//Size Trigger
-		$('#sg-size-toggle').on("click", function(e){
+		$('#resize-submit').on("click", function(e){
 			e.preventDefault();
-			$(this).parents('ul').toggleClass('active');
+			var $w = $('#sg-size-width').val(), $h = $('#sg-size-height').val();
+			if( !$w.length || !(Math.floor($w) == $w && $.isNumeric($w)) ) {
+				$('#sg-size-width').addClass('error');
+				return;
+			} else {
+				$('#sg-size-width').removeClass('error');
+			}
+			if( !$h.length || !(Math.floor($h) == $h && $.isNumeric($h)) ) {
+				$('#sg-size-height').addClass('error');
+				return;
+			} else {
+				$('#sg-size-height').removeClass('error');
+			}
+			navigator.__defineGetter__('userAgent', function(){
+				return 'custom';
+			});
+			sizeiframe($w, true, $h);
 		});
+
 
 		$('.tdevice a').on("click", function(e){
 			e.preventDefault();
@@ -61,7 +84,7 @@
     		return agent;
 			});
 
-			changeActiveState($(this));
+			$(this).addClass('active');
 			theight = $(this).data('height');
 			twidth = $(this).data('width');
 			sizeiframe(twidth, true, theight);
@@ -69,117 +92,66 @@
 
 		function sizeFull() {
 			sizeiframe(sw, false, sh);
-			updateSizeReading(sw);
 		}
 
-	//Pixel width input
-	$sizeWidth.on('keydown', function(e){
-		var val = Math.floor($(this).val());
+		//Resize the viewport
+		//'size' is the target size of the viewport
+		//'animate' is a boolean for switching the CSS animation on or off. 'animate' is true by default, but can be set to false for things like nudging and dragging
 
-		if(e.keyCode === 38) { //If the up arrow key is hit
-			val++;
-			sizeiframe(val,false);
-		} else if(e.keyCode === 40) { //If the down arrow key is hit
-			val--;
-			sizeiframe(val,false);
-		} else if(e.keyCode === 13) { //If the Enter key is hit
-			e.preventDefault();
-			sizeiframe(val); //Size Iframe to value of text box
-			$(this).blur();
-		}
-		changeActiveState();
-	});
+		function sizeiframe(size,animate, height) {
+			var width;
+			size = (size ? size : $('sg-size-px').value);
+			if(size>maxViewportWidth) { //If the entered size is larger than the max allowed viewport size, cap value at max vp size
+				width = maxViewportWidth;
+			} else if(size<minViewportWidth) { //If the entered size is less than the minimum allowed viewport size, cap value at min vp size
+				width = minViewportWidth;
+			} else {
+				width = size;
+			}
 
-	//Pixel width input
-	$sizeHeight.on('keydown', function(e){
-		var val = Math.floor($(this).val());
+			//Conditionally remove CSS animation class from viewport
+			if(animate===false) {
+				$sgWrapper.removeClass("vp-animate");
+				$sgViewport.removeClass("vp-animate"); //If aninate is set to false, remove animate class from viewport
+			} else {
+				$sgWrapper.addClass("vp-animate");
+				$sgViewport.addClass("vp-animate");
+			}
 
-		if(e.keyCode === 38) { //If the up arrow key is hit
-			val++;
-			sizeiframe('',false, val);
-		} else if(e.keyCode === 40) { //If the down arrow key is hit
-			val--;
-			sizeiframe('',false, val);
-		} else if(e.keyCode === 13) { //If the Enter key is hit
-			e.preventDefault();
-			sizeiframe('',false, val); //Size Iframe to value of text box
-			$(this).blur();
-		}
-		changeActiveState();
-	});
+			$sgWrapper.width(width); //Resize viewport wrapper to desired size + size of drag resize handler
+			$sgViewport.width(width); //Resize viewport to desired size
 
-	$sizeWidth.on('keyup', function(){
-		var val = Math.floor($(this).val());
-		updateSizeReading(val,'px','updateEmInput');
-	});
+			$sgWrapper.height(height);
+			$sgViewport.height(height);
 
+			updateSizeReading(width, height); //Update values in toolbar
 
-	//Resize the viewport
-	//'size' is the target size of the viewport
-	//'animate' is a boolean for switching the CSS animation on or off. 'animate' is true by default, but can be set to false for things like nudging and dragging
-
-	function sizeiframe(size,animate, height) {
-		var theSize;
-
-		size = (size ? size : $('sg-size-px').value);
-
-		if(size>maxViewportWidth) { //If the entered size is larger than the max allowed viewport size, cap value at max vp size
-			theSize = maxViewportWidth;
-		} else if(size<minViewportWidth) { //If the entered size is less than the minimum allowed viewport size, cap value at min vp size
-			theSize = minViewportWidth;
-		} else {
-			theSize = size;
+			$( '.swiper-slide' ).each(function(){
+				var st = $(this).data("status");
+				if ( st == "loaded" ) {
+					$iframe = $(this).children('iframe');
+					$iframe.attr('src', $iframe.attr('src'));
+				}
+			});
 		}
 
-		//Conditionally remove CSS animation class from viewport
-		if(animate===false) {
-			$sgWrapper.removeClass("vp-animate");
-			$sgViewport.removeClass("vp-animate"); //If aninate is set to false, remove animate class from viewport
-		} else {
-			$sgWrapper.addClass("vp-animate");
-			$sgViewport.addClass("vp-animate");
+		//Update Pixel and Em inputs
+		//'size' is the input number
+		//'unit' is the type of unit: either px or em. Default is px. Accepted values are 'px' and 'em'
+		//'target' is what inputs to update. Defaults to both
+		function updateSizeReading(width, height) {
+			$('#sg-size-width').val(width);
+			$('#sg-size-height').val(height);
 		}
 
-		$sgWrapper.width(theSize); //Resize viewport wrapper to desired size + size of drag resize handler
-		$sgViewport.width(theSize); //Resize viewport to desired size
+		// on "mouseup" we unbind the "mousemove" event and hide the cover again
+		$('body').mouseup(function(event) {
+			$('#sg-cover').unbind('mousemove');
+			$('#sg-cover').css("display","none");
+		});
 
-		$sgWrapper.height(height);
-		$sgViewport.height(height);
-
-		updateSizeReading(theSize); //Update values in toolbar
-
-		setInterval(function(){
-			prSwiper.reInit();
-			prSwiper.resizeFix();
-		}, 1000);
-	}
-
-	//Update Pixel and Em inputs
-	//'size' is the input number
-	//'unit' is the type of unit: either px or em. Default is px. Accepted values are 'px' and 'em'
-	//'target' is what inputs to update. Defaults to both
-	function updateSizeReading(size,unit,target) {
-		if(unit=='em') { //If size value is in em units
-			emSize = size;
-			pxSize = Math.floor(size*$bodySize);
-		} else { //If value is px or absent
-			pxSize = size;
-			emSize = size/$bodySize;
-		}
-	}
-
-	// on "mouseup" we unbind the "mousemove" event and hide the cover again
-	$('body').mouseup(function(event) {
-		$('#sg-cover').unbind('mousemove');
-		$('#sg-cover').css("display","none");
-	});
-
-	// capture the viewport width that was loaded and modify it so it fits with the pull bar
-	var origViewportWidth = $sgViewport.width();
-	$sgWrapper.width(origViewportWidth);
-	// $sgViewport.width(origViewportWidth - 14);
-	$sgViewport.width(origViewportWidth);
-	updateSizeReading($sgViewport.width());
-
-
+		// capture the viewport width that was loaded and modify it so it fits with the pull bar
+		$sgWrapper.width($sgViewport.width());
+		$sgWrapper.height($sgViewport.height());
+		updateSizeReading($sgViewport.width(), $sgViewport.height());
 })(this);

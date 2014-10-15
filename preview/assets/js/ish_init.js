@@ -55,16 +55,16 @@
 			e.preventDefault();
 			var $w = $('#sg-size-width').val(), $h = $('#sg-size-height').val();
 			if( !$w.length || !(Math.floor($w) == $w && $.isNumeric($w)) ) {
-				$('#sg-size-width').addClass('error');
+				$('#sg-size-width').addClass('input-error');
 				return;
 			} else {
-				$('#sg-size-width').removeClass('error');
+				$('#sg-size-width').removeClass('input-error');
 			}
 			if( !$h.length || !(Math.floor($h) == $h && $.isNumeric($h)) ) {
-				$('#sg-size-height').addClass('error');
+				$('#sg-size-height').addClass('input-error');
 				return;
 			} else {
-				$('#sg-size-height').removeClass('error');
+				$('#sg-size-height').removeClass('input-error');
 			}
 			navigator.__defineGetter__('userAgent', function(){
 				return userAgent;

@@ -58,6 +58,11 @@ body {
   text-transform: none;
 }
 
+.input-error {
+  border: 1px solid #CF000F !important;
+  background: #D64541 !important;
+}
+
 #resize-submit {
   background: rgba(255, 255, 255, 0.05);
   color: #fff;

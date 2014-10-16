@@ -19,7 +19,10 @@
 			if (fullMode == true) {
 				sizeFull();
 			}
+			fixPagesHeight();
+		});
 
+		$sgViewport.bind("transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd", function(){
 			fixPagesHeight();
 		});
 
@@ -44,11 +47,11 @@
 			e.preventDefault();
 			sw = document.body.clientWidth;
 			sh = $(window).height() - $('.sg-header').height();
-			fixPagesHeight();
 			navigator.__defineGetter__('userAgent', function(){
 				return userAgent;
 			});
 			sizeFull();
+			fixPagesHeight();
 		});
 
 		$('#resize-submit').on("click", function(e){
@@ -71,8 +74,7 @@
 			});
 			sizeiframe($w, true, $h);
 		});
-
-
+		
 		$('.tdevice a').on("click", function(e){
 			e.preventDefault();
 			fullMode = false;
@@ -122,14 +124,8 @@
 			$sgViewport.height(height);
 
 			updateSizeReading(width, height); //Update values in toolbar
-
-			$( '.swiper-slide' ).each(function(){
-				var st = $(this).data("status");
-				if ( st == "loaded" ) {
-					$iframe = $(this).children('iframe');
-					$iframe.attr('src', $iframe.attr('src'));
-				}
-			});
+			//fixPagesHeight();
+			//reloadPages();
 		}
 
 		//Update Pixel and Em inputs
@@ -139,6 +135,16 @@
 		function updateSizeReading(width, height) {
 			$('#sg-size-width').val(width);
 			$('#sg-size-height').val(height);
+		}
+
+		function reloadPages() {
+			$( '.swiper-slide' ).each(function() {
+				var st = $(this).data("status");
+				if ( st == "loaded" ) {
+					$iframe = $(this).children('iframe');
+					$iframe.attr('src', $iframe.attr('src'));
+				}
+			});
 		}
 
 		// on "mouseup" we unbind the "mousemove" event and hide the cover again

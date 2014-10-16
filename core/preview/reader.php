@@ -125,22 +125,16 @@ $index_height = pr_get_option( 'pr-index-height' );
   <div id="sg-cover"></div>
   <div id="sg-gen-container">
     <div id="sg-viewport">
-      <div class="device">
-        <div class="circle circle--left"><a class="arrow-left" href="#"></a></div>
-        <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
-        <div class="swiper-pages swiper-container" id="reader"
-          data-edition="<?php echo $edition_id; ?>"
-          data-conpages="<?php echo $concurrent_slides; ?>"
-          data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
-          <div class="swiper-wrapper">
-            <?php
-            foreach ( $linked_posts as $post ):
-            ?>
-            <div data-post="<?php echo $post->ID; ?>" class="swiper-slide" data-hash="item-<?php echo $post->ID; ?>"></div>
-            <?php
-            endforeach;
-            ?>
-          </div>
+      <div class="circle circle--left"><a class="arrow-left" href="#"></a></div>
+      <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
+      <div class="swiper-pages swiper-container" id="reader"
+        data-edition="<?php echo $edition_id; ?>"
+        data-conpages="<?php echo $concurrent_slides; ?>"
+        data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
+        <div class="swiper-wrapper">
+          <?php foreach ( $linked_posts as $post ): ?>
+          <div data-post="<?php echo $post->ID; ?>" class="swiper-slide" data-hash="item-<?php echo $post->ID; ?>"></div>
+          <?php endforeach; ?>
         </div>
       </div>
     </div>

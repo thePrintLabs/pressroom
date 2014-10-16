@@ -9,7 +9,7 @@ body {
   padding: 0;
 }
 
-.device .circle {
+#sg-viewport .circle {
   position: absolute;
   top: 50%;
   z-index: 100;
@@ -20,16 +20,16 @@ body {
   background-color: rgba(255, 255, 255, .4);
 }
 
-.device .circle--right {
+#sg-viewport .circle--right {
   right: 1rem;
 }
 
-.device .circle--left {
+#sg-viewport .circle--left {
   left: 1rem;
 }
 
-.device .circle--right,
-.device .circle--left {
+#sg-viewport .circle--right,
+#sg-viewport .circle--left {
     -webkit-transition: all 300ms;
      -moz-transition: all 300ms;
       -ms-transition: all 300ms;
@@ -37,13 +37,13 @@ body {
           transition: all 300ms;
 }
 
-.device .circle--right:hover,
-.device .circle--left:hover {
+#sg-viewport .circle--right:hover,
+#sg-viewport .circle--left:hover {
   background-color: rgba(255, 255, 255, .7);
 }
 
-.device .arrow-left,
-.device .arrow-right {
+#sg-viewport .arrow-left,
+#sg-viewport .arrow-right {
   display: block;
   width: 44px;
   height: 44px;
@@ -52,10 +52,10 @@ body {
   background-size: 18px 90px;
 }
 
-.device .arrow-left {
+#sg-viewport .arrow-left {
   background-position: center top;
 }
-.device .arrow-right {
+#sg-viewport .arrow-right {
   background-position: center bottom;
 }
 
@@ -110,5 +110,3 @@ body {
 #sg-gen-container {
    overflow: hidden;
 }
-
-

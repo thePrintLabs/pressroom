@@ -43,8 +43,9 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
   if ( !empty( $linked_posts_id) ) {
 
+    $post_types = array_merge( array( 'post', 'page' ), pr_get_option( 'custom_post_type' ) );
     $edition_query = new WP_Query( array(
-      'post_type'           => 'any',
+      'post_type'           => $post_types,
       'post_status'         => 'any',
       'post__in'            => $linked_posts_id,
       'orderby'             => 'post__in',

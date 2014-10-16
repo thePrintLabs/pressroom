@@ -1260,15 +1260,22 @@ body {
 #toc .swiper-slide-active {
   border-style: solid;
   border-color: #ccc;
-  border-width: 0px 1px 0 1px;
+  border-width: 0px 1px 0 0px;
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/pages\/_toc\.scss}line{font-family:\0000337}}
+#toc .swiper-slide-active + .swiper-slide-visible {
+  border-style: solid;
+  border-color: #ccc;
+  border-width: 0px 1px 0 0px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/pages\/_toc\.scss}line{font-family:\0000343}}
 .toc__item.cover__image {
   min-height: 100vh;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/pages\/_toc\.scss}line{font-family:\0000341}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/pages\/_toc\.scss}line{font-family:\0000347}}
 .toc__title {
   padding: 1rem 2rem;
   margin: 0;

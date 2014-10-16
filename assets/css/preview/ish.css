@@ -97,7 +97,7 @@ body {
 
 .sg-acc-panel {
   max-height: 0;
-  min-width: 10em;
+/*  min-width: 10em;*/
   background: #222222;
   -webkit-transition: max-height 0.5s ease-out;
   -moz-transition: max-height 0.5s ease-out;
@@ -420,7 +420,7 @@ body {
 }
 .sg-acc-panel {
     max-height: 0;
-    min-width: 10em;
+/*    min-width: 10em;*/
     overflow: hidden;
     transition: max-height 0.1s ease-out 0s;
 }
@@ -465,17 +465,17 @@ body {
     float: left;
 }
 @media all and (min-width: 48em) {
-.sg-control > li {
+  .sg-control > li {
     border-bottom: 0 none;
     border-left: 1px solid rgba(255, 255, 255, 0.05);
-}
+  }
 }
 .sg-control .sg-input {
     padding: 0.1em;
     transition: all 0.2s ease-out 0s;
     border: 1px solid #444;
-    margin-left: .3em;
-    margin-right: 1.7em;
+    margin-left: 0;
+    margin-right: 6px;
 }
 .sg-control .sg-input:active, .sg-control .sg-input:focus {
     background: none repeat scroll 0 0 #3F3F3F;

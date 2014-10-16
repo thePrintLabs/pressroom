@@ -75,17 +75,23 @@ body {
   position: absolute;
   left: 0;
   text-align: center;
-  bottom:5px;
+  bottom:9px;
   width: 100%;
-  z-index: 10;
+/*  z-index: 10;*/
 }
+
+.dots {
+  display: inline-block;
+}
+
+
 .swiper-pagination-switch {
   display: inline-block;
   width: 10px;
   height: 10px;
   border-radius: 10px;
-  background: #999;
-  box-shadow: 0px 1px 2px #555 inset;
+  background: #5F5F5F;
+/*  box-shadow: 0px 1px 2px #555 inset;*/
   margin: 0 3px;
   cursor: pointer;
 }
@@ -104,3 +110,5 @@ body {
 #sg-gen-container {
    overflow: hidden;
 }
+
+

@@ -31,7 +31,13 @@
 #toc .swiper-slide-active {
 	border-style: solid;
 	border-color: #ccc;
-	border-width: 0px 1px 0 1px;
+	border-width: 0px 1px 0 0px;
+}
+
+#toc .swiper-slide-active + .swiper-slide-visible {
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 0px 1px 0 0px;
 }
 
 .toc__item.cover__image {

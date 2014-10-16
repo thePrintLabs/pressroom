@@ -51,7 +51,7 @@ $(function(){
 
   prSwiper = new Swiper(".swiper-pages", {
     mode: "horizontal",
-    pagination: '.pagination',
+    pagination: '.dots',
     loop: false,
     simulateTouch: false,
     grabCursor: false,

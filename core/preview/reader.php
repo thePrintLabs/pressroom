@@ -50,14 +50,20 @@ $index_height = pr_get_option( 'pr-index-height' );
 <header class="sg-header" role="banner">
   <a class="sg-nav-toggle" href="#sg-nav-container"><span class="icon-menu"></span>Menu</a>
   <div id="sg-nav-container" class="sg-nav-container">
+    <div class="pagination">
+      <div class="dots"></div>
+    </div>
     <ol class="sg-nav">
       <li>
         <a class="logo" title="PressRoom">PressRoom</a>
       </li>
+      <li>
+        <a id="fire-toc" href="#" title="Open toc bar">Toc</a>
+      </li>
       <li id="phone" >
         <a class="sg-acc-handle group-device o-menu" title="iPhone">Devices</a>
         <ol class="sg-acc-panel">
-					<li class="sg-nav-global">
+          <li class="sg-nav-global">
             <a class="sg-acc-handle s-menu">iPhone 3/4</a>
             <ol class="sg-acc-panel sg-sub-nav">
               <li class="tdevice"><a data-width="320" data-height="480" data-agent="iphone" href="#">portrait</a></li>
@@ -95,10 +101,7 @@ $index_height = pr_get_option( 'pr-index-height' );
         </ol>
       </li>
       <li id="desktop" >
-        <a id="reset" class="sg-acc-handle group-device" data-agent="desktop" title="Desktop">Fullscreen</a>
-      </li>
-      <li>
-        <a id="fire-toc" href="#" title="Open toc bar">Open Toc</a>
+        <a id="reset" class="sg-acc-handle group-device" data-agent="desktop" title="Desktop">Reset</a>
       </li>
     <ol>
     <div class="sg-controls" id="sg-controls">
@@ -107,9 +110,9 @@ $index_height = pr_get_option( 'pr-index-height' );
           <li class="sg-size">
             <div class="sg-current-size">
               <form id="sg-form">
-                Width <input type="text" id="sg-size-width" class="sg-input sg-size-px" value="">
-                Height <input type="text" id="sg-size-height" class="sg-input sg-size-height" value="">
-                <button type="button" id="resize-submit">Resize</button>
+                W <input type="text" id="sg-size-width" class="sg-input sg-size-px" value="">
+                H <input type="text" id="sg-size-height" class="sg-input sg-size-height" value="">
+                <button type="button" id="resize-submit">Apply</button>
               </form>
             </div>
           </li>
@@ -139,7 +142,6 @@ $index_height = pr_get_option( 'pr-index-height' );
             ?>
           </div>
         </div>
-        <div class="pagination"></div>
       </div>
     </div>
     <div id="toc" style="height:<?php echo $index_height ?>px;display:none">

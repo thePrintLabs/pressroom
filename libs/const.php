@@ -14,6 +14,7 @@ define( "TPL_PREVIEW_DIR", TPL_TMP_DIR . 'preview/' );
 define( "TPL_SHELF_DIR", TPL_API_DIR . 'shelf/' );
 
 define( "TPL_PLUGIN_URI", plugin_dir_url(TPL_LIBS_PATH) );
+define( "TPL_CORE_URI", TPL_PLUGIN_URI . 'core/' );
 define( "TPL_SHELF_URI", TPL_PLUGIN_URI . 'api/shelf/' );
 define( "TPL_PLUGIN_ASSETS", TPL_PLUGIN_URI. 'assets/' );
 define( "TPL_HPUB_URI", TPL_PLUGIN_URI . 'api/hpub/' );

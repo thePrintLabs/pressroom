@@ -32,7 +32,7 @@ require_once( TPL_CORE_PATH . 'edition/editorial_project.php' );
 require_once( TPL_CORE_PATH . 'press_list.php' );
 require_once( TPL_CORE_PATH . 'theme.php' );
 require_once( TPL_CORE_PATH . 'packager/packager.php' );
-require_once( TPL_CORE_PATH . 'preview.php' );
+require_once( TPL_CORE_PATH . 'preview/preview.php' );
 
 require_once( TPL_CORE_PATH . 'api.php' );
 

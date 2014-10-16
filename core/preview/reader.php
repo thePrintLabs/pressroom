@@ -1,6 +1,6 @@
 <?php
 const CONCURRENT_PAGES = 3;
-require_once('../../../../wp-load.php');
+require_once( '../../../../../wp-load.php' );
 if ( !defined( 'WP_ADMIN' ) ) {
   define( 'WP_ADMIN', true );
 }
@@ -41,10 +41,10 @@ $index_height = pr_get_option( 'pr-index-height' );
   <title>Pressroom - Preview</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../assets/css/reset.css">
-  <link rel="stylesheet" href="assets/css/ish.css">
-  <link rel="stylesheet" type="text/css" href="assets/css/preview.css" />
-  <link rel="stylesheet" type="text/css" href="assets/css/idangerous.swiper.css" />
+  <link rel="stylesheet" href="../../assets/css/reset.css">
+  <link rel="stylesheet" href="../../assets/css/preview/ish.css">
+  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/preview.css" />
+  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/idangerous.swiper.css" />
 </head>
 <body>
 <header class="sg-header" role="banner">
@@ -147,10 +147,10 @@ $index_height = pr_get_option( 'pr-index-height' );
     </div>
   </div>
 </div>
-<script src="assets/js/jquery-2.0.3.min.js"></script>
-<script src="assets/js/idangerous.swiper.min.js"></script>
-<script src="assets/js/idangerous.swiper.hashnav.min.js"></script>
-<script src="assets/js/tpl.reader.js"></script>
-<script src="assets/js/ish_init.js"></script>
+<script src="../../assets/js/preview/jquery-2.0.3.min.js"></script>
+<script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
+<script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
+<script src="../../assets/js/preview/tpl.reader.js"></script>
+<script src="../../assets/js/preview/ish_init.js"></script>
 </body>
 </html>

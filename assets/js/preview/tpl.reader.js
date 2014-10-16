@@ -123,6 +123,23 @@ $(function(){
     $( "#toc" ).slideToggle('slow', function(){ $('#fire-toc').html( $("#toc").is(":hidden") ? 'Open Toc' : 'Close Toc');});
   });
 
+  $(window).on('hashchange', function(e){
+    var h = document.location.hash;
+    if (h.match("^#toc-")) {
+      h = h.replace('#toc-', 'item-');
+      if (!h) return;
+      for (var i = 0; i < prSwiper.slides.length; i++) {
+        var slide = prSwiper.slides[i];
+        var slideHash = slide.data('hash');
+        if (slideHash === h && slide.getData('looped') !== true) {
+          var index = slide.index();
+          if (prSwiper.params.loop) index = index - prSwiper.loopedSlides;
+          prSwiper.swipeTo(index, prSwiper.speed);
+        }
+      }
+    }
+  });
+
   function getNotLoadedSlide(item, d, i, m) {
     if ( i == m ) {
       return false;

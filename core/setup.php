@@ -120,10 +120,10 @@ class TPL_Setup
          return false;
       }
 
-      TPL_Utils::make_dir( TPL_API_DIR, 'hpub' );
-      TPL_Utils::make_dir( TPL_API_DIR, 'tmp' );
-      TPL_Utils::make_dir( TPL_API_DIR, 'shelf' );
-      TPL_Utils::make_dir( TPL_TMP_DIR, 'preview' );
+      TPL_Utils::make_dir( TPL_API_PATH, 'hpub' );
+      TPL_Utils::make_dir( TPL_API_PATH, 'tmp' );
+      TPL_Utils::make_dir( TPL_API_PATH, 'shelf' );
+      TPL_Utils::make_dir( TPL_TMP_PATH, 'preview' );
 
       return true;
    }

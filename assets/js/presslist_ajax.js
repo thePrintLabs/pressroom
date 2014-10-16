@@ -103,9 +103,9 @@ list = {
                 if ( response.pagination.top.length )
                     $('.tablenav.bottom .tablenav-pages').html( response.pagination.bottom );
 
-	            $('#presslist_paged').val(data.paged);
-	            $('#presslist_order').val(data.order);
-	            $('#presslist_orderby').val(data.orderby);
+                $('#presslist_paged').val(data.paged);
+                $('#presslist_order').val(data.order);
+                $('#presslist_orderby').val(data.orderby);
 
             }
         });
@@ -128,83 +128,83 @@ list.init();
 
 $( ".wp-list-table tbody" ).delegate( ".presslist-status", "click", function(e) {
 
-	e.preventDefault();
-	el = jQuery(this);
-	index = el.data('index');
-	status = el.data('status');
+    e.preventDefault();
+    el = jQuery(this);
+    index = el.data('index');
+    status = el.data('status');
 
-	var data = {
-		'status': status,
-		'id': index,
-		'action' : 'presslist'
-	};
+    var data = {
+        'status': status,
+        'id': index,
+        'action' : 'presslist'
+    };
 
-	jQuery.post(ajaxurl, data, function(response) {
-		if(status) {
-			el.find('i').addClass('icon-eye-off').removeClass('icon-eye');
-			el.data('status',0);
-		}
-		else {
-			el.find('i').addClass('icon-eye').removeClass('icon-eye-off');;
-			el.data('status',1);
-		}
+    jQuery.post(ajaxurl, data, function(response) {
+        if(status) {
+            el.find('i').addClass('icon-eye-off').removeClass('icon-eye');
+            el.data('status',0);
+        }
+        else {
+            el.find('i').addClass('icon-eye').removeClass('icon-eye-off');;
+            el.data('status',1);
+        }
 
-	});
+    });
 });
 
 $( ".wp-list-table tbody" ).delegate(".presslist-template",'change', function(e) {
 
-	el = jQuery(this);
-	index = el.find('option').data('index');
-	template = el.val();
+    el = jQuery(this);
+    index = el.find('option').data('index');
+    template = el.val();
 
-	var data = {
-		'template': template,
-		'id': index,
-		'action' : 'register_template'
-	};
+    var data = {
+        'template': template,
+        'id': index,
+        'action' : 'register_template'
+    };
 
-	jQuery.post(ajaxurl, data, function(response) {
-		console.log('ok');
-	});
+    jQuery.post(ajaxurl, data, function(response) {
+        console.log('ok');
+    });
 
 });
 
 $('#doaction').on( "click", function(e) {
 
-	e.preventDefault();
-	var posts = new Array();
-	var action_to_do = $('#pressroom_metabox .actions select option:selected').val();
-	$('.check-column :checked').each(function(){
+    e.preventDefault();
+    var posts = new Array();
+    var action_to_do = $('#pressroom_metabox .actions select option:selected').val();
+    $('.check-column :checked').each(function(){
 
-		posts.push($(this).val());
-		var el = $('#r_'+$(this).val());
+        posts.push($(this).val());
+        var el = $('#r_'+$(this).val());
 
-		var status = (action_to_do == 'include' ? 0 : 1 );
-		el.find('i').addClass((status == 0 ? 'icon-eye' : 'icon-eye-off' ));
-		el.find('i').removeClass((status == 0 ? 'icon-eye-off' : 'icon-eye' ));
-		el.attr('data-status', (status == 0 ? 1 : 0));
-	});
+        var status = (action_to_do == 'include' ? 0 : 1 );
+        el.find('i').addClass((status == 0 ? 'icon-eye' : 'icon-eye-off' ));
+        el.find('i').removeClass((status == 0 ? 'icon-eye-off' : 'icon-eye' ));
+        el.attr('data-status', (status == 0 ? 1 : 0));
+    });
 
-	var data = {
-		'action' : 'bulk_presslist',
-		'connected_posts': posts,
-		'action_to_do': action_to_do
-	};
+    var data = {
+        'action' : 'bulk_presslist',
+        'connected_posts': posts,
+        'action_to_do': action_to_do
+    };
 
-	jQuery.post(ajaxurl, data, function(response) {
+    jQuery.post(ajaxurl, data, function(response) {
 
-	});
+    });
 });
 
 $( "#pressroom_metabox .inside" ).delegate(".number_element_input",'change', function(e) {
 
-	e.preventDefault();
+    e.preventDefault();
 
-	var post_per_page = $(this).val();
-	$('#presslist_screen_per_page').val(post_per_page);
+    var post_per_page = $(this).val();
+    $('#presslist_screen_per_page').val(post_per_page);
 
-	var query = window.location.search.substring( 1 );
+    var query = window.location.search.substring( 1 );
     var data = {
         paged: 1,
         order: list.__query( query, 'order' ) ||  $('#presslist_order').val(),
@@ -213,7 +213,7 @@ $( "#pressroom_metabox .inside" ).delegate(".number_element_input",'change', fun
         post_per_page: post_per_page
     };
 
-	list.update( data );
+    list.update( data );
 });
 
 jQuery('#_pr_date').datepicker({
@@ -227,7 +227,7 @@ $('#theme_refresh').on( "click", function(e) {
    };
 
    jQuery.post(ajaxurl, data, function(response) {
-     alert('Flushed');
+     alert('Flushed. No need to Save.');
    });
 });
 

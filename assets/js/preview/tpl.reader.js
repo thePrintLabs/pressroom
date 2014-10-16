@@ -1,11 +1,10 @@
 var prSwiper;
-function fixPagesHeight(){
-  $('.swiper-pages').css({ height: $(window).height() - $('.sg-header').height() });
-  prSwiper.reInit();
+function fixPagesHeight() {
+  $('.swiper-pages').css({ height: $('#sg-gen-container').height() });
   prSwiper.resizeFix();
 }
 
-$(function(){
+$(function() {
   var reader = $( "#reader" ), conPages = reader.data( "conpages" ),
   bLeft = $(".circle--left").hide(), bRight = $(".circle--right").hide(), bToc = $("#fire-toc");
 
@@ -23,13 +22,10 @@ $(function(){
           $iframe.load(function(){
             var $head = $iframe.contents().find("head");
             $head.append($('<style>body{-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}</style>'));
-            prSwiper.resizeFix();
-            console.log( 'User Agent: ' + navigator.userAgent );
+            //prSwiper.resizeFix();
+            //console.log( 'User Agent: ' + navigator.userAgent );
           });
           $item.data("status", "loaded").append($iframe);
-          //.hide().fadeIn(1000, function(){
-            //
-          //});
         }
       }).then(function(){
         if (i < m - 1 ) {
@@ -51,7 +47,7 @@ $(function(){
 
   prSwiper = new Swiper(".swiper-pages", {
     mode: "horizontal",
-    pagination: '.pagination',
+    pagination: '.dots',
     loop: false,
     simulateTouch: false,
     grabCursor: false,
@@ -120,7 +116,24 @@ $(function(){
 
   bToc.on("click", function(e){
     e.preventDefault();
-    $( "#toc" ).slideToggle('slow', function(){ $('#fire-toc').html( $("#toc").is(":hidden") ? 'Open Toc' : 'Close Toc');});
+    $( "#toc" ).slideToggle('slow', function(){ $("#toc").is(":hidden") ? $('#fire-toc').removeClass('active') : $('#fire-toc').addClass('active') });
+  });
+
+  $(window).on('hashchange', function(e){
+    var h = document.location.hash;
+    if (h.match("^#toc-")) {
+      h = h.replace('#toc-', 'item-');
+      if (!h) return;
+      for (var i = 0; i < prSwiper.slides.length; i++) {
+        var slide = prSwiper.slides[i];
+        var slideHash = slide.data('hash');
+        if (slideHash === h && slide.getData('looped') !== true) {
+          var index = slide.index();
+          if (prSwiper.params.loop) index = index - prSwiper.loopedSlides;
+          prSwiper.swipeTo(index, prSwiper.speed);
+        }
+      }
+    }
   });
 
   function getNotLoadedSlide(item, d, i, m) {

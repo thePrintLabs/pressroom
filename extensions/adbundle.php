@@ -232,7 +232,7 @@ class TPL_ADBundle
 				$edition_name = TPL_Utils::sanitize_string( $edition->post_title );
 				$adb_name = TPL_Utils::sanitize_string( $post->post_title );
 
-				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_name );
+				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_TMP_PATH, $edition_name );
 				$adb_dir = TPL_Utils::make_dir( $edition_dir, $adb_name );
 
 				if ( $zip->extractTo( $adb_dir ) ) {

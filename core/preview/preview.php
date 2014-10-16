@@ -20,21 +20,22 @@ class TPL_Preview {
       return;
     }
 
-    $linked_posts = pr_get_edition_posts_id( $edition );
-    if ( empty( $linked_posts ) ) {
+    $linked_query = pr_get_edition_posts( $edition, true );
+    if ( empty( $linked_query ) ) {
       return;
     }
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
-    if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
+    $edition_path = TPL_PREVIEW_TMP_PATH . DIRECTORY_SEPARATOR . $edition_dir;
+    TPL_Utils::remove_dir( $edition_path );
 
+    if ( TPL_Utils::make_dir( TPL_PREVIEW_TMP_PATH, $edition_dir ) ) {
       $font_path = TPL_Theme::get_theme_path( $edition->ID ) . 'assets' . DIRECTORY_SEPARATOR . 'fonts';
-      TPL_Utils::recursive_copy( $font_path, TPL_PREVIEW_DIR . DIRECTORY_SEPARATOR . $edition_dir . DIRECTORY_SEPARATOR . 'fonts');
-
-      self::draw_toc( $edition, $linked_posts );
+      TPL_Utils::recursive_copy( $font_path, $edition_path . DIRECTORY_SEPARATOR . 'fonts');
+      self::draw_toc( $edition, $linked_query );
     }
 
-    return $linked_posts;
+    return $linked_query->posts;
   }
 
   /**
@@ -71,8 +72,8 @@ class TPL_Preview {
 
       $filename =  TPL_Utils::sanitize_string( $post->post_title ) . '.html';
       $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
-      if ( TPL_Utils::make_dir( TPL_PREVIEW_DIR, $edition_dir ) ) {
-        file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
+      if ( TPL_Utils::make_dir( TPL_PREVIEW_TMP_PATH, $edition_dir ) ) {
+        file_put_contents( TPL_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
         $page_url = TPL_PREVIEW_URI . $edition_dir . DIRECTORY_SEPARATOR . $filename;
       }
     }
@@ -90,13 +91,12 @@ class TPL_Preview {
   public static function draw_toc( $edition, $linked_posts ) {
 
     $toc = TPL_Theme::get_theme_toc( $edition->ID );
-    if ( !$toc ) {
+    if ( !$toc || !file_exists( $toc ) ) {
       return false;
     }
 
     ob_start();
-    $posts = pr_get_edition_posts( $edition );
-
+    $posts = $linked_posts;
     require_once( $toc );
     $output = ob_get_contents();
     ob_end_clean();
@@ -105,7 +105,7 @@ class TPL_Preview {
     $output = self::rewrite_toc_url( $output, $edition->ID );
 
     $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
-    file_put_contents( TPL_PREVIEW_DIR . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', $output );
+    file_put_contents( TPL_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', $output );
   }
 
   /**
@@ -179,12 +179,12 @@ class TPL_Preview {
    */
   public static function rewrite_toc_url( $html, $edition_id ) {
      if ( $html ) {
-        $links = TPL_Utils::get_urls( $html );
+        $links = wp_extract_urls( $html );
         foreach ( $links as $link ) {
 
           $post_id = url_to_postid( $link );
           if ( $post_id ) {
-             $html = str_replace( $link, TPL_PLUGIN_URI . 'preview/reader.php?edition_id=' . $edition_id . '#item-' . $post_id, $html );
+             $html = str_replace( $link, TPL_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
           }
         }
      }
@@ -229,7 +229,7 @@ class TPL_Preview {
     var e = document.getElementById("pr_prw_edition_id"),
     edition = e.options[e.selectedIndex].value,
     post = ' . $post->ID . ';
-    window.open("' . TPL_PLUGIN_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
+    window.open("' . TPL_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
     }, false);
     </script>';
   }

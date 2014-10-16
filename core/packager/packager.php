@@ -45,9 +45,9 @@ class TPL_Packager
 		}
 
 		// Create edition folder
-		$edition_dir = TPL_Utils::make_dir( TPL_TMP_DIR, $this->_edition_post->post_title );
+		$edition_dir = TPL_Utils::make_dir( TPL_TMP_PATH, $this->_edition_post->post_title );
 		if ( !$edition_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . TPL_Utils::sanitize_string( $this->_edition_post->post_title ), 'error' );
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_PATH . TPL_Utils::sanitize_string( $this->_edition_post->post_title ), 'error' );
 			ob_end_flush();
 			return;
 		}
@@ -121,9 +121,9 @@ class TPL_Packager
 				self::print_line( sprintf( __( 'You have to select a template for %s', 'edition' ), $post->post_title ), 'error' );
 				continue;
 			}
+
 			// Rewrite post url
 			$parsed_post = $this->_rewrite_url( $parsed_post );
-
 			if ( !has_action( 'pr_packager_run_' . $post->post_type ) ) {
 				if ( !$this->_save_html_file( $parsed_post, $post->post_title ) ) {
 					self::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
@@ -250,7 +250,7 @@ class TPL_Packager
 
 		$edition_assets_dir = TPL_Utils::make_dir( $this->_edition_dir, 'assets' );
 		if ( !$edition_assets_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_DIR . DIRECTORY_SEPARATOR . 'assets', 'error');
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_PATH . DIRECTORY_SEPARATOR . 'assets', 'error');
 			return false;
 		}
 
@@ -352,7 +352,7 @@ class TPL_Packager
 		if ( $html ) {
 
 			$post_rewrite_urls = array();
-			$urls = TPL_Utils::get_urls( $html );
+			$urls = wp_extract_urls( $html );
 
 			foreach ( $urls as $url ) {
 

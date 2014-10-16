@@ -481,8 +481,8 @@ class Pressroom_List_Table extends WP_List_Table
     */
    public function add_presslist_scripts() {
 
-      wp_register_script( 'presslist-ajax', TPL_PLUGIN_ASSETS . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
-      wp_register_script( 'presslist-drag-drop', TPL_PLUGIN_ASSETS . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
+      wp_register_script( 'presslist-ajax', TPL_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
+      wp_register_script( 'presslist-drag-drop', TPL_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
       wp_enqueue_script('jquery-ui-core');
       wp_enqueue_script('jquery-ui-sortable');
       wp_enqueue_script( 'presslist-ajax' );

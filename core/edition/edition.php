@@ -192,7 +192,7 @@ class TPL_Edition
 	public function add_publication_metabox_callback() {
 
 		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
-		echo '<a id="preview_edition" target="_blank" href="' . TPL_PLUGIN_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
+		echo '<a id="preview_edition" target="_blank" href="' . TPL_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a> ';
 	}
 
 	/**
@@ -269,7 +269,7 @@ class TPL_Edition
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-		wp_enqueue_style( 'pressroom', TPL_PLUGIN_ASSETS . 'css/pressroom.css' );
+		wp_enqueue_style( 'pressroom', TPL_ASSETS_URI . 'css/pressroom.css' );
 	}
 
 	/**
@@ -340,20 +340,28 @@ class TPL_Edition
 		return $linked_query;
 	}
 
+	/**
+	 * Get subscription types terms
+	 * @return array
+	 */
 	protected function _get_subscription_types() {
 
 		$types = array();
 		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
-		foreach ( $terms as $term ) {
+		if ( !empty( $terms ) ) {
+			foreach ( $terms as $term ) {
 
-			$term_meta = get_option( "taxonomy_term_" . $term->term_id );
-			$term_types = unserialize( $term_meta['subscription_type'] );
-			foreach ( $term_types as $type ) {
+				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
+				if ( $term_meta ) {
+					$term_types = unserialize( $term_meta['subscription_type'] );
+					foreach ( $term_types as $type ) {
 
-				array_push( $types, array(
-					'value' => $term_meta['prefix_bundle_id']. '.' . $term_meta['subscription_prefix']. '.' . $type,
-					'text'  => $type
-				) );
+						array_push( $types, array(
+							'value' => $term_meta['prefix_bundle_id']. '.' . $term_meta['subscription_prefix']. '.' . $type,
+							'text'  => $type
+						) );
+					}
+				}
 			}
 		}
 
@@ -393,7 +401,7 @@ class TPL_Edition
 	      	break;
 
 			case 'previews':
-				echo '<a target="_blank" href="'. TPL_PLUGIN_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >View</a>';
+				echo '<a target="_blank" href="'. TPL_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >View</a>';
 				break;
 
 			default:

@@ -9,7 +9,7 @@ abstract class TPL_Packager_HPUB_Package
 
    public static function build( $post, $dir ) {
       $filename = TPL_Utils::sanitize_string( $post->post_title );
-      if ( TPL_Utils::create_zip_file( $dir, TPL_HPUB_DIR . $filename . '.hpub', '' ) ) {
+      if ( TPL_Utils::create_zip_file( $dir, TPL_HPUB_PATH . $filename . '.hpub', '' ) ) {
          return $filename . '.hpub';
       }
 

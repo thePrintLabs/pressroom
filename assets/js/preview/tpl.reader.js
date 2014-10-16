@@ -120,7 +120,7 @@ $(function(){
 
   bToc.on("click", function(e){
     e.preventDefault();
-    $( "#toc" ).slideToggle('slow', function(){ $('#fire-toc').html( $("#toc").is(":hidden") ? 'Open Toc' : 'Close Toc');});
+    $( "#toc" ).slideToggle('slow', function(){ $("#toc").is(":hidden") ? $('#fire-toc').removeClass('active') : $('#fire-toc').addClass('active') });
   });
 
   $(window).on('hashchange', function(e){

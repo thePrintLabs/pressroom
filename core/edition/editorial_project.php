@@ -192,7 +192,7 @@ class TPL_Editorial_Project
   * @to do bisognerebbe spostarlo direttamente in metabox.js
   */
   public function add_form_scripts() {
-    wp_register_script( 'editorial_project', TPL_PLUGIN_ASSETS . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    wp_register_script( 'editorial_project', TPL_ASSETS_URI . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'editorial_project' );
 
     // Css rules for Color Picker

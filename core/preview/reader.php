@@ -20,7 +20,7 @@ if ( !isset( $_GET['post_id'] ) || !strlen( $_GET['post_id'] ) ) {
   $concurrent_slides = min( count( $linked_posts ), CONCURRENT_PAGES );
 }
 else {
-  $linked_posts = array( (int)$_GET['post_id'] );
+  $linked_posts = array( get_post( $_GET['post_id'] ) );
   $concurrent_slides = 1;
 }
 
@@ -134,9 +134,9 @@ $index_height = pr_get_option( 'pr-index-height' );
           data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
           <div class="swiper-wrapper">
             <?php
-            foreach ( $linked_posts as $post_id ):
+            foreach ( $linked_posts as $post ):
             ?>
-            <div data-post="<?php echo $post_id; ?>" class="swiper-slide" data-hash="item-<?php echo $post_id; ?>"></div>
+            <div data-post="<?php echo $post->ID; ?>" class="swiper-slide" data-hash="item-<?php echo $post->ID; ?>"></div>
             <?php
             endforeach;
             ?>

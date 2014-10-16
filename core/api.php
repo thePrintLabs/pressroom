@@ -43,15 +43,15 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
   if ( !empty( $linked_posts_id) ) {
 
-    $posts = new WP_Query( array(
-      'post_type'   => 'any',
-      'post_status' => 'any',
-      'post__in'    => $linked_posts_id,
-      'orderby' => 'post__in',
-      'posts_per_page' => -1,
-      'nopaging'    => true
+    $edition_query = new WP_Query( array(
+      'post_type'           => 'any',
+      'post_status'         => 'any',
+      'post__in'            => $linked_posts_id,
+      'orderby'             => 'post__in',
+      'posts_per_page'      => -1,
+      'nopaging'            => true
     ) );
-    return $posts;
+    return $edition_query;
   }
 
   return false;
@@ -95,24 +95,35 @@ function pr_book( $edition_id ) {
  */
 function pr_get_edition_post( $post_id, $edition_id, $position = '' ) {
 
-  $linked_posts = pr_get_edition_posts( $edition_id, true );
-  $linked_posts = $linked_posts->posts;
+  $linked_query = pr_get_edition_posts( $edition_id, true );
+  $linked_posts = $linked_query->posts;
   foreach( $linked_posts as $k => $post ) {
 
     if( $post->ID == $post_id ) {
-      if( $position == 'prev' && $k > 0 ) {
-        $previous = ( isset( $linked_posts[$k-1] ) ? $linked_posts[$k-1] : false );
-        return $previous->guid;
+
+      if( $position == 'prev' ) {
+        if ( $k > 0 && isset( $linked_posts[$k-1] ) ) {
+          $prev = $linked_posts[$k-1];
+          return $prev->guid;
+        }
+        else {
+          return false;
+        }
       }
-      else if ( $position == 'next' ) {
-        $nextpost = ( isset( $linked_posts[$k+1] ) ? $linked_posts[$k+1] : false );
-        if( $nextpost )
-          return $nextpost->guid;
+
+      if ( $position == 'next' ) {
+        if ( $k < count( $linked_posts ) && isset( $linked_posts[$k+1] ) ) {
+          $next = $linked_posts[$k+1];
+          return $next->guid;
+        }
+        else {
+          return false;
+        }
       }
-      else
-        return;
     }
   }
+
+  return false;
 }
 
 /**

@@ -198,17 +198,6 @@ class TPL_Utils
 	}
 
 	/**
-	 * Extracts all url from an html string
-	 * @param string $string
-	 */
-	public static function get_urls($string) {
-
-		$regex = '/https?\:\/\/[^\" ]+/i';
-		preg_match_all( $regex, $string, $matches );
-		return $matches[0];
-	}
-
-	/**
 	 * Create a zip file
 	 * @param  string $source
 	 * @param  string $destination

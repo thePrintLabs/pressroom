@@ -269,7 +269,7 @@ class TPL_Edition
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-		wp_enqueue_style( 'pressroom', TPL_PLUGIN_ASSETS . 'css/pressroom.css' );
+		wp_enqueue_style( 'pressroom', TPL_ASSETS_URI . 'css/pressroom.css' );
 	}
 
 	/**

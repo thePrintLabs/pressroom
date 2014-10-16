@@ -91,7 +91,7 @@ class TPL_Editorial_Project
 
          case 'header_icon':
             $shelf_url = TPL_SHELF_URI . $editorial->slug . '_shelf.json';
-            if ( is_file( TPL_SHELF_DIR . $editorial->slug . '_shelf.json' ) ) {
+            if ( is_file( TPL_SHELF_PATH . $editorial->slug . '_shelf.json' ) ) {
                echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
             }
             break;
@@ -261,7 +261,7 @@ class TPL_Editorial_Project
     * Add required scripts
     */
    public function add_form_scripts() {
-      wp_register_script( 'editorial_project', TPL_PLUGIN_ASSETS . '/js/editorial_project.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+      wp_register_script( 'editorial_project', TPL_ASSETS_URI . '/js/editorial_project.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
       wp_enqueue_script( 'editorial_project' );
 
        // Css rules for Color Picker

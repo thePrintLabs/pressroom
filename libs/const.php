@@ -7,16 +7,16 @@ define( "TPL_THEME_PATH", TPL_PLUGIN_PATH . 'themes/' );
 define( "TPL_EXTENSIONS_PATH", TPL_PLUGIN_PATH . 'extensions/' );
 
 /* API */
-define( "TPL_API_DIR", TPL_PLUGIN_PATH . 'api/' );
-define( "TPL_HPUB_DIR", TPL_API_DIR . 'hpub/' );
-define( "TPL_TMP_DIR", TPL_API_DIR . 'tmp/' );
-define( "TPL_PREVIEW_DIR", TPL_TMP_DIR . 'preview/' );
-define( "TPL_SHELF_DIR", TPL_API_DIR . 'shelf/' );
+define( "TPL_API_PATH", TPL_PLUGIN_PATH . 'api/' );
+define( "TPL_HPUB_PATH", TPL_API_PATH . 'hpub/' );
+define( "TPL_TMP_PATH", TPL_API_PATH . 'tmp/' );
+define( "TPL_PREVIEW_TMP_PATH", TPL_TMP_PATH . 'preview/' );
+define( "TPL_SHELF_PATH", TPL_API_PATH . 'shelf/' );
 
 define( "TPL_PLUGIN_URI", plugin_dir_url(TPL_LIBS_PATH) );
 define( "TPL_CORE_URI", TPL_PLUGIN_URI . 'core/' );
 define( "TPL_SHELF_URI", TPL_PLUGIN_URI . 'api/shelf/' );
-define( "TPL_PLUGIN_ASSETS", TPL_PLUGIN_URI. 'assets/' );
+define( "TPL_ASSETS_URI", TPL_PLUGIN_URI. 'assets/' );
 define( "TPL_HPUB_URI", TPL_PLUGIN_URI . 'api/hpub/' );
 define( "TPL_THEME_URI", TPL_PLUGIN_URI . 'themes/' );
 define( "TPL_PREVIEW_URI", TPL_PLUGIN_URI . 'api/tmp/preview/' );

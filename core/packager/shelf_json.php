@@ -85,7 +85,7 @@ final class TPL_Packager_Shelf_JSON
             }
          }
 
-         return TPL_Packager::save_json_file( $press_options, $term->slug . '_shelf.json', TPL_SHELF_DIR );
+         return TPL_Packager::save_json_file( $press_options, $term->slug . '_shelf.json', TPL_SHELF_PATH );
       }
    }
 }

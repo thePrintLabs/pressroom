@@ -6,18 +6,29 @@
 final class TPL_Packager_Book_JSON
 {
    private static $_press_to_baker = array(
-      'pr-orientation'       => 'orientation',
-      'pr-zoomable'          => 'zoomable',
-      'opt-color-background'  => '-baker-background',
-      'pr-vertical-bounce' 	=> '-baker-vertical-bounce',
-      'pr-index-bounce'      => '-baker-index-bounce',
-      'pr-index-height'      => '-baker-index-height',
-      'pr-media-autoplay'	 	=> '-baker-media-autoplay',
-      '_pr_author'            => 'author',
-      '_pr_creator'           => 'creator',
-      '_pr_cover'             => 'cover',
-      '_pr_date'              => 'date',
-      'post_title'            => 'title',
+      '_pr-orientation'                 => 'orientation',
+      '_pr-zoomable'                    => 'zoomable',
+      '_pr_body_bg_color'               => '-baker-background',
+      '_pr_background_image_portrait'   => '-baker-background-image-portrait',
+      '_pr_background_image_landscape'  => '-baker-background-image-landscape',
+      '_pr_page_numbers_color'          => '-baker-page-numbers-color',
+      '_pr_page_numbers_alpha'          => '-baker-page-numbers-alpha',
+      '_pr_page_screenshot'             => '-baker-page-screenshots',
+      '_pr_rendering'                   => '-baker-rendering',
+      '_pr_vertical_bounce' 	          => '-baker-vertical-bounce',
+      '_pr_media_autoplay'	 	          => '-baker-media-autoplay',
+      '_pr_vertical_pagination'         => '-baker-vertical-pagination',
+      '_pr_page_turn_tap'               => '-baker-page-turn-tap',
+      '_pr_page_turn_swipe'             => '-baker-page-turn-swipe',
+      '_pr_index_height'                => '-baker-index-height',
+      '_pr_index_width'                 => '-baker-index-width',
+      '_pr_index_bounce'                => '-baker-index-bounce',
+      '_pr_start_at_page'               => '-baker-start-at-page',
+      '_pr_author'                      => 'author',
+      '_pr_creator'                     => 'creator',
+      '_pr_cover'                       => 'cover',
+      '_pr_date'                        => 'date',
+      'post_title'                      => 'title',
    );
 
    /**
@@ -28,9 +39,9 @@ final class TPL_Packager_Book_JSON
     * @param string $edition_cover_image
     * @void
     */
-   public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image ) {
+   public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image, $term_id ) {
 
-      $press_options = self::_get_pressroom_options( $edition_post, $edition_cover_image );
+      $press_options = self::_get_pressroom_options( $edition_post, $edition_cover_image, $term_id );
 
       foreach ( $linked_query->posts as $post ) {
 
@@ -60,7 +71,7 @@ final class TPL_Packager_Book_JSON
     * @param  boolean $shelf
     * @return array
     */
-   protected static function _get_pressroom_options( $edition_post, $edition_cover_image ) {
+   protected static function _get_pressroom_options( $edition_post, $edition_cover_image, $term_id ) {
 
       global $tpl_pressroom;
 
@@ -71,22 +82,31 @@ final class TPL_Packager_Book_JSON
          'url'    => $book_url . TPL_Utils::sanitize_string( $edition_post->post_title . '.hpub' )
       );
 
-      foreach ( $tpl_pressroom->configs as $key => $option ) {
+      $configs = get_option( 'taxonomy_term_' . $term_id );
+      if ( !$configs ) {
+        return $options;
+      }
+      foreach ( $configs as $key => $option ) {
 
          if ( array_key_exists( $key, self::$_press_to_baker ) ) {
             $baker_option = self::$_press_to_baker[$key];
             switch ( $key ) {
-               case 'pr-index-height':
+               case '_pr_index_height':
+               case '_pr_index_width':
+               case '_pr_start_at_page':
                   $options[$baker_option] = (int)$option;
                   break;
-               case 'pr-orientation':
+               case '_pr_orientation':
+               case '_pr_rendering':
                   $options[$baker_option] = strtolower($option);
                   break;
-               case 'pr-zoomable':
-               case 'pr-vertical-bounce':
-               case 'pr-vertical-bounce':
-               case 'pr-index-bounce':
-               case 'pr-media-autoplay':
+               case '_pr_zoomable':
+               case '_pr_vertical_bounce':
+               case '_pr_vertical_pagination':
+               case '_pr_index_bounce':
+               case '_pr_media_autoplay':
+               case '_pr_page_turn_tap':
+               case '_pr_page_turn_swipe':
                   $options[$baker_option] = (bool)$option;
                   break;
                default:

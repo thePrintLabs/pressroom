@@ -256,7 +256,11 @@ class TPL_Edition
 		#publishing_popup h1 {margin-bottom: 10px}
 		</style>';
 		echo '<div id="publishing_popup"><h1>' . __( 'Publication progress', 'edition' ) . '</h1>';
-		$packager->run();
+		$editorial_terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
+		foreach ( $editorial_terms as $term ) {
+			$packager->run( $term );
+		}
+
 		echo '</div>';
 		exit;
 	}

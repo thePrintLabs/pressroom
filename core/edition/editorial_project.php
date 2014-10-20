@@ -105,6 +105,10 @@ class TPL_Editorial_Project
     return $out;
   }
 
+  /**
+   * Render custom metabox in editorial project
+   * @param  int $term_id
+   */
   public function get_custom_metabox( $term_id ) {
     $e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $term_id );
 
@@ -192,13 +196,23 @@ class TPL_Editorial_Project
   * @to do bisognerebbe spostarlo direttamente in metabox.js
   */
   public function add_form_scripts() {
+    
     wp_register_script( 'editorial_project', TPL_ASSETS_URI . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'editorial_project' );
 
     // Css rules for Color Picker
     wp_enqueue_style( 'wp-color-picker' );
+  }
 
+  /**
+   * load configs for single editorial project
+   * @param  int $term_id
+   * @return array $term_meta
+   */
+  public static function load_config( $term_id ) {
 
+    $term_meta = get_option( 'taxonomy_term_' . $term_id );
+    return $term_meta;
   }
 }
 

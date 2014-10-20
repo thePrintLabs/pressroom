@@ -94,7 +94,7 @@ class TPL_Editorial_Project
 
        case 'header_icon':
           $shelf_url = TPL_SHELF_URI . $editorial->slug . '_shelf.json';
-          if ( is_file( TPL_SHELF_DIR . $editorial->slug . '_shelf.json' ) ) {
+          if ( is_file( TPL_SHELF_PATH . $editorial->slug . '_shelf.json' ) ) {
              echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
           }
           break;

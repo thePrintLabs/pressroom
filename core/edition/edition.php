@@ -353,11 +353,11 @@ class TPL_Edition
 
 				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
 				if ( $term_meta ) {
-					$term_types = unserialize( $term_meta['subscription_type'] );
+					$term_types = unserialize( $term_meta['_pr_subscription_types'] );
 					foreach ( $term_types as $type ) {
 
 						array_push( $types, array(
-							'value' => $term_meta['prefix_bundle_id']. '.' . $term_meta['subscription_prefix']. '.' . $type,
+							'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
 							'text'  => $type
 						) );
 					}

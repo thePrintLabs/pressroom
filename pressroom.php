@@ -22,6 +22,7 @@ if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
 require_once( 'libs/const.php' );
 require_once( TPL_LIBS_PATH . 'utils.php' );
+require_once( TPL_LIBS_PATH . 'metabox.php' );
 require_once( TPL_CORE_PATH . 'setup.php' );
 require_once( TPL_CORE_PATH . 'config/redux.php' );
 require_once( TPL_CORE_PATH . 'config/tgm.php' );
@@ -33,7 +34,6 @@ require_once( TPL_CORE_PATH . 'press_list.php' );
 require_once( TPL_CORE_PATH . 'theme.php' );
 require_once( TPL_CORE_PATH . 'packager/packager.php' );
 require_once( TPL_CORE_PATH . 'preview/preview.php' );
-
 require_once( TPL_CORE_PATH . 'api.php' );
 
 class TPL_Pressroom

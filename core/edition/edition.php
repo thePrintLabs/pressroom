@@ -1,7 +1,5 @@
 <?php
 
-require_once( TPL_LIBS_PATH . 'metabox.php' );
-
 /**
  * TPL_Edition class.
  */
@@ -383,7 +381,7 @@ class TPL_Edition
 
 		$columns["cover"] = "Cover";
 		$columns["paid_free"] = "Paid/Free";
-		$columns["previews"] = "Preview";
+		$columns["action"] = "Action";
 
 		return $columns;
 	}
@@ -406,8 +404,9 @@ class TPL_Edition
 	      	echo get_post_meta( $id, '_pr_edition_free', true ) ? 'Free' : 'Paid';
 	      	break;
 
-			case 'previews':
-				echo '<a target="_blank" href="'. TPL_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >View</a>';
+			case 'action':
+				echo '<a target="_blank" href="'. TPL_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';
+				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true" class=" thickbox">' . __( "Packaging", "edition" ) . '</a> ';
 				break;
 
 			default:

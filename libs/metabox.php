@@ -258,7 +258,7 @@ class TPL_Metabox
               foreach ( $field['options'] as $key => $group ) {
                 $html.= '<optgroup label="'.$key.'">';
                 foreach ( $group as $option ) {
-                    $html.= '<option value="'. $option['value'] .'" '. ( !empty( $meta ) && in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
+                    $html.= '<option value="'. $option['value'] .'" '. ( !empty( $meta ) && in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['value'] . '</option>';
                 }
                 $html.= '</optgroup>';
               }

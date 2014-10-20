@@ -9,12 +9,12 @@ jQuery(document).ready(function() {
         return helper;
     };
 
-    var tableSelector = '.wp-list-table tbody';
+    var tableSelector = '#pressroom_metabox .wp-list-table tbody';
     jQuery(tableSelector).sortable({
         helper: fixHelperModified,
         stop : function(event, ui) {
             var order = jQuery(this).sortable('toArray').toString();
-            
+
             jQuery.post(ajaxurl, {
                                 action:'update-custom-post-order',
                                 event: 'sort-posts',
@@ -23,7 +23,7 @@ jQuery(document).ready(function() {
                                 currentPage: jQuery('#presslist_paged').val()
                                 },
                                 function(response) {
-                                        
+
                                 });
         }
     });

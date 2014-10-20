@@ -95,11 +95,11 @@ class TPL_Edition
 	 */
 	public function get_custom_metaboxes( $post_type, $post ) {
 
+		$editorial_terms = wp_get_post_terms( $post->ID, TPL_EDITORIAL_PROJECT );
 		$e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $post->ID );
 		$e_meta->add_field( '_pr_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_pr_product_id', __( 'Product identifier', 'edition' ), __( 'Product identifier', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
 		$e_meta->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => TPL_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_pr_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
@@ -108,9 +108,11 @@ class TPL_Edition
 				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
 			)
 		) );
-		$e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'checkbox_list', '', array(
+		$e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
 			'options' => $this->_get_subscription_types()
 		) );
+		foreach ( $editorial_terms as $term)
+			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
 
 		// Add metabox to metaboxes array
 		array_push( $this->_metaboxes, $e_meta );
@@ -360,10 +362,10 @@ class TPL_Edition
 					$term_types = unserialize( $term_meta['_pr_subscription_types'] );
 					foreach ( $term_types as $type ) {
 
-						array_push( $types, array(
+						$types[$term->name][] = array(
 							'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-							'text'  => $type
-						) );
+							'text'  => $type,
+						);
 					}
 				}
 			}

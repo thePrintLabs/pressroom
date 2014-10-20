@@ -20,8 +20,8 @@ jQuery( "#add-field" ).click(function(e) {
   var last_cloned_index = jQuery( ".tpl_repeater" ).last();
 
   last_cloned_index.data('index',parseInt( last_index + 1));
-
-  clone.find('input').attr('name','_pr_subscription_types[' + parseInt(last_index +1 ) + ']');
+  var name = clone.find('input').attr('name');
+  clone.find('input').attr('name',name.replace('[0]', '[' + parseInt(last_index +1 ) + ']'));
 
 
 });
@@ -31,6 +31,7 @@ jQuery( ".form-table" ).delegate( ".remove-field", "click", function(e) {
   jQuery(this).parent().remove();
 });
 
-jQuery(document).ready(function($){
+jQuery(function(){
     jQuery('.tpl-color-picker').wpColorPicker();
+    jQuery(".chosen-select").chosen();
 });

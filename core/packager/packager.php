@@ -173,7 +173,7 @@ class TPL_Packager
 			return;
 		}
 
-		if ( !TPL_Packager_Shelf_JSON::generate_shelf( $this->_edition_post ) ) {
+		if ( !TPL_Packager_Shelf_JSON::generate_shelf( $this->_edition_post, $editorial_project ) ) {
 			self::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );
 			$this->_clean_temp_dir();
 			ob_end_flush();

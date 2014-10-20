@@ -17,6 +17,9 @@ class TPL_Metabox
       $this->priority = $priority;
       $this->fields = $fields;
       $this->post_id = $post_id;
+
+      add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
+      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
    }
 
    /**
@@ -251,9 +254,13 @@ class TPL_Metabox
               break;
 
             case 'select_multiple':
-              $html.= '<select multiple name="' . $field['id'] . '[]" id="' . $field['id'] . '">';
-              foreach ( $field['options'] as $option ) {
-                $html.= '<option value="'. $option['value'] .'" '. ( !empty( $meta ) && in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
+              $html.= '<select multiple name="' . $field['id'] . '[]" id="' . $field['id'] . '" class="chosen-select" style="width:100%;">';
+              foreach ( $field['options'] as $key => $group ) {
+                $html.= '<optgroup label="'.$key.'">';
+                foreach ( $group as $option ) {
+                    $html.= '<option value="'. $option['value'] .'" '. ( !empty( $meta ) && in_array( $option['value'], $meta ) ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
+                }
+                $html.= '</optgroup>';
               }
               $html.= '</select>';
               break;
@@ -328,4 +335,27 @@ class TPL_Metabox
       $html.= '<td></tr>';
       return $html;
    }
+
+   /**
+    * add chosen.js to metabox
+    */
+  function add_chosen_script() {
+
+    wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
+
+    wp_register_script( 'chosen', TPL_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
+    wp_enqueue_script( 'chosen' );
+  }
+
+  /**
+   * add custom script to metabox
+   */
+  function add_custom_script() {
+
+    wp_register_script( 'editorial_project', TPL_ASSETS_URI . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    wp_enqueue_script( 'editorial_project' );
+
+    // Css rules for Color Picker
+    wp_enqueue_style( 'wp-color-picker' );
+  }
 }

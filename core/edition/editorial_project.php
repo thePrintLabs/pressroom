@@ -149,8 +149,8 @@ class TPL_Editorial_Project
 
     $e_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );
     $e_meta->add_field( '_pr_prefix_bundle_id', __( 'Prefix bundle id', 'edition' ), __( 'Prefix bundle id', 'edition' ), 'text', '' );
-    $e_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'edition' ), 'text', '' );
-    $e_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'edition' ), 'text', '' );
+    $e_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'edition' ), 'text_autocompleted', '' );
+    $e_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'edition' ), 'text_autocompleted', '' );
     $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater', '' );
     $this->_metabox = $e_meta;
   }

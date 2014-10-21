@@ -238,7 +238,11 @@ class TPL_Metabox
          switch ( $field['type'] ) {
 
             case 'text':
-              $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta ? $meta : $field['default'] ) . '" size="30" style="width:97%" /><br>'. $field['desc'];
+              $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta ? $meta : $field['default'] ) . '" size="20" style="width:100%" /><br>'. $field['desc'] . '<br/>';
+              break;
+
+            case 'text_autocompleted':
+              $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta ? $meta : $field['default'] ) . '" size="20" style="width:100%" /><div class="tpl_autocompleted"></div>';
               break;
 
             case 'textarea':
@@ -322,12 +326,19 @@ class TPL_Metabox
 
                 $html.= '
                 <div class="tpl_repeater" id="tpl_repeater" data-index="'.$i.'">
-                <input type="text" name="' . $field['id'] . '['.$i.']" id="' . $field['id'] . '" value="'. ( $value ? $value : $field['default'] ) . '"><a href="#" ' . ( $i == 0 ? "id=\"add-field\" class=\"add-field\"" : "id=\"remove-field\" class=\"remove-field\"" ). '">' . ( $i == 0 ? $img_add : $img_remove ). '</a></div>';
+                <input style="width:85%;" type="text" name="' . $field['id'] . '['.$i.']" id="' . $field['id'] . '" value="'. ( $value ? $value : $field['default'] ) . '">
+                <a href="#" ' . ( $i == 0 ? "id=\"add-field\" class=\"add-field\"" : "id=\"remove-field\" class=\"remove-field\"" ). '">' . ( $i == 0 ? $img_add : $img_remove ). '</a>
+                <div class="repeater-completer" style="width:84%;"></div>
+                </div>';
                 $i++;
                 }
               }
               else {
-                $html.= '<input type="text" name="' . $field['id'] . '[0]" id="' . $field['id'] . '" value="'.$field['default'] . '"><a href="#" id="add-field">' . $img_add . '</a>';
+                $html.= '<div class="tpl_repeater" id="tpl_repeater" data-index="0">
+                <input style="width:85%;" type="text" name="' . $field['id'] . '[0]" id="' . $field['id'] . '" value="'.$field['default'] . '">
+                <a href="#" id="add-field">' . $img_add . '</a>
+                <div class="repeater-completer" style="width:84%;"></div>
+                </div>';
               }
          }
       }

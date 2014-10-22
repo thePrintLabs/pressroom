@@ -36,6 +36,9 @@ require_once( TPL_CORE_PATH . 'packager/packager.php' );
 require_once( TPL_CORE_PATH . 'preview/preview.php' );
 require_once( TPL_CORE_PATH . 'api.php' );
 
+// PRO FEATURE
+require_once( TPL_SERVER_PATH . 'server.php' );
+
 class TPL_Pressroom
 {
 	public $configs;
@@ -49,11 +52,10 @@ class TPL_Pressroom
 		}
 
 		$this->_load_configs();
-
 		$this->_load_extensions();
 
-		$this->_instance_edition();
-		$this->_instance_preview();
+		$this->_create_edition();
+		$this->_create_preview();
 
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
@@ -77,6 +79,7 @@ class TPL_Pressroom
 			<ul><li>' .implode( "</li><li>", $errors ). '</li></ul>';
 			wp_die( $html, __( 'Pressroom activation error', 'pressroom_setup' ), ('back_link=true') );
 		}
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -84,7 +87,9 @@ class TPL_Pressroom
 	 *
 	 * @void
 	 */
-	public function plugin_deactivation() {}
+	public function plugin_deactivation() {
+		flush_rewrite_rules();
+	}
 
 	/**
 	 * Add connection between the edition and the posts
@@ -159,6 +164,7 @@ class TPL_Pressroom
 
 	/**
 	 * Check admin notices and display
+	 *
 	 * @echo
 	 */
 	public function check_pressroom_notice() {
@@ -181,6 +187,7 @@ class TPL_Pressroom
 	/**
    * Unset theme root to exclude custom filter override
    * @param string $path
+   * return string;
    */
   public function set_theme_root( $path ) {
 
@@ -193,6 +200,7 @@ class TPL_Pressroom
 
 	/*
 	 * Get all allowed post types
+	 *
 	 * @return array
 	 */
 	public function get_allowed_post_types() {
@@ -221,6 +229,7 @@ class TPL_Pressroom
 
 	/**
 	 * Load plugin configuration settings
+	 *
 	 * @void
 	 */
 	protected function _load_configs() {
@@ -232,6 +241,11 @@ class TPL_Pressroom
 		}
 	}
 
+	/**
+	 * Load plugin extra extensions
+	 *
+	 * @void
+	 */
 	protected function _load_extensions() {
 
 		if ( is_dir( TPL_EXTENSIONS_PATH ) ) {
@@ -265,7 +279,7 @@ class TPL_Pressroom
 	* Instance a new edition object
 	* @void
 	*/
-	protected function _instance_edition() {
+	protected function _create_edition() {
 
 		if ( is_null( $this->edition ) ) {
 			$this->edition = new TPL_Edition;
@@ -276,7 +290,7 @@ class TPL_Pressroom
 	* Instance a new edition object
 	* @void
 	*/
-	protected function _instance_preview() {
+	protected function _create_preview() {
 
 		if ( is_null( $this->preview ) ) {
 			$this->preview = new TPL_Preview;

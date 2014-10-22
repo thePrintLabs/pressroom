@@ -5,6 +5,8 @@ define( "TPL_VENDORS_PATH", TPL_LIBS_PATH . 'vendors/' );
 define( "TPL_CORE_PATH", TPL_PLUGIN_PATH . 'core/' );
 define( "TPL_THEME_PATH", TPL_PLUGIN_PATH . 'themes/' );
 define( "TPL_EXTENSIONS_PATH", TPL_PLUGIN_PATH . 'extensions/' );
+define( "TPL_SERVER_PATH", TPL_PLUGIN_PATH . 'server/' );
+define( "TPL_CONNECTORS_PATH", TPL_SERVER_PATH . 'connectors/' );
 
 /* API */
 define( "TPL_API_PATH", TPL_PLUGIN_PATH . 'api/' );
@@ -32,9 +34,9 @@ define( "P2P_EDITION_CONNECTION", 'edition_post' );
 define( "TPL_EDITORIAL_PROJECT", 'tpl_editorial_project' );
 
 /* Database */
-define( "TPL_TABLE_RECEIPTS", 'tpl_receipts' );
-define( "TPL_TABLE_PURCHASED_ISSUES", 'tpl_purchased_issues' );
-define( "TPL_TABLE_APNS_TOKENS", 'tpl_apns_tokens' );
+define( "TPL_TABLE_RECEIPTS", 'pr_receipts' );
+define( "TPL_TABLE_PURCHASED_ISSUES", 'pr_purchased_issues' );
+define( "TPL_TABLE_APNS_TOKENS", 'pr_apns_tokens' );
 
 /* ADBundle */
 define( "TPL_AD_BUNDLE", 'tpl_adbundle' );

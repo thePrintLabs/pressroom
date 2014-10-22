@@ -111,6 +111,7 @@ class TPL_Editorial_Project
     $e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $term_id );
 
     $e_meta->add_field( '_pr_default', '<h3>Basic option</h1><hr>', '', 'textnode', '' );
+    $e_meta->add_field( '_pr_itunes_secret', __( 'Itunes secret', 'edition' ), __( 'Itunes secret', 'edition' ), 'text', '' );
     $e_meta->add_field( '_pr_orientation', __( 'Orientation', 'edition' ), __( 'Orientation', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'edition' ) ),

@@ -18,18 +18,17 @@ final class TPL_Packager_Shelf_JSON
     */
    public static function generate_shelf( $edition_post, $term ) {
 
-      $press_options = array();
+
       $args = array(
         'post_type'             => TPL_EDITION,
         TPL_EDITORIAL_PROJECT   => $term->slug,
         'post_status'           => 'publish',
         'posts_per_page'        => -1,
       );
-
-      self::$_press_to_baker['_pr_product_id_' . $term->term_id] = 'product_id';
-
       $edition_query = new WP_Query( $args );
 
+      $press_options = array();
+      self::$_press_to_baker['_pr_product_id_' . $term->term_id] = 'product_id';
       foreach ( $edition_query->posts as $edition_key => $edition ) {
 
         $press_options[$edition_key] = array( 'url' => TPL_HPUB_URI . TPL_Utils::sanitize_string( $edition->post_title . '.hpub' ) );

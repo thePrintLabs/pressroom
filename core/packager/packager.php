@@ -335,6 +335,7 @@ class TPL_Packager
 		}
 
 		ob_start();
+		$edition = $this->_edition_post;
 		global $post;
 		$post = $linked_post;
 		setup_postdata($post);

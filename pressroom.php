@@ -115,7 +115,7 @@ class TPL_Pressroom
 					'priority'	=> 'high',
 				),
 				'fields' => array(
-					'state' => array(
+					'status' => array(
 						'title'		=> __( 'Included', 'pressroom' ),
 						'type'		=> 'checkbox',
 						'default'	=> 1,

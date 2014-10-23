@@ -1,12 +1,8 @@
 <?php
-final class PR_Server_Shelf_JSON extends PR_Server_API
+final class PR_Server_Issue extends PR_Server_API
 {
-  private static $_press_to_baker = array(
-    'post_name'       => 'name',
-    'post_title'      => 'title',
-    'post_content'    => 'info',
-    '_pr_date'        => 'date',
-  );
+  public $app_id;
+  public $user_id;
 
   public function __construct() {
 
@@ -23,9 +19,9 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_tag( '%editorial_project%', '([^&]+)' );
-    add_rewrite_rule( 'pressroom-api/shelf/([^&]+)/?$',
-                      'index.php?__pressroom-api=shelf_json&editorial_project=$matches[1]',
+    add_rewrite_tag( '%issue_name%', '([^&]+)' );
+    add_rewrite_rule( 'pressroom-api/issue/([^&]+)/?$',
+                      'index.php?__pressroom-api=issue&issue_name=$matches[1]',
                       'top' );
   }
 
@@ -39,21 +35,91 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
 
     global $wp;
     $request = parent::parse_request();
-    if ( $request && $request == 'shelf_json' ) {
-      $this->_generate_shelf();
+    if ( $request && $request == 'issue' ) {
+      $this->_validate_issue();
     }
   }
 
   /**
-   * Get all editions of the editorial projects and create the shelf json output
-   * @return string
+   * Retrieve latest receipts
+   * @return string or null
    */
-  protected function _generate_shelf() {
+  protected function _retrieve_receipts() {
+
+    global $wpdb;
+    $sql = "SELECT base64_receipt FROM " . $wpdb->prefix . TPL_TABLE_RECEIPTS . "
+    WHERE app_id = %s AND user_id = %s AND type = 'auto-renewable-subscription'
+    ORDER BY transaction_id DESC";
+
+    $encoded_receipt = $wpdb->get_var( $wpdb->prepare( $sql, $this->app_id, $this->user_id ), 0, 0 );
+
+    return $encoded_receipt;
+  }
+
+  /**
+   *  Mark issues as purchased, based on the app_store_data parameter.
+   *  This function will examine a receipt verification response coming from the
+   *  App Store and mark as purchased all the issues it covers.
+   *  This function should be passed a verification response for an
+   *  auto-renewable subscription.
+   */
+  function mark_issues_as_purchased( $receipt ) {
 
     global $wp;
-    $editorial_slug = $wp->query_vars['editorial_project'];
-    if ( !$editorial_slug ) {
-      $this->send_response( 400, 'Bad request. Please specify an editorial project.' );
+
+    $start_date = (int)$receipt->purchase_date_ms / 1000;
+
+    if ($data->status == 0) {
+      $finish = intval($data->latest_receipt_info->expires_date) / 1000;
+    } else if ($data->status == 21006) {
+      $finish = intval($data->latest_expired_receipt_info->expires_date) / 1000;
+    }
+
+    $result = $file_db->query(
+      "SELECT product_id FROM issues
+      WHERE app_id='$app_id'
+      AND product_id NOT NULL
+      AND `date` > datetime($start, 'unixepoch')
+      AND `date` < datetime($finish, 'unixepoch')"
+    );
+    $product_ids_to_mark = $result->fetchAll(PDO::FETCH_COLUMN);
+
+    $insert = "INSERT OR IGNORE INTO purchased_issues (app_id, user_id, product_id)
+      VALUES ('$app_id', '$user_id', :product_id)";
+    $stmt = $file_db->prepare($insert);
+    foreach ($product_ids_to_mark as $key => $product_id) {
+      $stmt->bindParam(':product_id', $product_id);
+      $stmt->execute();
+    }
+  }
+
+  /**
+   *
+   * @void
+   */
+  protected function _validate_issue() {
+
+    global $wp;
+    $issue = $wp->query_vars['issue_name'];
+    if ( !$issue ) {
+      $this->send_response( 400, 'Bad request. Please specify an issue name.' );
+    }
+
+    $this->app_id = isset( $_GET['app_id'] ) ? $_GET['app_id'] : false;
+    $this->user_id = isset( $_GET['user_id'] ) ? $_GET['user_id'] : false;
+
+    // APPID -> EDITORIAL PROJECT
+    // VERIFICARE SE EDIZIONE E' GRATUITA O A PAGAMENTO
+    // VERIFICARE PARAMETRI CON ITUNES
+
+
+    $receipt = $this->_retrieve_receipts();
+    if ( $receipt ) {
+      // @TODO: Implement management of multiple connectors
+      $itunes_connector = new PR_Connector_iTunes;
+
+      $data = $itunes_connector->validate_receipt( $receipt );
+      $this->_mark_issues_as_purchased( $data->receipt );
     }
 
     $editorial = get_term_by( 'slug', $editorial_slug, TPL_EDITORIAL_PROJECT );
@@ -113,7 +179,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
               }
               break;
 
-            case '_pr_product_id' . $editorial->term_id :
+            case '_pr_product_id' . $term->term_id :
               if ( isset( $meta_value[0] ) &&
                 !( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) ) {
                 $press_options[$edition_key][$baker_option] = $meta_value[0];
@@ -133,4 +199,4 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
   }
 }
 
-$pr_server_shelf = new PR_Server_Shelf_JSON;
+$pr_server_issue = new PR_Server_Issue;

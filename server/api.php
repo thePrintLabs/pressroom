@@ -1,6 +1,6 @@
 <?php
-abstract class PR_Server_API {
-
+abstract class PR_Server_API
+{
   /**
    * Sniff Requests
    * If $_GET['__pressroom-api'] is set, we kill WP and serve up pug bomb awesomeness

@@ -93,10 +93,8 @@ class TPL_Editorial_Project
     switch ( $column_name ) {
 
        case 'header_icon':
-          $shelf_url = TPL_SHELF_URI . $editorial->slug . '_shelf.json';
-          if ( is_file( TPL_SHELF_PATH . $editorial->slug . '_shelf.json' ) ) {
-             echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
-          }
+          $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
+          echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
           break;
        default:
           break;
@@ -197,7 +195,7 @@ class TPL_Editorial_Project
 
   /**
    * load configs for single editorial project
-   * 
+   *
    * @param  int $term_id
    * @return array $term_meta
    */

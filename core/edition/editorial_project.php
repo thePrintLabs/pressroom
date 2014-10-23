@@ -60,7 +60,8 @@ class TPL_Editorial_Project
   }
 
   /**
-  * Define the columns of the table
+  * Define columns on list table
+  *
   * @param  array $edit_columns
   * @return array
   */
@@ -80,6 +81,7 @@ class TPL_Editorial_Project
 
   /**
   * Custom column managment
+  *
   * @param  string $out
   * @param  string $column_name
   * @param  int $editorial_id
@@ -104,7 +106,8 @@ class TPL_Editorial_Project
   }
 
   /**
-   * Render custom metabox in editorial project
+   * Add fields to custom editorial project metabox
+   *
    * @param  int $term_id
    */
   public function get_custom_metabox( $term_id ) {
@@ -171,6 +174,7 @@ class TPL_Editorial_Project
 
   /**
   * Save the values ​​in a custom option
+  *
   * @param  int $term_id
   * @void
   */
@@ -182,7 +186,8 @@ class TPL_Editorial_Project
   }
 
   /**
-  * Add enctype to form for fileupload
+  * Add enctype to form for files upload
+  *
   * @echo
   */
 	public function form_add_enctype() {
@@ -192,6 +197,7 @@ class TPL_Editorial_Project
 
   /**
    * load configs for single editorial project
+   * 
    * @param  int $term_id
    * @return array $term_meta
    */

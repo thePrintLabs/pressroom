@@ -5,9 +5,6 @@ if ( !class_exists( 'ReduxFramework' ) && file_exists( TPL_VENDORS_PATH . 'Redux
 
 if ( !class_exists('TPL_Redux_Framework' ) ) {
 
-   /**
-   * TPL_Redux_Framework class.
-   */
    class TPL_Redux_Framework {
 
       public $args = array();

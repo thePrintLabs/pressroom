@@ -1,8 +1,5 @@
 <?php
 
-/**
- * TPL_Edition class.
- */
 class TPL_Edition
 {
 	protected $_metaboxes = array();
@@ -89,9 +86,10 @@ class TPL_Edition
 	/**
 	 * Get custom metaboxes configuration
 	 *
+	 * @param object $post
 	 * @void
 	 */
-	public function get_custom_metaboxes( $post_type, $post ) {
+	public function get_custom_metaboxes( $post ) {
 
 		$editorial_terms = wp_get_post_terms( $post->ID, TPL_EDITORIAL_PROJECT );
 		$e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $post->ID );
@@ -123,7 +121,7 @@ class TPL_Edition
 	 */
 	public function add_custom_metaboxes( $post_type, $post ) {
 
-		$this->get_custom_metaboxes( $post_type, $post );
+		$this->get_custom_metaboxes( $post );
 		foreach ( $this->_metaboxes as $metabox ) {
 
 			add_meta_box($metabox->id, $metabox->title, array($this, 'add_custom_metabox_callback'), TPL_EDITION, $metabox->context, $metabox->priority);
@@ -131,7 +129,7 @@ class TPL_Edition
 	}
 
 	/**
-	 * Add required edition posts metabox
+	 * Add metabox to edition post
 	 *
 	 * @void
 	 */
@@ -144,7 +142,7 @@ class TPL_Edition
 	}
 
 	/**
-	* Add publication metabox
+	* Add side metabox for publication step
 	*
 	* @return void
 	*/
@@ -176,6 +174,7 @@ class TPL_Edition
 
 	/**
 	 * Pressroom metabox callback
+	 *
 	 * @return void
 	 */
 	public function add_pressroom_metabox_callback() {
@@ -187,6 +186,7 @@ class TPL_Edition
 
 	/**
 	* Publication metabox callback
+	*
 	* @echo
 	*/
 	public function add_publication_metabox_callback() {
@@ -197,6 +197,7 @@ class TPL_Edition
 
 	/**
 	 * Save metabox form data
+	 *
 	 * @param  int $post_id
 	 * @void
 	 */
@@ -222,7 +223,7 @@ class TPL_Edition
 			return $post_id;
 		}
 
-		$this->get_custom_metaboxes( TPL_EDITION, $post);
+		$this->get_custom_metaboxes( $post);
 		foreach ( $this->_metaboxes as $metabox ) {
 
 			$metabox->save_values();
@@ -242,6 +243,7 @@ class TPL_Edition
 
 	/**
 	 * Ajax publishing callback function
+	 *
 	 * @echo
 	 */
 	public function ajax_publishing_callback() {
@@ -277,7 +279,8 @@ class TPL_Edition
 	}
 
 	/**
-	 * Add enctype to form for fileupload
+	 * Add enctype to form for files upload
+	 *
 	 * @echo
 	 */
 	public function form_add_enctype() {
@@ -287,6 +290,7 @@ class TPL_Edition
 
 	/**
 	 * Add thickbox to form for the packager support
+	 *
 	 * @void
 	 */
 	public function form_add_thickbox() {
@@ -296,6 +300,7 @@ class TPL_Edition
 
 	/**
 	 * Get linked posts
+	 *
 	 * @param object or int $edition
 	 * @return array of objects
 	 */
@@ -321,6 +326,7 @@ class TPL_Edition
 
 	/**
 	 * Get linked editions
+	 *
 	 * @param object or int $post
 	 * @return array of objects
 	 */
@@ -346,6 +352,7 @@ class TPL_Edition
 
 	/**
 	 * Get subscription types terms
+	 *
 	 * @return array
 	 */
 	protected function _get_subscription_types() {
@@ -374,6 +381,7 @@ class TPL_Edition
 
 	/**
 	 * Add custom columns
+	 *
 	 * @param  array $columns
 	 * @return array $columns
 	 */
@@ -388,6 +396,7 @@ class TPL_Edition
 
 	/**
 	 * Set output for custom columns
+	 *
 	 * @param  string $column_name
 	 * @param  int $id
 	 * @void

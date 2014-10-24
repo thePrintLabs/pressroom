@@ -51,26 +51,26 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
   protected function _generate_shelf() {
 
     global $wp;
-    $editorial_slug = $wp->query_vars['editorial_project'];
-    if ( !$editorial_slug ) {
+    $eproject_slug = $wp->query_vars['editorial_project'];
+    if ( !$eproject_slug ) {
       $this->send_response( 400, 'Bad request. Please specify an editorial project.' );
     }
 
-    $editorial = get_term_by( 'slug', $editorial_slug, TPL_EDITORIAL_PROJECT );
-    if ( !$editorial ) {
+    $eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
+    if ( !$eproject ) {
       $this->send_response( 500, 'Editorial project not valid.' );
     }
 
     $args = array(
       'post_type'             => TPL_EDITION,
-      TPL_EDITORIAL_PROJECT   => $editorial->slug,
+      TPL_EDITORIAL_PROJECT   => $eproject->slug,
       'post_status'           => 'publish',
       'posts_per_page'        => -1,
     );
     $edition_query = new WP_Query( $args );
 
     $press_options = array();
-    self::$_press_to_baker['_pr_product_id_' . $editorial->term_id] = 'product_id';
+    self::$_press_to_baker['_pr_product_id_' . $eproject->term_id] = 'product_id';
 
     foreach ( $edition_query->posts as $edition_key => $edition ) {
 
@@ -113,7 +113,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
               }
               break;
 
-            case '_pr_product_id' . $editorial->term_id :
+            case '_pr_product_id' . $eproject->term_id :
               if ( isset( $meta_value[0] ) &&
                 !( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) ) {
                 $press_options[$edition_key][$baker_option] = $meta_value[0];

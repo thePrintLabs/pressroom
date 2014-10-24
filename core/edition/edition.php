@@ -343,7 +343,7 @@ class TPL_Edition
 		$linked_query = new WP_Query( $args );
 		return $linked_query;
 	}
-
+	
 	/**
 	 * Get subscription types terms
 	 * @return array

@@ -191,14 +191,72 @@ class TPL_Editorial_Project
 	}
 
   /**
-   * load configs for single editorial project
+   * Get an editorial project by slug
+   * @param string $slug
+   * @return object
+   */
+  public static function get_by_slug( $slug ) {
+
+    $eproject = get_term_by( 'slug', $slug, TPL_EDITORIAL_PROJECT );
+    return $eproject;
+  }
+
+  /**
+   * Get all configs for single editorial project
    * @param  int $term_id
    * @return array $term_meta
    */
-  public static function load_config( $term_id ) {
+  public static function get_configs( $term_id ) {
 
-    $term_meta = get_option( 'taxonomy_term_' . $term_id );
-    return $term_meta;
+    $options = get_option( 'taxonomy_term_' . $term_id );
+    return $options;
+  }
+
+  /**
+   * Load a config for single editorial project
+   * @param int $term_id
+   * @param string $meta_name
+   * @return mixed
+   */
+  public static function get_config( $term_id , $meta_name ) {
+
+    $options = self::get_configs( $term_id );
+    return isset( $options[$meta_name] ) ? $options[$meta_name] : false;
+  }
+
+  /**
+   * Get all editions in a range of dates
+   * linked to an editiorial project with a specific slug
+   * @param  object $eproject
+   * @param  string $start_date
+   * @param  string $end_date
+   * @return array
+   */
+  public static function get_editions_in_range( $eproject, $start_date, $end_date ) {
+
+    $editions_query = new WP_Query( array(
+      'nopaging'        => true,
+      'posts_per_page'  => -1,
+      'post_status'     => 'publish',
+      'post_type'       => TPL_EDITION,
+      'tax_query'       => array(
+        array(
+          'taxonomy'  => TPL_EDITORIAL_PROJECT,
+          'field'     => 'slug',
+          'terms'     => $eproject->slug
+        )
+      ),
+      'meta_query'       => array(
+        array(
+          'key'     => '_pr_date',
+          'value'   => array( $start_date, $end_date ),
+          'type'    => 'DATE',
+          'compare' => 'BETWEEN'
+        )
+      )
+    ));
+    $editions = $editions_query->posts;
+    return $editions;
   }
 }
 

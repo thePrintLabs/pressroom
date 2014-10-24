@@ -4,11 +4,11 @@ class PR_Server
 {
   public function __construct() {
 
-    $this->_load_connectors();
-
     require_once( TPL_SERVER_PATH . 'api.php' );
     require_once( TPL_SERVER_PATH . 'shelf.php' );
     require_once( TPL_SERVER_PATH . 'issue.php' );
+
+    $this->_load_connectors();
   }
 
   /**

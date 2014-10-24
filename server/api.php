@@ -36,9 +36,15 @@ abstract class PR_Server_API
    */
   protected function send_response( $code, $msg = '' ) {
 
-    wp_send_json( array(
-      'code' => $code,
-      'message' => $msg
-    ));
+    status_header( $code );
+    if ( $code == 200 ) {
+      wp_send_json_success( $msg );
+    }
+    else {
+      wp_send_json_error( array(
+        'code' => $code,
+        'message' => $msg
+      ));
+    }
   }
 }

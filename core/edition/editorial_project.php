@@ -150,10 +150,15 @@ class TPL_Editorial_Project
     $e_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'edition' ), 'number', '' );
 
     $e_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_prefix_bundle_id', __( 'Prefix bundle id', 'edition' ), __( 'Prefix bundle id', 'edition' ), 'text', '' );
+    $e_meta->add_field( '_pr_prefix_bundle_id', __( 'App bundle id', 'edition' ), __( 'App bundle id', 'edition' ), 'text', '' );
     $e_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'edition' ), 'text_autocompleted', '' );
     $e_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'edition' ), 'text_autocompleted', '' );
-    $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater', '' );
+    $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater_with_radio', '', array(
+      'options' => array(
+        array( 'value' => 'all', 'name' => __( "All", 'edition' ) ),
+        array( 'value' => 'last', 'name' => __( "Last edition", 'edition' ) )
+      )
+    ) );
     $this->_metabox = $e_meta;
   }
 

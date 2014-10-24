@@ -161,7 +161,13 @@ class TPL_Metabox
             break;
 
           case 'repeater':
-              $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
+            $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
+            break;
+          case 'repeater_with_radio':
+
+            $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
+            if( isset( $_POST['_pr_subscription_method'] ) )
+              $term_meta['_pr_subscription_method'] = serialize( array_filter( $_POST['_pr_subscription_method'] ) );
             break;
 
           case 'date':
@@ -235,12 +241,13 @@ class TPL_Metabox
 
       if ( $term ) {
         $meta = get_option( 'taxonomy_term_' . $this->post_id );
-        if ( $field['type'] != 'repeater' )
-          $meta = ( isset($meta[$field['id']]) ? esc_attr( $meta[$field['id']]) : '' );
       }
       else {
         $meta = get_post_meta( $this->post_id, $field['id'], true);
       }
+
+      if ( $field['type'] != 'repeater' && $field['type'] != 'repeater_with_radio' )
+        $meta = ( isset($meta[$field['id']]) ? esc_attr( $meta[$field['id']]) : '' );
 
       $html.= '<tr>
       <th style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
@@ -352,6 +359,42 @@ class TPL_Metabox
             </div>';
           }
           break;
+        case 'repeater_with_radio':
+          if ( isset( $meta[$field['id']] ) ) {
+            $i = 0;
+            $repetitions = unserialize( $meta[$field['id']] );
+            $types = unserialize( $meta['_pr_subscription_method'] );
+            foreach ( $repetitions as $value ) {
+              $html.= '
+              <div class="tpl_repeater subscription" id="tpl_repeater" data-index="'. $i .'">
+              <a href="#" ' . ( $i == 0 ? "id=\"add-field\" class=\"add-field\"" : "id=\"remove-field\" class=\"remove-field\"" ). '">' . ( $i == 0 ? $img_add : $img_remove ). '</a>
+              <input style="width:55%;" type="text" name="' . $field['id'] . '['. $i .']" id="' . $field['id'] . '" value="'. ( $value ? $value : $field['default'] ) . '">';
+              $html .= '<div class="subscription_method">';
+              foreach( $field['options'] as $option) {
+                $html.= '<input type="radio" id="checkbox-' . $option['value'].'" name="_pr_subscription_method['. $i .']" '.( $option['value'] == $types[$i] ? 'checked="checked"' : '' ).' value="'.$option['value'].'" />
+                <label for="checkbox-' . $option['value'] . '_' . $i . '">' . $option['name'] . '</label>';
+              }
+
+              $html.='</div><div class="repeater-completer"></div>
+              </div>';
+              $i++;
+            }
+          }
+          else {
+            $html.= '<div class="tpl_repeater subscription" id="tpl_repeater" data-index="0">
+            <a href="#" id="add-field">' . $img_add . '</a>
+            <input style="width:55%;" type="text" name="' . $field['id'] . '[0]" id="' . $field['id'] . '" value="'.$field['default'] . '">';
+            $html .= '<div class="subscription_method">';
+            foreach( $field['options'] as $option) {
+              $html.= '<input style="margin-right:5px" type="radio" id="checkbox-' . $option['value'].'" name="_pr_subscription_method[0]' . '" value="'.$option['value'].'" ' . ' />
+              <label for="checkbox-' . $option['value'] . '">' . $option['name'] . '</label>';
+            }
+
+            $html.='</div><div class="repeater-completer"></div>
+            </div>';
+          }
+          break;
+
         }
     }
 

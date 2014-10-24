@@ -3,6 +3,11 @@ class TPL_Utils
 {
 	public static $excluded_files = array( ".", "..", ".git", ".gitignore", ".pressignore", ".DS_Store", "_notes", "Thumbs.db", "__MACOSX" );
 
+	/**
+	 * constructor
+	 *
+	 * @void
+	 */
 	public function __construct() {}
 
 	/**
@@ -27,6 +32,7 @@ class TPL_Utils
 
 	/**
 	 * Check if a file is allowed in context
+	 *
 	 * @param  string  $dir
 	 * @param  string  $file
 	 * @return boolean
@@ -52,6 +58,7 @@ class TPL_Utils
 
 	/**
 	* Search files in a directory
+	*
 	* @param string $directory
 	* @param string $extension
 	* @return array
@@ -88,6 +95,7 @@ class TPL_Utils
 
 	/**
 	 * Create a new folder
+	 *
 	 * @param  string $basepath - parent folder
 	 * @param  string $dir - new directory
 	 * @return string or false - new directory path
@@ -114,6 +122,7 @@ class TPL_Utils
 
 	/**
 	 * Remove a directory
+	 *
 	 * @param string $dir
 	 * @void
 	 */
@@ -143,6 +152,7 @@ class TPL_Utils
 
 	/**
 	 * Copy files recursively
+	 *
 	 * @param string  $source_dir
 	 * @param string  $destination_dir
 	 * @param integer $count
@@ -199,6 +209,7 @@ class TPL_Utils
 
 	/**
 	 * Create a zip file
+	 *
 	 * @param  string $source
 	 * @param  string $destination
 	 * @param  string $basepath - null to auto create
@@ -245,6 +256,7 @@ class TPL_Utils
 
 	/**
 	 * Extends sanitize wp method replacing latin1 characters
+	 * 
 	 * @param  string $str
 	 * @return string
 	 */

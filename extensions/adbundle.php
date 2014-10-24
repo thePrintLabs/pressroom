@@ -1,11 +1,14 @@
 <?php
-/**
-* TPL_ADBundle class.
-*/
+
 class TPL_ADBundle
 {
 	protected $_metaboxes = array();
 
+	/**
+	 * construct
+	 *
+	 * @void
+	 */
 	public function __construct() {
 
 		if ( !is_admin() ) {
@@ -26,7 +29,7 @@ class TPL_ADBundle
 	}
 
 	/**
-	* Add custom post type ad bundle to worpress
+	* Add custom post type ad-bundle to worpress
 	*
 	* @void
 	*/
@@ -72,7 +75,7 @@ class TPL_ADBundle
 	}
 
 	/**
-	* Get adbundle metaboxes configuration
+	* Get ad-bundle metaboxes configuration
 	*
 	* @void
 	*/
@@ -100,7 +103,8 @@ class TPL_ADBundle
 	}
 
 	/**
-	* Custom metabox callback print html input field
+	* Custom metabox callback
+	* print html input field
 	*
 	* @echo
 	*/
@@ -117,7 +121,8 @@ class TPL_ADBundle
 	}
 
 	/**
-	* Add enctype to form for fileupload
+	* Add form enctype for fileupload
+	*
 	* @echo
 	*/
 	public function form_add_enctype() {
@@ -127,6 +132,7 @@ class TPL_ADBundle
 
 	/**
 	* Save metabox form data
+	*
 	* @param  int $post_id
 	* @void
 	*/
@@ -159,7 +165,10 @@ class TPL_ADBundle
 	}
 
 	/**
-	* Add AdBundle support to packager
+	* Add Ad-bundle support to packager
+	* This function is called by a custom hook
+	* from the packager class
+	*
 	* @param  object $post
 	* @param  string $edition_dir
 	* @void
@@ -190,7 +199,10 @@ class TPL_ADBundle
 	}
 
 	/**
-	* [add_adb_bookjson description]
+	* Add ad-bundle in book.json contents
+	* This function is called by a custom hook
+	* from the book_json class
+	*
 	* @param object $post
 	* @param string $edition_dir
 	* @void
@@ -213,14 +225,16 @@ class TPL_ADBundle
 	}
 
 	/**
-	 * [adb_preview description]
-	 * @param  [type] $args [description]
-	 * @return [type]       [description]
-	 */
+	* Add ad-bundle to preview
+	* This function is called by a custom hook
+	* from the preview class
+	*
+	* @param  array $args
+	* @void
+	*/
 	public function adb_preview( &$args ) {
 
 		list( $url, $edition, $post ) = $args;
-
 		$attachment = self::get_adb_attachment( $post->ID );
 
 		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
@@ -249,6 +263,7 @@ class TPL_ADBundle
 
 	/**
 	* Get adbundle zip attachment
+	* 
 	* @param  int $adb_id
 	* @return object or boolean false
 	*/

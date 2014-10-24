@@ -5,11 +5,17 @@ require( TPL_VENDORS_PATH . '/TGM_Plugin_Activation/class_tgm_plugin_activation.
 if (!class_exists('TPL_TGM')) {
 	class TPL_TGM {
 
-		public function TPL_TGM() {
+		public function __construct() {
 
 			add_action( 'tgmpa_register', array( $this , 'tpl_required_plugins' ));
 
 		}
+
+		/**
+		* set required plugin for pressroom
+		*
+		* @void
+		*/
 		public function tpl_required_plugins() {
 
 			$plugins = array(
@@ -23,14 +29,14 @@ if (!class_exists('TPL_TGM')) {
 		    );
 
 		    $config = array(
-		        'id'           => 'pressroom',         // Unique ID for hashing notices for multiple instances of pressroom.
-		        'default_path' => '',                      // Default absolute path to pre-packaged plugins.
-		        'menu'         => 'pr-pressroom-plugins', // Menu slug.
-		        'has_notices'  => true,                    // Show admin notices or not.
+		        'id'           => 'pressroom',         			// Unique ID for hashing notices for multiple instances of pressroom.
+		        'default_path' => '',                      	// Default absolute path to pre-packaged plugins.
+		        'menu'         => 'pr-pressroom-plugins', 	// Menu slug.
+		        'has_notices'  => true,                    	// Show admin notices or not.
 		        'dismissable'  => false,                    // If false, a user cannot dismiss the nag message.
-		        'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
-		        'is_automatic' => true,                    // Automatically activate plugins after installation or not.
-		        'message'      => '',                      // Message to output right before the plugins table.
+		        'dismiss_msg'  => '',                      	// If 'dismissable' is false, this message will be output at top of nag.
+		        'is_automatic' => true,                    	// Automatically activate plugins after installation or not.
+		        'message'      => '',                      	// Message to output right before the plugins table.
 		        'strings'      => array(
 		            'page_title'                      => __( 'Install Required Plugins', 'pressroom' ),
 		            'menu_title'                      => __( 'Install Plugins', 'pressroom' ),

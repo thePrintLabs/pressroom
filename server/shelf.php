@@ -104,7 +104,6 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
         if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
 
           $baker_option = self::$_press_to_baker[$meta_key];
-
           switch ( $meta_key ) {
 
             case '_pr_date':
@@ -116,7 +115,8 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
             case '_pr_product_id' . $eproject->term_id :
               if ( isset( $meta_value[0] ) &&
                 !( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) ) {
-                $press_options[$edition_key][$baker_option] = $meta_value[0];
+                $editorial_options = get_option( 'taxonomy_term_' . $editorial->term_id );
+                $press_options[$edition_key][$baker_option] = $editorial_options['_pr_prefix_bundle_id'] . '.' . $editorial_options['_pr_single_edition_prefix']. '.' . $meta_value[0];
               }
               break;
 

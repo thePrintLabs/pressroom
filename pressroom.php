@@ -15,7 +15,7 @@
  *  | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
  *  |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
  *
- *  thePrintLabs Ltd. ©
+ *  Copyright © 2014 - thePrintLabs Ltd.
  */
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
@@ -66,7 +66,8 @@ class TPL_Pressroom
 	}
 
 	/**
-	 * Activation plugin
+	 * Activation plugin:
+	 * Setup database tables and filesystem structure
 	 *
 	 * @void
 	 */
@@ -92,7 +93,8 @@ class TPL_Pressroom
 	}
 
 	/**
-	 * Add connection between the edition and the posts
+	 * Add connection between
+	 * the edition and other allowed post type.
 	 *
 	 * @void
 	 */
@@ -142,6 +144,7 @@ class TPL_Pressroom
 
 	/**
 	 * Add default theme template to post connection
+	 *
 	 * @param  int $p2p_id
 	 * @void
 	 */
@@ -186,6 +189,7 @@ class TPL_Pressroom
 
 	/**
    * Unset theme root to exclude custom filter override
+   *
    * @param string $path
    * return string;
    */
@@ -213,7 +217,8 @@ class TPL_Pressroom
 	}
 
 	/**
-	 * Determine if is add or edit page
+	 * Check if is add or edit page
+	 *
 	 * @param  string  $new_edit
 	 * @return boolean
 	 */
@@ -242,7 +247,7 @@ class TPL_Pressroom
 	}
 
 	/**
-	 * Load plugin extra extensions
+	 * Load plugin extensions
 	 *
 	 * @void
 	 */
@@ -260,6 +265,7 @@ class TPL_Pressroom
 
 	/**
 	 * Load custom post types configured in settings page
+	 *
 	 * @return array - custom post types
 	 */
 	protected function _load_custom_post_types() {
@@ -277,6 +283,7 @@ class TPL_Pressroom
 
 	/**
 	* Instance a new edition object
+	*
 	* @void
 	*/
 	protected function _create_edition() {
@@ -287,7 +294,8 @@ class TPL_Pressroom
 	}
 
 	/**
-	* Instance a new edition object
+	* Instance a new preview object
+	*
 	* @void
 	*/
 	protected function _create_preview() {

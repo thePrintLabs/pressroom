@@ -60,7 +60,8 @@ class TPL_Editorial_Project
   }
 
   /**
-  * Define the columns of the table
+  * Define columns on list table
+  *
   * @param  array $edit_columns
   * @return array
   */
@@ -80,6 +81,7 @@ class TPL_Editorial_Project
 
   /**
   * Custom column managment
+  *
   * @param  string $out
   * @param  string $column_name
   * @param  int $editorial_id
@@ -91,10 +93,8 @@ class TPL_Editorial_Project
     switch ( $column_name ) {
 
        case 'header_icon':
-          $shelf_url = TPL_SHELF_URI . $editorial->slug . '_shelf.json';
-          if ( is_file( TPL_SHELF_PATH . $editorial->slug . '_shelf.json' ) ) {
-             echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
-          }
+          $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
+          echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
           break;
        default:
           break;
@@ -104,7 +104,8 @@ class TPL_Editorial_Project
   }
 
   /**
-   * Render custom metabox in editorial project
+   * Add fields to custom editorial project metabox
+   *
    * @param  int $term_id
    */
   public function get_custom_metabox( $term_id ) {
@@ -149,10 +150,15 @@ class TPL_Editorial_Project
     $e_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'edition' ), 'number', '' );
 
     $e_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_prefix_bundle_id', __( 'Prefix bundle id', 'edition' ), __( 'Prefix bundle id', 'edition' ), 'text', '' );
+    $e_meta->add_field( '_pr_prefix_bundle_id', __( 'App bundle id', 'edition' ), __( 'App bundle id', 'edition' ), 'text', '' );
     $e_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'edition' ), 'text_autocompleted', '' );
     $e_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'edition' ), 'text_autocompleted', '' );
-    $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater', '' );
+    $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater_with_radio', '', array(
+      'options' => array(
+        array( 'value' => 'all', 'name' => __( "All", 'edition' ) ),
+        array( 'value' => 'last', 'name' => __( "Last edition", 'edition' ) )
+      )
+    ) );
     $this->_metabox = $e_meta;
   }
 
@@ -171,6 +177,7 @@ class TPL_Editorial_Project
 
   /**
   * Save the values ​​in a custom option
+  *
   * @param  int $term_id
   * @void
   */
@@ -182,7 +189,8 @@ class TPL_Editorial_Project
   }
 
   /**
-  * Add enctype to form for fileupload
+  * Add enctype to form for files upload
+  *
   * @echo
   */
 	public function form_add_enctype() {
@@ -203,6 +211,8 @@ class TPL_Editorial_Project
 
   /**
    * Get all configs for single editorial project
+   * load configs for single editorial project
+   *
    * @param  int $term_id
    * @return array $term_meta
    */
@@ -246,7 +256,7 @@ class TPL_Editorial_Project
           'terms'     => $eproject->slug
         )
       ),
-      'meta_query'       => array(
+      'meta_query'    => array(
         array(
           'key'     => '_pr_date',
           'value'   => array( $start_date, $end_date ),

@@ -176,11 +176,15 @@ class TPL_Pressroom
 
 			$msg_type = $_GET['pmtype'];
 			$msg_code = $_GET['pmcode'];
+			$msg_param = $_GET['pmparam'];
 
 			echo '<div class="' . $msg_type . '"><p>';
 			switch ( $msg_code ) {
 				case 'theme':
 					echo _e( '<b>Error:</b> You must specify a theme for edition!', 'pressroom_notice' );
+					break;
+				case 'duplicate_entry':
+					echo _e( sprintf('<b>Error</b> Duplicate entry for <b>%s</b>. It must be unique', $msg_param ) );
 					break;
 			}
 			echo '</p></div>';

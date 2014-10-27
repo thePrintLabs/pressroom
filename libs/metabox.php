@@ -164,7 +164,6 @@ class TPL_Metabox
             $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
             break;
           case 'repeater_with_radio':
-
             $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
             if( isset( $_POST['_pr_subscription_method'] ) )
               $term_meta['_pr_subscription_method'] = serialize( array_filter( $_POST['_pr_subscription_method'] ) );
@@ -363,7 +362,8 @@ class TPL_Metabox
           if ( isset( $meta[$field['id']] ) ) {
             $i = 0;
             $repetitions = unserialize( $meta[$field['id']] );
-            $types = unserialize( $meta['_pr_subscription_method'] );
+            if( isset( $meta['_pr_subscription_method'] ) )
+              $types = unserialize( $meta['_pr_subscription_method'] );
             foreach ( $repetitions as $value ) {
               $html.= '
               <div class="tpl_repeater subscription" id="tpl_repeater" data-index="'. $i .'">
@@ -371,7 +371,7 @@ class TPL_Metabox
               <input style="width:55%;" type="text" name="' . $field['id'] . '['. $i .']" id="' . $field['id'] . '" value="'. ( $value ? $value : $field['default'] ) . '">';
               $html .= '<div class="subscription_method">';
               foreach( $field['options'] as $option) {
-                $html.= '<input type="radio" id="checkbox-' . $option['value'].'" name="_pr_subscription_method['. $i .']" '.( $option['value'] == $types[$i] ? 'checked="checked"' : '' ).' value="'.$option['value'].'" />
+                $html.= '<input type="radio" id="checkbox-' . $option['value'].'" name="_pr_subscription_method['. $i .']" '. ( isset( $types[$i] ) ? ($option['value'] == $types[$i] ? 'checked="checked"' : '' ) : '' ).' value="'.$option['value'].'" />
                 <label for="checkbox-' . $option['value'] . '_' . $i . '">' . $option['name'] . '</label>';
               }
 

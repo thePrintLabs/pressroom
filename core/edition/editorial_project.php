@@ -183,8 +183,22 @@ class TPL_Editorial_Project
   */
   public function save_form_meta_fields( $term_id ) {
 
+    $terms = get_terms( TPL_EDITORIAL_PROJECT );
+    foreach( $terms as $term ) {
+      $option = self::get_config( $term->term_id, '_pr_prefix_bundle_id');
+      if ( $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
+        $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
+        wp_redirect( $url );
+        exit;
+      }
+    }
+
     $this->get_custom_metabox( $term_id );
     $this->_metabox->save_term_values();
+
+    $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
+    wp_redirect( $url );
+    exit;
 
   }
 

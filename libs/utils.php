@@ -222,7 +222,7 @@ class TPL_Utils
 		}
 
 		$zip = new ZipArchive();
-		if ( !$zip->open( $destination, ZIPARCHIVE::OVERWRITE ) ) {
+		if ( !$zip->open( $destination, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE ) ) {
 			return false;
 		}
 
@@ -256,7 +256,7 @@ class TPL_Utils
 
 	/**
 	 * Extends sanitize wp method replacing latin1 characters
-	 * 
+	 *
 	 * @param  string $str
 	 * @return string
 	 */

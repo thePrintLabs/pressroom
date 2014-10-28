@@ -164,7 +164,8 @@ class TPL_Metabox
             $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
             break;
           case 'repeater_with_radio':
-            $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
+            if( isset( $_POST[$field_id] ) )
+              $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
             if( isset( $_POST['_pr_subscription_method'] ) )
               $term_meta['_pr_subscription_method'] = serialize( array_filter( $_POST['_pr_subscription_method'] ) );
             break;
@@ -408,7 +409,7 @@ class TPL_Metabox
     *
     * @void
     */
-  function add_chosen_script() {
+  public function add_chosen_script() {
 
     wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
 
@@ -421,7 +422,7 @@ class TPL_Metabox
    *
    * @void
    */
-  function add_custom_script() {
+  public function add_custom_script() {
 
     wp_register_script( 'editorial_project', TPL_ASSETS_URI . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'editorial_project' );

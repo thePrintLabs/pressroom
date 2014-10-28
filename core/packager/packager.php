@@ -320,7 +320,7 @@ class TPL_Packager
 	protected function _post_parse( $linked_post ) {
 
 		$page = TPL_Theme::get_theme_page( $this->_edition_post->ID, $linked_post->p2p_id );
-		if ( !$page ) {
+		if ( !$page || !file_exists( $page )  ) {
 			return false;
 		}
 

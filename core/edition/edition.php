@@ -349,7 +349,7 @@ class TPL_Edition
 		$linked_query = new WP_Query( $args );
 		return $linked_query;
 	}
-	
+
 	/**
 	 * Get subscription types terms
 	 *
@@ -365,13 +365,15 @@ class TPL_Edition
 				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
 				if ( $term_meta ) {
 					$term_types = unserialize( $term_meta['_pr_subscription_types'] );
-					foreach ( $term_types as $type ) {
+					if( $term_types ) {
+						foreach ( $term_types as $type ) {
 
-						$types[$term->name][] = array(
-							'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-							'text'  => $type,
-						);
-					}
+							$types[$term->name][] = array(
+								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
+								'text'  => $type,
+							);
+						}
+					}					
 				}
 			}
 		}

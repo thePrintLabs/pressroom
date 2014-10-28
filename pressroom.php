@@ -24,7 +24,7 @@ require_once( 'libs/const.php' );
 require_once( TPL_LIBS_PATH . 'utils.php' );
 require_once( TPL_LIBS_PATH . 'metabox.php' );
 require_once( TPL_CORE_PATH . 'setup.php' );
-require_once( TPL_CORE_PATH . 'config/redux.php' );
+require_once( TPL_CORE_PATH . 'config/option_page.php' );
 require_once( TPL_CORE_PATH . 'config/tgm.php' );
 
 require_once( TPL_CORE_PATH . 'edition/edition.php' );
@@ -244,7 +244,7 @@ class TPL_Pressroom
 	protected function _load_configs() {
 
 		if ( is_null( $this->configs ) ) {
-			$this->configs = get_option('tpl_options', array(
+			$this->configs = get_option('pr_settings', array(
 				'custom_post_type' => array()
 			));
 		}
@@ -275,13 +275,12 @@ class TPL_Pressroom
 	protected function _load_custom_post_types() {
 
 		$types = array();
-		if ( !empty( $this->configs ) && isset( $this->configs['custom_post_type'] ) ) {
-			foreach ( $this->configs['custom_post_type'] as $post_type ) {
+		if ( !empty( $this->configs ) && isset( $this->configs['pr_custom_post_type'] ) ) {
+			foreach ( $this->configs['pr_custom_post_type'] as $post_type ) {
 
 				array_push( $types, $post_type );
 			}
 		}
-
 		return $types;
 	}
 

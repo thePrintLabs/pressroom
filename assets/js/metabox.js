@@ -46,11 +46,6 @@ jQuery(function(){
 
     clone.find('input[type="text"]').val('');
 
-    clone.find('input[type="radio"]').each( function() {
-      jQuery(this).removeAttr('checked');
-    });
-
-
     var name = clone.find('input[type="text"]').attr('name');
     var radioname = clone.find('input[type="radio"]').attr('name');
 

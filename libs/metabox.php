@@ -121,7 +121,7 @@ class TPL_Metabox
 
                 if ( isset( $_POST[$field_id] ) ) {
                   foreach ( $_POST[$field_id] as $key => $single ) {
-                    $new_value[$key] = serialize( $single );
+                    $new_value[$key] = $single;
                   }
                 }
                 else {
@@ -161,13 +161,13 @@ class TPL_Metabox
             break;
 
           case 'repeater':
-            $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
+            $term_meta[$field_id] = array_filter( $_POST[$field_id] );
             break;
           case 'repeater_with_radio':
             if( isset( $_POST[$field_id] ) )
-              $term_meta[$field_id] = serialize( array_filter( $_POST[$field_id] ) );
+              $term_meta[$field_id] = array_filter( $_POST[$field_id] );
             if( isset( $_POST['_pr_subscription_method'] ) )
-              $term_meta['_pr_subscription_method'] = serialize( array_filter( $_POST['_pr_subscription_method'] ) );
+              $term_meta['_pr_subscription_method'] = array_filter( $_POST['_pr_subscription_method'] );
             break;
 
           case 'date':
@@ -339,7 +339,7 @@ class TPL_Metabox
         case 'repeater':
           if ( $meta[$field['id']] ) {
             $i = 0;
-            $repetitions = unserialize( $meta[$field['id']] );
+            $repetitions = $meta[$field['id']];
             foreach ( $repetitions as $value ) {
 
             $html.= '
@@ -362,9 +362,9 @@ class TPL_Metabox
         case 'repeater_with_radio':
           if ( isset( $meta[$field['id']] ) ) {
             $i = 0;
-            $repetitions = unserialize( $meta[$field['id']] );
+            $repetitions = $meta[$field['id']];
             if( isset( $meta['_pr_subscription_method'] ) )
-              $types = unserialize( $meta['_pr_subscription_method'] );
+              $types = $meta['_pr_subscription_method'];
             foreach ( $repetitions as $value ) {
               $html.= '
               <div class="tpl_repeater subscription" id="tpl_repeater" data-index="'. $i .'">

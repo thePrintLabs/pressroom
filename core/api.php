@@ -65,7 +65,7 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
  */
 function pr_get_option( $option ) {
 
-   $configs = get_option( 'tpl_options' );
+   $configs = get_option( 'pr_settings' );
    if( isset( $configs[$option] ) ) {
       return $configs[$option];
    }

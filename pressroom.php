@@ -245,7 +245,7 @@ class TPL_Pressroom
 
 		if ( is_null( $this->configs ) ) {
 			$this->configs = get_option('pr_settings', array(
-				'custom_post_type' => array()
+				'pr_custom_post_type' => array()
 			));
 		}
 	}

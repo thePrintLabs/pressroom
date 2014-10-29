@@ -16,9 +16,8 @@ final class PR_Server_Issue extends PR_Server_API
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_tag( '%issue_name%', '([^&]+)' );
-    add_rewrite_rule( 'pressroom-api/issue/([^&]+)/?$',
-                      'index.php?__pressroom-api=issue&issue_name=$matches[1]',
+    add_rewrite_rule( 'pressroom-api/edition/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=edition&editorial_project=$matches[1]&edition_name=$matches[2]',
                       'top' );
   }
 
@@ -32,8 +31,8 @@ final class PR_Server_Issue extends PR_Server_API
 
     global $wp;
     $request = parent::parse_request();
-    if ( $request && $request == 'issue' ) {
-      $this->_validate_issue();
+    if ( $request && $request == 'edition' ) {
+      $this->_action_validate_issue();
     }
   }
 
@@ -41,51 +40,56 @@ final class PR_Server_Issue extends PR_Server_API
    *
    * @void
    */
-  protected function _validate_issue() {
+  protected function _action_validate_issue() {
 
     global $wp;
-    $issue = $wp->query_vars['issue_name'];
-    if ( !$issue ) {
-      $this->send_response( 400, 'Bad request. Please specify an issue name.' );
+    $edition_slug = $wp->query_vars['edition_name'];
+    $eproject_slug = $wp->query_vars['editorial_project'];
+    if ( !$edition_slug || !$eproject_slug ) {
+      $this->send_response( 400, 'Bad request. Please specify an issue name and/or an editorial project.' );
+    }
+    elseif ( !isset( $_GET['app_id'], $_GET['user_id']) ) {
+      $this->send_response( 400, "Bad request. App identifier and/or user identifier doesn't exist." );
+    }
+
+    $eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
+    if( !$eproject ) {
+      $this->send_response( 404, "Not found. Editorial project not found." );
+    }
+
+    $edition = TPL_Edition::get_by_slug( $edition_slug );
+    if( !$edition ) {
+      $this->send_response( 404, "Not found. Edition not found." );
     }
 
     $app_id = isset( $_GET['app_id'] ) ? $_GET['app_id'] : false;
     $user_id = isset( $_GET['user_id'] ) ? $_GET['user_id'] : false;
+    $environment = isset( $_GET['environment'] ) ? $_GET['environment'] : 'production';
 
-    // APPID -> EDITORIAL PROJECT
-    // VERIFICARE SE EDIZIONE E' GRATUITA O A PAGAMENTO
-    // VERIFICARE PARAMETRI CON ITUNES
+    $allow_download = false;
+    $edition_type = get_post_meta( $edition->ID, '_pr_edition_free', true );
+    if ( $edition_type == 0 ) {
+      // @TODO: Implement management of multiple connectors
+      $itunes_connector = new PR_Connector_iTunes( $app_id, $user_id, $environment );
+      $itunes_connector->eproject = $eproject;
 
-    // @TODO: Implement management of multiple connectors
-    $itunes_connector = new PR_Connector_iTunes( $app_id, $user_id );
-    $receipt = $itunes_connector->retrieve_receipts();
-    if ( $receipt ) {
-
-      $data = $itunes_connector->validate_receipt();
-      $itunes_connector->save_purchased_editions( $data );
+      $purchases = $itunes_connector->get_purchases();
+      if ( !empty( $purchases['issues'] ) ) {
+        // Get the editorial project settings
+        $eproject_options = TPL_Editorial_Project::get_configs( $eproject->term_id );
+        $product_id = get_post_meta( $edition->ID, '_pr_product_id_' . $eproject->term_id , true );
+        $edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
+        if ( in_array( $edition_bundle_id, $purchases['issues'] ) ) {
+          $allow_download = true;
+        }
+      }
     }
-    // // Retrieve issue
-    // $result = $file_db->query(
-    //   "SELECT * FROM issues
-    //   WHERE app_id='$app_id' AND name='$name'"
-    // );
-    // $issue = $result->fetch(PDO::FETCH_ASSOC);
-    // $product_id = $issue['product_id'];
-    //
-    // $allow_download = false;
-    // if ($product_id) {
-    //   // Allow download if the issue is marked as purchased
-    //   $result = $file_db->query(
-    //     "SELECT COUNT(*) FROM purchased_issues
-    //     WHERE app_id='$app_id' AND user_id='$user_id' AND product_id='$product_id'"
-    //   );
-    //   $allow_download = ($result->fetchColumn() > 0);
-    // } else if ($issue) {
-    //   // No product ID -> the issue is free to download
-    //   $allow_download = true;
-    // }
-    //
-    // if ($allow_download) {
+    else {
+      $allow_download = true;
+    }
+
+    if ( $allow_download ) {
+      die( 'avvio download' );
     //   $attachment_location = $_SERVER["DOCUMENT_ROOT"] . "/issues/$name.hpub";
     //   if (file_exists($attachment_location)) {
     //     header('HTTP/1.1 200 OK');
@@ -104,7 +108,7 @@ final class PR_Server_Issue extends PR_Server_API
     //   header('HTTP/1.1 403 Forbidden');
     //   $log->LogInfo("Download not allowed: $name");
     // }
-
+    }
   }
 }
 

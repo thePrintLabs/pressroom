@@ -40,7 +40,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
     global $wp;
     $request = parent::parse_request();
     if ( $request && $request == 'shelf_json' ) {
-      $this->_generate_shelf();
+      $this->_action_generate_shelf();
     }
   }
 
@@ -48,7 +48,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
    * Get all editions of the editorial projects and create the shelf json output
    * @return string
    */
-  protected function _generate_shelf() {
+  protected function _action_generate_shelf() {
 
     global $wp;
     $eproject_slug = $wp->query_vars['editorial_project'];
@@ -76,7 +76,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
 
       $press_options[$edition_key] = array(
         //'url' => TPL_HPUB_URI . TPL_Utils::sanitize_string( $edition->post_title . '.hpub' ) // @TODO: FREE
-        'url' => esc_url( home_url( '/pressroom-api/issue/' . TPL_Utils::sanitize_string( $edition->post_title ) ) )
+        'url' => esc_url( home_url( '/pressroom-api/edition/' . $eproject->slug . '/' . $edition->post_name ) )
       );
 
       // Add the cover image into the edition options
@@ -112,7 +112,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
               }
               break;
 
-            case '_pr_product_id' . $eproject->term_id :
+            case '_pr_product_id_' . $eproject->term_id :
               if ( isset( $meta_value[0] ) &&
                 !( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) ) {
                 $editorial_options = get_option( 'taxonomy_term_' . $editorial->term_id );

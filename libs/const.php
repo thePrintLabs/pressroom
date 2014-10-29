@@ -35,6 +35,7 @@ define( "TPL_EDITORIAL_PROJECT", 'tpl_editorial_project' );
 
 /* Database */
 define( "TPL_TABLE_RECEIPTS", 'pr_receipts' );
+define( "TPL_TABLE_RECEIPT_TRANSACTIONS", 'pr_receipt_transactions' );
 define( "TPL_TABLE_PURCHASED_ISSUES", 'pr_purchased_issues' );
 define( "TPL_TABLE_APNS_TOKENS", 'pr_apns_tokens' );
 

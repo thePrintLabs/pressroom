@@ -259,9 +259,15 @@ class TPL_Edition
 		</style>';
 		echo '<div id="publishing_popup"><h1>' . __( 'Publication progress', 'edition' ) . '</h1>';
 		$editorial_terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
-		foreach ( $editorial_terms as $term ) {
-			$packager->run( $term );
+		if ( $editorial_terms ){
+				foreach ( $editorial_terms as $term ) {
+					$packager->run( $term );
+				}
 		}
+		else {
+			echo '<p class="liveoutput error"><span class="label">Error</span>' . __( ' No editorial project linked to this edition', 'edition' ) .'</p>';
+		}
+
 
 		echo '</div>';
 		exit;
@@ -364,7 +370,7 @@ class TPL_Edition
 
 				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
 				if ( $term_meta ) {
-					$term_types = unserialize( $term_meta['_pr_subscription_types'] );
+					$term_types = $term_meta['_pr_subscription_types'];
 					if( $term_types ) {
 						foreach ( $term_types as $type ) {
 
@@ -373,7 +379,7 @@ class TPL_Edition
 								'text'  => $type,
 							);
 						}
-					}					
+					}
 				}
 			}
 		}

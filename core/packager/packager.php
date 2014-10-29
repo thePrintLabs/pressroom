@@ -36,6 +36,11 @@ class TPL_Packager
 			return;
 		}
 
+		if( !$this->_linked_query->posts ) {
+				self::print_line( __( 'No posts linked to this edition ', 'edition' ), 'error' );
+				exit;
+		}
+
 		// $editorial_terms = wp_get_post_terms( $this->_edition_post->ID, TPL_EDITORIAL_PROJECT );
 		// if ( empty( $editorial_terms ) ) {
 		// 	self::print_line( __( 'You must assign the edition to an editorial project ', 'edition' ), 'error' );

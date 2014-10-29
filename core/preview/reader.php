@@ -29,6 +29,12 @@ if ( empty( $linked_posts ) ) {
   <li>Check if the edition with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
 }
 
+$terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
+if ( empty( $terms ) ) {
+  wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
+  <li>Ensure that there is least one editorial project linked to this edition</li></ul>", 'pressroom' ) );
+}
+
 $edition = get_post( $edition_id );
 $edition_name = TPL_Utils::sanitize_string( $edition->post_title );
 $index_height = pr_get_option( 'pr-index-height' );

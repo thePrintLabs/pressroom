@@ -25,6 +25,8 @@ abstract class PR_Server_API
   public function add_endpoint() {
 
     add_rewrite_tag('%__pressroom-api%', '([^&]+)');
+    add_rewrite_tag( '%editorial_project%', '([^&]+)' );
+    add_rewrite_tag( '%edition_name%', '([^&]+)' );
   }
 
   /**

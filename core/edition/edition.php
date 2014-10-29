@@ -430,4 +430,25 @@ class TPL_Edition
 				break;
 		}
 	}
+
+	/**
+	 * Get an edition by slug
+	 * @param string $slug
+	 * @return object
+	 */
+	public static function get_by_slug( $slug ) {
+
+		$args = array(
+  		'name' => $slug,
+  		'post_type' => TPL_EDITION,
+  		'post_status' => 'any',
+  		'numberposts' => 1
+		);
+		$edition_query = new WP_Query( $args );
+		$editions = $edition_query->posts;
+		if ( !empty( $editions ) ) {
+			return $editions[0];
+		}
+		return false;
+	}
 }

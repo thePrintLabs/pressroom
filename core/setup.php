@@ -62,10 +62,11 @@ class TPL_Setup
    */
   private static function _setup_db_tables() {
 
-    if ( VERSION_PRO ) {
+    if ( self::VERSION_PRO ) {
 
       global $wpdb;
       $table_receipts = $wpdb->prefix . TPL_TABLE_RECEIPTS;
+      $table_receipt_transactions = $wpdb->prefix . TPL_TABLE_RECEIPT_TRANSACTIONS;
       $table_purchased_issues = $wpdb->prefix . TPL_TABLE_PURCHASED_ISSUES;
       $table_apns_tokens = $wpdb->prefix . TPL_TABLE_APNS_TOKENS;
 
@@ -79,14 +80,45 @@ class TPL_Setup
     	}
 
     	$sql_receipts = "CREATE TABLE IF NOT EXISTS $table_receipts (
-        transaction_id VARCHAR(30),
-        app_id VARCHAR(255),
-        user_id VARCHAR(255),
-        product_id VARCHAR(255),
-        type VARCHAR(30),
-        base64_receipt TEXT,
-        PRIMARY KEY(transaction_id, app_id, user_id)
+        receipt_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	      app_bundle_id VARCHAR(128),
+	      device_id VARCHAR(256),
+        transaction_id VARCHAR(32),
+	      base64_receipt TEXT CHARACTER SET ascii COLLATE ascii_bin,
+        PRIMARY KEY (receipt_id),
+        INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
       ) $charset_collate; ";
+
+      //
+      // CREATE TABLE IF NOT EXISTS $table_receipts (
+      //   receipt_id BIGINT(20)
+      //   transaction_id VARCHAR(30),
+      //   app_id VARCHAR(255),
+      //   user_id VARCHAR(255),
+      //   product_id VARCHAR(255),
+      //   type VARCHAR(30),
+      //   base64_receipt TEXT,
+      //   PRIMARY KEY(transaction_id, app_id, user_id)
+      // ) $charset_collate; ";
+
+      $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
+        transaction_id VARCHAR(32),
+        receipt_id bigint(20) UNSIGNED NOT NULL,
+        product_id VARCHAR(256),
+        type VARCHAR(32),
+        PRIMARY KEY(transaction_id),
+        INDEX receipt USING BTREE (receipt_id) COMMENT ''
+      ) $charset_collate; ";
+
+      // $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
+      //   transaction_id VARCHAR(30),
+      //   app_id VARCHAR(255),
+      //   user_id VARCHAR(255),
+      //   product_id VARCHAR(255),
+      //   type VARCHAR(30),
+      //   base64_receipt TEXT,
+      //   PRIMARY KEY(transaction_id, app_id, user_id)
+      // ) $charset_collate; ";
 
       $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_purchased_issues (
         app_id VARCHAR(255),
@@ -104,10 +136,12 @@ class TPL_Setup
 
       require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
       dbDelta( $sql_receipts );
+      dbDelta( $sql_receipt_transactions );
       dbDelta( $sql_purchased_issues );
       dbDelta( $sql_apns_tokens  );
 
       return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts
+         && $wpdb->get_var("SHOW TABLES LIKE '$table_receipt_transactions'") == $table_receipt_transactions
          && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues
          && $wpdb->get_var("SHOW TABLES LIKE '$table_apns_tokens'") == $table_apns_tokens );
     }

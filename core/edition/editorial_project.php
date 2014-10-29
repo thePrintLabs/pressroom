@@ -251,9 +251,26 @@ class TPL_Editorial_Project
     return isset( $options[$meta_name] ) ? $options[$meta_name] : false;
   }
 
+  public static function get_subscription_method( $term_id, $product_id ) {
+
+    $options = self::get_configs( $term_id );
+    $subscription_types = $options['_pr_subscription_types'];
+    $subscription_methods = $options['_pr_subscription_method'];
+
+    if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
+      foreach ( $subscription_types as $k => $type ) {
+        $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
+        if ( $identifier == $product_id ) {
+          return $subscription_methods[$k];
+        }
+      }
+    }
+    return false;
+  }
+
   /**
    * Get all editions in a range of dates
-   * linked to an editiorial project with a specific slug
+   * linked to an editiorial project
    * @param  object $eproject
    * @param  string $start_date
    * @param  string $end_date
@@ -266,6 +283,8 @@ class TPL_Editorial_Project
       'posts_per_page'  => -1,
       'post_status'     => 'publish',
       'post_type'       => TPL_EDITION,
+      'meta_key'        => '_pr_date',
+      'orderby'         => 'meta_value',
       'tax_query'       => array(
         array(
           'taxonomy'  => TPL_EDITORIAL_PROJECT,
@@ -284,6 +303,64 @@ class TPL_Editorial_Project
     ));
     $editions = $editions_query->posts;
     return $editions;
+  }
+
+  /**
+   * Get all published editions
+   * linked to an editiorial project
+   * @param  object $eproject
+   * @return array
+   */
+  public static function get_all_editions( $eproject ) {
+
+    $editions_query = new WP_Query( array(
+      'nopaging'        => true,
+      'posts_per_page'  => -1,
+      'post_status'     => 'publish',
+      'post_type'       => TPL_EDITION,
+      'meta_key'        => '_pr_date',
+      'orderby'         => 'meta_value',
+      'tax_query'       => array(
+        array(
+          'taxonomy'  => TPL_EDITORIAL_PROJECT,
+          'field'     => 'slug',
+          'terms'     => $eproject->slug
+        )
+      )
+    ));
+    $editions = $editions_query->posts;
+    return $editions;
+  }
+
+  /**
+   * Get latest published edition
+   * linked to an editiorial project
+   * @param  object $eproject
+   * @return array
+   */
+  public static function get_latest_edition( $eproject ) {
+
+    $editions_query = new WP_Query( array(
+      'nopaging'        => true,
+      'numberposts'     => 1,
+      'posts_per_page'  => 1,
+      'post_status'     => 'publish',
+      'post_type'       => TPL_EDITION,
+      'meta_key'        => '_pr_date',
+      'orderby'         => 'meta_value',
+      'tax_query'       => array(
+        array(
+          'taxonomy'  => TPL_EDITORIAL_PROJECT,
+          'field'     => 'slug',
+          'terms'     => $eproject->slug
+        )
+      ),
+    ));
+    $editions = $editions_query->posts;
+    if ( !empty( $editions ) ) {
+      return $editions[0];
+    }
+    return false;
   }
 }
 

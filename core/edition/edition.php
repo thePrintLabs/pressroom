@@ -107,9 +107,9 @@ class TPL_Edition
 		$e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
 			'options' => $this->_get_subscription_types()
 		) );
-		foreach ( $editorial_terms as $term)
+		foreach ( $editorial_terms as $term) {
 			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
-
+		}
 		// Add metabox to metaboxes array
 		array_push( $this->_metaboxes, $e_meta );
 	}
@@ -357,37 +357,6 @@ class TPL_Edition
 	}
 
 	/**
-	 * Get subscription types terms
-	 *
-	 * @return array
-	 */
-	protected function _get_subscription_types() {
-
-		$types = array();
-		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
-		if ( !empty( $terms ) ) {
-			foreach ( $terms as $term ) {
-
-				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
-				if ( $term_meta ) {
-					$term_types = $term_meta['_pr_subscription_types'];
-					if( $term_types ) {
-						foreach ( $term_types as $type ) {
-
-							$types[$term->name][] = array(
-								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-								'text'  => $type,
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $types;
-	}
-
-	/**
 	 * Add custom columns
 	 *
 	 * @param  array $columns
@@ -450,5 +419,53 @@ class TPL_Edition
 			return $editions[0];
 		}
 		return false;
+	}
+
+	/**
+	 * Get the bundle id of an edition into an editorial project
+	 * @param int $edition_id
+	 * @param int $editorial_project_id
+	 * @return string or boolean false
+	 */
+	public static function get_bundle_id( $edition_id, $editorial_project_id ) {
+
+		$edition_bundle_id = false;
+		$product_id = get_post_meta( $edition_id, '_pr_product_id_' . $editorial_project_id , true );
+		$eproject_options = TPL_Editorial_Project::get_configs( $editorial_project_id );
+		if ( $product_id && $eproject_options ) {
+			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
+		}
+		return $edition_bundle_id;
+	}
+
+	/**
+	 * Get subscription types terms
+	 *
+	 * @return array
+	 */
+	protected function _get_subscription_types() {
+
+		$types = array();
+		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
+		if ( !empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+
+				$eproject_options = TPL_Editorial_Project::get_configs( $term->term_id );
+				if ( $eproject_options ) {
+					$eproject_types = $eproject_options['_pr_subscription_types'];
+					if( $eproject_types ) {
+						foreach ( $eproject_types as $type ) {
+
+							$types[$term->name][] = array(
+								'value' => $eproject_options['_pr_prefix_bundle_id']. '.' . $eproject_options['_pr_subscription_prefix']. '.' . $type,
+								'text'  => $type,
+							);
+						}
+					}
+				}
+			}
+		}
+
+		return $types;
 	}
 }

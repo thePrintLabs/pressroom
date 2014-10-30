@@ -76,9 +76,7 @@ final class PR_Server_Issue extends PR_Server_API
       $purchases = $itunes_connector->get_purchases();
       if ( !empty( $purchases['issues'] ) ) {
         // Get the editorial project settings
-        $eproject_options = TPL_Editorial_Project::get_configs( $eproject->term_id );
-        $product_id = get_post_meta( $edition->ID, '_pr_product_id_' . $eproject->term_id , true );
-        $edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
+        $edition_bundle_id = TPL_Edition::get_bundle_id( $edition->ID, $eproject->term_id );
         if ( in_array( $edition_bundle_id, $purchases['issues'] ) ) {
           $allow_download = true;
         }

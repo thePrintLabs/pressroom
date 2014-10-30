@@ -34,7 +34,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
    * Add API Endpoint
    * Must extend the parent class
    *
-   *	@void
+   *  @void
    */
   public function add_endpoint() {
 
@@ -51,7 +51,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
    * Parse HTTP request
    * Must extend the parent class
    *
-   *	@return die if API request
+   *  @return die if API request
    */
   public function parse_request() {
 
@@ -239,6 +239,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     if ( $receipt_data->status == 0 ) {
       if ( is_array( $receipt_data->latest_receipt_info ) ) {
         foreach ( $receipt_data->latest_receipt_info as $receipt_info ) {
+
           if ( $receipt_info->transaction_id == $transaction_id ) {
             $to_date = date( 'Y-m-d', (int)$receipt_info->expires_date_ms / 1000 );
             break;
@@ -252,6 +253,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     elseif ( $receipt_data->status == 21006 ) {
       if ( is_array( $receipt_data->latest_expired_receipt_info ) ) {
         foreach ( $receipt_data->latest_expired_receipt_info as $expired_receipt_info ) {
+
           if ( $expired_receipt_info->transaction_id == $transaction_id ) {
             $to_date = date( 'Y-m-d', (int)$expired_receipt_info->expires_date_ms / 1000 );
             break;
@@ -292,8 +294,8 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
     if ( !empty( $editions ) ) {
       foreach ( $editions as $edition ) {
-        $product_id = get_post_meta( $edition->ID, '_pr_product_id_' . $this->eproject->term_id, true );
-        $edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
+
+        $edition_bundle_id = TPL_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
         array_push( $issues, $edition_bundle_id );
       }
     }
@@ -311,6 +313,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     $purchased_editions = $this->get_purchased_editions();
     if ( $purchased_editions ) {
       foreach ( $purchased_editions as $edition ) {
+
         array_push( $purchases, $edition->product_id );
       }
     }
@@ -329,6 +332,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
         if ( isset( $receipt->in_app ) ) {
           $receipt_unique_id = $this->save_receipt( false );
           foreach ( $receipt->in_app as $k => $single_receipt ) {
+
             if ( $single_receipt->transaction_id == $transaction_id ) {
               $editions = $this->get_editions_in_subscription( $receipt_data, $single_receipt );
               $purchases = array_merge( $purchases, $editions );
@@ -397,6 +401,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     if ( isset( $receipt->in_app ) ) {
       $receipt_unique_id = $this->save_receipt( false );
       foreach ( $receipt->in_app as $k => $single_receipt ) {
+
         if ( $product_id && $product_id == $single_receipt->product_id ) {
           $this->save_receipt_transactions( $receipt_record_id, $single_receipt, $purchase_type );
         }

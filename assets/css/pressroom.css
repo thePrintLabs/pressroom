@@ -42,19 +42,19 @@
   padding: 0.5%;
 }
 
-.tpl_repeater.subscription  .repeater-completer {
+.pr_repeater.subscription  .repeater-completer {
   margin: 0  0 10px 29px;
   width:54%;
   display: block;
 }
-.tpl_repeater .subscription_method {
+.pr_repeater .subscription_method {
   display: inline-block;
 }
-.tpl_repeater .subscription_method input {
+.pr_repeater .subscription_method input {
   margin: 2px 5px;
 }
 @media screen and (max-width:768px) {
-  .tpl_repeater.subscription .repeater-completer {
+  .pr_repeater.subscription .repeater-completer {
   margin: 10px  0;
   }
 }

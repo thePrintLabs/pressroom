@@ -169,7 +169,7 @@ class TPL_Packager
 
 		self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
 
-		$hpub_package = TPL_Packager_HPUB_Package::build( $edition_post, $editorial_project, $edition_dir );
+		$hpub_package = TPL_Packager_HPUB_Package::build( $edition_post->ID, $editorial_project, $edition_dir );
 		if ( $hpub_package ) {
 			self::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
 		} else {
@@ -179,7 +179,7 @@ class TPL_Packager
 			return;
 		}
 
-		if ( TPL_Packager_Shelf_JSON::generate_shelf( $edition_post, $editorial_project ) ) {
+		if ( TPL_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
 			self::print_line( __( 'Generated shelf.json for editorial project: ', 'edition' ) . $editorial_project->name, 'success' );
 		}
 		else {

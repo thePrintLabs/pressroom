@@ -154,10 +154,11 @@ class TPL_Editorial_Project
     $e_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'edition' ), 'text_autocompleted', '' );
     $e_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'edition' ), 'text_autocompleted', '' );
     $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater_with_radio', '', array(
-      'options' => array(
+      'radio_field'   => '_pr_subscription_method',
+      'radio_options' => array(
         array( 'value' => 'all', 'name' => __( "All", 'edition' ) ),
         array( 'value' => 'last', 'name' => __( "Last edition", 'edition' ) )
-      )
+      ),
     ) );
     $this->_metabox = $e_meta;
   }

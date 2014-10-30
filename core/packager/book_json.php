@@ -6,8 +6,8 @@
 final class TPL_Packager_Book_JSON
 {
    private static $_press_to_baker = array(
-      '_pr-orientation'                 => 'orientation',
-      '_pr-zoomable'                    => 'zoomable',
+      '_pr_orientation'                 => 'orientation',
+      '_pr_zoomable'                    => 'zoomable',
       '_pr_body_bg_color'               => '-baker-background',
       '_pr_background_image_portrait'   => '-baker-background-image-portrait',
       '_pr_background_image_landscape'  => '-baker-background-image-landscape',
@@ -76,10 +76,11 @@ final class TPL_Packager_Book_JSON
       global $tpl_pressroom;
 
       $book_url = str_replace( array( 'http://', 'https://' ), 'book://', TPL_HPUB_URI );
+      $hpub_url = str_replace( TPL_HPUB_PATH, $book_url, get_post_meta( $edition_post->ID, '_pr_edition_hpub_' . $term_id, true ) );
 
       $options = array(
          'hpub'   => true,
-         'url'    => $book_url . TPL_Utils::sanitize_string( $edition_post->post_title . '.hpub' )
+         'url'    => $hpub_url
       );
 
       $configs = get_option( 'taxonomy_term_' . $term_id );
@@ -94,6 +95,7 @@ final class TPL_Packager_Book_JSON
                case '_pr_index_height':
                case '_pr_index_width':
                case '_pr_start_at_page':
+               case '_pr_page_numbers_alpha':
                   $options[$baker_option] = (int)$option;
                   break;
                case '_pr_orientation':

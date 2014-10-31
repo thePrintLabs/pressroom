@@ -199,18 +199,18 @@ class Pressroom_List_Table extends WP_List_Table
 	 */
    public function column_template( $item ) {
 
-      $template = p2p_get_meta( $item->p2p_id, 'template', true );
+    $template = p2p_get_meta( $item->p2p_id, 'template', true );
 		$themes = TPL_Theme::get_themes();
-      $current_theme = get_post_meta( $this->_edition_id, '_pr_theme_select', true );
+    $current_theme = get_post_meta( $this->_edition_id, '_pr_theme_select', true );
 
-      $html = '<select class="presslist-template">';
+    $html = '<select class="presslist-template">';
 		if ( $current_theme ) {
          $pages = $themes[$current_theme];
-         foreach ( $pages as $page ) {
-            if ( $page['name'] ) {
-               $html.= '<option ' . ( $template == $page['filename'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page['filename'] . '" >' . $page['name'] . '</option>';
-            }
-         }
+        foreach ( $pages as $page ) {
+          if ( $page['name'] ) {
+            $html.= '<option ' . ( $template == $page['filename'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page['filename'] . '" >' . $page['name'] . '</option>';
+          }
+        }
       } else {
          $html.= '<option value="">' . __('Please assign a theme edition', 'edition') . '</option>';
       }
@@ -266,7 +266,7 @@ class Pressroom_List_Table extends WP_List_Table
       echo '<div class="tablenav ' . esc_attr( $which ) . '">
       <div class="alignleft actions">
       <select name="actiontwo">
-      <option selected="selected" value="-1">' . __( 'Bulk Action', 'edition' ) . '</option>
+      <option selected="selected" value="-1">' . __( 'Change status', 'edition' ) . '</option>
       <option value="include">include</option>
       <option value="exclude">exclude</option>
       </select>

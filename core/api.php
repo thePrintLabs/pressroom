@@ -8,28 +8,20 @@
  */
 function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
 
-  $linked_posts = array();
-  $connected = p2p_get_connections( P2P_EDITION_CONNECTION, array(
-    'to' => is_int( $edition ) ? get_post( $edition ) : $edition,
-  ));
+  global $wpdb;
+  $q= "SELECT ID FROM $wpdb->posts AS posts
+  LEFT JOIN $wpdb->p2p AS p2p ON p2p.p2p_from = posts . ID
+  LEFT JOIN $wpdb->p2pmeta AS meta ON meta.p2p_id = p2p . p2p_id AND meta.meta_key = 'order'";
 
-  foreach ( $connected as $conn ) {
-    if ( $conn->post_status != 'trash') {
-      if ( $only_enabled ) {
-        $visible = p2p_get_meta( $conn->p2p_id, 'status', true );
-        if ( !$visible ) {
-          continue;
-        }
-      }
-
-      $order = p2p_get_meta( $conn->p2p_id, 'order', true );
-      $linked_posts[$order] = $conn->p2p_from;
-    }
-
-    ksort( $linked_posts );
-
-    return $linked_posts;
+  if ( $only_enabled ) {
+    $q.= "LEFT JOIN $wpdb->p2pmeta AS meta_status ON meta_status.p2p_id = p2p . p2p_id AND meta_status.meta_key = 'status'";
   }
+
+  $q.= "WHERE post_status <> %s AND meta_status.meta_value = %b ORDER BY meta.meta_value ASC";
+
+  $linked_posts = $wpdb->get_col( $wpdb->prepare( $q, 'trash', 1 ) );
+
+  return $linked_posts;
 }
 
 /**

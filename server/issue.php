@@ -67,6 +67,7 @@ final class PR_Server_Issue extends PR_Server_API
     $environment = isset( $_GET['environment'] ) ? $_GET['environment'] : 'production';
 
     $allow_download = false;
+    $edition_hpub = get_post_meta( $edition->ID, '_pr_edition_hpub_' . $eproject->term_id, true );
     $edition_type = get_post_meta( $edition->ID, '_pr_edition_free', true );
     if ( $edition_type == 0 ) {
       // @TODO: Implement management of multiple connectors
@@ -76,9 +77,7 @@ final class PR_Server_Issue extends PR_Server_API
       $purchases = $itunes_connector->get_purchases();
       if ( !empty( $purchases['issues'] ) ) {
         // Get the editorial project settings
-        $eproject_options = TPL_Editorial_Project::get_configs( $eproject->term_id );
-        $product_id = get_post_meta( $edition->ID, '_pr_product_id_' . $eproject->term_id , true );
-        $edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
+        $edition_bundle_id = TPL_Edition::get_bundle_id( $edition->ID, $eproject->term_id );
         if ( in_array( $edition_bundle_id, $purchases['issues'] ) ) {
           $allow_download = true;
         }
@@ -88,26 +87,23 @@ final class PR_Server_Issue extends PR_Server_API
       $allow_download = true;
     }
 
-    if ( $allow_download ) {
-      die( 'avvio download' );
-    //   $attachment_location = $_SERVER["DOCUMENT_ROOT"] . "/issues/$name.hpub";
-    //   if (file_exists($attachment_location)) {
-    //     header('HTTP/1.1 200 OK');
-    //     header("Cache-Control: public"); // needed for i.e.
-    //     header("Content-Type: application/zip");
-    //     header("Content-Transfer-Encoding: Binary");
-    //     header("Content-Length:".filesize($attachment_location));
-    //     header("Content-Disposition: attachment; filename=file.zip");
-    //     readfile($attachment_location);
-    //     $log->LogDebug("Downloading $attachment_location");
-    //   } else {
-    //     header('HTTP/1.1 404 Not Found');
-    //     $log->LogInfo("Issue not found: $attachment_location");
-    //   }
-    // } else {
-    //   header('HTTP/1.1 403 Forbidden');
-    //   $log->LogInfo("Download not allowed: $name");
-    // }
+    if ( $allow_download && $edition_hpub && file_exists( $edition_hpub ) ) {
+
+      header( "HTTP/1.1 200 OK" );
+      header( "Pragma: public" );
+      header( "Expires: 0" );
+      header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+      header( "Cache-Control: public" );
+      header( "Content-Description: File Transfer" );
+      header( "Content-Type: application/zip" );
+      header( "Content-Transfer-Encoding: Binary" );
+      header( "Content-Length:" . filesize( $edition_hpub ) );
+      header( "Content-Disposition: attachment; filename=" . basename( $edition_hpub ) );
+      readfile( $edition_hpub );
+      // MEMORIZZARE IL DOWNLOAD?
+    } else {
+      header( "HTTP/1.1 404 Not Found" );
+      //$log->LogInfo("Issue not found: $attachment_location");
     }
   }
 }

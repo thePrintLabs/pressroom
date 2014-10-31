@@ -3,16 +3,24 @@
 * TPL packager: Hpub package
 *
 */
-abstract class TPL_Packager_HPUB_Package
+final class TPL_Packager_HPUB_Package
 {
-   public function __construct() {}
+  public function __construct() {}
 
-   public static function build( $filename, $dir ) {
+  public static function build( $edition_post_id, $editorial_project, $source_dir ) {
 
-      if ( TPL_Utils::create_zip_file( $dir, TPL_HPUB_PATH . $filename . '.hpub', '' ) ) {
-         return $filename . '.hpub';
+    $filename = TPL_HPUB_PATH . TPL_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $edition_post_id . '.hpub';
+    if ( TPL_Utils::create_zip_file( $source_dir, $filename, '' ) ) {
+
+      $meta_key = '_pr_edition_hpub_' . $editorial_project->term_id;
+      if ( get_post_meta( $edition_post_id, $meta_key, true ) ) {
+        update_post_meta( $edition_post_id, $meta_key, $filename );
       }
-
-      return false;
-   }
+      else {
+        add_post_meta( $edition_post_id, $meta_key, $filename, true );
+      }
+      return $filename;
+    }
+    return false;
+  }
 }

@@ -1,9 +1,10 @@
 <?php
 /**
-* TPL packager class.
-*
-*/
+ * TPL packager class.
+ *
+ */
 require_once( TPL_CORE_PATH . '/packager/book_json.php' );
+require_once( TPL_CORE_PATH . '/packager/shelf_json.php' );
 require_once( TPL_CORE_PATH . '/packager/hpub_package.php' );
 
 class TPL_Packager
@@ -53,6 +54,7 @@ class TPL_Packager
 		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'info' );
 
 		// Create edition folder
+		$edition_post = $this->_edition_post;
 		$edition_name = $editorial_project->slug . '_' . time();
 		$this->_edition_dir = TPL_Utils::make_dir( TPL_TMP_PATH, $edition_name );
 		if ( !$this->_edition_dir ) {
@@ -61,11 +63,11 @@ class TPL_Packager
 			return;
 		}
 
-
-		self::print_line( __( 'Create folder ', 'edition' ) . $this->_edition_dir, 'success' );
+		$edition_dir = $this->_edition_dir;
+		self::print_line( __( 'Create folder ', 'edition' ) . $edition_dir, 'success' );
 
 		// Get associated theme
-		$theme_dir = TPL_Theme::get_theme_path( $this->_edition_post->ID );
+		$theme_dir = TPL_Theme::get_theme_path( $edition_post->ID );
 		if ( !$theme_dir ) {
 			self::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
 			$this->_clean_temp_dir();
@@ -140,15 +142,15 @@ class TPL_Packager
 				}
 			}
 			else {
-				do_action( 'pr_packager_run_' . $post->post_type, $post, $this->_edition_dir );
+				do_action( 'pr_packager_run_' . $post->post_type, $post, $edition_dir );
 			}
 
 			self::print_line(__('Adding ', 'edition') . $post->post_title);
 		}
 
-		$media_dir = TPL_Utils::make_dir( $this->_edition_dir, TPL_EDITION_MEDIA );
+		$media_dir = TPL_Utils::make_dir( $edition_dir, TPL_EDITION_MEDIA );
 		if ( !$media_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA, 'error' );
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA, 'error' );
 			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
@@ -158,7 +160,7 @@ class TPL_Packager
 
 		$this->_save_cover_image();
 
-		if ( !TPL_Packager_Book_JSON::generate_book( $this->_edition_post, $this->_linked_query, $this->_edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
+		if ( !TPL_Packager_Book_JSON::generate_book( $edition_post, $this->_linked_query, $edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
 			self::print_line( __( 'Failed to generate book.json ', 'edition' ), 'error' );
 			$this->_clean_temp_dir();
 			ob_end_flush();
@@ -167,11 +169,21 @@ class TPL_Packager
 
 		self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
 
-		$hpub_package = TPL_Packager_HPUB_Package::build( $edition_name, $this->_edition_dir );
+		$hpub_package = TPL_Packager_HPUB_Package::build( $edition_post->ID, $editorial_project, $edition_dir );
 		if ( $hpub_package ) {
 			self::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
 		} else {
 			self::print_line( __( 'Failed to create hpub package ', 'edition' ), 'error' );
+			$this->_clean_temp_dir();
+			ob_end_flush();
+			return;
+		}
+
+		if ( TPL_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
+			self::print_line( __( 'Generated shelf.json for editorial project: ', 'edition' ) . $editorial_project->name, 'success' );
+		}
+		else {
+			self::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );
 			$this->_clean_temp_dir();
 			ob_end_flush();
 			return;
@@ -213,7 +225,6 @@ class TPL_Packager
 		if ( file_put_contents( $json_file, $encoded ) ) {
 			return true;
 		}
-
 		return false;
 	}
 

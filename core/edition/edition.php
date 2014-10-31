@@ -223,11 +223,13 @@ class TPL_Edition
 			return $post_id;
 		}
 
-		$this->get_custom_metaboxes( $post);
+		$this->get_custom_metaboxes( $post );
 		foreach ( $this->_metaboxes as $metabox ) {
 
 			$metabox->save_values();
 		}
+
+		$this->sanitize_linked_posts( $post );
 
 		$edition_theme = get_post_meta( $post_id, '_pr_theme_select', true );
 		if ( !$edition_theme ) {
@@ -238,6 +240,36 @@ class TPL_Edition
 			}
 			wp_redirect( $url );
 			exit;
+		}
+	}
+
+	public function sanitize_linked_posts( $edition ) {
+
+		$linked_posts = self::get_linked_posts( $edition );
+
+
+
+		$old_order = 1;
+		foreach ( $linked_posts->posts as $i => $post ) {
+
+			$current_order = p2p_get_meta( $post->p2p_id, 'order', true );
+			$current_order = max( $current_order, $old_order );
+			$old_order++;
+
+			p2p_update_meta( $post->p2p_id, 'order', $current_order);
+
+			$template = p2p_get_meta( $post->p2p_id, 'template', true );
+
+			if( !$template || !file_exists( TPL_THEME_PATH . $template ) ) {
+
+				$current_theme = get_post_meta( $edition->ID, '_pr_theme_select', true );
+
+				if ( $current_theme ) {
+					$themes = TPL_Theme::get_themes();
+					$default_template = $themes[$current_theme][0]['filename'];
+					p2p_update_meta( $post->p2p_id, 'template', $default_template);
+				}
+			}
 		}
 	}
 

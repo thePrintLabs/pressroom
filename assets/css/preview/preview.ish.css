@@ -597,13 +597,9 @@ body {
     transition: width 0.8s ease-out 0s;
 }
 
-
-
 div.clear {
     clear: both;
 }
-
-
 .sg-nav li a i {
     margin-right: 15px;
 }

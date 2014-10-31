@@ -281,27 +281,32 @@ class TPL_Edition
 	public function ajax_publishing_callback() {
 
 		$packager = new TPL_Packager();
-		echo '<style>
+		echo '<style type="text/css">
+		#publishing_popup {padding:10px 20px; font-family:"Helvetica Neue", Helvetica, Arial, sans-serif !important;}
 		#publishing_popup .error .label {background: #c22d26;}
 		#publishing_popup .success .label {background: #7dc42a;}
 		#publishing_popup .info .label {background: #000;}
-		#publishing_popup .label {color:#fff; text-transform:capitalize; padding: 2px 5px;}
-		#publishing_popup p { font-family: "Open Sans",sans-serif; font-size: 12px; line-height: 20px; margin: 5px 0;}
-		#publishing_popup h1 {margin-bottom: 10px}
+		#publishing_popup .label {color:#fff; text-transform:capitalize; padding:2px;width:60px;text-align:center;display:inline-block}
+		#publishing_popup p { font-size: 12px; line-height: 20px; margin: 5px 0;}
+		#publishing_popup h1 {margin:0 0 10px; color:#333;font-weight:300}
+		#publishing_console { padding:10px; height:435px; margin: 0 auto; overflow:scroll;font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }
 		</style>';
-		echo '<div id="publishing_popup"><h1>' . __( 'Publication progress', 'edition' ) . '</h1>';
+		echo '<div id="publishing_popup">
+		<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
+		$packager->pb->render();
+		echo '<div id="publishing_console">';
 		$editorial_terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
 		if ( $editorial_terms ){
-				foreach ( $editorial_terms as $term ) {
-					$packager->run( $term );
-				}
+			$total_steps = count( $editorial_terms ) * 12;
+			foreach ( $editorial_terms as $term ) {
+				$packager->run( $term );
+			}
 		}
 		else {
 			echo '<p class="liveoutput error"><span class="label">Error</span>' . __( ' No editorial project linked to this edition', 'edition' ) .'</p>';
 		}
-
-
-		echo '</div>';
+		echo '</div>
+		</div>';
 		exit;
 	}
 

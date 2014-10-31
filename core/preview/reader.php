@@ -48,9 +48,9 @@ $index_height = pr_get_option( 'pr-index-height' );
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../../assets/css/reset.css">
-  <link rel="stylesheet" href="../../assets/css/preview/ish.css">
-  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/preview.css" />
-  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/idangerous.swiper.css" />
+  <link rel="stylesheet" href="../../assets/css/preview/preview.ish.min.css">
+  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/preview.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/idangerous.swiper.min.css" />
 </head>
 <body>
 <header class="sg-header" role="banner">
@@ -139,7 +139,13 @@ $index_height = pr_get_option( 'pr-index-height' );
         data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
         <div class="swiper-wrapper">
           <?php foreach ( $linked_posts as $post ): ?>
-          <div data-post="<?php echo $post->ID; ?>" class="swiper-slide" data-hash="item-<?php echo $post->ID; ?>"></div>
+          <div data-post="<?php echo $post->ID; ?>" class="swiper-slide" data-hash="item-<?php echo $post->ID; ?>">
+            <div class="spinner">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+          </div>
           <?php endforeach; ?>
         </div>
       </div>
@@ -152,7 +158,7 @@ $index_height = pr_get_option( 'pr-index-height' );
 <script src="../../assets/js/preview/jquery-2.0.3.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
-<script src="../../assets/js/preview/tpl.reader.js"></script>
-<script src="../../assets/js/preview/ish_init.js"></script>
+<script src="../../assets/js/preview/tpl.reader.min.js"></script>
+<script src="../../assets/js/preview/tpl.reader.ish.min.js"></script>
 </body>
 </html>

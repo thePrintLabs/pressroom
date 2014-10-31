@@ -6,10 +6,12 @@
 require_once( TPL_CORE_PATH . '/packager/book_json.php' );
 require_once( TPL_CORE_PATH . '/packager/shelf_json.php' );
 require_once( TPL_CORE_PATH . '/packager/hpub_package.php' );
+require_once( TPL_CORE_PATH . '/packager/progressbar.php' );
 
 class TPL_Packager
 {
 	public static $verbose = true;
+	public $pb;
 
 	protected $_edition_post;
 	protected $_edition_dir;
@@ -21,6 +23,7 @@ class TPL_Packager
 	public function __construct() {
 
 		$this->_get_linked_posts();
+		$this->pb = new ProgressBar();
 	}
 
 	/**
@@ -31,25 +34,15 @@ class TPL_Packager
 	public function run( $editorial_project ) {
 
 		ob_start();
-
 		if ( is_null( $this->_edition_post ) ) {
 			ob_end_flush();
 			return;
 		}
 
 		if( !$this->_linked_query->posts ) {
-				self::print_line( __( 'No posts linked to this edition ', 'edition' ), 'error' );
-				exit;
+			self::print_line( __( 'No posts linked to this edition ', 'edition' ), 'error' );
+			exit;
 		}
-
-		// $editorial_terms = wp_get_post_terms( $this->_edition_post->ID, TPL_EDITORIAL_PROJECT );
-		// if ( empty( $editorial_terms ) ) {
-		// 	self::print_line( __( 'You must assign the edition to an editorial project ', 'edition' ), 'error' );
-		// 	ob_end_flush();
-		// 	return;
-		// }
-		//
-		//
 
 		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'info' );
 
@@ -59,73 +52,82 @@ class TPL_Packager
 		$this->_edition_dir = TPL_Utils::make_dir( TPL_TMP_PATH, $edition_name );
 		if ( !$this->_edition_dir ) {
 			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_PATH . $edition_name, 'error' );
+			$this->set_progress( 100 );
 			ob_end_flush();
 			return;
 		}
 
 		$edition_dir = $this->_edition_dir;
 		self::print_line( __( 'Create folder ', 'edition' ) . $edition_dir, 'success' );
+		$this->set_progress( 2, __( 'Loading edition theme', 'edition' ) );
 
 		// Get associated theme
 		$theme_dir = TPL_Theme::get_theme_path( $edition_post->ID );
 		if ( !$theme_dir ) {
 			self::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
+		$this->set_progress( 5, __( 'Downloading assets', 'edition' ) );
 
 		// Download all assets
 		$downloaded_assets = $this->_download_assets( $theme_dir . 'assets' );
 		if ( !$downloaded_assets ) {
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
+		$this->set_progress( 10, __( 'Parsing cover', 'edition' ) );
 
 		// Parse html of cover index.php file
 		$cover = $this->_cover_parse();
 		if ( !$cover ) {
 			self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
+		$this->set_progress( 15, __( 'Rewriting cover urls', 'edition' ) );
 
 		// Rewrite cover url
 		$cover = $this->_rewrite_url($cover);
+		$this->set_progress( 20, __( 'Saving cover file', 'edition' ) );
+
 		// Save cover html file
-		if ( !$this->_save_html_file( $cover, 'index' ) ) {
+		if ( $this->_save_html_file( $cover, 'index' ) ) {
+			self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
+			$this->set_progress( 22, __( 'Parsing toc file', 'edition' ) );
+		}
+		else {
 			self::print_line( __( 'Failed to save cover file', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
-
-		self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
 
 		// Parse html of cover index.php file
 		$toc = $this->_toc_parse();
 		if ( !$toc ) {
 			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
 
 		// Rewrite cover url
 		$toc = $this->_rewrite_url($toc);
+		$this->set_progress( 28, __( 'Saving toc file', 'edition' ) );
+
 		// Save cover html file
-		if ( !$this->_save_html_file( $toc, 'toc' ) ) {
+		if ( $this->_save_html_file( $toc, 'toc' ) ) {
+			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
+			$this->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
+		}
+		else {
 			self::print_line( __( 'Failed to save toc file', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
 
-		self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
-
-		foreach ( $this->_linked_query->posts as $post ) {
+		$total_progress = 40;
+		$progress_step = round( $total_progress / count( $this->_linked_query->posts ) );
+		foreach ( $this->_linked_query->posts as $k => $post ) {
 			// Parse post content
 			$parsed_post = $this->_post_parse( $post );
 			if ( !$parsed_post ) {
@@ -146,54 +148,68 @@ class TPL_Packager
 			}
 
 			self::print_line(__('Adding ', 'edition') . $post->post_title);
+			$this->set_progress( $total_progress + $k * $progress_step );
 		}
 
 		$media_dir = TPL_Utils::make_dir( $edition_dir, TPL_EDITION_MEDIA );
 		if ( !$media_dir ) {
 			self::print_line( __( 'Failed to create folder ', 'edition' ) . $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA, 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
+		$this->set_progress( 70, __( 'Saving edition attachments files', 'edition' ) );
 
 		$this->_save_posts_attachments( $media_dir );
+		$this->set_progress( 78, __( 'Saving edition cover image', 'edition' ) );
 
 		$this->_save_cover_image();
+		$this->set_progress( 80, __( 'Generating book json', 'edition' ) );
 
-		if ( !TPL_Packager_Book_JSON::generate_book( $edition_post, $this->_linked_query, $edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
+		if ( TPL_Packager_Book_JSON::generate_book( $edition_post, $this->_linked_query, $edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
+			self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
+			$this->set_progress( 85, __( 'Generating hpub package', 'edition' ) );
+		}
+		else {
 			self::print_line( __( 'Failed to generate book.json ', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
-
-		self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
 
 		$hpub_package = TPL_Packager_HPUB_Package::build( $edition_post->ID, $editorial_project, $edition_dir );
 		if ( $hpub_package ) {
 			self::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
+			$this->set_progress( 90, __( 'Generating shelf json', 'edition' ) );
 		} else {
 			self::print_line( __( 'Failed to create hpub package ', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
 
 		if ( TPL_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
 			self::print_line( __( 'Generated shelf.json for editorial project: ', 'edition' ) . $editorial_project->name, 'success' );
+			$this->set_progress( 95, __( 'Cleaning temporary files', 'edition' ) );
 		}
 		else {
 			self::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );
-			$this->_clean_temp_dir();
-			ob_end_flush();
+			$this->_exit_on_error();
 			return;
 		}
 
 		$this->_clean_temp_dir();
-
+		$this->set_progress( 100, __( 'Successfully created package', 'edition' ) );
 		self::print_line(__('Done', 'edition'), 'success');
-
 		ob_end_flush();
+	}
+
+	/**
+	* Set progressbar percentage
+	* @param int $percentage
+	* @void
+	*/
+	public function set_progress( $percentage, $text = '' ) {
+
+		$this->pb->setProgressBarProgress( $percentage, $text );
+		usleep(1000000*0.1);
 	}
 
 	/**
@@ -226,6 +242,17 @@ class TPL_Packager
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Stop packager procedure and clear temp folder
+	 * @void
+	 */
+	protected function _packager_exit_on_error() {
+
+		$this->_clean_temp_dir();
+		$this->set_progress( 100, __( 'Errore creating package', 'edition' ) );
+		ob_end_flush();
 	}
 
 	/**

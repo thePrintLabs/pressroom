@@ -4,6 +4,21 @@ function fixPagesHeight() {
   prSwiper.resizeFix();
 }
 
+function getNotLoadedSlide(item, d, i, m) {
+  if ( i == m ) {
+    return false;
+  }
+  var next = d == 'next' ? item.next() : item.prev();
+  if ( !next.length ) {
+    return false;
+  }
+  if ( next.data("status") != "loaded" ) {
+    return next;
+  } else {
+    getNotLoadedSlide(next, d, i+1, m);
+  }
+}
+
 $(function() {
   var reader = $( "#reader" ), conPages = reader.data( "conpages" ),
   bLeft = $(".circle--left").hide(), bRight = $(".circle--right").hide(), bToc = $("#fire-toc");
@@ -25,7 +40,7 @@ $(function() {
             //prSwiper.resizeFix();
             //console.log( 'User Agent: ' + navigator.userAgent );
           });
-          $item.data("status", "loaded").append($iframe);
+          $item.data("status", "loaded").children('.spinner').replaceWith($iframe).hide().fadeIn('slow');
         }
       }).then(function(){
         if (i < m - 1 ) {
@@ -135,21 +150,6 @@ $(function() {
       }
     }
   });
-
-  function getNotLoadedSlide(item, d, i, m) {
-    if ( i == m ) {
-      return false;
-    }
-    var next = d == 'next' ? item.next() : item.prev();
-    if ( !next.length ) {
-      return false;
-    }
-    if ( next.data("status") != "loaded" ) {
-      return next;
-    } else {
-      getNotLoadedSlide(next, d, i+1, m);
-    }
-  }
 
   fixPagesHeight();
 });

@@ -179,12 +179,20 @@ class TPL_Preview {
    */
   public static function rewrite_toc_url( $html, $edition_id ) {
      if ( $html ) {
-        $links = wp_extract_urls( $html );
+        //$links = wp_extract_urls( $html );
+        //
+        libxml_use_internal_errors( true );
+        $dom = new domDocument();
+        $dom->loadHTML( $html );
+
+        $links = $dom->getElementsByTagName( 'a' );
         foreach ( $links as $link ) {
 
-          $post_id = url_to_postid( $link );
+          $href = $link->getAttribute( 'href' );
+          $post_id = url_to_postid( $href );
           if ( $post_id ) {
-             $html = str_replace( $link, TPL_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
+            
+            $html = str_replace( $href, TPL_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
           }
         }
      }

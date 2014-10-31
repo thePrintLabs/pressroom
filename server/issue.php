@@ -102,8 +102,7 @@ final class PR_Server_Issue extends PR_Server_API
       readfile( $edition_hpub );
       // MEMORIZZARE IL DOWNLOAD?
     } else {
-      header( "HTTP/1.1 404 Not Found" );
-      //$log->LogInfo("Issue not found: $attachment_location");
+      $this->send_response( 404, "Not found. Edition not found." );
     }
   }
 }

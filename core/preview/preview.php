@@ -179,7 +179,7 @@ class TPL_Preview {
    */
   public static function rewrite_toc_url( $html, $edition_id ) {
      if ( $html ) {
-        $links = wp_extract_urls( $html );
+        $links = TPL_Utils::extract_urls( $html );
         foreach ( $links as $link ) {
 
           $post_id = url_to_postid( $link );

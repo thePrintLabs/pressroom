@@ -300,4 +300,16 @@ class TPL_Utils
 
 		return $str;
 	}
+
+	/**
+	 * Use RegEx to extract URLs from arbitrary content.
+	 * @param string $content
+	 * @return array
+	 */
+	public static function extract_urls( $content ) {
+
+		preg_match_all( "#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#", $content, $post_links );
+		$post_links = array_unique( $post_links[0] );
+		return array_values( $post_links );
+	}
 }

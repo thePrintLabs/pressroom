@@ -364,7 +364,7 @@ class TPL_Packager
 		if ( $html ) {
 
 			$post_rewrite_urls = array();
-			$urls = wp_extract_urls( $html );
+			$urls = TPL_Utils::extract_urls( $html );
 
 			foreach ( $urls as $url ) {
 

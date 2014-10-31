@@ -14,21 +14,22 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
   ));
 
   foreach ( $connected as $conn ) {
-
-    if ( $only_enabled ) {
-      $visible = p2p_get_meta( $conn->p2p_id, 'status', true );
-      if ( !$visible ) {
-        continue;
+    if ( $conn->post_status != 'trash') {
+      if ( $only_enabled ) {
+        $visible = p2p_get_meta( $conn->p2p_id, 'status', true );
+        if ( !$visible ) {
+          continue;
+        }
       }
+
+      $order = p2p_get_meta( $conn->p2p_id, 'order', true );
+      $linked_posts[$order] = $conn->p2p_from;
     }
 
-    $order = p2p_get_meta( $conn->p2p_id, 'order', true );
-    $linked_posts[$order] = $conn->p2p_from;
+    ksort( $linked_posts );
+
+    return $linked_posts;
   }
-
-  ksort( $linked_posts );
-
-  return $linked_posts;
 }
 
 /**

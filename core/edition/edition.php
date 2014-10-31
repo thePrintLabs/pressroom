@@ -363,8 +363,9 @@ class TPL_Edition
 	 */
 	protected function _get_subscription_types() {
 
+		global $post;
+		$terms = wp_get_post_terms( $post->ID, TPL_EDITORIAL_PROJECT );
 		$types = array();
-		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
 		if ( !empty( $terms ) ) {
 			foreach ( $terms as $term ) {
 

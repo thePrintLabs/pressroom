@@ -17,9 +17,9 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
     $q.= "LEFT JOIN $wpdb->p2pmeta AS meta_status ON meta_status.p2p_id = p2p . p2p_id AND meta_status.meta_key = 'status'";
   }
 
-  $q.= "WHERE post_status <> %s AND meta_status.meta_value = %b ORDER BY meta.meta_value ASC";
+  $q.= "WHERE post_status <> %s AND meta_status.meta_value = %b AND p2p.p2p_to = %u ORDER BY meta.meta_value ASC";
 
-  $linked_posts = $wpdb->get_col( $wpdb->prepare( $q, 'trash', 1 ) );
+  $linked_posts = $wpdb->get_col( $wpdb->prepare( $q, 'trash', 1, $edition->ID ) );
 
   return $linked_posts;
 }

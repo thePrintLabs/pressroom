@@ -171,7 +171,7 @@ class Pressroom_List_Table extends WP_List_Table
 	 */
    public function column_cb( $item ) {
 
-      return sprintf( '<input type="checkbox" name="" value="%s" />', $item->p2p_id );
+      return sprintf( '<input type="checkbox" name="linked_post" value="%s" />', $item->p2p_id );
 	}
 
 	/**
@@ -181,7 +181,7 @@ class Pressroom_List_Table extends WP_List_Table
 	 */
    public function column_status( $item ) {
 
-      $status = p2p_get_meta( $item->p2p_id, 'status', true );
+    $status = p2p_get_meta( $item->p2p_id, 'status', true );
 		if ( $status ) {
          $status_label = '<i class="icon-eye"></i>';
 		}
@@ -189,7 +189,7 @@ class Pressroom_List_Table extends WP_List_Table
 			$status_label = '<i class="icon-eye-off"></i>';
 		}
 
-      return '<a id="r_' . $item->p2p_id . '" class="presslist-status" data-status="' . $status .'" data-index="' . $item->p2p_id . '" href="#">' . __( $status_label, 'edition' ).'</a>';
+      return '<a id="r_' . $item->p2p_id . '" class="presslist-status" data-index="' . $item->p2p_id . '" href="#">' . __( $status_label, 'edition' ).'</a>';
 	}
 
 	/**
@@ -427,15 +427,18 @@ class Pressroom_List_Table extends WP_List_Table
    public function ajax_bulk_callback() {
 
       if ( !empty( $_POST['connected_posts'] ) ) {
-         foreach ( $_POST['connected_posts'] as $post_id ) {
+        foreach ( $_POST['connected_posts'] as $post_id ) {
 
-            if ( $_POST['action_to_do'] === 'include' ) {
-               p2p_update_meta( $post_id, 'status', 1 );
-            }
-            else {
-               p2p_update_meta( $post_id, 'status', 0 );
-            }
-         }
+          if ( $_POST['action_to_do'] === 'include' ) {
+             p2p_update_meta( $post_id, 'status', 1 );
+             $return = 1;
+          }
+          else {
+             p2p_update_meta( $post_id, 'status', 0 );
+             $return = 0;
+          }
+        }
+        wp_send_json( $return );
       }
       exit;
    }
@@ -460,10 +463,13 @@ class Pressroom_List_Table extends WP_List_Table
 	 */
 	public function presslist_ajax_callback() {
 
-      if ( p2p_update_meta( $_POST['id'], 'status', ( $_POST['status'] ? 0 : 1 ) ) ) {
-         echo 'updated';
+    $value = p2p_get_meta( $_POST['id'], 'status', true );
+
+    if ( p2p_update_meta( $_POST['id'], 'status', !$value ) ) {
+      wp_send_json( $value );
 		}
-      exit;
+
+    exit;
 	}
 
 	public function ajax_register_template_callback() {

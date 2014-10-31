@@ -131,22 +131,18 @@ $( ".wp-list-table tbody" ).delegate( ".presslist-status", "click", function(e) 
     e.preventDefault();
     el = jQuery(this);
     index = el.data('index');
-    status = el.data('status');
 
     var data = {
-        'status': status,
-        'id': index,
-        'action' : 'presslist'
+        'id'      : index,
+        'action'  : 'presslist'
     };
 
     jQuery.post(ajaxurl, data, function(response) {
-        if(status) {
+        if( response ) {
             el.find('i').addClass('icon-eye-off').removeClass('icon-eye');
-            el.data('status',0);
         }
         else {
             el.find('i').addClass('icon-eye').removeClass('icon-eye-off');;
-            el.data('status',1);
         }
 
     });
@@ -175,15 +171,9 @@ $('#doaction').on( "click", function(e) {
     e.preventDefault();
     var posts = new Array();
     var action_to_do = $('#pressroom_metabox .actions select option:selected').val();
-    $('.check-column :checked').each(function(){
-
+    var el;
+    $('input[name="linked_post"]:checked').each(function(){
         posts.push($(this).val());
-        var el = $('#r_'+$(this).val());
-
-        var status = (action_to_do == 'include' ? 0 : 1 );
-        el.find('i').addClass((status == 0 ? 'icon-eye' : 'icon-eye-off' ));
-        el.find('i').removeClass((status == 0 ? 'icon-eye-off' : 'icon-eye' ));
-        el.attr('data-status', (status == 0 ? 1 : 0));
     });
 
     var data = {
@@ -193,7 +183,16 @@ $('#doaction').on( "click", function(e) {
     };
 
     jQuery.post(ajaxurl, data, function(response) {
+      $('input[name="linked_post"]:checked').each(function(){
 
+          el = $('#r_'+$(this).val());
+          if( response ) {
+            el.find('i').removeClass('icon-eye-off').addClass('icon-eye');
+          }
+          else {
+            el.find('i').removeClass('icon-eye').addClass('icon-eye-off');
+          }
+      });
     });
 });
 

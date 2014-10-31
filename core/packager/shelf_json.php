@@ -67,7 +67,7 @@ final class TPL_Packager_Shelf_JSON
             case '_pr_product_id_' . $editorial_project->term_id :
               if ( isset( $meta_value[0] ) &&
                 !( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) ) {
-                $press_options[$edition_key][$baker_option] = TPL_Edition::get_bundle_id( $edition->ID, $editorial->term_id );
+                $press_options[$edition_key][$baker_option] = TPL_Edition::get_bundle_id( $edition->ID, $editorial_project->term_id );
               }
               break;
 

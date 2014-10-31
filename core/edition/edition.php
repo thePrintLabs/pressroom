@@ -357,6 +357,38 @@ class TPL_Edition
 	}
 
 	/**
+	 * Get subscription types terms
+	 *
+	 * @return array
+	 */
+	protected function _get_subscription_types() {
+
+		global $post;
+		$terms = wp_get_post_terms( $post->ID, TPL_EDITORIAL_PROJECT );
+		$types = array();
+		if ( !empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+
+				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
+				if ( $term_meta ) {
+					$term_types = $term_meta['_pr_subscription_types'];
+					if( $term_types ) {
+						foreach ( $term_types as $type ) {
+
+							$types[$term->name][] = array(
+								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
+								'text'  => $type,
+							);
+						}
+					}
+				}
+			}
+		}
+
+		return $types;
+	}
+
+	/**
 	 * Add custom columns
 	 *
 	 * @param  array $columns
@@ -436,36 +468,5 @@ class TPL_Edition
 			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
 		}
 		return $edition_bundle_id;
-	}
-
-	/**
-	 * Get subscription types terms
-	 *
-	 * @return array
-	 */
-	protected function _get_subscription_types() {
-
-		$types = array();
-		$terms = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
-		if ( !empty( $terms ) ) {
-			foreach ( $terms as $term ) {
-
-				$eproject_options = TPL_Editorial_Project::get_configs( $term->term_id );
-				if ( $eproject_options ) {
-					$eproject_types = $eproject_options['_pr_subscription_types'];
-					if( $eproject_types ) {
-						foreach ( $eproject_types as $type ) {
-
-							$types[$term->name][] = array(
-								'value' => $eproject_options['_pr_prefix_bundle_id']. '.' . $eproject_options['_pr_subscription_prefix']. '.' . $type,
-								'text'  => $type,
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $types;
 	}
 }

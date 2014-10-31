@@ -112,7 +112,7 @@ class TPL_Preview {
    * Parsing html
    * @param object $edition
    * @param object $connected_post
-   * @return string	html string
+   * @return string  html string
    */
   public static function parse_html( $edition, $connected_post ) {
 
@@ -178,25 +178,17 @@ class TPL_Preview {
    * @return string $html
    */
   public static function rewrite_toc_url( $html, $edition_id ) {
-     if ( $html ) {
-        //$links = wp_extract_urls( $html );
-        //
-        libxml_use_internal_errors( true );
-        $dom = new domDocument();
-        $dom->loadHTML( $html );
+    if ( $html ) {
+      $links = TPL_Utils::extract_urls( $html );
+      foreach ( $links as $link ) {
 
-        $links = $dom->getElementsByTagName( 'a' );
-        foreach ( $links as $link ) {
-
-          $href = $link->getAttribute( 'href' );
-          $post_id = url_to_postid( $href );
-          if ( $post_id ) {
-            
-            $html = str_replace( $href, TPL_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
-          }
+        $post_id = url_to_postid( $link );
+        if ( $post_id ) {
+          $html = str_replace( $link, TPL_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
         }
-     }
-     return $html;
+      }
+    }
+    return $html;
   }
 
   /**

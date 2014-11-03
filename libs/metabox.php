@@ -222,7 +222,7 @@ class TPL_Metabox
 
       if ( $term ) {
         $tax_options = get_option( 'taxonomy_term_' . $this->post_id );
-        $meta_value = $tax_options[$field['id']];
+        $meta_value = isset( $tax_options[$field['id']] ) ? $tax_options[$field['id']] : '';
       }
       else {
         $meta_value = get_post_meta( $this->post_id, $field['id'], true);
@@ -278,7 +278,7 @@ class TPL_Metabox
           break;
 
         case 'checkbox':
-          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' />';
+          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value || ( $meta_value == '' && $field['default'] ) ? 'checked="checked"' : '' ) . ' />';
           break;
 
         case 'checkbox_list':

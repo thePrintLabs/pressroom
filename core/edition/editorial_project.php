@@ -120,7 +120,7 @@ class TPL_Editorial_Project
         array( 'value' => 'both', 'name' => __( "Both", 'edition' ) )
       )
     ) );
-    $e_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'edition' ), __( 'Zoomable', 'edition' ), 'checkbox', '' );
+    $e_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'edition' ), __( 'Zoomable', 'edition' ), 'checkbox', false );
     $e_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Body background color', 'edition' ), 'color', '' );
 
     $e_meta->add_field( '_pr_default', '<h3>Visualization properties</h1><hr>', '', 'textnode', '' );
@@ -137,16 +137,16 @@ class TPL_Editorial_Project
         array( 'value' => 'three-cards', 'name' => __( "Three cards", 'edition' ) )
       )
     ) );
-    $e_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Vertical Bounce', 'edition' ), 'checkbox', '' );
-    $e_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media autoplay', 'edition' ), 'checkbox', '' );
-    $e_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical pagination', 'edition' ), 'checkbox', '' );
-    $e_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Page turn tap', 'edition' ), 'checkbox', '' );
-    $e_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Page turn swipe', 'edition' ), 'checkbox', '' );
+    $e_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Vertical Bounce', 'edition' ), 'checkbox', true );
+    $e_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media autoplay', 'edition' ), 'checkbox', true );
+    $e_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical pagination', 'edition' ), 'checkbox', false );
+    $e_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Page turn tap', 'edition' ), 'checkbox', true );
+    $e_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Page turn swipe', 'edition' ), 'checkbox', true );
 
     $e_meta->add_field( '_pr_default', '<h3>Book extended</h1><hr>', '', 'textnode', '' );
     $e_meta->add_field( '_pr_index_height', __( 'Index height', 'edition' ), __( 'Index height', 'edition' ), 'number', '' );
     $e_meta->add_field( '_pr_index_width', __( 'Index width', 'edition' ), __( 'Index width', 'edition' ), 'number', '' );
-    $e_meta->add_field( '_pr_index_bounce', __( 'Index bounce', 'edition' ), __( 'Index bounce', 'edition' ), 'checkbox', '' );
+    $e_meta->add_field( '_pr_index_bounce', __( 'Index bounce', 'edition' ), __( 'Index bounce', 'edition' ), 'checkbox', false );
     $e_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'edition' ), 'number', '' );
 
     $e_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );

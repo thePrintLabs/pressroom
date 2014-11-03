@@ -1,0 +1,59 @@
+/* ==========================================================================
+   Image styles
+   ========================================================================== */
+
+figure {
+	margin: 0;
+	padding: 0;
+	line-height: 0;
+	img {
+		width: 100%;
+		height: auto
+	}
+}
+
+figure .aligncenter {
+	width: 100%
+}
+
+img.aligncenter {
+	// max-width: 100%;
+	height: auto;
+}
+
+
+figure + p {
+	@include ktype(0,1,1);
+	display: block;
+}
+
+.entry-content-asset + p
+ {
+	@include ktype(0,0,1);
+	display: block;
+}
+
+.entry-content-asset + p:empty,
+figure + p:empty {
+	@include ktype(0,1,0);
+}
+
+.alignnone {
+
+}
+
+.alignleft {
+
+}
+
+.alignright {
+
+}
+
+.aligncenter {
+
+}
+
+figcaption {
+	margin-left: 1em;
+}

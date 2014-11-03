@@ -10,14 +10,20 @@ class TPL_option_page {
    */
   public function __construct() {
 
+    if( !is_admin() ) {
+      return;
+    }
+
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom' ) {
+
+      add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
+      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
+    }
+
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'admin_init', array( $this, 'pr_settings_init' ) );
-
-    add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
-    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
-
     add_filter( 'pre_update_option_pr_settings', array( $this, 'pr_save_options' ), 10, 2 );
-
   }
 
   /**
@@ -180,8 +186,8 @@ class TPL_option_page {
   		<h2>Pressroom Options</h2>
 
   		<?php
-  		settings_fields( 'pluginPage' );
-  		do_settings_sections( 'pluginPage' );
+  		settings_fields( 'pressroom' );
+  		do_settings_sections( 'pressroom' );
   		submit_button();
   		?>
 

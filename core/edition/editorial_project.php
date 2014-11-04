@@ -18,6 +18,11 @@ class TPL_Editorial_Project
       add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
       add_action( TPL_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
+
+    }
+    global $pagenow;
+    if ( $pagenow == 'edit-tags.php' && isset( $_GET['taxonomy'] ) && $_GET['taxonomy'] == TPL_EDITORIAL_PROJECT ) {
+      add_action( 'admin_footer', array( $this,'remove_form_fields' ) );
     }
 
   }
@@ -59,6 +64,7 @@ class TPL_Editorial_Project
     register_taxonomy( TPL_EDITORIAL_PROJECT, TPL_EDITION, $args );
   }
 
+
   /**
   * Define columns on list table
   *
@@ -71,7 +77,6 @@ class TPL_Editorial_Project
        'cb'           => '<input type="checkbox" />',
        'name'         => __( 'Name' ),
        'header_icon'  => __( 'Shelf.json', 'editorial_project'),
-       'description'  => __( 'Description' ),
        'slug'         => __( 'Slug' ),
        'posts'        => __( 'Posts' )
     );
@@ -390,6 +395,16 @@ class TPL_Editorial_Project
       return $editions[0];
     }
     return false;
+  }
+
+  public function remove_form_fields() {
+    ?>
+    <script>
+      jQuery('#tag-description').closest('.form-field').remove();
+	     jQuery('#description').closest('.form-field').remove();
+       jQuery('#parent').closest('.form-field').remove();
+    </script>
+    <?php
   }
 }
 

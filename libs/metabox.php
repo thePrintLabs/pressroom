@@ -143,7 +143,6 @@ class TPL_Metabox
     $term_meta = get_option( 'taxonomy_term_' . $this->post_id );
     $term_keys = array_keys( array_merge( $_POST, $_FILES ) );
     foreach ( $this->fields as $field ) {
-
       $field_id = $field['id'];
       $default = $updated ? '' : $field['default'];
       switch ( $field['type'] ) {
@@ -212,7 +211,7 @@ class TPL_Metabox
    *
    * @return string html field
    */
-  public function fields_to_html( $term = false ) {
+  public function fields_to_html( $term = false, $class = false ) {
 
     $html = '';
     $img_add = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAOElEQVRIx2NgGAWjYCAAP60tqBi1YPhY4AjEGVjwehzisuQkRwksuAWHONtoJA8fCxJHi+NRgAIACRMLT1NmIO8AAAAASUVORK5CYIIbd6c9de163cea60b462a8c6cd83a93e7"/>';
@@ -222,7 +221,9 @@ class TPL_Metabox
 
       if ( $term ) {
         $tax_options = get_option( 'taxonomy_term_' . $this->post_id );
-        $meta_value = isset( $tax_options[$field['id']] ) ? $tax_options[$field['id']] : '';
+        if( isset ( $tax_options[$field['id']] ) ) {
+          $meta_value = $tax_options[$field['id']];
+        }
       }
       else {
         $meta_value = get_post_meta( $this->post_id, $field['id'], true);
@@ -232,8 +233,8 @@ class TPL_Metabox
         $meta_value = esc_attr( $meta_value );
       }
 
-      $html.= '<tr>
-      <th style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
+      $html.= '<tr ' . ( $class ? 'class="tabbed ' . $class.'"' : "") . '>
+      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . ' style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
       <td>';
       switch ( $field['type'] ) {
 
@@ -278,7 +279,7 @@ class TPL_Metabox
           break;
 
         case 'checkbox':
-          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value || ( $meta_value == '' && $field['default'] ) ? 'checked="checked"' : '' ) . ' />';
+          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' />';
           break;
 
         case 'checkbox_list':

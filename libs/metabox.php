@@ -138,19 +138,18 @@ class TPL_Metabox
    *
    * @void
    */
-  public function save_term_values() {
+  public function save_term_values( $updated = false ) {
 
     $term_meta = get_option( 'taxonomy_term_' . $this->post_id );
     $term_keys = array_keys( array_merge( $_POST, $_FILES ) );
     foreach ( $this->fields as $field ) {
-
       $field_id = $field['id'];
+      $default = $updated ? '' : $field['default'];
       switch ( $field['type'] ) {
 
         default:
-          $term_meta[$field_id] = isset( $_POST[$field_id] ) ? $_POST[$field_id] : '';
+          $term_meta[$field_id] = isset( $_POST[$field_id] ) ? $_POST[$field_id] : $default;
           break;
-
         case 'repeater':
           $term_meta[$field_id] = array_filter( $_POST[$field_id] );
           break;
@@ -222,7 +221,9 @@ class TPL_Metabox
 
       if ( $term ) {
         $tax_options = get_option( 'taxonomy_term_' . $this->post_id );
-        $meta_value = $tax_options[$field['id']];
+        if( isset ( $tax_options[$field['id']] ) ) {
+          $meta_value = $tax_options[$field['id']];
+        }
       }
       else {
         $meta_value = get_post_meta( $this->post_id, $field['id'], true);

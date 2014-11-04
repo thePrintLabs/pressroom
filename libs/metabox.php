@@ -211,7 +211,7 @@ class TPL_Metabox
    *
    * @return string html field
    */
-  public function fields_to_html( $term = false ) {
+  public function fields_to_html( $term = false, $class = false ) {
 
     $html = '';
     $img_add = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAOElEQVRIx2NgGAWjYCAAP60tqBi1YPhY4AjEGVjwehzisuQkRwksuAWHONtoJA8fCxJHi+NRgAIACRMLT1NmIO8AAAAASUVORK5CYIIbd6c9de163cea60b462a8c6cd83a93e7"/>';
@@ -233,8 +233,8 @@ class TPL_Metabox
         $meta_value = esc_attr( $meta_value );
       }
 
-      $html.= '<tr>
-      <th style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
+      $html.= '<tr ' . ( $class ? 'class="tabbed ' . $class.'"' : "") . '>
+      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . ' style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
       <td>';
       switch ( $field['type'] ) {
 

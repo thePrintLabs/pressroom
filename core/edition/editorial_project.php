@@ -5,7 +5,7 @@
  */
 class TPL_Editorial_Project
 {
-  protected $_metabox;
+  protected $_metaboxes;
 
   public function __construct() {
 
@@ -14,6 +14,7 @@ class TPL_Editorial_Project
     if ( is_admin() ) {
       add_filter( 'manage_edit-' . TPL_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
       add_filter( 'manage_' . TPL_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
+      add_action( TPL_EDITORIAL_PROJECT . '_pre_edit_form', array( $this, 'pre_edit_form' ), 10, 2 );
       add_action( TPL_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
       add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
@@ -114,60 +115,82 @@ class TPL_Editorial_Project
    * @param  int $term_id
    */
   public function get_custom_metabox( $term_id ) {
-    $e_meta = new TPL_Metabox( 'edition_metabox', __( 'Edition metabox', 'edition' ), 'normal', 'high', $term_id );
 
-    $e_meta->add_field( '_pr_default', '<h3>Basic option</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_itunes_secret', __( 'Itunes secret', 'edition' ), __( 'Itunes secret', 'edition' ), 'text', '' );
-    $e_meta->add_field( '_pr_orientation', __( 'Orientation', 'edition' ), __( 'Orientation', 'edition' ), 'radio', '', array(
+    $basic_meta = new TPL_Metabox( 'basic_metabox', __( 'Basic', 'editorial_project' ), 'normal', 'high', $term_id );
+    $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
+    $behavior_meta = new TPL_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
+    $book_meta = new TPL_Metabox( 'book_metabox', __( 'Book extended', 'editorial_project' ), 'normal', 'high', $term_id );
+    $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'Subscriptions', 'editorial_project' ), 'normal', 'high', $term_id );
+
+    $basic_meta->add_field( '_pr_default', '<h3>Basic option</h1><hr>', '', 'textnode', '' );
+    $basic_meta->add_field( '_pr_itunes_secret', __( 'Itunes secret', 'editorial_project' ), __( 'Itunes secret', 'editorial_project' ), 'text', '' );
+    $basic_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'Orientation', 'edition' ), 'radio', '', array(
       'options' => array(
-        array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'edition' ) ),
-        array( 'value' => 'vertical', 'name' => __( "Vertical", 'edition' ) ),
-        array( 'value' => 'both', 'name' => __( "Both", 'edition' ) )
+        array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'editorial_project' ) ),
+        array( 'value' => 'vertical', 'name' => __( "Vertical", 'editorial_project' ) ),
+        array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
       )
     ) );
-    $e_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'edition' ), __( 'Zoomable', 'edition' ), 'checkbox', false );
-    $e_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Body background color', 'edition' ), 'color', '' );
+    $basic_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Zoomable', 'editorial_project' ), 'checkbox', false );
+    $basic_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Body background color', 'editorial_project' ), 'color', '' );
 
-    $e_meta->add_field( '_pr_default', '<h3>Visualization properties</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Background image portrait', 'edition' ), 'file', '' );
-    $e_meta->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Background image landscape', 'edition' ), 'file', '' );
-    $e_meta->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Page numbers color', 'edition' ), 'color', '' );
-    $e_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Page number alpha', 'edition' ), 'decimal', '' );
-    $e_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'edition' ), 'text', '' );
+    $vis_meta->add_field( '_pr_default', '<h3>Visualization properties</h1><hr>', '', 'textnode', '' );
+    $vis_meta->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Background image portrait', 'editorial_project' ), 'file', '' );
+    $vis_meta->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Background image landscape', 'editorial_project' ), 'file', '' );
+    $vis_meta->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Page numbers color', 'editorial_project' ), 'color', '' );
+    $vis_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Page number alpha', 'editorial_project' ), 'decimal', '' );
+    $vis_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
 
-    $e_meta->add_field( '_pr_default', '<h3>Behaviour properties</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_rendering', __( 'Rendering type', 'edition' ), __( 'Rendering type', 'edition' ), 'radio', '', array(
+    $behavior_meta->add_field( '_pr_default', '<h3>Behaviour properties</h1><hr>', '', 'textnode', '' );
+    $behavior_meta->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'Rendering type', 'edition' ), 'radio', '', array(
       'options' => array(
-        array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'edition' ) ),
-        array( 'value' => 'three-cards', 'name' => __( "Three cards", 'edition' ) )
+        array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),
+        array( 'value' => 'three-cards', 'name' => __( "Three cards", 'editorial_project' ) )
       )
     ) );
-    $e_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Vertical Bounce', 'edition' ), 'checkbox', true );
-    $e_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media autoplay', 'edition' ), 'checkbox', true );
-    $e_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical pagination', 'edition' ), 'checkbox', false );
-    $e_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Page turn tap', 'edition' ), 'checkbox', true );
-    $e_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Page turn swipe', 'edition' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Vertical Bounce', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media autoplay', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical pagination', 'editorial_project' ), 'checkbox', false );
+    $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Page turn tap', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Page turn swipe', 'editorial_project' ), 'checkbox', true );
 
-    $e_meta->add_field( '_pr_default', '<h3>Book extended</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_index_height', __( 'Index height', 'edition' ), __( 'Index height', 'edition' ), 'number', '' );
-    $e_meta->add_field( '_pr_index_width', __( 'Index width', 'edition' ), __( 'Index width', 'edition' ), 'number', '' );
-    $e_meta->add_field( '_pr_index_bounce', __( 'Index bounce', 'edition' ), __( 'Index bounce', 'edition' ), 'checkbox', false );
-    $e_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'edition' ), 'number', '' );
+    $book_meta->add_field( '_pr_default', '<h3>Book extended</h1><hr>', '', 'textnode', '' );
+    $book_meta->add_field( '_pr_index_height', __( 'Index height', 'edition' ), __( 'Index height', 'editorial_project' ), 'number', '' );
+    $book_meta->add_field( '_pr_index_width', __( 'Index width', 'edition' ), __( 'Index width', 'editorial_project' ), 'number', '' );
+    $book_meta->add_field( '_pr_index_bounce', __( 'Index bounce', 'edition' ), __( 'Index bounce', 'editorial_project' ), 'checkbox', false );
+    $book_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'editorial_project' ), 'number', '' );
 
-    $e_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );
-    $e_meta->add_field( '_pr_prefix_bundle_id', __( 'App bundle id', 'edition' ), __( 'App bundle id', 'edition' ), 'text', '' );
-    $e_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'edition' ), 'text_autocompleted', '' );
-    $e_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'edition' ), 'text_autocompleted', '' );
-    $e_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'edition' ), 'repeater_with_radio', '', array(
+    $sub_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );
+    $sub_meta->add_field( '_pr_prefix_bundle_id', __( 'App bundle id', 'edition' ), __( 'App bundle id', 'editorial_project' ), 'text', '' );
+    $sub_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'editorial_project' ), 'text_autocompleted', '' );
+    $sub_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'editorial_project' ), 'text_autocompleted', '' );
+    $sub_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'editorial_project' ), 'repeater_with_radio', '', array(
       'radio_field'   => '_pr_subscription_method',
       'radio_options' => array(
-        array( 'value' => 'all', 'name' => __( "All", 'edition' ) ),
-        array( 'value' => 'last', 'name' => __( "Last edition", 'edition' ) )
+        array( 'value' => 'all', 'name' => __( "All", 'editorial_project' ) ),
+        array( 'value' => 'last', 'name' => __( "Last edition", 'editorial_project' ) )
       ),
     ) );
-    $this->_metabox = $e_meta;
+
+    $this->_metaboxes = array(
+      $basic_meta,
+      $vis_meta,
+      $behavior_meta,
+      $book_meta,
+      $sub_meta
+    );
   }
 
+
+  public function pre_edit_form( $term ) {
+
+    $this->get_custom_metabox( $term->term_id );
+    echo '<h2 class="nav-tab-wrapper">';
+    foreach ( $this->_metaboxes as $key => $metabox ) {
+      echo '<a class="nav-tab" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
+    }
+    echo '</h2>';
+  }
   /**
   * Define the custom meta fields for new entry
   *
@@ -176,9 +199,9 @@ class TPL_Editorial_Project
   */
   public function edit_form_meta_fields( $term ) {
 
-
-    $this->get_custom_metabox( $term->term_id );
-    echo $this->_metabox->fields_to_html( true );
+    foreach ( $this->_metaboxes as $key => $metabox ) {
+      echo $metabox->fields_to_html( true, $metabox->id );
+    }
   }
 
   /**
@@ -200,7 +223,10 @@ class TPL_Editorial_Project
     }
 
     $this->get_custom_metabox( $term_id );
-    $this->_metabox->save_term_values();
+    foreach ( $this->_metaboxes as $metabox ) {
+      $metabox->save_term_values();
+    }
+
 
     if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
       $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
@@ -229,7 +255,9 @@ class TPL_Editorial_Project
     }
 
     $this->get_custom_metabox( $term_id );
-    $this->_metabox->save_term_values( true );
+    foreach ( $this->_metaboxes as $metabox ) {
+      $metabox->save_term_values( true );
+    }
 
     if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
       $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
@@ -401,8 +429,8 @@ class TPL_Editorial_Project
     ?>
     <script>
       jQuery('#tag-description').closest('.form-field').remove();
-	     jQuery('#description').closest('.form-field').remove();
-       jQuery('#parent').closest('.form-field').remove();
+	    jQuery('#description').closest('.form-field').remove();
+      jQuery('#parent').closest('.form-field').remove();
     </script>
     <?php
   }

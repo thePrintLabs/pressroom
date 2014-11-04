@@ -15,7 +15,7 @@ class TPL_Editorial_Project
       add_filter( 'manage_edit-' . TPL_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
       add_filter( 'manage_' . TPL_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
       add_action( TPL_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
-      add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
+      add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
       add_action( TPL_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
     }
@@ -203,6 +203,34 @@ class TPL_Editorial_Project
       exit;
     }
 
+  }
+
+  /**
+  * Save the values ​​in a custom option
+  *
+  * @param  int $term_id
+  * @void
+  */
+  public function update_form_meta_fields( $term_id ) {
+
+    $terms = get_terms( TPL_EDITORIAL_PROJECT );
+    foreach( $terms as $term ) {
+      $option = self::get_config( $term->term_id, '_pr_prefix_bundle_id');
+      if ( isset($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
+        $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
+        wp_redirect( $url );
+        exit;
+      }
+    }
+
+    $this->get_custom_metabox( $term_id );
+    $this->_metabox->save_term_values( true );
+
+    if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
+      $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
+      wp_redirect( $url );
+      exit;
+    }
 
   }
 

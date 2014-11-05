@@ -5,6 +5,11 @@ jQuery(function(){
   if(jQuery(".chosen-select").length)
     jQuery(".chosen-select").chosen();
 
+  // calendar init
+  jQuery('#_pr_date').datepicker({
+     dateFormat : 'yy-mm-dd'
+  });
+
   //repeater fields
   var prefix = jQuery('#_pr_prefix_bundle_id');
   var subscription = jQuery('#_pr_subscription_prefix');
@@ -61,5 +66,23 @@ jQuery(function(){
     e.preventDefault();
     jQuery(this).parent().remove();
   });
+
+  jQuery('#name').closest('.form-field').addClass('tabbed basic_metabox');
+  jQuery('#slug').closest('.form-field').addClass('tabbed basic_metabox');
+  jQuery('.tabbed').css('display','none');
+  jQuery('.basic_metabox').css('display','table-row');
+
+  jQuery('.nav-tab').click(function(e) {
+    e.preventDefault();
+    jQuery('.nav-tab').each(function(){
+      jQuery(this).removeClass('nav-tab-active');
+    })
+    var tab = jQuery(this).data('tab');
+    jQuery(this).addClass('nav-tab-active');
+    jQuery('.tabbed').css('display','none');
+    jQuery('.'+ tab).css('display','table-row');
+
+  });
+
 
 });

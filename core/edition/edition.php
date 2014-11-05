@@ -297,7 +297,6 @@ class TPL_Edition
 		echo '<div id="publishing_console">';
 		$editorial_terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
 		if ( $editorial_terms ){
-			$total_steps = count( $editorial_terms ) * 12;
 			foreach ( $editorial_terms as $term ) {
 				$packager->run( $term );
 			}
@@ -451,13 +450,13 @@ class TPL_Edition
 
 		switch ($column_name) {
 
-	      case 'cover' :
+      case 'cover' :
 				echo get_the_post_thumbnail( $id, 'thumbnail' );
 				break;
 
-	      case 'paid_free' :
-	      	echo get_post_meta( $id, '_pr_edition_free', true ) ? 'Free' : 'Paid';
-	      	break;
+      case 'paid_free' :
+      	echo get_post_meta( $id, '_pr_edition_free', true ) ? 'Free' : 'Paid';
+      	break;
 
 			case 'action':
 				echo '<a target="_blank" href="'. TPL_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';

@@ -10,14 +10,20 @@ class TPL_option_page {
    */
   public function __construct() {
 
+    if( !is_admin() ) {
+      return;
+    }
+
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom' ) {
+
+      add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
+      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
+    }
+
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'admin_init', array( $this, 'pr_settings_init' ) );
-
-    add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
-    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
-
     add_filter( 'pre_update_option_pr_settings', array( $this, 'pr_save_options' ), 10, 2 );
-
   }
 
   /**
@@ -53,7 +59,7 @@ class TPL_option_page {
   	register_setting( 'pressroom', 'pr_settings' );
 
   	add_settings_section(
-  		'pr_pluginPage_section',
+  		'pr_pressroom_section',
   		__( 'General settings', 'pressroom' ),
   		array( $this, 'pr_settings_section_callback' ),
   		'pressroom'
@@ -64,7 +70,7 @@ class TPL_option_page {
   		__( 'Default theme', 'pressroom' ),
   		array( $this, 'pr_theme_render' ),
   		'pressroom',
-  		'pr_pluginPage_section'
+  		'pr_pressroom_section'
   	);
 
   	add_settings_field(
@@ -72,7 +78,7 @@ class TPL_option_page {
   		__( 'Max edition number', 'pressroom' ),
   		array( $this, 'pr_maxnumber' ),
   		'pressroom',
-  		'pr_pluginPage_section'
+  		'pr_pressroom_section'
   	);
 
     add_settings_section(
@@ -173,16 +179,16 @@ class TPL_option_page {
    * @echo
    */
   public function pressroom_options_page() {
-?>
+  ?>
     <form action='options.php' method='post'>
     <h2>Pressroom Options</h2>
-<?php
+  <?php
   	settings_fields( 'pressroom' );
   	do_settings_sections( 'pressroom' );
   	submit_button();
-?>
+  ?>
   	</form>
-<?php
+  <?php
   }
 
   /**
@@ -213,24 +219,3 @@ class TPL_option_page {
   }
 
   /**
-    * add chosen.js to metabox
-    *
-    * @void
-    */
-  public function add_chosen_script() {
-
-    wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
-
-    wp_register_script( 'chosen', TPL_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
-    wp_enqueue_script( 'chosen' );
-
-    wp_enqueue_style( 'tagsinput', TPL_ASSETS_URI . 'css/jquery.tagsinput.css' );
-
-    wp_register_script( 'tagsinput', TPL_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
-    wp_enqueue_script( 'tagsinput' );
-
-  }
-
-}
-
-$tpl_option_page = new TPL_option_page();

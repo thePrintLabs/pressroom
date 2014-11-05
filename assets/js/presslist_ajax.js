@@ -215,9 +215,4 @@ $( "#pressroom_metabox .inside" ).delegate(".number_element_input",'change', fun
     list.update( data );
 });
 
-jQuery('#_pr_date').datepicker({
-   dateFormat : 'yy-mm-dd'
-});
-
-
 })(jQuery);

@@ -121,6 +121,7 @@ class TPL_Editorial_Project
     $behavior_meta = new TPL_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
     $book_meta = new TPL_Metabox( 'book_metabox', __( 'Book extended', 'editorial_project' ), 'normal', 'high', $term_id );
     $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'Subscriptions', 'editorial_project' ), 'normal', 'high', $term_id );
+    $push_meta = new TPL_Metabox( 'push_metabox', __( 'Notification push', 'editorial_project' ), 'normal', 'high', $term_id );
 
     $basic_meta->add_field( '_pr_default', '<h3>Basic option</h1><hr>', '', 'textnode', '' );
     $basic_meta->add_field( '_pr_itunes_secret', __( 'Itunes secret', 'editorial_project' ), __( 'Itunes secret', 'editorial_project' ), 'text', '' );
@@ -172,12 +173,23 @@ class TPL_Editorial_Project
       ),
     ) );
 
+    $push_meta->add_field( '_pr_default', '<h3>Push notification option</h1><hr>', '', 'textnode', '' );
+    $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push service', 'edition' ), 'radio', '', array(
+      'options' => array(
+        array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
+        array( 'value' => 'urbanairship', 'name' => __( "Urban Airship", 'editorial_project' ) ),
+      )
+    ) );
+    $push_meta->add_field( 'pr_push_api_app_id', __( 'App key', 'edition' ), __( 'The main identifier of your app. <b>Urban Airship</b>: <i>App Key</i><b> - Parse: </b><i>Application Id</i>', 'editorial_project' ), 'text', '' );
+    $push_meta->add_field( 'pr_push_api_key', __( 'App secret', 'edition' ), __( 'The secret token for authentication <b>Urban Airship</b>: <i>App Master Secret</i><b> - Parse: </b><i>REST API Key</i> ', 'editorial_project' ), 'text', '' );
+
     $this->_metaboxes = array(
       $basic_meta,
       $vis_meta,
       $behavior_meta,
       $book_meta,
-      $sub_meta
+      $sub_meta,
+      $push_meta
     );
   }
 

@@ -39,11 +39,11 @@ final class PR_Connector_iTunes extends PR_Server_API {
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/itunes_purchase_confirmation/([^&]+)/?$',
-                      'index.php?__pressroom-api=itunes_purchase_confirmation&editorial_project=$matches[1]',
+    add_rewrite_rule( 'pressroom-api/itunes_purchase_confirmation/([^&]+)/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=itunes_purchase_confirmation&app_id=$matches[1]&user_id=$matches[2]&editorial_project=$matches[3]',
                       'top' );
-    add_rewrite_rule( 'pressroom-api/itunes_purchases_list/([^&]+)/?$',
-                      'index.php?__pressroom-api=itunes_purchases_list&editorial_project=$matches[1]',
+    add_rewrite_rule( 'pressroom-api/itunes_purchases_list/([^&]+)/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=itunes_purchases_list&app_id=$matches[1]&user_id=$matches[2]&editorial_project=$matches[3]',
                       'top' );
   }
 
@@ -93,9 +93,15 @@ final class PR_Connector_iTunes extends PR_Server_API {
         $wpdb->query( $wpdb->prepare( $sql, $this->base64_receipt, $receipt_id ) );
       }
       else {
-        $sql = "INSERT INTO " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " SET ";
-        $sql.= "app_bundle_id = %s, device_id = %s, transaction_id = %s, base64_receipt = %s";
-        $wpdb->query( $wpdb->prepare( $sql, $this->app_id, $this->user_id, $transaction_id, $this->base64_receipt ) );
+        $wpdb->insert(
+          $wpdb->prefix . TPL_TABLE_RECEIPTS,
+          array(
+             'app_bundle_id'  => $this->app_id,
+             'device_id'      => $this->user_id,
+             'transaction_id' => $transaction_id,
+             'base64_receipt' => $this->base64_receipt
+          ), array( '%s', '%s', '%s', '%s' )
+        );
         $receipt_id = $wpdb->insert_id;
       }
     }
@@ -108,9 +114,14 @@ final class PR_Connector_iTunes extends PR_Server_API {
         $wpdb->query( $wpdb->prepare( $sql, $this->base64_receipt, $receipt_id ) );
       }
       else {
-        $sql = "INSERT INTO " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " ";
-        $sql.= "SET app_bundle_id = %s, device_id = %s, base64_receipt = %s";
-        $wpdb->query( $wpdb->prepare( $sql, $this->app_id, $this->user_id, $this->base64_receipt ) );
+        $wpdb->insert(
+          $wpdb->prefix . TPL_TABLE_RECEIPTS,
+          array(
+             'app_bundle_id'  => $this->app_id,
+             'device_id'      => $this->user_id,
+             'base64_receipt' => $this->base64_receipt
+          ), array( '%s', '%s', '%s' )
+        );
         $receipt_id = $wpdb->insert_id;
       }
     }
@@ -239,7 +250,6 @@ final class PR_Connector_iTunes extends PR_Server_API {
     if ( $receipt_data->status == 0 ) {
       if ( is_array( $receipt_data->latest_receipt_info ) ) {
         foreach ( $receipt_data->latest_receipt_info as $receipt_info ) {
-
           if ( $receipt_info->transaction_id == $transaction_id ) {
             $to_date = date( 'Y-m-d', (int)$receipt_info->expires_date_ms / 1000 );
             break;
@@ -294,7 +304,6 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
     if ( !empty( $editions ) ) {
       foreach ( $editions as $edition ) {
-
         $edition_bundle_id = TPL_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
         array_push( $issues, $edition_bundle_id );
       }
@@ -313,7 +322,6 @@ final class PR_Connector_iTunes extends PR_Server_API {
     $purchased_editions = $this->get_purchased_editions();
     if ( $purchased_editions ) {
       foreach ( $purchased_editions as $edition ) {
-
         array_push( $purchases, $edition->product_id );
       }
     }
@@ -361,17 +369,10 @@ final class PR_Connector_iTunes extends PR_Server_API {
   protected function _action_purchase_confirmation() {
 
     global $wp;
+    parent::validate_request();
     $eproject_slug = $wp->query_vars['editorial_project'];
-    if ( !$eproject_slug ) {
-      $this->send_response( 400, 'Bad request. Please specify an editorial project.' );
-    }
-    elseif ( !isset( $_POST ) || empty( $_POST ) ) {
-      $this->send_response( 400, "Bad request. Request doesn't contains required data." );
-    }
-    elseif ( !isset( $_POST['app_id'], $_POST['user_id']) ) {
-      $this->send_response( 400, "Bad request. App identifier and/or user identifier doesn't exist." );
-    }
-    elseif ( !isset( $_POST['receipt_data'], $_POST['type']) || !strlen($_POST['receipt_data']) || !strlen($_POST['type']) ) {
+
+    if ( !isset( $_POST['receipt_data'], $_POST['type']) || !strlen($_POST['receipt_data']) || !strlen($_POST['type']) ) {
       $this->send_response( 400, "Bad request. Receipt data and/or purchase type doesn't exist." );
     }
 
@@ -383,8 +384,8 @@ final class PR_Connector_iTunes extends PR_Server_API {
     $purchase_type = $_POST['type'];
     $product_id = isset( $_POST['product_id'] ) ? $_POST['product_id'] : false;
 
-    $this->app_id = $_POST['app_id'];
-    $this->user_id = $_POST['user_id'];
+    $this->app_id = $wp->query_vars['app_id'];
+    $this->user_id = $wp->query_vars['user_id'];
     $this->environment = isset( $_POST['environment'] ) ? $_POST['environment'] : 'production';
 
     // @note: the replacement ' ' => '+' is used to support
@@ -422,21 +423,16 @@ final class PR_Connector_iTunes extends PR_Server_API {
   protected function _action_purchases_list() {
 
     global $wp;
+    parent::validate_request();
     $eproject_slug = $wp->query_vars['editorial_project'];
-    if ( !$eproject_slug ) {
-      $this->send_response( 400, 'Bad request. Please specify an editorial project.' );
-    }
-    elseif ( !isset( $_GET['app_id'], $_GET['user_id']) ) {
-      $this->send_response( 400, "Bad request. App identifier and/or user identifier doesn't exist." );
-    }
 
     $this->eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
     if( !$this->eproject ) {
       $this->send_response( 404, "Not found. Editorial project not found." );
     }
 
-    $this->app_id = $_GET['app_id'];
-    $this->user_id = $_GET['user_id'];
+    $this->app_id = $wp->query_vars['app_id'];
+    $this->user_id = $wp->query_vars['user_id'];
     $this->environment = isset( $_GET['environment'] ) ? $_GET['environment'] : 'production';
 
     $purchases = $this->get_purchases();

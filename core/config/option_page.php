@@ -50,20 +50,20 @@ class TPL_option_page {
    */
   public function pr_settings_init() {
 
-  	register_setting( 'pluginPage', 'pr_settings' );
+  	register_setting( 'pressroom', 'pr_settings' );
 
   	add_settings_section(
   		'pr_pluginPage_section',
   		__( 'General settings', 'pressroom' ),
   		array( $this, 'pr_settings_section_callback' ),
-  		'pluginPage'
+  		'pressroom'
   	);
 
   	add_settings_field(
   		'pr-theme',
   		__( 'Default theme', 'pressroom' ),
   		array( $this, 'pr_theme_render' ),
-  		'pluginPage',
+  		'pressroom',
   		'pr_pluginPage_section'
   	);
 
@@ -71,7 +71,7 @@ class TPL_option_page {
   		'pr-maxnumber',
   		__( 'Max edition number', 'pressroom' ),
   		array( $this, 'pr_maxnumber' ),
-  		'pluginPage',
+  		'pressroom',
   		'pr_pluginPage_section'
   	);
 
@@ -79,14 +79,14 @@ class TPL_option_page {
       'pr_plugin_pro',
       __( 'Pro settings', 'pressroom' ),
       array( $this, 'pr_settings_section_pro_callback' ),
-      'pluginPage'
+      'pressroom'
     );
 
     add_settings_field(
       'custom_post_type',
       __( 'Custom post types', 'pressroom' ),
       array( $this, 'pr_custom_post_type' ),
-      'pluginPage',
+      'pressroom',
       'pr_plugin_pro'
     );
   }
@@ -173,21 +173,16 @@ class TPL_option_page {
    * @echo
    */
   public function pressroom_options_page() {
-
-  	?>
-  	<form action='options.php' method='post'>
-
-  		<h2>Pressroom Options</h2>
-
-  		<?php
-  		settings_fields( 'pluginPage' );
-  		do_settings_sections( 'pluginPage' );
-  		submit_button();
-  		?>
-
+?>
+    <form action='options.php' method='post'>
+    <h2>Pressroom Options</h2>
+<?php
+  	settings_fields( 'pressroom' );
+  	do_settings_sections( 'pressroom' );
+  	submit_button();
+?>
   	</form>
-  	<?php
-
+<?php
   }
 
   /**

@@ -88,19 +88,7 @@ class TPL_Setup
         PRIMARY KEY (receipt_id),
         INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
       ) $charset_collate; ";
-
-      //
-      // CREATE TABLE IF NOT EXISTS $table_receipts (
-      //   receipt_id BIGINT(20)
-      //   transaction_id VARCHAR(30),
-      //   app_id VARCHAR(255),
-      //   user_id VARCHAR(255),
-      //   product_id VARCHAR(255),
-      //   type VARCHAR(30),
-      //   base64_receipt TEXT,
-      //   PRIMARY KEY(transaction_id, app_id, user_id)
-      // ) $charset_collate; ";
-
+      
       $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
         transaction_id VARCHAR(32),
         receipt_id bigint(20) UNSIGNED NOT NULL,
@@ -109,16 +97,6 @@ class TPL_Setup
         PRIMARY KEY(transaction_id),
         INDEX receipt USING BTREE (receipt_id) COMMENT ''
       ) $charset_collate; ";
-
-      // $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
-      //   transaction_id VARCHAR(30),
-      //   app_id VARCHAR(255),
-      //   user_id VARCHAR(255),
-      //   product_id VARCHAR(255),
-      //   type VARCHAR(30),
-      //   base64_receipt TEXT,
-      //   PRIMARY KEY(transaction_id, app_id, user_id)
-      // ) $charset_collate; ";
 
       $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_purchased_issues (
         app_id VARCHAR(255),

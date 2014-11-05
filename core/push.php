@@ -1,0 +1,240 @@
+<?php
+
+class TPL_push_page {
+
+  /**
+   * constructor method
+   * Add class functions to wordpress hooks
+   *
+   * @void
+   */
+  public function __construct() {
+
+    if ( !is_admin() ) {
+      return;
+    }
+
+    add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
+    add_action( 'wp_ajax_pr_push_get_editions_list', array( $this, 'ajax_push_editions_list' ) );
+    add_action( 'wp_ajax_pr_send_push_notification', array( $this, 'ajax_send_push_notification' ) );
+    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
+
+  }
+
+  /**
+   * Add options page to wordpress menu
+   */
+  public function pr_add_admin_menu() {
+
+    add_submenu_page( 'tools.php', __( 'Pressroom push notification' ), __( 'PressRoom Push Notification' ), 'manage_options', 'pressroom-push', array( $this, 'pressroom_push_page' ) );
+  }
+
+  /**
+   * Get editorial projects list
+   *
+   * @return array
+   */
+  public function pr_editorial_projects_list() {
+
+    $eprojects = get_terms( TPL_EDITORIAL_PROJECT, array( 'hide_empty' => false ) );
+    return $eprojects;
+  }
+
+  /**
+   * Get editions by editorial project via ajax request
+   *
+   * @echo
+   */
+  public function ajax_push_editions_list() {
+
+    if ( !isset( $_POST['eproject_slug'] ) ) {
+      return;
+    }
+
+    $editions_list = array();
+    $editions = TPL_Editorial_Project::get_all_editions( $_POST['eproject_slug'], 20 );
+    foreach ( $editions as $edition ) {
+      echo '<option value="' . $edition->post_name . '">' . esc_attr( $edition->post_title ) . '</option>';
+    }
+    exit;
+  }
+
+  /**
+   * Send push notification via ajax request
+   *
+   * @echo
+   */
+  public function ajax_send_push_notification() {
+
+    $msg = __( "Generic error.", 'pressroom' );
+
+    if ( !isset( $_POST ) && empty( $_POST ) ) {
+      wp_send_json_error( $msg );
+    }
+
+    $data = $_POST['pr_push'];
+    if ( !isset( $data['editorial_project'] ) || !strlen( $data['editorial_project'] ) ) {
+      wp_send_json_error( $msg );
+    }
+
+    $eproject = TPL_Editorial_Project::get_by_slug( $data['editorial_project'] );
+    if ( !$eproject ) {
+      wp_send_json_error( __( "Editorial project doesn't exist.", 'pressroom' ) );
+    }
+
+    $push_type = $data['type'];
+    $push_time = $data['time'] == 'later' ? strtotime( $data['date_time'] ) : false;
+    $push_service = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_service' );
+    $push_app_id = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
+    $push_app_key = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
+
+    switch ( $push_type ) {
+      case 'message':
+        $notification_data = array(
+          'alert' => $data['alert'],
+        );
+        break;
+      case 'download':
+        $notification_data = array(
+          'alert' => $data['alert'],
+          'badge' => 1,
+          'content-available' => 1,
+        );
+        if ( $data['edition'] == 'specific' ) {
+          $notification_data['content-name'] = $data['edition-slug'];
+        }
+        break;
+    }
+
+    switch ( $push_service ) {
+      case 'parse':
+        $params = array(
+          'channels'  => array( $data['editorial_project'] ),
+          'data'      => $notification_data
+        );
+
+        if ( $push_time ) {
+          $params['push_time'] = gmdate("Y-m-d\TH:i:s\Z", $push_time);
+        }
+
+        $msg = __( "Data sent:", 'pressroom' ) . '<br>' . json_encode( $params ) . '<br>';
+        $response = wp_remote_post( 'https://api.parse.com/1/push', array(
+          'body'      => json_encode( $params ),
+          'headers'   => array(
+            'X-Parse-Application-Id'  =>  $push_app_id,
+            'X-Parse-REST-API-Key'    =>  $push_app_key,
+            'Content-Type'  => 'application/json',
+          ),
+        ));
+
+        if ( is_wp_error( $response ) || !isset( $response['body'] ) ) {
+          wp_send_json_error( __( "Invalid response data.", 'pressroom' ) );
+        }
+
+        $data = json_decode( $response['body'] );
+        if ( !is_object($data) || !isset( $data->result ) ) {
+          wp_send_json_error( $msg );
+        }
+
+        wp_send_json_success( $msg );
+        break;
+    }
+    wp_send_json_error( $msg );
+  }
+
+  /**
+   * Render push page form
+   *
+   * @echo
+   */
+  public function pressroom_push_page() {
+?>
+    <h2>Pressroom Push Notification</h2>
+<?php
+    $eprojects = $this->pr_editorial_projects_list();
+    if ( !empty( $eprojects) ) {
+?>
+    <ol>
+      <li><?php echo __('Select an editorial project', 'pressroom-push'); ?></li>
+      <li><?php echo __('Set the push notification settings', 'pressroom-push'); ?></li>
+      <li><?php echo __('View the result'); ?></li>
+    </ol>
+    <form action="options.php" method="post" id="pr-push-form">
+      <div id="bg">
+        <div class="pr-push-content">
+          <ul>
+            <li class="tab activeTab"><img class="icon" src="<?php echo TPL_ASSETS_URI . 'img/filter.png' ?>"></li>
+            <li class="tab" ><img class="icon" src="<?php echo TPL_ASSETS_URI . 'img/send.png' ?>"></li>
+            <li class="tab" ><img class="icon" src="<?php echo TPL_ASSETS_URI . 'img/terminal.png' ?>"></li>
+          </ul>
+          <br class="clear">
+          <div class="prp-panel active">
+            <b><?php echo __('Editorial project', 'pressroom-push'); ?></b>
+            <?php
+            foreach ( $eprojects as $i => $eproject ) {
+              echo '<label for="prp-eproject-' . $eproject->term_id . '" class="radio">
+              <input type="radio" name="pr_push[editorial_project]" id="prp-eproject-' . $eproject->term_id . '" value="' . $eproject->slug . '" ' . ( !$i ? 'checked="checked"' : '' ) . '><span>' . $eproject->name . '<br>
+              <i>' . TPL_Editorial_Project::get_bundle_id( $eproject->term_id ) . '</i></span></label>';
+            }
+            ?>
+            <button type="button" class="pr-option-btn" id="pr-btn-continue"><?php echo __("Continue", 'pressroom-push'); ?></button>
+          </div>
+
+          <div class="prp-panel">
+            <b><?php echo __('Push Notifications Type', 'pressroom-push'); ?></b>
+            <label for="prp-type-0" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-0" value="message" checked="checked"> <?php echo __('Message push', 'pressroom-push'); ?></label>
+            <label for="prp-type-1" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-1" value="download"> <?php echo __('Background download push', 'pressroom-push'); ?></label>
+            <div id="pr-edition-d">
+              <br>
+              <b><?php echo __('Edition to download', 'pressroom-push'); ?></b>
+              <label for="prp-edition-0" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-0" value="latest" checked="checked"> <?php echo __('Latest published edition', 'pressroom-push'); ?></label>
+              <label for="prp-edition-1" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-1" value="specific"> <?php echo __('Specific edition', 'pressroom-push'); ?></label>
+              <select name="pr_push[edition-slug]" class="combobox" disabled="disabled" id="prp-edition-s"></select>
+            </div>
+            <br>
+            <b><?php echo __('Delivery time', 'pressroom-push'); ?></b>
+            <label for="prp-time-0" class="radio"><input type="radio" name="pr_push[time]" class="prp-time" id="prp-time-0" value="now" checked="checked"> <?php echo __('Send immediately', 'pressroom-push'); ?></label>
+            <label for="prp-time-1" class="radio"><input type="radio" name="pr_push[time]" class="prp-time" id="prp-time-1" value="later"> <?php echo __('Schedule sending', 'pressroom-push'); ?></label>
+            <div id="pr-edition-t">
+              <br>
+              <input id="prp-rp-time" name="pr_push[date_time]" type="text" value="<?php echo strtotime('+1 hour'); ?>" class="textbox">
+            </div>
+            <br>
+            <b><?php echo __('Alert message', 'pressroom-push'); ?></b>
+            <textarea placeholder="The notification's message" name="pr_push[alert]" class="textbox textareabox"></textarea>
+            <button type="submit" class="pr-option-btn"><?php echo __("Send notification", 'pressroom-push'); ?></button>
+          </div>
+          <div class="prp-panel">
+            <div id="pr-push-console"></div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <?php
+    }
+    else {
+?>
+    <div class="error">
+      <p><?php echo __( "Unable to use push notification service. You need to create at least one <a href=\"" . admin_url( 'edit-tags.php?taxonomy=' . TPL_EDITORIAL_PROJECT . '&post_type=' . TPL_EDITION ) . "\">editorial project.</a>", 'pressroom' ); ?></p>
+    </div>
+<?php
+    }
+  }
+
+  /**
+   * add custom script to metabox
+   *
+   * @void
+   */
+  public function add_custom_script() {
+
+    wp_register_style( 'push_notification_page', TPL_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
+    wp_enqueue_style( 'push_notification_page' );
+    wp_register_script( 'push_notification_datepicker', TPL_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'push_notification_datepicker' );
+    wp_register_script( 'push_notification_page', TPL_ASSETS_URI . '/js/pr.pushnotification.js', array( 'push_notification_datepicker' ) );
+    wp_enqueue_script( 'push_notification_page' );
+  }
+}
+
+$tpl_push_page = new TPL_push_page();

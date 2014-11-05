@@ -309,14 +309,14 @@ class TPL_Editorial_Project
   /**
    * Get all published editions
    * linked to an editiorial project
-   * @param  object $eproject
+   * @param  object/string $eproject
    * @return array
    */
-  public static function get_all_editions( $eproject ) {
+  public static function get_all_editions( $eproject, $limit = -1 ) {
 
     $editions_query = new WP_Query( array(
       'nopaging'        => true,
-      'posts_per_page'  => -1,
+      'posts_per_page'  => $limit,
       'post_status'     => 'publish',
       'post_type'       => TPL_EDITION,
       'meta_key'        => '_pr_date',
@@ -325,7 +325,7 @@ class TPL_Editorial_Project
         array(
           'taxonomy'  => TPL_EDITORIAL_PROJECT,
           'field'     => 'slug',
-          'terms'     => $eproject->slug
+          'terms'     => is_string( $eproject ) ? $eproject : $eproject->slug
         )
       )
     ));
@@ -362,6 +362,21 @@ class TPL_Editorial_Project
       return $editions[0];
     }
     return false;
+  }
+
+  /**
+   * Get the bundle id of an editorial project
+   * @param int $editorial_project_id
+   * @return string or boolean false
+   */
+  public static function get_bundle_id( $editorial_project_id ) {
+
+    $eproject_bundle_id = false;
+    $eproject_options = TPL_Editorial_Project::get_configs( $editorial_project_id );
+    if ( $eproject_options ) {
+      $eproject_bundle_id = $eproject_options['_pr_prefix_bundle_id'];
+    }
+    return $eproject_bundle_id;
   }
 }
 

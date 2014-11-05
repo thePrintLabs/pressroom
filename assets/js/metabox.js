@@ -5,6 +5,11 @@ jQuery(function(){
   if(jQuery(".chosen-select").length)
     jQuery(".chosen-select").chosen();
 
+  // calendar init
+  jQuery('#_pr_date').datepicker({
+     dateFormat : 'yy-mm-dd'
+  });
+
   //repeater fields
   var prefix = jQuery('#_pr_prefix_bundle_id');
   var subscription = jQuery('#_pr_subscription_prefix');

@@ -219,3 +219,19 @@ class TPL_option_page {
   }
 
   /**
+   * add chosen.js to metabox
+   *
+   * @void
+   */
+  public function add_chosen_script() {
+
+    wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
+    wp_register_script( 'chosen', TPL_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
+    wp_enqueue_script( 'chosen' );
+    wp_enqueue_style( 'tagsinput', TPL_ASSETS_URI . 'css/jquery.tagsinput.css' );
+    wp_register_script( 'tagsinput', TPL_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
+    wp_enqueue_script( 'tagsinput' );
+  }
+}
+
+$tpl_option_page = new TPL_option_page();

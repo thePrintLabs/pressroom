@@ -199,7 +199,7 @@ class TPL_Editorial_Project
     $this->get_custom_metabox( $term->term_id );
     echo '<h2 class="nav-tab-wrapper">';
     foreach ( $this->_metaboxes as $key => $metabox ) {
-      echo '<a class="nav-tab" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
+      echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
     }
     echo '</h2>';
   }
@@ -437,7 +437,6 @@ class TPL_Editorial_Project
     return false;
   }
 
-<<<<<<< HEAD
   /**
    * Get the bundle id of an editorial project
    * @param int $editorial_project_id
@@ -451,7 +450,8 @@ class TPL_Editorial_Project
       $eproject_bundle_id = $eproject_options['_pr_prefix_bundle_id'];
     }
     return $eproject_bundle_id;
-=======
+  }
+
   public function remove_form_fields() {
     ?>
     <script>
@@ -460,7 +460,6 @@ class TPL_Editorial_Project
       jQuery('#parent').closest('.form-field').remove();
     </script>
     <?php
->>>>>>> af7a629a8d002df84c49333787c6f5d0619a9c24
   }
 }
 

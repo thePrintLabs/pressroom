@@ -294,6 +294,7 @@ class TPL_Edition
 		echo '<div id="publishing_popup">
 		<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
 		$packager->pb->render();
+		sleep( 2 );
 		echo '<div id="publishing_console">';
 		$editorial_terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
 		if ( $editorial_terms ){

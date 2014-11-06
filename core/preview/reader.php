@@ -37,8 +37,7 @@ if ( empty( $terms ) ) {
 
 $edition = get_post( $edition_id );
 $edition_name = TPL_Utils::sanitize_string( $edition->post_title );
-$index_height = pr_get_option( 'pr-index-height' );
-
+$index_height = 150;
 ?>
 <!DOCTYPE html>
 <head>

@@ -79,7 +79,7 @@ class TPL_Packager
 		$this->set_progress( 10, __( 'Parsing cover', 'edition' ) );
 
 		// Parse html of cover index.php file
-		$cover = $this->_cover_parse();
+		$cover = $this->_cover_parse( $editorial_project );
 		if ( !$cover ) {
 			self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );
 			$this->_exit_on_error();
@@ -88,7 +88,7 @@ class TPL_Packager
 		$this->set_progress( 15, __( 'Rewriting cover urls', 'edition' ) );
 
 		// Rewrite cover url
-		$cover = $this->_rewrite_url($cover);
+		$cover = $this->_rewrite_url( $cover );
 		$this->set_progress( 20, __( 'Saving cover file', 'edition' ) );
 
 		// Save cover html file
@@ -103,7 +103,7 @@ class TPL_Packager
 		}
 
 		// Parse html of cover index.php file
-		$toc = $this->_toc_parse();
+		$toc = $this->_toc_parse( $editorial_project );
 		if ( !$toc ) {
 			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
 			$this->_exit_on_error();
@@ -111,7 +111,7 @@ class TPL_Packager
 		}
 
 		// Rewrite cover url
-		$toc = $this->_rewrite_url($toc);
+		$toc = $this->_rewrite_url( $toc );
 		$this->set_progress( 28, __( 'Saving toc file', 'edition' ) );
 
 		// Save cover html file
@@ -129,7 +129,7 @@ class TPL_Packager
 		$progress_step = round( $total_progress / count( $this->_linked_query->posts ) );
 		foreach ( $this->_linked_query->posts as $k => $post ) {
 			// Parse post content
-			$parsed_post = $this->_post_parse( $post );
+			$parsed_post = $this->_post_parse( $post, $editorial_project );
 			if ( !$parsed_post ) {
 				self::print_line( sprintf( __( 'You have to select a template for %s', 'edition' ), $post->post_title ), 'error' );
 				continue;
@@ -318,7 +318,7 @@ class TPL_Packager
 	 *
 	 * @return string or boolean false
 	 */
-	protected function _cover_parse() {
+	protected function _cover_parse( $editorial_project ) {
 
 		$cover = TPL_Theme::get_theme_cover( $this->_edition_post->ID );
 		if ( !$cover ) {
@@ -326,6 +326,7 @@ class TPL_Packager
 		}
 
 		ob_start();
+		$editorial_project_id = $editorial_project->term_id;
 		$posts = $this->_linked_query;
 		require( $cover );
 		$output = ob_get_contents();
@@ -339,7 +340,7 @@ class TPL_Packager
 	*
 	* @return string or boolean false
 	*/
-	protected function _toc_parse() {
+	protected function _toc_parse( $editorial_project ) {
 
     $toc = TPL_Theme::get_theme_toc( $this->_edition_post->ID );
     if ( !$toc ) {
@@ -347,6 +348,7 @@ class TPL_Packager
     }
 
 		ob_start();
+		$editorial_project_id = $editorial_project->term_id;
 		$posts = $this->_linked_query;
 		require( $toc );
 		$output = ob_get_contents();
@@ -360,7 +362,7 @@ class TPL_Packager
 	 * @param  object $post
 	 * @return string
 	 */
-	protected function _post_parse( $linked_post ) {
+	protected function _post_parse( $linked_post, $editorial_project ) {
 
 		$page = TPL_Theme::get_theme_page( $this->_edition_post->ID, $linked_post->p2p_id );
 		if ( !$page || !file_exists( $page )  ) {
@@ -369,6 +371,7 @@ class TPL_Packager
 
 		ob_start();
 		$edition = $this->_edition_post;
+		$editorial_project_id = $editorial_project->term_id;
 		global $post;
 		$post = $linked_post;
 		setup_postdata($post);

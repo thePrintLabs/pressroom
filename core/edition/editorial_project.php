@@ -116,45 +116,45 @@ class TPL_Editorial_Project
   public function get_custom_metabox( $term_id ) {
 
     $basic_meta = new TPL_Metabox( 'basic_metabox', __( 'Basic', 'editorial_project' ), 'normal', 'high', $term_id );
-    $basic_meta->add_field( '_pr_default', '<h3>Basic option</h1><hr>', '', 'textnode', '' );
-    $basic_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'Orientation', 'edition' ), 'radio', '', array(
+
+    $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
+    $vis_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'editorial_project' ) ),
         array( 'value' => 'vertical', 'name' => __( "Vertical", 'editorial_project' ) ),
         array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
       )
     ) );
-    $basic_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Zoomable', 'editorial_project' ), 'checkbox', false );
-    $basic_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Body background color', 'editorial_project' ), 'color', '' );
+    $vis_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'editorial_project' ), 'checkbox', false );
+    $vis_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '' );
 
-    $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
-    $vis_meta->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Background image portrait', 'editorial_project' ), 'file', '' );
-    $vis_meta->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Background image landscape', 'editorial_project' ), 'file', '' );
-    $vis_meta->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Page numbers color', 'editorial_project' ), 'color', '' );
-    $vis_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Page number alpha', 'editorial_project' ), 'decimal', '' );
-    $vis_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
+    $vis_meta->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in portrait mode.', 'editorial_project' ), 'file', '' );
+    $vis_meta->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in landscape mode.', 'editorial_project' ), 'file', '' );
+    $vis_meta->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Color for page numbers to be shown before pages are loaded.', 'editorial_project' ), 'color', '#ffffff' );
+    $vis_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Opacity for page numbers to be shown before pages are loaded. (min 0 => max 1)', 'editorial_project' ), 'decimal', 0.3 );
+    //$vis_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
 
     $behavior_meta = new TPL_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
-    $behavior_meta->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'Rendering type', 'edition' ), 'radio', '', array(
+    $behavior_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed.', 'editorial_project' ), 'number', 1 );
+    $behavior_meta->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),
         array( 'value' => 'three-cards', 'name' => __( "Three cards", 'editorial_project' ) )
       )
     ) );
-    $behavior_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Vertical Bounce', 'editorial_project' ), 'checkbox', true );
-    $behavior_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media autoplay', 'editorial_project' ), 'checkbox', true );
-    $behavior_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical pagination', 'editorial_project' ), 'checkbox', false );
-    $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Page turn tap', 'editorial_project' ), 'checkbox', true );
-    $behavior_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Page turn swipe', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
+    $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Swipe on the page to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
 
-    $book_meta = new TPL_Metabox( 'book_metabox', __( 'Book extended', 'editorial_project' ), 'normal', 'high', $term_id );
-    $book_meta->add_field( '_pr_index_height', __( 'Index height', 'edition' ), __( 'Index height', 'editorial_project' ), 'number', '' );
-    $book_meta->add_field( '_pr_index_width', __( 'Index width', 'edition' ), __( 'Index width', 'editorial_project' ), 'number', '' );
-    $book_meta->add_field( '_pr_index_bounce', __( 'Index bounce', 'edition' ), __( 'Index bounce', 'editorial_project' ), 'checkbox', false );
-    $book_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'editorial_project' ), 'number', '' );
+    $toc_meta = new TPL_Metabox( 'toc_metabox', __( 'TOC', 'editorial_project' ), 'normal', 'high', $term_id );
+    $toc_meta->add_field( '_pr_index_height', __( 'TOC height', 'edition' ), __( 'Height (in pixels) for the toc bar.', 'editorial_project' ), 'number', 150 );
+    $toc_meta->add_field( '_pr_index_width', __( 'TOC width', 'edition' ), __( 'Width (in pixels) for the toc bar. When empty, the width is automatically set to the width of the page.', 'editorial_project' ), 'number', '' );
+    $toc_meta->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
 
-    $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'Subscriptions', 'editorial_project' ), 'normal', 'high', $term_id );
-    $sub_meta->add_field( '_pr_itunes_secret', __( 'Itunes Shared Secret', 'editorial_project' ), __( 'A shared secret is a unique code that you should use when you make the call to our servers for your In-App Purchase receipts.', 'editorial_project' ), 'text', '' );
+    $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'In-App Purchases', 'editorial_project' ), 'normal', 'high', $term_id );
+    $sub_meta->add_field( '_pr_itunes_secret', __( 'iTunes Shared Secret', 'editorial_project' ), __( 'A shared secret is a unique code that you should use when you make the call to our servers for your In-App Purchase receipts.', 'editorial_project' ), 'text', '' );
     $sub_meta->add_field( '_pr_prefix_bundle_id', __( 'App Bundle ID', 'edition' ), __( 'Application Bundle ID is the unique identifier of your application', 'editorial_project' ), 'text', '' );
     $sub_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'editorial_project' ), 'text_autocompleted', '' );
     $sub_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'editorial_project' ), 'text_autocompleted', '' );
@@ -166,8 +166,8 @@ class TPL_Editorial_Project
       ),
     ) );
 
-    $push_meta = new TPL_Metabox( 'push_metabox', __( 'Notification push', 'editorial_project' ), 'normal', 'high', $term_id );
-    $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push service', 'edition' ), 'radio', '', array(
+    $push_meta = new TPL_Metabox( 'push_metabox', __( 'Push notification', 'editorial_project' ), 'normal', 'high', $term_id );
+    $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push notification service', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
         array( 'value' => 'urbanairship', 'name' => __( "Urban Airship", 'editorial_project' ) ),
@@ -180,7 +180,7 @@ class TPL_Editorial_Project
       $basic_meta,
       $vis_meta,
       $behavior_meta,
-      $book_meta,
+      $toc_meta,
       $sub_meta,
       $push_meta
     );

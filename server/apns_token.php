@@ -1,6 +1,9 @@
 <?php
 final class PR_Server_APNS_Token extends PR_Server_API
 {
+  public $push_app_id;
+  public $push_app_key;
+
   public function __construct() {
 
     add_action( 'init', array( $this, 'add_endpoint' ), 10 );
@@ -60,11 +63,13 @@ final class PR_Server_APNS_Token extends PR_Server_API
     }
 
     $push_service = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_service' );
-    $push_app_id = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
-    $push_app_key = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
+    $this->push_app_id = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
+    $this->push_app_key = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_key' );
 
     switch ( $push_service ) {
+
       case 'parse':
+
         $params = json_encode( array(
           'deviceType'  => 'ios',
           'deviceToken' => $device_token,
@@ -74,8 +79,8 @@ final class PR_Server_APNS_Token extends PR_Server_API
         $response = wp_remote_post( 'https://api.parse.com/1/installations', array(
           'body'      => $params,
           'headers'   => array(
-            'X-Parse-Application-Id'  =>  $push_app_id,
-            'X-Parse-REST-API-Key'    =>  $push_app_key,
+            'X-Parse-Application-Id'  =>  $this->push_app_id,
+            'X-Parse-REST-API-Key'    =>  $this->push_app_key,
             'Content-Type'  => 'application/json',
           ),
         ));
@@ -86,6 +91,27 @@ final class PR_Server_APNS_Token extends PR_Server_API
 
         $data = json_decode( $response['body'] );
         if ( !is_object($data) || !isset( $data->objectId ) ) {
+          $this->send_response( 400, __( "Token registration failed.", 'pressroom' ) );
+        }
+        break;
+
+      case 'urbanairship':
+
+        $response = wp_remote_request( 'https://go.urbanairship.com/api/device_tokens/' . $device_token, array(
+          'method'    => 'PUT',
+          'headers'   => array(
+            'Authorization'           => 'Basic ' . base64_encode( $this->push_app_id . ':' . $this->push_app_key ),
+            'Content-Type'            => 'application/json',
+            'Accept'                  => 'application/vnd.urbanairship+json; version=3;'
+          ),
+        ));
+
+        if ( is_wp_error( $response ) || !isset( $response['response'] ) ) {
+          $this->send_response( 400, __( "Invalid response data.", 'pressroom' ) );
+        }
+
+        $data = json_decode( $response['response'] );
+        if ( !is_object($data) || $data->code != 200 ) {
           $this->send_response( 400, __( "Token registration failed.", 'pressroom' ) );
         }
         break;

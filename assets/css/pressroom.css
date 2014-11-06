@@ -55,11 +55,21 @@
 }
 @media screen and (max-width:768px) {
   .pr_repeater.subscription .repeater-completer {
-  margin: 10px  0;
+  margin: 10px 0;
   }
 }
 
+/****************************/
+/* EDITORIAL PROJECT PAGE   */
+/****************************/
 
+.pr-tab-wrapper {
+  margin: 10px 0 20px 0!important;
+}
+
+.pr-edittag {
+  padding: 0 15px;
+}
 /****************************/
 /* PUSH NOTIFICATION PAGE  */
 /****************************/
@@ -112,7 +122,7 @@
   background-color:rgba(0,0,0,.1);
 }
 
-.activeTab{
+.activeTab, .activeTab:hover{
   background:#fff;
 }
 

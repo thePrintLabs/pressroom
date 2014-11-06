@@ -60,21 +60,25 @@ jQuery(function(){
     });
   });
 
-  var d = new Date();
   jQuery('#prp-rp-time').datetimepicker({
     format: 'Y-m-d H:i:s',
     lang: 'en',
     minDate: 0,
-    minTime: new Date(d.setHours(d.getHours()+1)).dateFormat('H:i'),
-    maxDate: new Date(d.setDate(d.getDate()+14)).dateFormat('Y/m/d'),
+    minTime: moment().add(1, 'hours').format('HH:00'),
+    maxDate: moment().add(14, 'days').format('YYYY/MM/DD'),
     inline: true,
-    yearStart: d.dateFormat('Y'),
-    yearEnd: new Date(d.setDate(d.getDate()+14)).dateFormat('Y'),
+    yearStart: moment().format('YYYY'),
+    yearEnd: moment().add(14, 'days').format('YYYY'),
+    scrollMonth: false,
     onSelectDate: function(c) {
-      var t = new Date(d.setHours(d.getHours()+1)).dateFormat('H:i');
+      var d = moment();
+      var t = moment().add(1, 'hours').format('HH:00');
       this.setOptions({
-        minTime: ( c.dateFormat('d/m/Y') != d.dateFormat('d/m/Y') ? false : t )
+        minTime: ( c.dateFormat('Y/m/d') != d.format('YYYY/MM/DD') ? false : t )
       });
+    },
+    onChangeDateTime:function(dp,$input){
+      $input.val( moment(dp).tz("Europe/Berlin").format('YYYY-MM-DD HH:mm') );
     }
   });
 });

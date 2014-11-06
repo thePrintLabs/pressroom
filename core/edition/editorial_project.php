@@ -14,18 +14,17 @@ class TPL_Editorial_Project
     if ( is_admin() ) {
       add_filter( 'manage_edit-' . TPL_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
       add_filter( 'manage_' . TPL_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
-      add_action( TPL_EDITORIAL_PROJECT . '_pre_edit_form', array( $this, 'pre_edit_form' ), 10, 2 );
+      add_filter( 'wp_tag_cloud', array( $this, 'remove_tag_cloud' ), 10, 2 );
+
+      add_action( TPL_EDITORIAL_PROJECT . '_pre_edit_form', array( $this, 'add_tabs_to_form' ), 10, 2 );
       add_action( TPL_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
+      add_action( TPL_EDITORIAL_PROJECT . '_add_form', array( $this,'customize_form' ) );
+      add_action( TPL_EDITORIAL_PROJECT . '_edit_form', array( $this,'customize_form' ) );
       add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
       add_action( TPL_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
 
     }
-    global $pagenow;
-    if ( $pagenow == 'edit-tags.php' && isset( $_GET['taxonomy'] ) && $_GET['taxonomy'] == TPL_EDITORIAL_PROJECT ) {
-      add_action( 'admin_footer', array( $this,'remove_form_fields' ) );
-    }
-
   }
 
   /**
@@ -36,30 +35,30 @@ class TPL_Editorial_Project
   public function add_editorial_project_taxonomy() {
 
     $labels = array(
-  		'name'                       => _x( 'Editorial Projects', 'editorial_project' ),
-  		'singular_name'              => _x( 'Editorial Project', 'editorial_project' ),
-  		'search_items'               => __( 'Search editorial project' ),
-  		'popular_items'              => __( 'Popular editorial project' ),
-  		'all_items'                  => __( 'All editorial project' ),
-  		'parent_item'                => null,
-  		'parent_item_colon'          => null,
-  		'edit_item'                  => __( 'Edit editorial project' ),
-  		'update_item'                => __( 'Update editorial project' ),
-  		'add_new_item'               => __( 'Add New editorial project' ),
-  		'new_item_name'              => __( 'New editorial project' ),
-  		'separate_items_with_commas' => __( 'Separate editorial project with commas' ),
-  		'add_or_remove_items'        => __( 'Add or remove editorial projects' ),
-  		'not_found'                  => __( 'No editorial project found.' ),
-  		'menu_name'                  => __( 'Editorial project' ),
-  	);
+      'name'                       => _x( 'Editorial Projects', 'editorial_project' ),
+      'singular_name'              => _x( 'Editorial Project', 'editorial_project' ),
+      'search_items'               => __( 'Search editorial project' ),
+      'popular_items'              => __( 'Popular editorial project' ),
+      'all_items'                  => __( 'All editorial project' ),
+      'parent_item'                => null,
+      'parent_item_colon'          => null,
+      'edit_item'                  => __( 'Edit editorial project' ),
+      'update_item'                => __( 'Update editorial project' ),
+      'add_new_item'               => __( 'Add New editorial project' ),
+      'new_item_name'              => __( 'New editorial project' ),
+      'separate_items_with_commas' => __( 'Separate editorial project with commas' ),
+      'add_or_remove_items'        => __( 'Add or remove editorial projects' ),
+      'not_found'                  => __( 'No editorial project found.' ),
+      'menu_name'                  => __( 'Editorial project' ),
+    );
 
     $args = array(
       'hierarchical'          => true,
-    	'labels'                => $labels,
-    	'show_ui'               => true,
-    	'show_admin_column'     => true,
-    	'query_var'             => true,
-    	'rewrite'               => array( 'slug' => 'editorial-project' ),
+      'labels'                => $labels,
+      'show_ui'               => true,
+      'show_admin_column'     => true,
+      'query_var'             => true,
+      'rewrite'               => array( 'slug' => 'editorial-project' ),
     );
 
     register_taxonomy( TPL_EDITORIAL_PROJECT, TPL_EDITION, $args );
@@ -100,7 +99,7 @@ class TPL_Editorial_Project
 
        case 'header_icon':
           $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
-          echo '<a href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
+          echo '<a target="_blank" href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
           break;
        default:
           break;
@@ -117,14 +116,7 @@ class TPL_Editorial_Project
   public function get_custom_metabox( $term_id ) {
 
     $basic_meta = new TPL_Metabox( 'basic_metabox', __( 'Basic', 'editorial_project' ), 'normal', 'high', $term_id );
-    $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
-    $behavior_meta = new TPL_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
-    $book_meta = new TPL_Metabox( 'book_metabox', __( 'Book extended', 'editorial_project' ), 'normal', 'high', $term_id );
-    $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'Subscriptions', 'editorial_project' ), 'normal', 'high', $term_id );
-    $push_meta = new TPL_Metabox( 'push_metabox', __( 'Notification push', 'editorial_project' ), 'normal', 'high', $term_id );
-
     $basic_meta->add_field( '_pr_default', '<h3>Basic option</h1><hr>', '', 'textnode', '' );
-    $basic_meta->add_field( '_pr_itunes_secret', __( 'Itunes secret', 'editorial_project' ), __( 'Itunes secret', 'editorial_project' ), 'text', '' );
     $basic_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'Orientation', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'editorial_project' ) ),
@@ -135,14 +127,14 @@ class TPL_Editorial_Project
     $basic_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Zoomable', 'editorial_project' ), 'checkbox', false );
     $basic_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Body background color', 'editorial_project' ), 'color', '' );
 
-    $vis_meta->add_field( '_pr_default', '<h3>Visualization properties</h1><hr>', '', 'textnode', '' );
+    $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
     $vis_meta->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Background image portrait', 'editorial_project' ), 'file', '' );
     $vis_meta->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Background image landscape', 'editorial_project' ), 'file', '' );
     $vis_meta->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Page numbers color', 'editorial_project' ), 'color', '' );
     $vis_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Page number alpha', 'editorial_project' ), 'decimal', '' );
     $vis_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
 
-    $behavior_meta->add_field( '_pr_default', '<h3>Behaviour properties</h1><hr>', '', 'textnode', '' );
+    $behavior_meta = new TPL_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
     $behavior_meta->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'Rendering type', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),
@@ -155,14 +147,15 @@ class TPL_Editorial_Project
     $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Page turn tap', 'editorial_project' ), 'checkbox', true );
     $behavior_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Page turn swipe', 'editorial_project' ), 'checkbox', true );
 
-    $book_meta->add_field( '_pr_default', '<h3>Book extended</h1><hr>', '', 'textnode', '' );
+    $book_meta = new TPL_Metabox( 'book_metabox', __( 'Book extended', 'editorial_project' ), 'normal', 'high', $term_id );
     $book_meta->add_field( '_pr_index_height', __( 'Index height', 'edition' ), __( 'Index height', 'editorial_project' ), 'number', '' );
     $book_meta->add_field( '_pr_index_width', __( 'Index width', 'edition' ), __( 'Index width', 'editorial_project' ), 'number', '' );
     $book_meta->add_field( '_pr_index_bounce', __( 'Index bounce', 'edition' ), __( 'Index bounce', 'editorial_project' ), 'checkbox', false );
     $book_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Start at page', 'editorial_project' ), 'number', '' );
 
-    $sub_meta->add_field( '_pr_default', '<h3>Subscription properties</h1><hr>', '', 'textnode', '' );
-    $sub_meta->add_field( '_pr_prefix_bundle_id', __( 'App bundle id', 'edition' ), __( 'App bundle id', 'editorial_project' ), 'text', '' );
+    $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'Subscriptions', 'editorial_project' ), 'normal', 'high', $term_id );
+    $sub_meta->add_field( '_pr_itunes_secret', __( 'Itunes Shared Secret', 'editorial_project' ), __( 'A shared secret is a unique code that you should use when you make the call to our servers for your In-App Purchase receipts.', 'editorial_project' ), 'text', '' );
+    $sub_meta->add_field( '_pr_prefix_bundle_id', __( 'App Bundle ID', 'edition' ), __( 'Application Bundle ID is the unique identifier of your application', 'editorial_project' ), 'text', '' );
     $sub_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'editorial_project' ), 'text_autocompleted', '' );
     $sub_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'editorial_project' ), 'text_autocompleted', '' );
     $sub_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'editorial_project' ), 'repeater_with_radio', '', array(
@@ -173,7 +166,7 @@ class TPL_Editorial_Project
       ),
     ) );
 
-    $push_meta->add_field( '_pr_default', '<h3>Push notification option</h1><hr>', '', 'textnode', '' );
+    $push_meta = new TPL_Metabox( 'push_metabox', __( 'Notification push', 'editorial_project' ), 'normal', 'high', $term_id );
     $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push service', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
@@ -193,16 +186,21 @@ class TPL_Editorial_Project
     );
   }
 
-
-  public function pre_edit_form( $term ) {
+  /**
+   * Add tabs to edit form
+   *
+   * @echo
+   */
+  public function add_tabs_to_form( $term ) {
 
     $this->get_custom_metabox( $term->term_id );
-    echo '<h2 class="nav-tab-wrapper">';
+    echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
     foreach ( $this->_metaboxes as $key => $metabox ) {
       echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
     }
     echo '</h2>';
   }
+
   /**
   * Define the custom meta fields for new entry
   *
@@ -249,11 +247,11 @@ class TPL_Editorial_Project
   }
 
   /**
-  * Save the values ​​in a custom option
-  *
-  * @param  int $term_id
-  * @void
-  */
+   * Save the values ​​in a custom option
+   *
+   * @param  int $term_id
+   * @void
+   */
   public function update_form_meta_fields( $term_id ) {
 
     $terms = get_terms( TPL_EDITORIAL_PROJECT );
@@ -276,18 +274,56 @@ class TPL_Editorial_Project
       wp_redirect( $url );
       exit;
     }
-
   }
 
   /**
-  * Add enctype to form for files upload
-  *
-  * @echo
-  */
-	public function form_add_enctype() {
+   * Add enctype to form for files upload
+   *
+   * @echo
+   */
+  public function form_add_enctype() {
 
-		echo ' enctype="multipart/form-data"';
-	}
+    echo ' enctype="multipart/form-data"';
+  }
+
+  /**
+   * Remove description and parent fields.
+   * Move tabs after title
+   * @echo
+   */
+  public function customize_form() {
+  ?>
+    <script type="text/javascript">
+      jQuery(function(){
+        jQuery('#tag-description, #description, #parent').closest('.form-field').remove();
+        jQuery('.nav-tab-wrapper').insertAfter(jQuery('.wrap>h2'));
+        jQuery('#edittag').addClass('postbox pr-edittag');
+        jQuery('input[name="pr_push_service"]').change(function(){
+          var $this = jQuery(this);
+          if ( $this.is(':checked') ) {
+            if ( $this.val() == 'urbanairship' ) {
+              jQuery('label[for="pr_push_api_app_id"]').html('App Key');
+              jQuery('label[for="pr_push_api_key"]').html('App Master Secret');
+              jQuery('#pr_push_api_app_id').next('.description').html('Urban Airship generated string identifying the app setup. Used in the application bundle.');
+              jQuery('#pr_push_api_key').next('.description').html('Urban Airship generated string used for server to server API access. This should never be shared or placed in an application bundle.');
+            } else if ( $this.val() == 'parse' ) {
+              jQuery('label[for="pr_push_api_app_id"]').html('Application ID');
+              jQuery('label[for="pr_push_api_key"]').html('REST API Key');
+              jQuery('#pr_push_api_app_id').next('.description').html('This is the main identifier that uniquely specifies your application. This is paired with a key to provide your clients access to your application\'s data.');
+              jQuery('#pr_push_api_key').next('.description').html('This key should be used when making requests to the REST API. It also adheres to object level permissions.');
+            }
+          }
+        }).change();
+      });
+    </script>
+  <?php
+  }
+
+  public function remove_tag_cloud ( $return, $args ) {
+    if ( $args['taxonomy'] == TPL_EDITORIAL_PROJECT ) {
+      return false;
+    }
+  }
 
   /**
    * Get an editorial project by slug
@@ -450,16 +486,6 @@ class TPL_Editorial_Project
       $eproject_bundle_id = $eproject_options['_pr_prefix_bundle_id'];
     }
     return $eproject_bundle_id;
-  }
-
-  public function remove_form_fields() {
-    ?>
-    <script>
-      jQuery('#tag-description').closest('.form-field').remove();
-	    jQuery('#description').closest('.form-field').remove();
-      jQuery('#parent').closest('.form-field').remove();
-    </script>
-    <?php
   }
 }
 

@@ -2,6 +2,9 @@
 
 class TPL_push_page {
 
+  public $push_app_id;
+  public $push_app_key;
+
   /**
    * constructor method
    * Add class functions to wordpress hooks
@@ -82,61 +85,18 @@ class TPL_push_page {
       wp_send_json_error( __( "Editorial project doesn't exist.", 'pressroom' ) );
     }
 
-    $push_type = $data['type'];
-    $push_time = $data['time'] == 'later' ? strtotime( $data['date_time'] ) : false;
+    $push_time = $data['time'] == 'later' ? $data['date_time'] : false;
     $push_service = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_service' );
-    $push_app_id = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
-    $push_app_key = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
-
-    switch ( $push_type ) {
-      case 'message':
-        $notification_data = array(
-          'alert' => $data['alert'],
-        );
-        break;
-      case 'download':
-        $notification_data = array(
-          'alert' => $data['alert'],
-          'badge' => 1,
-          'content-available' => 1,
-        );
-        if ( $data['edition'] == 'specific' ) {
-          $notification_data['content-name'] = $data['edition-slug'];
-        }
-        break;
-    }
+    $this->push_app_id = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
+    $this->push_app_key = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_key' );
 
     switch ( $push_service ) {
       case 'parse':
-        $params = array(
-          'channels'  => array( $data['editorial_project'] ),
-          'data'      => $notification_data
-        );
+        $this->send_parse_push_notification( $data, $push_time );
+        break;
 
-        if ( $push_time ) {
-          $params['push_time'] = gmdate("Y-m-d\TH:i:s\Z", $push_time);
-        }
-
-        $msg = __( "Data sent:", 'pressroom' ) . '<br>' . json_encode( $params ) . '<br>';
-        $response = wp_remote_post( 'https://api.parse.com/1/push', array(
-          'body'      => json_encode( $params ),
-          'headers'   => array(
-            'X-Parse-Application-Id'  =>  $push_app_id,
-            'X-Parse-REST-API-Key'    =>  $push_app_key,
-            'Content-Type'  => 'application/json',
-          ),
-        ));
-
-        if ( is_wp_error( $response ) || !isset( $response['body'] ) ) {
-          wp_send_json_error( __( "Invalid response data.", 'pressroom' ) );
-        }
-
-        $data = json_decode( $response['body'] );
-        if ( !is_object($data) || !isset( $data->result ) ) {
-          wp_send_json_error( $msg );
-        }
-
-        wp_send_json_success( $msg );
+      case 'urbanairship':
+        $this->send_urbanairship_push_notification( $data, $push_time );
         break;
     }
     wp_send_json_error( $msg );
@@ -197,7 +157,7 @@ class TPL_push_page {
             <label for="prp-time-1" class="radio"><input type="radio" name="pr_push[time]" class="prp-time" id="prp-time-1" value="later"> <?php echo __('Schedule sending', 'pressroom-push'); ?></label>
             <div id="pr-edition-t">
               <br>
-              <input id="prp-rp-time" name="pr_push[date_time]" type="text" value="<?php echo strtotime('+1 hour'); ?>" class="textbox">
+              <input id="prp-rp-time" name="pr_push[date_time]" type="text" value="<?php echo date( 'Y-m-d H:s:i', strtotime( '+1 hour' ) ); ?>" class="textbox">
             </div>
             <br>
             <b><?php echo __('Alert message', 'pressroom-push'); ?></b>
@@ -230,10 +190,140 @@ class TPL_push_page {
 
     wp_register_style( 'push_notification_page', TPL_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
     wp_enqueue_style( 'push_notification_page' );
+    wp_register_script( 'push_notification_moment', TPL_ASSETS_URI . '/js/moment.min.js' );
+    wp_enqueue_script( 'push_notification_moment' );
+    wp_register_script( 'push_notification_moment_tz', TPL_ASSETS_URI . '/js/moment.timezone.min.js', array( 'push_notification_moment' ) );
+    wp_enqueue_script( 'push_notification_moment_tz' );
     wp_register_script( 'push_notification_datepicker', TPL_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
     wp_enqueue_script( 'push_notification_datepicker' );
     wp_register_script( 'push_notification_page', TPL_ASSETS_URI . '/js/pr.pushnotification.js', array( 'push_notification_datepicker' ) );
     wp_enqueue_script( 'push_notification_page' );
+
+  }
+
+  public function send_parse_push_notification( $data, $push_time = false ) {
+
+    switch ( $data['type'] ) {
+
+      case 'message':
+
+        $notification = array(
+          'alert' => stripcslashes( $data['alert'] ),
+        );
+        break;
+
+      case 'download':
+
+        $notification = array(
+          'alert' => stripcslashes( $data['alert'] ),
+          'badge' => 1,
+          'content-available' => 1,
+        );
+        if ( $data['edition'] == 'specific' ) {
+          $notification['content-name'] = $data['edition-slug'];
+        }
+        break;
+    }
+
+    $params = array(
+      'where' => '{}',
+      'data'  => $notification
+    );
+
+    if ( $push_time ) {
+      $params['push_time'] = gmdate( "Y-m-d\TH:i:s\+01:00", strtotime( $push_time ) );
+    }
+
+    $msg = __( "Data sent:", 'pressroom' ) . '<br>' . json_encode( $params ) . '<br>';
+    $response = wp_remote_post( 'https://api.parse.com/1/push', array(
+      'body'      => json_encode( $params ),
+      'headers'   => array(
+        'X-Parse-Application-Id'  =>  $this->push_app_id,
+        'X-Parse-REST-API-Key'    =>  $this->push_app_key,
+        'Content-Type'            => 'application/json',
+      ),
+    ));
+
+    if ( is_wp_error( $response ) || !isset( $response['body'] ) ) {
+      wp_send_json_error( __( "Invalid response data.", 'pressroom' ) );
+    }
+
+    $data = json_decode( $response['body'] );
+    if ( !is_object( $data ) || !isset( $data->result ) ) {
+      wp_send_json_error( $data->error );
+    }
+    wp_send_json_success( $msg );
+
+  }
+
+  public function send_urbanairship_push_notification( $data, $push_time = false ) {
+
+    switch ( $data['type'] ) {
+
+      case 'message':
+
+        $notification = array(
+          'alert' => stripcslashes( $data['alert'] ),
+        );
+        break;
+
+      case 'download':
+
+        $notification = array(
+          'alert' => stripcslashes( $data['alert'] ),
+          'ios'   => array(
+            'badge' => 1,
+            'content-available' => 1,
+          )
+        );
+
+        if ( $data['edition'] == 'specific' ) {
+          $notification['ios']['extra'] = array( 'content-name' => $data['edition-slug'] );
+        }
+        break;
+    }
+
+    if ( $push_time ) {
+      $d = DateTime::createFromFormat( 'Y-m-d H:i', $push_time, new DateTimeZone( 'Europe/Berlin' ) );
+      $d->setTimeZone( new DateTimeZone( 'UTC' ) );
+
+
+      $params = array(
+        'schedule'      => array( 'scheduled_time' => $d->format( 'Y-m-d\TH:i:s' ) ),
+        'push'          => array(
+          'audience'      => 'all',
+          'device_types'  => 'all',
+          'notification'  => $notification,
+        ),
+      );
+    }
+    else {
+      $params = array(
+        'audience'      => 'all',
+        'device_types'  => 'all',
+        'notification'  => $notification
+      );
+    }
+
+    $msg = __( "Data sent:", 'pressroom' ) . '<br>' . json_encode( $params ) . '<br>';
+    $response = wp_remote_post( 'https://go.urbanairship.com/api/' . ( $push_time ? 'schedules/' : 'push/' ), array(
+      'body'      => json_encode( $params ),
+      'headers'   => array(
+        'Authorization'           => 'Basic ' . base64_encode( $this->push_app_id . ':' . $this->push_app_key ),
+        'Content-Type'            => 'application/json',
+        'Accept'                  => 'application/vnd.urbanairship+json; version=3;'
+      ),
+    ));
+
+    if ( is_wp_error( $response ) || !isset( $response['body'] ) ) {
+      wp_send_json_error( __( "Invalid response data.", 'pressroom' ) );
+    }
+
+    $data = json_decode( $response['body'] );
+    if ( !is_object($data) || !$data->ok ) {
+      wp_send_json_error( $data->error );
+    }
+    wp_send_json_success( $msg );
   }
 }
 

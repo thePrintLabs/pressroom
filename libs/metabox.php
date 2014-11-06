@@ -239,7 +239,7 @@ class TPL_Metabox
       switch ( $field['type'] ) {
 
         case 'text':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><br>'. $field['desc'] . '<br/>';
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'text_autocompleted':
@@ -247,7 +247,7 @@ class TPL_Metabox
           break;
 
         case 'textarea':
-          $html.= '<textarea name="' . $field['id'] . '" id="' . $field['id'] . '" cols="60" rows="4" style="width:97%">' . ( $meta_value ? $meta_value : $field['default'] ) . '</textarea><br>'. $field['desc'];
+          $html.= '<textarea name="' . $field['id'] . '" id="' . $field['id'] . '" cols="60" rows="4" style="width:97%">' . ( $meta_value ? $meta_value : $field['default'] ) . '</textarea><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'select':
@@ -306,7 +306,7 @@ class TPL_Metabox
           break;
 
         case 'date':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" /><br>'. $field['desc'];
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'color':

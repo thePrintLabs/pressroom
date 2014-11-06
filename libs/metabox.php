@@ -276,10 +276,11 @@ class TPL_Metabox
             $html.= ' <input type="radio" id="' . $field['id'] . '_' . $i .'" name="' . $field['id'] . '" value="' . $option['value'] . '" ' . ( $checked ? 'checked="checked"' : '' ) . ' />
             <label for="' . $field['id'] . '_' . $i . '">' . $option['name'] . '</label>';
           }
+          $html.= '<p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'checkbox':
-          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' />';
+          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'checkbox_list':
@@ -303,22 +304,27 @@ class TPL_Metabox
                }
             }
           }
+          $html.= '<p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'date':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" /><p class="description">'. $field['desc'] . '</p>';
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'color':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="tpl-color-picker" data-default-color="#ffffff" />';
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="tpl-color-picker" data-default-color="#ffffff" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'number':
-          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />';
+          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'decimal':
-          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />';
+          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'textnode':

@@ -17,7 +17,7 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
     $q.= "LEFT JOIN $wpdb->p2pmeta AS meta_status ON meta_status.p2p_id = p2p . p2p_id AND meta_status.meta_key = 'status'";
   }
 
-  $q.= "WHERE post_status <> %s AND meta_status.meta_value = %b AND p2p.p2p_to = %u ORDER BY meta.meta_value ASC";
+  $q.= "WHERE post_status <> %s AND meta_status.meta_value = %b AND p2p.p2p_to = %u ORDER BY CAST(meta.meta_value AS UNSIGNED ) ASC";
 
   $linked_posts = $wpdb->get_col( $wpdb->prepare( $q, 'trash', 1, $edition->ID ) );
 
@@ -64,6 +64,25 @@ function pr_get_option( $option ) {
    }
 
    return false;
+}
+
+
+/**
+ * Get single option from editorial project option array
+ *
+ * @param string $option
+ * @param int $term_id
+ * @return mixed or boolean false
+ */
+function pr_get_eproject_option( $term_id, $option ) {
+
+  $option = TPL_Editorial_Project::get_config( $term_id, $option);
+
+  if ( $option ) {
+    return $option;
+  }
+
+  return false;
 }
 
 /**

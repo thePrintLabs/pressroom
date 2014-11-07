@@ -16,9 +16,4 @@ jQuery(function(){
        });
     });
 
-    //tagsInput init
-    jQuery('#pr_custom_post_type').tagsInput({
-      'placeholderColor': '#2ea2cc',
-      'defaultText'     : 'Add'
-    });
 });

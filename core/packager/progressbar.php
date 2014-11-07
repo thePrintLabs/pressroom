@@ -74,15 +74,16 @@ class ProgressBar {
       }
 
       .progress {
-        padding: 4px;
-        background:#f2f2f2;
-        -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+        height: 20px;
+        overflow: hidden;
       }
 
       .progress-bar {
         position: relative;
-        height: 16px;
+        height: 19px;
         -webkit-transition: 0.4s linear;
         -moz-transition: 0.4s linear;
         -o-transition: 0.4s linear;
@@ -93,6 +94,7 @@ class ProgressBar {
         transition-property: width, background-color;
         -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
         box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+
       }
 
       .progress-bar:before, .progress-bar:after {
@@ -105,7 +107,15 @@ class ProgressBar {
 
       .progress-bar:before {
         bottom: 0;
-        background: url("' . TPL_ASSETS_URI . 'img/stripes.png") 0 0 repeat;
+        background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        -webkit-background-size: 40px 40px;
+        background-size: 40px 40px;
+
+        -webkit-animation: progress-bar-stripes 2s linear infinite;
+        -o-animation: progress-bar-stripes 2s linear infinite;
+        animation: progress-bar-stripes 2s linear infinite;
       }
 
       .progress-bar:after {
@@ -116,6 +126,16 @@ class ProgressBar {
         background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
         background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
         background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+      }
+
+      @keyframes progress-bar-stripes{
+        from{background-position:40px 0}
+        to{background-position:0 0}
+      }
+
+      @-webkit-keyframes progress-bar-stripes{
+        from{background-position:40px 0}
+        to{background-position:0 0}
       }
 
       .pb_text {
@@ -130,7 +150,7 @@ class ProgressBar {
         position: absolute;
         left: 50%;
         margin-left: -30px;
-        top: 22px;
+        top: 20px;
         z-index: 10;
       }
 
@@ -139,7 +159,7 @@ class ProgressBar {
   }
 
   protected function _flush() {
-    print str_pad('', intval(ini_get('output_buffering')))."\n";
+    echo str_pad('', intval(ini_get('output_buffering')))."\n";
     //ob_end_flush();
     flush();
   }

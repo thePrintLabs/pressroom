@@ -24,6 +24,8 @@ require_once( 'libs/const.php' );
 require_once( TPL_LIBS_PATH . 'utils.php' );
 require_once( TPL_LIBS_PATH . 'metabox.php' );
 require_once( TPL_CORE_PATH . 'setup.php' );
+require_once( TPL_CORE_PATH . 'push.php' );
+
 require_once( TPL_CORE_PATH . 'config/option_page.php' );
 require_once( TPL_CORE_PATH . 'config/tgm.php' );
 
@@ -36,6 +38,7 @@ require_once( TPL_CORE_PATH . 'packager/packager.php' );
 require_once( TPL_CORE_PATH . 'preview/preview.php' );
 require_once( TPL_CORE_PATH . 'api.php' );
 
+// PRO FEATURE
 require_once( TPL_SERVER_PATH . 'server.php' );
 
 class TPL_Pressroom

@@ -23,7 +23,7 @@ class TPL_option_page {
 
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'admin_init', array( $this, 'pr_settings_init' ) );
-
+    add_action( 'wp_ajax_refresh_cache_theme', array( $this, 'refresh_cache_theme' ) );
   }
 
   /**
@@ -80,7 +80,6 @@ class TPL_option_page {
   		'pressroom',
   		'pr_pressroom_section'
   	);
-
   }
 
   /**
@@ -123,19 +122,6 @@ class TPL_option_page {
 
   }
 
-  /**
-   * Render custom_post_type field
-   *
-   * @void
-   */
-  public function pr_custom_post_type() {
-
-  	$options = get_option( 'pr_settings' );
-  	?>
-  	<input id="pr_custom_post_type" type='text' name='pr_settings[pr_custom_post_type]' value='<?php echo ( isset( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type']) : '') ?>'>
-  	<?php
-
-  }
 
   /**
    * render setting section
@@ -155,23 +141,17 @@ class TPL_option_page {
    * @echo
    */
   public function pressroom_options_page() {
-
-  	?>
-  	<form action='options.php' method='post'>
-
-  		<h2>Pressroom Options</h2>
-
-  		<?php
-  		settings_fields( 'pressroom' );
-  		do_settings_sections( 'pressroom' );
-  		submit_button();
-  		?>
-
+  ?>
+    <form action='options.php' method='post'>
+    <h2>Pressroom Options</h2>
+  <?php
+  	settings_fields( 'pressroom' );
+  	do_settings_sections( 'pressroom' );
+  	submit_button();
+  ?>
   	</form>
-  	<?php
-
+  <?php
   }
-
 
   /**
    * add custom script to metabox
@@ -185,19 +165,22 @@ class TPL_option_page {
   }
 
   /**
-    * add chosen.js to metabox
-    *
-    * @void
-    */
+   * add chosen.js to metabox
+   *
+   * @void
+   */
   public function add_chosen_script() {
 
     wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
-
     wp_register_script( 'chosen', TPL_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
     wp_enqueue_script( 'chosen' );
-
   }
 
+
+  public function refresh_cache_theme() {
+    delete_option( 'pressroom_themes' );
+    die();
+  }
 }
 
 $tpl_option_page = new TPL_option_page();

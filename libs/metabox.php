@@ -224,6 +224,9 @@ class TPL_Metabox
         if( isset ( $tax_options[$field['id']] ) ) {
           $meta_value = $tax_options[$field['id']];
         }
+        else {
+          $meta_value = false;
+        }
       }
       else {
         $meta_value = get_post_meta( $this->post_id, $field['id'], true);
@@ -239,7 +242,7 @@ class TPL_Metabox
       switch ( $field['type'] ) {
 
         case 'text':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><br>'. $field['desc'] . '<br/>';
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'text_autocompleted':
@@ -247,7 +250,7 @@ class TPL_Metabox
           break;
 
         case 'textarea':
-          $html.= '<textarea name="' . $field['id'] . '" id="' . $field['id'] . '" cols="60" rows="4" style="width:97%">' . ( $meta_value ? $meta_value : $field['default'] ) . '</textarea><br>'. $field['desc'];
+          $html.= '<textarea name="' . $field['id'] . '" id="' . $field['id'] . '" cols="60" rows="4" style="width:97%">' . ( $meta_value ? $meta_value : $field['default'] ) . '</textarea><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'select':
@@ -276,10 +279,11 @@ class TPL_Metabox
             $html.= ' <input type="radio" id="' . $field['id'] . '_' . $i .'" name="' . $field['id'] . '" value="' . $option['value'] . '" ' . ( $checked ? 'checked="checked"' : '' ) . ' />
             <label for="' . $field['id'] . '_' . $i . '">' . $option['name'] . '</label>';
           }
+          $html.= '<p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'checkbox':
-          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' />';
+          $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'checkbox_list':
@@ -303,22 +307,27 @@ class TPL_Metabox
                }
             }
           }
+          $html.= '<p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'date':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" /><br>'. $field['desc'];
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'color':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="tpl-color-picker" data-default-color="#ffffff" />';
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="tpl-color-picker" data-default-color="#ffffff" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'number':
-          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />';
+          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'decimal':
-          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />';
+          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'textnode':

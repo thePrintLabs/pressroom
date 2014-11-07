@@ -274,10 +274,7 @@ class TPL_Theme
 		}
 
 		if ( empty( self::$_errors ) ) {
-			$themes = get_option( 'pressroom_themes' );
-			if ( !$themes ) {
-				update_option( 'pressroom_themes', self::$_themes );
-			}
+			update_option( 'pressroom_themes', self::$_themes );
 		}
 	}
 

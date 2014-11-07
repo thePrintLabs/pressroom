@@ -24,6 +24,7 @@ class TPL_option_page {
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'admin_init', array( $this, 'pr_settings_init' ) );
     add_filter( 'pre_update_option_pr_settings', array( $this, 'pr_save_options' ), 10, 2 );
+    add_action( 'wp_ajax_refresh_cache_theme', array( $this, 'refresh_cache_theme' ) );
   }
 
   /**
@@ -231,6 +232,12 @@ class TPL_option_page {
     wp_enqueue_style( 'tagsinput', TPL_ASSETS_URI . 'css/jquery.tagsinput.css' );
     wp_register_script( 'tagsinput', TPL_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
     wp_enqueue_script( 'tagsinput' );
+  }
+
+  
+  public function refresh_cache_theme() {
+    delete_option( 'pressroom_themes' );
+    die();
   }
 }
 

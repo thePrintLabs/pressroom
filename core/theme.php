@@ -249,7 +249,6 @@ class TPL_Theme
 			$cover = array();
 			$toc = array();
 			$theme_name = self::_get_theme_name( $theme );
-
 			foreach ( $theme as $page ) {
 
 				if ( !isset( $page['rule'] ) || !strlen( $page['rule'] ) ) {
@@ -277,9 +276,6 @@ class TPL_Theme
 		if ( empty( self::$_errors ) ) {
 			$themes = get_option( 'pressroom_themes' );
 			if ( !$themes ) {
-				add_option( 'pressroom_themes', self::$_themes );
-			}
-			elseif ( count( $themes ) != count( self::$_themes ) ) {
 				update_option( 'pressroom_themes', self::$_themes );
 			}
 		}

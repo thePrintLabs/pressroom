@@ -224,6 +224,9 @@ class TPL_Metabox
         if( isset ( $tax_options[$field['id']] ) ) {
           $meta_value = $tax_options[$field['id']];
         }
+        else {
+          $meta_value = false;
+        }
       }
       else {
         $meta_value = get_post_meta( $this->post_id, $field['id'], true);

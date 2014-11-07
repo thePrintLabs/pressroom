@@ -81,10 +81,14 @@
   width:450px;
   margin-left:auto;
   margin-right:auto;
-  border-radius:5px;
-  background:RGBA(255,255,255,1);
+  /*border-radius:5px;*/
+  background:#fff;
+  -webkit-box-shadow:  0px 0px 1px 0px rgba(0, 0, 0, .45);
+  box-shadow:  0px 0px 1px 0px rgba(0, 0, 0, .45);
+  /*
   -webkit-box-shadow:  0px 0px 15px 0px rgba(0, 0, 0, .45);
   box-shadow:  0px 0px 15px 0px rgba(0, 0, 0, .45);
+  */
 }
 .pr-push-content b {
   margin-bottom:4px;

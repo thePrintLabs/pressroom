@@ -22,7 +22,7 @@ $stylesheet = 'assets/css/toc.css';
         <link rel="stylesheet" href="<?php echo $stylesheet; ?>">
     </head>
     <body id="toc" class="<?php echo $post->post_name; ?>">
-        <div class="swiper-container" style="height:<?php echo pr_get_option( '_pr_index_height' ).'px; width: 100%;'; ?>">
+        <div class="swiper-container" style="height:<?php echo pr_get_eproject_option( $editorial_project_id, '_pr_index_height' ).'px; width: 100%;'; ?>">
             <div class="swiper-wrapper">
                 <?php
                 if ( $posts->have_posts() ):

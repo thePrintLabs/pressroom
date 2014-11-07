@@ -66,6 +66,25 @@ function pr_get_option( $option ) {
    return false;
 }
 
+
+/**
+ * Get single option from editorial project option array
+ *
+ * @param string $option
+ * @param int $term_id
+ * @return mixed or boolean false
+ */
+function pr_get_eproject_option( $term_id, $option ) {
+
+  $option = TPL_Editorial_Project::get_config( $term_id, $option);
+
+  if ( $option ) {
+    return $option;
+  }
+
+  return false;
+}
+
 /**
  * get edition link with book protocol
  * @param  int $edition_id

@@ -27,7 +27,7 @@ final class TPL_Packager_Book_JSON
       '_pr_author'                      => 'author',
       '_pr_creator'                     => 'creator',
       '_pr_cover'                       => 'cover',
-      '_pr_date'                        => 'date',
+      '_pr_package_date'                => 'date',
       'post_title'                      => 'title',
    );
 

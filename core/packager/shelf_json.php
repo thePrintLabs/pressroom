@@ -6,10 +6,10 @@
 final class TPL_Packager_Shelf_JSON
 {
   private static $_press_to_baker = array(
-    'post_name'       => 'name',
-    'post_title'      => 'title',
-    'post_content'    => 'info',
-    '_pr_date'        => 'date',
+    'post_name'         => 'name',
+    'post_title'        => 'title',
+    'post_content'      => 'info',
+    '_pr_package_date'  => 'date',
   );
 
   /**
@@ -57,12 +57,6 @@ final class TPL_Packager_Shelf_JSON
         if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
           $baker_option = self::$_press_to_baker[$meta_key];
           switch ( $meta_key ) {
-
-            case '_pr_date':
-              if ( isset( $meta_value[0] ) ) {
-                 $press_options[$edition_key][$baker_option] = date( 'Y-m-d H:s:i', strtotime( $meta_value[0] ) );
-              }
-              break;
 
             case '_pr_product_id_' . $editorial_project->term_id :
               if ( isset( $meta_value[0] ) &&

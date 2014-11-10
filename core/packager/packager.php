@@ -165,6 +165,8 @@ class TPL_Packager
 		$this->_save_cover_image();
 		$this->set_progress( 80, __( 'Generating book json', 'edition' ) );
 
+		$this->_set_package_date();
+
 		if ( TPL_Packager_Book_JSON::generate_book( $edition_post, $this->_linked_query, $edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
 			self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
 			$this->set_progress( 85, __( 'Generating hpub package', 'edition' ) );
@@ -516,5 +518,16 @@ class TPL_Packager
 
 		self::print_line(__('Cleaning temporary files ', 'edition') );
 		TPL_Utils::remove_dir( $this->_edition_dir );
+	}
+
+	/**
+	 * Add package meta data to edition
+	 *
+	 * @void
+	 */
+	protected function _set_package_date() {
+
+		$date = date( 'Y-m-d H:s:00' );
+		update_post_meta( $this->_edition_post->ID, '_pr_package_date', $date );
 	}
 }

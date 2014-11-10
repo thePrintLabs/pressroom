@@ -70,6 +70,22 @@
 .pr-edittag {
   padding: 0 15px;
 }
+
+.pr-image-container {
+  position: relative;
+  display: inline-block;
+}
+.pr-image-container .remove-file {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/trash.png');
+}
+.pr-image-container .remove-file:hover {
+  background-image: url('../img/trash_hover.png');
+}
 /****************************/
 /* PUSH NOTIFICATION PAGE  */
 /****************************/

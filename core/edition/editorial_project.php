@@ -23,7 +23,7 @@ class TPL_Editorial_Project
       add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
       add_action( TPL_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
-
+      add_action( 'wp_ajax_remove_upload_file', array( $this, 'remove_upload_file_callback' ) );
     }
   }
 
@@ -486,6 +486,25 @@ class TPL_Editorial_Project
       $eproject_bundle_id = $eproject_options['_pr_prefix_bundle_id'];
     }
     return $eproject_bundle_id;
+  }
+
+  /**
+   * Delete attachment and editorial project option
+   *
+   * @echo
+   */
+  public function remove_upload_file_callback() {
+
+    $editorial_project_id = $_POST['term_id'];
+    $term_meta = TPL_Editorial_Project::get_configs( $editorial_project_id );
+    $attach_id = $_POST['attach_id'];
+    $field = $_POST['field'];
+    $term_meta[$field] = '';
+    if( update_option( 'taxonomy_term_' . $editorial_project_id, $term_meta ) ) {
+      wp_delete_attachment( $attach_id );
+      echo "removed";
+    }
+    exit;
   }
 }
 

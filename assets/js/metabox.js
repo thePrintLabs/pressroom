@@ -84,5 +84,30 @@ jQuery(function(){
 
   });
 
+  //remove upload image
+  jQuery('.remove-file').click(function(e) {
+    e.preventDefault();
+    var field = jQuery(this).data('field');
+    var term_id = jQuery(this).data('term');
+    var attach_id = jQuery(this).data('attachment');
+    var current = jQuery(this);
+
+    var data = {
+        'field'      : field,
+        'term_id'    : term_id,
+        'attach_id'  : attach_id,
+        'action'     : 'remove_upload_file'
+    };
+
+    jQuery.post(ajaxurl, data, function(response) {
+      if( response ) {
+          current.parent().find('img').css('display', 'none');
+          current.css('display','none');
+      }
+      else {
+          alert('Error. Please retry');
+      }
+    });
+  });
 
 });

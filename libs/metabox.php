@@ -298,7 +298,10 @@ class TPL_Metabox
           if ( $meta_value ) {
             $img = wp_get_attachment_image( $meta_value );
             if ( $img ) {
-               $html.= $img;
+              $html.= '<div class="pr-image-container">';
+              $html.= $img;
+              $html.= '<a href="#" class="remove-file" '.( $term ? 'data-attachment="' . $meta_value . '" data-term="' . $this->post_id . '"' : "" ).' data-field="' . $field['id'] . '" ></a>';
+              $html.= '</div>';
             }
             else {
                $url = wp_get_attachment_url( $meta_value );

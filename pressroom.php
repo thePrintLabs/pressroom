@@ -82,7 +82,7 @@ class TPL_Pressroom
 			<ul><li>' .implode( "</li><li>", $errors ). '</li></ul>';
 			wp_die( $html, __( 'Pressroom activation error', 'pressroom_setup' ), ('back_link=true') );
 		}
-		flush_rewrite_rules();
+		flush_rewrite_rules( false );
 	}
 
 	/**
@@ -91,7 +91,8 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function plugin_deactivation() {
-		flush_rewrite_rules();
+
+		flush_rewrite_rules( false );
 	}
 
 	/**

@@ -28,6 +28,7 @@ final class TPL_Packager_Book_JSON
       '_pr_creator'                     => 'creator',
       '_pr_cover'                       => 'cover',
       '_pr_package_date'                => 'date',
+      '_pr_package_updated_date'        => 'updated_date',
       'post_title'                      => 'title',
    );
 
@@ -41,7 +42,7 @@ final class TPL_Packager_Book_JSON
     */
    public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image, $term_id ) {
 
-      $press_options = self::_get_pressroom_options( $edition_post, $edition_cover_image, $term_id );
+      $press_options = self::_get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id );
 
       foreach ( $linked_query->posts as $post ) {
 
@@ -71,7 +72,7 @@ final class TPL_Packager_Book_JSON
     * @param  boolean $shelf
     * @return array
     */
-   protected static function _get_pressroom_options( $edition_post, $edition_cover_image, $term_id ) {
+   protected static function _get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id ) {
 
       global $tpl_pressroom;
 
@@ -111,6 +112,15 @@ final class TPL_Packager_Book_JSON
                case '_pr_page_turn_swipe':
                   $options[$baker_option] = (bool)$option;
                   break;
+              case '_pr_background_image_portrait':
+              case '_pr_background_image_landscape':
+                $media = get_attached_file( $option );
+                $media_info = pathinfo( $media );
+                $path = $media_info['basename'];
+                copy( $media, $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $path );
+
+                $options[$baker_option] = TPL_EDITION_MEDIA . $path;
+                break;
                default:
                   $options[$baker_option] = ( $option == '0' || $option == '1' ? (int)$option : $option );
                   break;

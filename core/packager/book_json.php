@@ -34,6 +34,7 @@ final class TPL_Packager_Book_JSON
 
    /**
     * Get all options and html files and save them in the book.json
+    *
     * @param object $edition_post
     * @param object $linked_query
     * @param string $edition_dir
@@ -69,6 +70,7 @@ final class TPL_Packager_Book_JSON
 
    /**
     * Get pressroom edition configuration options
+    *
     * @param  boolean $shelf
     * @return array
     */
@@ -85,47 +87,48 @@ final class TPL_Packager_Book_JSON
       );
 
       $configs = get_option( 'taxonomy_term_' . $term_id );
+
       if ( !$configs ) {
         return $options;
       }
-      foreach ( $configs as $key => $option ) {
 
-         if ( array_key_exists( $key, self::$_press_to_baker ) ) {
-            $baker_option = self::$_press_to_baker[$key];
-            switch ( $key ) {
-               case '_pr_index_height':
-               case '_pr_index_width':
-               case '_pr_start_at_page':
-               case '_pr_page_numbers_alpha':
-                  $options[$baker_option] = (int)$option;
-                  break;
-               case '_pr_orientation':
-               case '_pr_rendering':
-                  $options[$baker_option] = strtolower($option);
-                  break;
-               case '_pr_zoomable':
-               case '_pr_vertical_bounce':
-               case '_pr_vertical_pagination':
-               case '_pr_index_bounce':
-               case '_pr_media_autoplay':
-               case '_pr_page_turn_tap':
-               case '_pr_page_turn_swipe':
-                  $options[$baker_option] = (bool)$option;
-                  break;
-              case '_pr_background_image_portrait':
-              case '_pr_background_image_landscape':
-                $media = get_attached_file( $option );
-                $media_info = pathinfo( $media );
-                $path = $media_info['basename'];
-                copy( $media, $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $path );
+      foreach ( self::$_press_to_baker as $key => $baker_option ) {
 
-                $options[$baker_option] = TPL_EDITION_MEDIA . $path;
+          $option = isset( $configs[$key] ) ? $configs[$key] : '';
+
+          switch ( $key ) {
+             case '_pr_index_height':
+             case '_pr_index_width':
+             case '_pr_start_at_page':
+             case '_pr_page_numbers_alpha':
+                $options[$baker_option] = (int)$option;
                 break;
-               default:
-                  $options[$baker_option] = ( $option == '0' || $option == '1' ? (int)$option : $option );
-                  break;
-            }
-         }
+             case '_pr_orientation':
+             case '_pr_rendering':
+                $options[$baker_option] = strtolower($option);
+                break;
+             case '_pr_zoomable':
+             case '_pr_vertical_bounce':
+             case '_pr_vertical_pagination':
+             case '_pr_index_bounce':
+             case '_pr_media_autoplay':
+             case '_pr_page_turn_tap':
+             case '_pr_page_turn_swipe':
+                $options[$baker_option] = $option == 'on';
+                break;
+            case '_pr_background_image_portrait':
+            case '_pr_background_image_landscape':
+              $media = get_attached_file( $option );
+              $media_info = pathinfo( $media );
+              $path = $media_info['basename'];
+              copy( $media, $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $path );
+
+              $options[$baker_option] = TPL_EDITION_MEDIA . $path;
+              break;
+             default:
+                $options[$baker_option] = ( $option == '0' || $option == '1' ? (int)$option : $option );
+                break;
+          }
       }
 
       foreach ( $edition_post as $key => $value ) {

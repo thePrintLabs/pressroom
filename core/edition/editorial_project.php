@@ -24,6 +24,8 @@ class TPL_Editorial_Project
       add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
       add_action( TPL_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
       add_action( 'wp_ajax_remove_upload_file', array( $this, 'remove_upload_file_callback' ) );
+      add_action( 'wp_ajax_reset_editorial_project', array( $this, 'reset_editorial_project' ) );
+      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
 
     }
   }
@@ -77,9 +79,9 @@ class TPL_Editorial_Project
     $new_columns = array(
        'cb'           => '<input type="checkbox" />',
        'name'         => __( 'Name' ),
-       'header_icon'  => __( 'Shelf.json', 'editorial_project'),
        'slug'         => __( 'Slug' ),
-       'posts'        => __( 'Posts' )
+       'posts'        => __( 'Posts' ),
+       'actions'  => __( 'Actions', 'editorial_project'),
     );
 
     return $new_columns;
@@ -98,9 +100,10 @@ class TPL_Editorial_Project
     $editorial = get_term( $editorial_id, TPL_EDITORIAL_PROJECT );
     switch ( $column_name ) {
 
-       case 'header_icon':
+       case 'actions':
           $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
-          echo '<a target="_blank" href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
+          echo '<a target="_blank" href="' . $shelf_url . '">' . __("View shelf endpoint", 'editorial_project') . '</a><br/>';
+          echo '<a href="#" data-term="'.$editorial_id.'" class="pr-reset">Reset</a>';
           break;
        default:
           break;
@@ -121,8 +124,8 @@ class TPL_Editorial_Project
     $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
     $vis_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
       'options' => array(
-        array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'editorial_project' ) ),
-        array( 'value' => 'vertical', 'name' => __( "Vertical", 'editorial_project' ) ),
+        array( 'value' => 'portrait', 'name' => __( "Portrait", 'editorial_project' ) ),
+        array( 'value' => 'landscape', 'name' => __( "Landscape", 'editorial_project' ) ),
         array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
       )
     ) );
@@ -143,7 +146,7 @@ class TPL_Editorial_Project
         array( 'value' => 'three-cards', 'name' => __( "Three cards", 'editorial_project' ) )
       )
     ) );
-    $behavior_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
     $behavior_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
     $behavior_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
     $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
@@ -188,8 +191,9 @@ class TPL_Editorial_Project
   }
 
   /**
-   * Add tabs to edit form
+   * Add tabs menu to edit form
    *
+   * @param object $term
    * @echo
    */
   public function add_tabs_to_form( $term ) {
@@ -200,6 +204,25 @@ class TPL_Editorial_Project
       echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
     }
     echo '</h2>';
+  }
+
+
+  /**
+   * delete editorial project options
+   *
+   * @echo
+   */
+  public function reset_editorial_project() {
+
+    $term_id = $_POST['term_id'];
+    if( delete_option( 'taxonomy_term_' . $term_id ) ){
+      $this->get_custom_metabox( $term_id );
+      foreach ( $this->_metaboxes as $metabox ) {
+        $metabox->save_term_values();
+      }
+      wp_send_json_success();
+    }
+    exit;
   }
 
   /**
@@ -213,6 +236,8 @@ class TPL_Editorial_Project
     foreach ( $this->_metaboxes as $key => $metabox ) {
       echo $metabox->fields_to_html( true, $metabox->id );
     }
+
+    // echo $this->add_reset_to_form();
   }
 
   /**
@@ -491,7 +516,7 @@ class TPL_Editorial_Project
 
   /**
    * Delete attachment and editorial project option
-   * 
+   *
    * @echo
    */
   public function remove_upload_file_callback() {
@@ -506,6 +531,17 @@ class TPL_Editorial_Project
       echo "removed";
     }
     exit;
+  }
+
+  /**
+   * add custom script to metabox
+   *
+   * @void
+   */
+  public function add_custom_script() {
+
+    wp_register_script( 'eproject', TPL_ASSETS_URI . '/js/eproject.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'eproject' );
   }
 }
 

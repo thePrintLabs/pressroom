@@ -527,7 +527,7 @@ class TPL_Packager
 	 */
 	protected function _set_package_date() {
 
-		$date = date( 'Y-m-d H:s:00' );
+		$date = date( 'Y-m-d H:i:s' );
 		add_post_meta( $this->_edition_post->ID, '_pr_package_date', $date, true );
 		update_post_meta( $this->_edition_post->ID, '_pr_package_updated_date', $date );
 	}

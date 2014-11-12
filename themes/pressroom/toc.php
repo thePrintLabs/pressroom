@@ -8,7 +8,7 @@
 */
 
 // temporary fix to enable wp hook & filters inside PR-themes
-require_once('inc/function.php');
+//require_once('inc/function.php');
 
 $stylesheet = 'assets/css/toc.css';
 ?>

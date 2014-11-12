@@ -330,6 +330,7 @@ class TPL_Packager
 		ob_start();
 		$editorial_project_id = $editorial_project->term_id;
 		$posts = $this->_linked_query;
+		$this->_add_functions_file();
 		require( $cover );
 		$output = ob_get_contents();
 		ob_end_clean();
@@ -352,6 +353,7 @@ class TPL_Packager
 		ob_start();
 		$editorial_project_id = $editorial_project->term_id;
 		$posts = $this->_linked_query;
+		$this->_add_functions_file();
 		require( $toc );
 		$output = ob_get_contents();
 		ob_end_clean();
@@ -377,6 +379,7 @@ class TPL_Packager
 		global $post;
 		$post = $linked_post;
 		setup_postdata($post);
+		$this->_add_functions_file();
 		require( $page );
 		$output = ob_get_contents();
 		wp_reset_postdata();
@@ -530,5 +533,24 @@ class TPL_Packager
 		$date = date( 'Y-m-d H:i:s' );
 		add_post_meta( $this->_edition_post->ID, '_pr_package_date', $date, true );
 		update_post_meta( $this->_edition_post->ID, '_pr_package_updated_date', $date );
+	}
+
+	/**
+	 * Add function file if exist
+	 *
+	 * @void
+	 */
+	protected function _add_functions_file() {
+
+		$theme_dir = TPL_Theme::get_theme_path( $this->_edition_post->ID );
+		$files = TPL_Utils::search_files( $theme_dir, 'php', true );
+		if ( !empty( $files ) ) {
+			foreach ( $files as $file ) {
+				if ( strpos( $file, 'functions.php' ) !== false ) {
+					require_once $file;
+					break;
+				}
+			}
+		}
 	}
 }

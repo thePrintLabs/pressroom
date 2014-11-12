@@ -119,11 +119,15 @@ final class TPL_Packager_Book_JSON
             case '_pr_background_image_portrait':
             case '_pr_background_image_landscape':
               $media = get_attached_file( $option );
-              $media_info = pathinfo( $media );
-              $path = $media_info['basename'];
-              copy( $media, $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $path );
-
-              $options[$baker_option] = TPL_EDITION_MEDIA . $path;
+              if ( $media ) {
+                $media_info = pathinfo( $media );
+                $path = $media_info['basename'];
+                copy( $media, $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $path );
+                $options[$baker_option] = TPL_EDITION_MEDIA . $path;
+              }
+              else {
+                $options[$baker_option] = '';
+              }
               break;
              default:
                 $options[$baker_option] = ( $option == '0' || $option == '1' ? (int)$option : $option );

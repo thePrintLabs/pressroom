@@ -67,11 +67,12 @@ class TPL_Preview {
       $page_url = $args[0];
     }
     else {
+      $filename =  TPL_Utils::sanitize_string( $post->post_title ) . '.html';
+      $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
+
       $html = self::parse_html( $edition, $post );
       $html = self::rewrite_html_url( $edition, $html );
 
-      $filename =  TPL_Utils::sanitize_string( $post->post_title ) . '.html';
-      $edition_dir = TPL_Utils::sanitize_string( $edition->post_title );
       if ( TPL_Utils::make_dir( TPL_PREVIEW_TMP_PATH, $edition_dir ) ) {
         file_put_contents( TPL_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
         $page_url = TPL_PREVIEW_URI . $edition_dir . DIRECTORY_SEPARATOR . $filename;
@@ -97,6 +98,7 @@ class TPL_Preview {
 
     ob_start();
     $posts = $linked_posts;
+    self::add_functions_file( $edition->ID );
     require_once( $toc );
     $output = ob_get_contents();
     ob_end_clean();
@@ -130,6 +132,7 @@ class TPL_Preview {
     global $post;
     $post = $connected_post;
     setup_postdata( $post );
+    self::add_functions_file( $edition->ID );
     require( $template );
     $output = ob_get_contents();
     wp_reset_postdata();
@@ -232,5 +235,24 @@ class TPL_Preview {
     window.open("' . TPL_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
     }, false);
     </script>';
+  }
+
+  /**
+   * Add function file if exist
+   * @param int $edition_id
+   * @void
+   */
+  public static function add_functions_file( $edition_id ) {
+
+    $theme_path = TPL_Theme::get_theme_path( $edition_id );
+    $files = TPL_Utils::search_files( $theme_path, 'php', true );
+    if ( !empty( $files ) ) {
+      foreach ( $files as $file ) {
+        if ( strpos( $file, 'functions.php' ) !== false ) {
+          require_once $file;
+          break;
+        }
+      }
+    }
   }
 }

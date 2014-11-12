@@ -20,7 +20,7 @@
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
-require_once( 'libs/const.php' );
+require_once( 'libs/define.php' );
 require_once( TPL_LIBS_PATH . 'utils.php' );
 require_once( TPL_LIBS_PATH . 'metabox.php' );
 require_once( TPL_CORE_PATH . 'setup.php' );

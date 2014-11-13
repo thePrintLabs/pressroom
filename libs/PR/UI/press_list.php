@@ -183,10 +183,10 @@ class Pressroom_List_Table extends WP_List_Table
 
     $status = p2p_get_meta( $item->p2p_id, 'status', true );
 		if ( $status ) {
-         $status_label = '<i class="icon-eye"></i>';
+         $status_label = '<i class="press-eye"></i>';
 		}
 		else {
-			$status_label = '<i class="icon-eye-off"></i>';
+			$status_label = '<i class="press-eye-off"></i>';
 		}
 
       return '<a id="r_' . $item->p2p_id . '" class="presslist-status" data-index="' . $item->p2p_id . '" href="#">' . __( $status_label, 'edition' ).'</a>';

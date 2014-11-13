@@ -139,10 +139,10 @@ $( ".wp-list-table tbody" ).delegate( ".presslist-status", "click", function(e) 
 
     jQuery.post(ajaxurl, data, function(response) {
         if( response ) {
-            el.find('i').addClass('icon-eye-off').removeClass('icon-eye');
+            el.find('i').addClass('press-eye-off').removeClass('press-eye');
         }
         else {
-            el.find('i').addClass('icon-eye').removeClass('icon-eye-off');;
+            el.find('i').addClass('press-eye').removeClass('press-eye-off');;
         }
 
     });

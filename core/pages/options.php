@@ -32,7 +32,7 @@ class PR_options_page {
    */
   public function pr_add_admin_menu() {
 
-    add_menu_page( 'pressroom', 'Pressroom', 'manage_options', 'pressroom', array( $this, 'pressroom_options_page' ) );
+    add_menu_page( 'pressroom', 'Pressroom', 'manage_options', 'pressroom', array( $this, 'pressroom_options_page' ), '' );
   }
 
   /**

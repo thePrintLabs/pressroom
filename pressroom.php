@@ -22,8 +22,6 @@ if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
 require_once( __DIR__ . '/core/define.php' );
 require_once( PR_LIBS_PR_PATH . 'utils.php' );
-require_once( PR_LIBS_PR_PATH . 'metabox.php' );
-require_once( PR_LIBS_PR_PATH . 'press_list.php' );
 
 require_once( PR_CORE_PATH . 'setup.php' );
 require_once( PR_CORE_PATH . 'edition/edition.php' );
@@ -36,6 +34,9 @@ require_once( PR_CORE_PATH . 'api.php' );
 require_once( PR_CONFIGS_PATH . 'tgm.php' );
 
 require_once( PR_SERVER_PATH . 'server.php' );
+
+require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
+require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
 
 class TPL_Pressroom
 {

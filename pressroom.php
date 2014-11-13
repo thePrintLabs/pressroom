@@ -31,12 +31,15 @@ require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );
 
+require_once( PR_CONFIGS_PATH . 'edd.php' );
 require_once( PR_CONFIGS_PATH . 'tgm.php' );
 
 require_once( PR_SERVER_PATH . 'server.php' );
 
 require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
+
+$license = new PR_EDD_License( __FILE__, 'PressRoom Pro', '1.0', 'thePrintLabs' );
 
 class TPL_Pressroom
 {

@@ -96,6 +96,14 @@ class PR_options_page {
       'pressroom',
       'pr_plugin_pro'
     );
+
+    add_settings_field(
+      'pr_license',
+      __( 'License key', 'pressroom' ),
+      array( $this, 'pr_license_key' ),
+      'pressroom',
+      'pr_plugin_pro'
+    );
   }
 
   /**
@@ -150,6 +158,20 @@ class PR_options_page {
   	<input id="pr_custom_post_type" type='text' name='pr_settings[pr_custom_post_type]' value='<?php echo ( isset( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type']) : '') ?>'>
   	<?php
 
+  }
+
+  /**
+   * Render custom_post_type field
+   *
+   * @void
+   */
+  public function pr_license_key() {
+
+    edd_license_key_callback(array(
+      'id' => 'edd_pressroom_pro_license_key',
+      'options' => array('is_valid_license_option' => false),
+      'desc' => 'banana'
+    ));
   }
 
   /**

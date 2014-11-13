@@ -1,6 +1,6 @@
 <?php
 
-class TPL_ADBundle
+class PR_ADBundle
 {
 	protected $_metaboxes = array();
 
@@ -17,15 +17,15 @@ class TPL_ADBundle
 
 		add_action( 'init', array( $this, 'add_adbundle_post_type' ), 20 );
 		add_action( 'post_edit_form_tag', array( $this, 'form_add_enctype' ) );
-		add_action( 'save_post_tpl_ad_bundle', array( $this, 'save_adbundle' ), 40 );
+		add_action( 'save_post_pr_ad_bundle', array( $this, 'save_adbundle' ), 40 );
 		add_filter( 'add_meta_boxes', array( $this, 'add_adbundle_metaboxes' ), 40, 2 );
 
 		// Packager hooks
-		add_action( 'pr_packager_run_tpl_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
-		add_action( 'pr_packager_generate_book_tpl_ad_bundle', array( $this, 'adb_packager_book' ), 10 );
+		add_action( 'pr_packager_run_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_generate_book_pr_ad_bundle', array( $this, 'adb_packager_book' ), 10 );
 
 		// Preview hooks
-		add_action( 'pr_preview_tpl_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
+		add_action( 'pr_preview_pr_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class TPL_ADBundle
 			'capability_type'     => 'post',
 		);
 
-		register_post_type( 'tpl_ad_bundle', $args );
+		register_post_type( 'pr_ad_bundle', $args );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class TPL_ADBundle
 	*/
 	public function get_custom_metaboxes( $post_type, $post ) {
 
-		$adb_meta = new TPL_Metabox( 'adbundle_metabox', __( 'Ad Bundle metabox', 'adbundle' ), 'normal', 'high', $post->ID );
+		$adb_meta = new PR_Metabox( 'adbundle_metabox', __( 'Ad Bundle metabox', 'adbundle' ), 'normal', 'high', $post->ID );
 		$adb_meta->add_field( '_pr_html_file', __( 'Html file', 'adbundle' ), __( 'The HTML file from within the ZIP that will be used in the edition.', 'adbundle' ), 'text', 'index.html' );
 		$adb_meta->add_field( '_pr_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 
@@ -98,7 +98,7 @@ class TPL_ADBundle
 
 		$this->get_custom_metaboxes( $post_type, $post );
 		foreach ( $this->_metaboxes as $metabox ) {
-			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_adbundle_metabox_callback' ), 'tpl_ad_bundle', $metabox->context, $metabox->priority );
+			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_adbundle_metabox_callback' ), 'pr_ad_bundle', $metabox->context, $metabox->priority );
 		}
 	}
 
@@ -110,7 +110,7 @@ class TPL_ADBundle
 	*/
 	public function add_adbundle_metabox_callback() {
 
-		echo '<input type="hidden" name="tpl_adbundle_nonce" value="' . wp_create_nonce('tpl_adbundle_nonce'). '" />';
+		echo '<input type="hidden" name="pr_adbundle_nonce" value="' . wp_create_nonce('pr_adbundle_nonce'). '" />';
 		echo '<table class="form-table">';
 
 		foreach ( $this->_metaboxes as $metabox ) {
@@ -139,12 +139,12 @@ class TPL_ADBundle
 	public function save_adbundle( $post_id ) {
 
 		$post = get_post( $post_id );
-		if ( !$post || $post->post_type != 'tpl_ad_bundle' ) {
+		if ( !$post || $post->post_type != 'pr_ad_bundle' ) {
 			return;
 		}
 
 		//Verify nonce
-		if ( !isset( $_POST['tpl_adbundle_nonce'] ) || !wp_verify_nonce( $_POST['tpl_adbundle_nonce'], 'tpl_adbundle_nonce' ) ) {
+		if ( !isset( $_POST['pr_adbundle_nonce'] ) || !wp_verify_nonce( $_POST['pr_adbundle_nonce'], 'pr_adbundle_nonce' ) ) {
 			return $post_id;
 		}
 
@@ -158,7 +158,7 @@ class TPL_ADBundle
 			return $post_id;
 		}
 
-		$this->get_custom_metaboxes( 'tpl_ad_bundle', $post);
+		$this->get_custom_metaboxes( 'pr_ad_bundle', $post);
 		foreach ( $this->_metaboxes as $metabox ) {
 			$metabox->save_values();
 		}
@@ -183,17 +183,17 @@ class TPL_ADBundle
 
 			if ( $zip->open( $adb_attached_file ) ) {
 
-				$adb_title = TPL_Utils::sanitize_string( $post->post_title );
-				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . 'tpl_ad_bundle' . DIRECTORY_SEPARATOR . $adb_title ) ) {
-					TPL_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $adb_attached_file, 'success' );
+				$adb_title = PR_Utils::sanitize_string( $post->post_title );
+				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_title ) ) {
+					PR_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $adb_attached_file, 'success' );
 				} else {
-					TPL_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $adb_attached_file, 'error' );
+					PR_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $adb_attached_file, 'error' );
 				}
 				$zip->close();
 
 			}
 			else {
-				TPL_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $adb_attached_file, 'error' );
+				PR_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $adb_attached_file, 'error' );
 			}
 		}
 	}
@@ -212,15 +212,15 @@ class TPL_ADBundle
 		list( $press_options, $post, $edition_dir ) = $args;
 
 		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
-		$adb_dir = TPL_Utils::sanitize_string( $post->post_title );
+		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
 
-		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'tpl_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
-			$press_options['contents'][] = 'tpl_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 			$args[0] = $press_options;
 		}
 		else {
-			TPL_Packager::print_line( sprintf( __( "Can't find file %s. It won't add to book.json. See the wiki to know how to make an add bundle", 'edition' ), $file_index ), 'error' );
+			PR_Packager::print_line( sprintf( __( "Can't find file %s. It won't add to book.json. See the wiki to know how to make an add bundle", 'edition' ), $file_index ), 'error' );
 		}
 	}
 
@@ -243,17 +243,17 @@ class TPL_ADBundle
 			$adb_attached_file = get_attached_file( $attachment->ID );
 			if ( $zip->open( $adb_attached_file ) ) {
 
-				$edition_name = TPL_Utils::sanitize_string( $edition->post_title );
-				$adb_name = TPL_Utils::sanitize_string( $post->post_title );
+				$edition_name = PR_Utils::sanitize_string( $edition->post_title );
+				$adb_name = PR_Utils::sanitize_string( $post->post_title );
 
-				$edition_dir = TPL_Utils::make_dir( TPL_PREVIEW_TMP_PATH, $edition_name );
-				$adb_dir = TPL_Utils::make_dir( $edition_dir, $adb_name );
+				$edition_dir = PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_name );
+				$adb_dir = PR_Utils::make_dir( $edition_dir, $adb_name );
 
 				if ( $zip->extractTo( $adb_dir ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
 					if ( $index_file && file_exists( $adb_dir . DIRECTORY_SEPARATOR . $index_file ) ) {
-						$args[0] = TPL_PREVIEW_URI . $edition_name . '/' . $adb_name . '/' . $index_file;
+						$args[0] = PR_PREVIEW_URI . $edition_name . '/' . $adb_name . '/' . $index_file;
 					}
 				}
 				$zip->close();
@@ -281,4 +281,4 @@ class TPL_ADBundle
 	}
 }
 
-$tpl_adbundle = new TPL_ADBundle;
+$pr_adbundle = new PR_ADBundle;

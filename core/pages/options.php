@@ -1,6 +1,6 @@
 <?php
 
-class TPL_option_page {
+class PR_options_page {
 
   /**
    * constructor method
@@ -60,7 +60,7 @@ class TPL_option_page {
   	register_setting( 'pressroom', 'pr_settings' );
 
   	add_settings_section(
-  		'pr_pressroom_section',
+  		'tpl_pressroom_section',
   		__( 'General settings', 'pressroom' ),
   		array( $this, 'pr_settings_section_callback' ),
   		'pressroom'
@@ -71,7 +71,7 @@ class TPL_option_page {
   		__( 'Default theme', 'pressroom' ),
   		array( $this, 'pr_theme_render' ),
   		'pressroom',
-  		'pr_pressroom_section'
+  		'tpl_pressroom_section'
   	);
 
   	add_settings_field(
@@ -79,7 +79,7 @@ class TPL_option_page {
   		__( 'Max edition number', 'pressroom' ),
   		array( $this, 'pr_maxnumber' ),
   		'pressroom',
-  		'pr_pressroom_section'
+  		'tpl_pressroom_section'
   	);
 
     add_settings_section(
@@ -106,7 +106,7 @@ class TPL_option_page {
   public function pr_theme_render() {
 
     $themes = array();
-    $themes_list = TPL_Theme::get_themes_list();
+    $themes_list = PR_Theme::get_themes_list();
     foreach ( $themes_list as $theme ) {
       $themes[$theme['value']] = $theme['text'];
     }
@@ -215,8 +215,8 @@ class TPL_option_page {
    */
   public function add_custom_script() {
 
-    wp_register_script( 'option_page', TPL_ASSETS_URI . '/js/option_page.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'option_page' );
+    wp_register_script( 'options_page', PR_ASSETS_URI . '/js/pr.option_page.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'options_page' );
   }
 
   /**
@@ -226,19 +226,19 @@ class TPL_option_page {
    */
   public function add_chosen_script() {
 
-    wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
-    wp_register_script( 'chosen', TPL_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
+    wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
+    wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
     wp_enqueue_script( 'chosen' );
-    wp_enqueue_style( 'tagsinput', TPL_ASSETS_URI . 'css/jquery.tagsinput.css' );
-    wp_register_script( 'tagsinput', TPL_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
+    wp_enqueue_style( 'tagsinput', PR_ASSETS_URI . 'css/jquery.tagsinput.css' );
+    wp_register_script( 'tagsinput', PR_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
     wp_enqueue_script( 'tagsinput' );
   }
 
-  
+
   public function refresh_cache_theme() {
     delete_option( 'pressroom_themes' );
     die();
   }
 }
 
-$tpl_option_page = new TPL_option_page();
+$pr_options_page = new PR_options_page();

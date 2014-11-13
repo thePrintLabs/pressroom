@@ -1,14 +1,14 @@
 <?php
 /**
- * TPL packager class.
+ * PressRoom packager class.
  *
  */
-require_once( TPL_CORE_PATH . '/packager/book_json.php' );
-require_once( TPL_CORE_PATH . '/packager/shelf_json.php' );
-require_once( TPL_CORE_PATH . '/packager/hpub_package.php' );
-require_once( TPL_CORE_PATH . '/packager/progressbar.php' );
+require_once( PR_CORE_PATH . '/packager/book_json.php' );
+require_once( PR_CORE_PATH . '/packager/shelf_json.php' );
+require_once( PR_CORE_PATH . '/packager/hpub_package.php' );
+require_once( PR_CORE_PATH . '/packager/progressbar.php' );
 
-class TPL_Packager
+class PR_Packager
 {
 	public static $verbose = true;
 	public $pb;
@@ -49,9 +49,9 @@ class TPL_Packager
 		// Create edition folder
 		$edition_post = $this->_edition_post;
 		$edition_name = $editorial_project->slug . '_' . time();
-		$this->_edition_dir = TPL_Utils::make_dir( TPL_TMP_PATH, $edition_name );
+		$this->_edition_dir = PR_Utils::make_dir( PR_TMP_PATH, $edition_name );
 		if ( !$this->_edition_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_PATH . $edition_name, 'error' );
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . PR_TMP_PATH . $edition_name, 'error' );
 			$this->set_progress( 100 );
 			ob_end_flush();
 			return;
@@ -62,7 +62,7 @@ class TPL_Packager
 		$this->set_progress( 2, __( 'Loading edition theme', 'edition' ) );
 
 		// Get associated theme
-		$theme_dir = TPL_Theme::get_theme_path( $edition_post->ID );
+		$theme_dir = PR_Theme::get_theme_path( $edition_post->ID );
 		if ( !$theme_dir ) {
 			self::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
 			$this->_exit_on_error();
@@ -151,9 +151,9 @@ class TPL_Packager
 			$this->set_progress( $total_progress + $k * $progress_step );
 		}
 
-		$media_dir = TPL_Utils::make_dir( $edition_dir, TPL_EDITION_MEDIA );
+		$media_dir = PR_Utils::make_dir( $edition_dir, PR_EDITION_MEDIA );
 		if ( !$media_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA, 'error' );
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . $edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA, 'error' );
 			$this->_exit_on_error();
 			return;
 		}
@@ -167,7 +167,7 @@ class TPL_Packager
 
 		$this->_set_package_date();
 
-		if ( TPL_Packager_Book_JSON::generate_book( $edition_post, $this->_linked_query, $edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
+		if ( PR_Packager_Book_JSON::generate_book( $edition_post, $this->_linked_query, $edition_dir, $this->_edition_cover_image, $editorial_project->term_id ) ) {
 			self::print_line( __( 'Created book.json ', 'edition' ), 'success' );
 			$this->set_progress( 85, __( 'Generating hpub package', 'edition' ) );
 		}
@@ -177,7 +177,7 @@ class TPL_Packager
 			return;
 		}
 
-		$hpub_package = TPL_Packager_HPUB_Package::build( $edition_post->ID, $editorial_project, $edition_dir );
+		$hpub_package = PR_Packager_HPUB_Package::build( $edition_post->ID, $editorial_project, $edition_dir );
 		if ( $hpub_package ) {
 			self::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
 			$this->set_progress( 90, __( 'Generating shelf json', 'edition' ) );
@@ -187,7 +187,7 @@ class TPL_Packager
 			return;
 		}
 
-		if ( TPL_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
+		if ( PR_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
 			self::print_line( __( 'Generated shelf.json for editorial project: ', 'edition' ) . $editorial_project->name, 'success' );
 			$this->set_progress( 95, __( 'Cleaning temporary files', 'edition' ) );
 		}
@@ -270,7 +270,7 @@ class TPL_Packager
 
 		$this->_edition_post = get_post( $_GET['edition_id'] );
 
-		$this->_linked_query = TPL_Edition::get_linked_posts( $_GET['edition_id'], array(
+		$this->_linked_query = PR_Edition::get_linked_posts( $_GET['edition_id'], array(
 			'connected_meta' => array(
 				array(
 					'key'		=> 'status',
@@ -288,9 +288,9 @@ class TPL_Packager
 	 */
 	protected function _download_assets( $theme_assets_dir ) {
 
-		$edition_assets_dir = TPL_Utils::make_dir( $this->_edition_dir, 'assets' );
+		$edition_assets_dir = PR_Utils::make_dir( $this->_edition_dir, 'assets' );
 		if ( !$edition_assets_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . TPL_TMP_PATH . DIRECTORY_SEPARATOR . 'assets', 'error');
+			self::print_line( __( 'Failed to create folder ', 'edition' ) . PR_TMP_PATH . DIRECTORY_SEPARATOR . 'assets', 'error');
 			return false;
 		}
 
@@ -301,7 +301,7 @@ class TPL_Packager
 			return false;
 		}
 
-		$copied_files = TPL_Utils::recursive_copy( $theme_assets_dir, $edition_assets_dir );
+		$copied_files = PR_Utils::recursive_copy( $theme_assets_dir, $edition_assets_dir );
 		if ( is_array( $copied_files ) ) {
 			foreach ( $copied_files as $file ) {
 				self::print_line( sprintf( __( 'Error: Can\'t copy file %s ', 'edition' ), $file ), 'error' );
@@ -322,7 +322,7 @@ class TPL_Packager
 	 */
 	protected function _cover_parse( $editorial_project ) {
 
-		$cover = TPL_Theme::get_theme_cover( $this->_edition_post->ID );
+		$cover = PR_Theme::get_theme_cover( $this->_edition_post->ID );
 		if ( !$cover ) {
 			return false;
 		}
@@ -345,7 +345,7 @@ class TPL_Packager
 	*/
 	protected function _toc_parse( $editorial_project ) {
 
-    $toc = TPL_Theme::get_theme_toc( $this->_edition_post->ID );
+    $toc = PR_Theme::get_theme_toc( $this->_edition_post->ID );
     if ( !$toc ) {
       return false;
     }
@@ -368,7 +368,7 @@ class TPL_Packager
 	 */
 	protected function _post_parse( $linked_post, $editorial_project ) {
 
-		$page = TPL_Theme::get_theme_page( $this->_edition_post->ID, $linked_post->p2p_id );
+		$page = PR_Theme::get_theme_page( $this->_edition_post->ID, $linked_post->p2p_id );
 		if ( !$page || !file_exists( $page )  ) {
 			return false;
 		}
@@ -399,7 +399,7 @@ class TPL_Packager
 		if ( $html ) {
 
 			$post_rewrite_urls = array();
-			$urls = TPL_Utils::extract_urls( $html );
+			$urls = PR_Utils::extract_urls( $html );
 
 			foreach ( $urls as $url ) {
 
@@ -410,7 +410,7 @@ class TPL_Packager
 						foreach( $this->_linked_query->posts as $post ) {
 
 							if ( $post->ID == $post_id ) {
-								$path = TPL_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
+								$path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
 								$post_rewrite_urls[$url] = $path;
 							}
 						}
@@ -421,7 +421,7 @@ class TPL_Packager
 						if ( $attachment_id ) {
 							$info = pathinfo( $url );
 							$filename = $info['basename'];
-							$post_rewrite_urls[$url] = TPL_EDITION_MEDIA . $filename;
+							$post_rewrite_urls[$url] = PR_EDITION_MEDIA . $filename;
 
 							// Add attachments that will be downloaded
 							$this->_posts_attachments[$filename] = $url;
@@ -445,7 +445,7 @@ class TPL_Packager
 	 */
 	protected function _save_html_file( $post, $filename ) {
 
-		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string( $filename ) . '.html', $post);
+		return file_put_contents( $this->_edition_dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
 	}
 
 	/**
@@ -502,7 +502,7 @@ class TPL_Packager
 			$edition_cover_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $edition_cover_metadata['file'];
 			$info = pathinfo( $edition_cover_path );
 
-			if ( copy( $edition_cover_path, $this->_edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $info['basename'] ) ) {
+			if ( copy( $edition_cover_path, $this->_edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $info['basename'] ) ) {
 				$this->_edition_cover_image = $info['basename'];
 				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $edition_cover_path ), 'success' );
 			}
@@ -520,7 +520,7 @@ class TPL_Packager
 	protected function _clean_temp_dir() {
 
 		self::print_line(__('Cleaning temporary files ', 'edition') );
-		TPL_Utils::remove_dir( $this->_edition_dir );
+		PR_Utils::remove_dir( $this->_edition_dir );
 	}
 
 	/**
@@ -542,8 +542,8 @@ class TPL_Packager
 	 */
 	protected function _add_functions_file() {
 
-		$theme_dir = TPL_Theme::get_theme_path( $this->_edition_post->ID );
-		$files = TPL_Utils::search_files( $theme_dir, 'php', true );
+		$theme_dir = PR_Theme::get_theme_path( $this->_edition_post->ID );
+		$files = PR_Utils::search_files( $theme_dir, 'php', true );
 		if ( !empty( $files ) ) {
 			foreach ( $files as $file ) {
 				if ( strpos( $file, 'functions.php' ) !== false ) {

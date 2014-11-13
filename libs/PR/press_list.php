@@ -29,7 +29,7 @@ class Pressroom_List_Table extends WP_List_Table
     parent::__construct( array(
        'singular'  => __( 'post', 'edition' ),
        'plural'    => __( 'posts', 'edition' ),
-       'screen'	   => 'tpl_edition',
+       'screen'	   => 'pr_edition',
        'ajax'      => true,
     ) );
 
@@ -200,7 +200,7 @@ class Pressroom_List_Table extends WP_List_Table
    public function column_template( $item ) {
 
     $template = p2p_get_meta( $item->p2p_id, 'template', true );
-		$themes = TPL_Theme::get_themes();
+		$themes = PR_Theme::get_themes();
     $current_theme = get_post_meta( $this->_edition_id, '_pr_theme_select', true );
 
     $html = '<select class="presslist-template">';
@@ -487,8 +487,8 @@ class Pressroom_List_Table extends WP_List_Table
     */
    public function add_presslist_scripts() {
 
-      wp_register_script( 'presslist-ajax', TPL_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
-      wp_register_script( 'presslist-drag-drop', TPL_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
+      wp_register_script( 'presslist-ajax', PR_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
+      wp_register_script( 'presslist-drag-drop', PR_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
       wp_enqueue_script('jquery-ui-core');
       wp_enqueue_script('jquery-ui-sortable');
       wp_enqueue_script( 'presslist-ajax' );
@@ -561,7 +561,7 @@ class Pressroom_List_Table extends WP_List_Table
     }
 
     $data = array();
-    $query_post = TPL_Edition::get_linked_posts( $this->_edition_id );
+    $query_post = PR_Edition::get_linked_posts( $this->_edition_id );
     foreach ( $query_post->posts as $related ) {
 
       if ( $related->post_author ) {

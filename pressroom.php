@@ -20,26 +20,22 @@
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
-require_once( 'libs/define.php' );
-require_once( TPL_LIBS_PATH . 'utils.php' );
-require_once( TPL_LIBS_PATH . 'metabox.php' );
-require_once( TPL_CORE_PATH . 'setup.php' );
-require_once( TPL_CORE_PATH . 'push.php' );
+require_once( __DIR__ . '/core/define.php' );
+require_once( PR_LIBS_PR_PATH . 'utils.php' );
+require_once( PR_LIBS_PR_PATH . 'metabox.php' );
+require_once( PR_LIBS_PR_PATH . 'press_list.php' );
 
-require_once( TPL_CORE_PATH . 'config/option_page.php' );
-require_once( TPL_CORE_PATH . 'config/tgm.php' );
+require_once( PR_CORE_PATH . 'setup.php' );
+require_once( PR_CORE_PATH . 'edition/edition.php' );
+require_once( PR_CORE_PATH . 'edition/editorial_project.php' );
+require_once( PR_CORE_PATH . 'theme.php' );
+require_once( PR_CORE_PATH . 'packager/packager.php' );
+require_once( PR_CORE_PATH . 'preview/preview.php' );
+require_once( PR_CORE_PATH . 'api.php' );
 
-require_once( TPL_CORE_PATH . 'edition/edition.php' );
-require_once( TPL_CORE_PATH . 'edition/editorial_project.php' );
+require_once( PR_CONFIGS_PATH . 'tgm.php' );
 
-require_once( TPL_CORE_PATH . 'press_list.php' );
-require_once( TPL_CORE_PATH . 'theme.php' );
-require_once( TPL_CORE_PATH . 'packager/packager.php' );
-require_once( TPL_CORE_PATH . 'preview/preview.php' );
-require_once( TPL_CORE_PATH . 'api.php' );
-
-// PRO FEATURE
-require_once( TPL_SERVER_PATH . 'server.php' );
+require_once( PR_SERVER_PATH . 'server.php' );
 
 class TPL_Pressroom
 {
@@ -54,6 +50,7 @@ class TPL_Pressroom
 		}
 
 		$this->_load_configs();
+		$this->_load_pages();
 		$this->_load_extensions();
 
 		$this->_create_edition();
@@ -75,7 +72,7 @@ class TPL_Pressroom
 	 */
 	public function plugin_activation() {
 
-		$errors = TPL_Setup::install();
+		$errors = PR_Setup::install();
 		if ($errors !== false) {
 			$html = '<h1>' . __('Pressroom') . '</h1>
 			<p><b>' .__( 'An error occurred during activation. Please see details below.', 'pressroom_setup' ). '</b></p>
@@ -108,7 +105,7 @@ class TPL_Pressroom
 		p2p_register_connection_type( array(
 				'name' 		=> P2P_EDITION_CONNECTION,
 				'from'	 	=> $types,
-				'to' 			=> TPL_EDITION,
+				'to' 			=> PR_EDITION,
 				'sortable' 	=> false,
 				'title' => array(
     				'from'	=> __( 'Included into edition', 'pressroom' )
@@ -155,7 +152,7 @@ class TPL_Pressroom
 
 		$connection = p2p_get_connection( $p2p_id );
 		if ( $connection->p2p_type == P2P_EDITION_CONNECTION ) {
-			$themes = TPL_Theme::get_themes();
+			$themes = PR_Theme::get_themes();
 			$theme_code = get_post_meta( $connection->p2p_to, '_pr_theme_select', true );
 			if ( $theme_code && $themes ) {
 				$pages = $themes[$theme_code];
@@ -203,7 +200,7 @@ class TPL_Pressroom
   public function set_theme_root( $path ) {
 
     if ( isset( $_GET['pr_no_theme'] ) ) {
-      return TPL_THEME_PATH;
+      return PR_THEMES_PATH;
     }
 
     return $path;
@@ -260,8 +257,25 @@ class TPL_Pressroom
 	 */
 	protected function _load_extensions() {
 
-		if ( is_dir( TPL_EXTENSIONS_PATH ) ) {
-			$files = TPL_Utils::search_files( TPL_EXTENSIONS_PATH, 'php' );
+		if ( is_dir( PR_EXTENSIONS_PATH ) ) {
+			$files = PR_Utils::search_files( PR_EXTENSIONS_PATH, 'php' );
+			if ( !empty( $files ) ) {
+				foreach ( $files as $file ) {
+					require_once( $file );
+				}
+			}
+		}
+	}
+
+	/**
+	* Load plugin pages
+	*
+	* @void
+	*/
+	protected function _load_pages() {
+
+		if ( is_dir( PR_PAGES_PATH ) ) {
+			$files = PR_Utils::search_files( PR_PAGES_PATH, 'php' );
 			if ( !empty( $files ) ) {
 				foreach ( $files as $file ) {
 					require_once( $file );
@@ -295,7 +309,7 @@ class TPL_Pressroom
 	protected function _create_edition() {
 
 		if ( is_null( $this->edition ) ) {
-			$this->edition = new TPL_Edition;
+			$this->edition = new PR_Edition;
 		}
 	}
 
@@ -307,7 +321,7 @@ class TPL_Pressroom
 	protected function _create_preview() {
 
 		if ( is_null( $this->preview ) ) {
-			$this->preview = new TPL_Preview;
+			$this->preview = new PR_Preview;
 		}
 	}
 }

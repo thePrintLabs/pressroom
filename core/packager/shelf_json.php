@@ -1,9 +1,9 @@
 <?php
 /**
- * TPL packager: Shelf.json
+ * PressRoom packager: Shelf.json
  *
  */
-final class TPL_Packager_Shelf_JSON
+final class PR_Packager_Shelf_JSON
 {
   private static $_press_to_baker = array(
     'post_name'                 => 'name',
@@ -20,8 +20,8 @@ final class TPL_Packager_Shelf_JSON
   public static function generate_shelf( $editorial_project ) {
 
     $args = array(
-      'post_type'             => TPL_EDITION,
-      TPL_EDITORIAL_PROJECT   => $editorial_project->slug,
+      'post_type'             => PR_EDITION,
+      PR_EDITORIAL_PROJECT   => $editorial_project->slug,
       'post_status'           => 'publish',
       'posts_per_page'        => -1,
     );
@@ -30,7 +30,7 @@ final class TPL_Packager_Shelf_JSON
     self::$_press_to_baker['_pr_product_id_' . $editorial_project->term_id] = 'product_id';
     foreach ( $edition_query->posts as $edition_key => $edition ) {
 
-      //$press_options[$edition_key] = array( 'url' => TPL_HPUB_URI . TPL_Utils::sanitize_string( $edition->post_title . '.hpub' ) );
+      //$press_options[$edition_key] = array( 'url' => PR_HPUB_URI . PR_Utils::sanitize_string( $edition->post_title . '.hpub' ) );
       $press_options[$edition_key] = array( 'url' => esc_url( home_url( '/pressroom-api/edition/' . $editorial_project->slug . '/' . $edition->post_name ) ) );
 
       // Add the cover image into the edition options
@@ -62,7 +62,7 @@ final class TPL_Packager_Shelf_JSON
             case '_pr_product_id_' . $editorial_project->term_id :
               if ( isset( $meta_value[0] ) &&
                 !( isset( $meta_fields['_pr_edition_free'] ) && $meta_fields['_pr_edition_free'][0] == 1 ) ) {
-                $press_options[$edition_key][$baker_option] = TPL_Edition::get_bundle_id( $edition->ID, $editorial_project->term_id );
+                $press_options[$edition_key][$baker_option] = PR_Edition::get_bundle_id( $edition->ID, $editorial_project->term_id );
               }
               break;
 
@@ -76,7 +76,7 @@ final class TPL_Packager_Shelf_JSON
       }
     }
 
-    if( !TPL_Packager::save_json_file( $press_options, $editorial_project->slug . '_shelf.json', TPL_SHELF_PATH ) ) {
+    if( !PR_Packager::save_json_file( $press_options, $editorial_project->slug . '_shelf.json', PR_SHELF_PATH ) ) {
       return false;
     }
     return true;

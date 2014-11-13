@@ -1,7 +1,7 @@
 jQuery(function(){
 
   // color picker init
-  jQuery('.tpl-color-picker').wpColorPicker();
+  jQuery('.pr-color-picker').wpColorPicker();
   if(jQuery(".chosen-select").length)
     jQuery(".chosen-select").chosen();
 

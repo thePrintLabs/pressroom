@@ -57,14 +57,14 @@ final class PR_Server_APNS_Token extends PR_Server_API
       $this->send_response( 400, __( "Bad request. APNS Token doesn't exist.", 'pressroom' ) );
     }
 
-    $eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
+    $eproject = PR_Editorial_Project::get_by_slug( $eproject_slug );
     if( !$eproject ) {
       $this->send_response( 404, __( "Not found. Editorial project not found.", 'pressroom' ) );
     }
 
-    $push_service = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_service' );
-    $this->push_app_id = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
-    $this->push_app_key = TPL_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_key' );
+    $push_service = PR_Editorial_Project::get_config( $eproject->term_id , 'pr_push_service' );
+    $this->push_app_id = PR_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_app_id' );
+    $this->push_app_key = PR_Editorial_Project::get_config( $eproject->term_id , 'pr_push_api_key' );
 
     switch ( $push_service ) {
 

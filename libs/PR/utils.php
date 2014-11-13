@@ -1,5 +1,5 @@
 <?php
-class TPL_Utils
+class PR_Utils
 {
 	public static $excluded_files = array( ".", "..", ".git", ".gitignore", ".pressignore", ".DS_Store", "_notes", "Thumbs.db", "__MACOSX" );
 
@@ -106,7 +106,7 @@ class TPL_Utils
 			$basepath = substr( $basepath, 0, -1 );
 		}
 
-		$path = $basepath . DIRECTORY_SEPARATOR . TPL_Utils::sanitize_string( $dir );
+		$path = $basepath . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $dir );
 		if ( is_dir( $path ) ) {
 			return $path;
 		}
@@ -137,7 +137,7 @@ class TPL_Utils
 				if ( $object != "." && $object != ".." ) {
 
 					if ( filetype( $dir . DIRECTORY_SEPARATOR . $object ) == "dir" ) {
-						TPL_Utils::remove_dir( $dir . DIRECTORY_SEPARATOR . $object );
+						PR_Utils::remove_dir( $dir . DIRECTORY_SEPARATOR . $object );
 					}
 					else {
 						unlink( $dir . DIRECTORY_SEPARATOR . $object );

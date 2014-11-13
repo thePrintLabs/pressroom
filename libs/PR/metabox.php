@@ -1,5 +1,5 @@
 <?php
-class TPL_Metabox
+class PR_Metabox
 {
   public $id;
   public $title;
@@ -246,7 +246,7 @@ class TPL_Metabox
           break;
 
         case 'text_autocompleted':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><div class="tpl_autocompleted"></div>';
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><div class="pr_autocompleted"></div>';
           break;
 
         case 'textarea':
@@ -319,7 +319,7 @@ class TPL_Metabox
           break;
 
         case 'color':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="tpl-color-picker" data-default-color="#ffffff" />
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="pr-color-picker" data-default-color="#ffffff" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
 
@@ -400,8 +400,8 @@ class TPL_Metabox
    */
   public function add_chosen_script() {
 
-    wp_enqueue_style( 'chosen', TPL_ASSETS_URI . 'css/chosen.min.css' );
-    wp_register_script( 'chosen', TPL_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
+    wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
+    wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
     wp_enqueue_script( 'chosen' );
   }
 
@@ -413,7 +413,7 @@ class TPL_Metabox
   public function add_custom_script() {
 
     wp_enqueue_style( 'wp-color-picker' );
-    wp_register_script( 'editorial_project', TPL_ASSETS_URI . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'editorial_project' );
   }
 }

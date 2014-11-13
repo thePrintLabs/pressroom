@@ -76,7 +76,7 @@ function pr_get_option( $option ) {
  */
 function pr_get_eproject_option( $term_id, $option ) {
 
-  $option = TPL_Editorial_Project::get_config( $term_id, $option);
+  $option = PR_Editorial_Project::get_config( $term_id, $option);
 
   if ( $option ) {
     return $option;
@@ -93,9 +93,9 @@ function pr_get_eproject_option( $term_id, $option ) {
 function pr_book( $edition_id ) {
 
   $edition = get_post( $edition_id );
-  $book_url = str_replace( array( 'http://', 'https://' ), 'book://', TPL_HPUB_URI );
+  $book_url = str_replace( array( 'http://', 'https://' ), 'book://', PR_HPUB_URI );
 
-  return $book_url . TPL_Utils::sanitize_string( $edition->post_title . '.hpub' );
+  return $book_url . PR_Utils::sanitize_string( $edition->post_title . '.hpub' );
 }
 
 /**

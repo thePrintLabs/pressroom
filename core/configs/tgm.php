@@ -1,13 +1,11 @@
 <?php
-
-require( TPL_VENDORS_PATH . '/TGM_Plugin_Activation/class_tgm_plugin_activation.php');
-
-if (!class_exists('TPL_TGM')) {
-	class TPL_TGM {
+require( PR_LIBS_PATH . 'TGM_Plugin_Activation/class_tgm_plugin_activation.php' );
+if (!class_exists('PR_TGM')) {
+	class PR_TGM {
 
 		public function __construct() {
 
-			add_action( 'tgmpa_register', array( $this , 'tpl_required_plugins' ));
+			add_action( 'tgmpa_register', array( $this , 'pr_required_plugins' ));
 
 		}
 
@@ -16,7 +14,7 @@ if (!class_exists('TPL_TGM')) {
 		*
 		* @void
 		*/
-		public function tpl_required_plugins() {
+		public function pr_required_plugins() {
 
 			$plugins = array(
 		        array(
@@ -42,7 +40,7 @@ if (!class_exists('TPL_TGM')) {
 		            'menu_title'                      => __( 'Install Plugins', 'pressroom' ),
 		            'installing'                      => __( 'Installing Plugin: %s', 'pressroom' ), // %s = plugin name.
 		            'oops'                            => __( 'Something went wrong with the plugin API.', 'pressroom' ),
-		            'notice_can_install_required'     => _n_noop( 'Tpl plugin requires the following plugin: %1$s.', 'This theme requires the following plugins: %1$s.', 'pressroom' ), // %1$s = plugin name(s).
+		            'notice_can_install_required'     => _n_noop( 'PressRoom plugin requires the following plugin: %1$s.', 'This theme requires the following plugins: %1$s.', 'pressroom' ), // %1$s = plugin name(s).
 		            'notice_can_install_recommended'  => _n_noop( 'This plugin recommends the following plugin: %1$s.', 'This plugin recommends the following plugins: %1$s.', 'pressroom' ), // %1$s = plugin name(s).
 		            'notice_cannot_install'           => _n_noop( 'Sorry, but you do not have the correct permissions to install the %s plugin. Contact the administrator of this site for help on getting the plugin installed.', 'Sorry, but you do not have the correct permissions to install the %s plugins. Contact the administrator of this site for help on getting the plugins installed.', 'pressroom' ), // %1$s = plugin name(s).
 		            'notice_can_activate_required'    => _n_noop( 'The following required plugin is currently inactive: %1$s.', 'The following required plugins are currently inactive: %1$s.', 'pressroom' ), // %1$s = plugin name(s).
@@ -65,5 +63,5 @@ if (!class_exists('TPL_TGM')) {
 
 	}
 
-	$TPL_TGM = new TPL_TGM();
+	$PR_TGM = new PR_TGM();
 }

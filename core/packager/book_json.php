@@ -1,9 +1,9 @@
 <?php
 /**
-* TPL packager: Book.json
+* PressRoom packager: Book.json
 *
 */
-final class TPL_Packager_Book_JSON
+final class PR_Packager_Book_JSON
 {
    private static $_press_to_baker = array(
       '_pr_orientation'                 => 'orientation',
@@ -47,7 +47,7 @@ final class TPL_Packager_Book_JSON
 
       foreach ( $linked_query->posts as $post ) {
 
-         $post_title = TPL_Utils::sanitize_string( $post->post_title );
+         $post_title = PR_Utils::sanitize_string( $post->post_title );
 
          if ( !has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
 
@@ -55,7 +55,7 @@ final class TPL_Packager_Book_JSON
                $press_options['contents'][] = $post_title . '.html';
             }
             else {
-               TPL_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
+               PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
             }
          }
          else {
@@ -65,7 +65,7 @@ final class TPL_Packager_Book_JSON
          }
       }
 
-      return TPL_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
+      return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
    }
 
    /**
@@ -78,8 +78,8 @@ final class TPL_Packager_Book_JSON
 
       global $tpl_pressroom;
 
-      $book_url = str_replace( array( 'http://', 'https://' ), 'book://', TPL_HPUB_URI );
-      $hpub_url = str_replace( TPL_HPUB_PATH, $book_url, get_post_meta( $edition_post->ID, '_pr_edition_hpub_' . $term_id, true ) );
+      $book_url = str_replace( array( 'http://', 'https://' ), 'book://', PR_HPUB_URI );
+      $hpub_url = str_replace( PR_HPUB_PATH, $book_url, get_post_meta( $edition_post->ID, '_pr_edition_hpub_' . $term_id, true ) );
 
       $options = array(
          'hpub'   => true,
@@ -122,8 +122,8 @@ final class TPL_Packager_Book_JSON
               if ( $media ) {
                 $media_info = pathinfo( $media );
                 $path = $media_info['basename'];
-                copy( $media, $edition_dir . DIRECTORY_SEPARATOR . TPL_EDITION_MEDIA . $path );
-                $options[$baker_option] = TPL_EDITION_MEDIA . $path;
+                copy( $media, $edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $path );
+                $options[$baker_option] = PR_EDITION_MEDIA . $path;
               }
               else {
                 $options[$baker_option] = '';
@@ -150,7 +150,7 @@ final class TPL_Packager_Book_JSON
             $baker_option = self::$_press_to_baker[$meta_key];
             switch ( $meta_key ) {
                case '_pr_cover':
-                  $options[$baker_option] = TPL_EDITION_MEDIA . $edition_cover_image;
+                  $options[$baker_option] = PR_EDITION_MEDIA . $edition_cover_image;
                   break;
                case '_pr_author':
                case '_pr_creator':

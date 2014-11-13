@@ -52,12 +52,12 @@ final class PR_Server_Issue extends PR_Server_API
       $this->send_response( 400, "Bad request. App identifier and/or user identifier doesn't exist." );
     }
 
-    $eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
+    $eproject = PR_Editorial_Project::get_by_slug( $eproject_slug );
     if( !$eproject ) {
       $this->send_response( 404, "Not found. Editorial project not found." );
     }
 
-    $edition = TPL_Edition::get_by_slug( $edition_slug );
+    $edition = PR_Edition::get_by_slug( $edition_slug );
     if( !$edition ) {
       $this->send_response( 404, "Not found. Edition not found." );
     }
@@ -77,7 +77,7 @@ final class PR_Server_Issue extends PR_Server_API
       $purchases = $itunes_connector->get_purchases();
       if ( !empty( $purchases['issues'] ) ) {
         // Get the editorial project settings
-        $edition_bundle_id = TPL_Edition::get_bundle_id( $edition->ID, $eproject->term_id );
+        $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $eproject->term_id );
         if ( in_array( $edition_bundle_id, $purchases['issues'] ) ) {
           $allow_download = true;
         }

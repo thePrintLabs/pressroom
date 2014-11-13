@@ -24,6 +24,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.press-filter:before {
+  content: "\e000";
+}
+.press-send:before {
+  content: "\e001";
+}
+.press-terminal:before {
+  content: "\e002";
+}
+
 .press-eye:before {
   content: "\e800";
   font-size: 20px;
@@ -39,7 +49,7 @@
 .toplevel_page_pressroom > a > .wp-menu-image:before {
   font-family: pressroom;
   content: "\e600";
-  font-size: 20px;
+  font-size: 18px;
 }
 
 

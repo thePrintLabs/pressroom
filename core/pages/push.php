@@ -29,7 +29,7 @@ class PR_push_notification_page {
    */
   public function pr_add_admin_menu() {
 
-    add_submenu_page( 'tools.php', __( 'Pressroom push notification' ), __( 'PressRoom Push Notification' ), 'manage_options', 'pressroom-push', array( $this, 'pressroom_push_notification_page' ) );
+    add_submenu_page( 'pressroom', __( 'Push notification' ), __( 'Push Notification' ), 'manage_options', 'pressroom-push', array( $this, 'pressroom_push_notification_page' ) );
   }
 
   /**
@@ -123,9 +123,9 @@ class PR_push_notification_page {
       <div id="bg">
         <div class="pr-push-content">
           <ul>
-            <li class="tab activeTab"><img class="icon" src="<?php echo PR_ASSETS_URI . 'img/filter.png' ?>"></li>
-            <li class="tab" ><img class="icon" src="<?php echo PR_ASSETS_URI . 'img/send.png' ?>"></li>
-            <li class="tab" ><img class="icon" src="<?php echo PR_ASSETS_URI . 'img/terminal.png' ?>"></li>
+            <li class="tab activeTab"><span class="press-filter"></span></li>
+            <li class="tab"><span class="press-send"></span></li>
+            <li class="tab"><span class="press-terminal"></span></li>
           </ul>
           <br class="clear">
           <div class="prp-panel active">

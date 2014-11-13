@@ -1,5 +1,5 @@
 jQuery('.pr-reset').click(function(e) {
-  if(confirm("Do you really want to delete all options for this editorial project and resto defaults?") ) {
+  if(confirm("Delete all saved options and restore default values?") ) {
     var term_id = jQuery(this).data('term');
 
     var data = {
@@ -13,5 +13,4 @@ jQuery('.pr-reset').click(function(e) {
       }
     });
   }
-
 });

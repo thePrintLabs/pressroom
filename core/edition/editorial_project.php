@@ -103,7 +103,7 @@ class PR_Editorial_Project
        case 'actions':
           $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
           echo '<a target="_blank" href="' . $shelf_url . '">' . __("View shelf endpoint", 'editorial_project') . '</a><br/>';
-          echo '<a href="#" data-term="'.$editorial_id.'" class="pr-reset">Reset</a>';
+          echo '<a href="#" data-term="'.$editorial_id.'" class="pr-reset" style="color:#A00">Restore default settings</a>';
           break;
        default:
           break;
@@ -540,7 +540,7 @@ class PR_Editorial_Project
    */
   public function add_custom_script() {
 
-    wp_register_script( 'eproject', PR_ASSETS_URI . '/js/eproject.js', array( 'jquery' ), '1.0', true );
+    wp_register_script( 'eproject', PR_ASSETS_URI . '/js/pr.eproject.min.js', array( 'jquery' ), '1.0', true );
     wp_enqueue_script( 'eproject' );
   }
 }

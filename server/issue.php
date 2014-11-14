@@ -3,6 +3,7 @@ final class PR_Server_Issue extends PR_Server_API
 {
   public function __construct() {
 
+    add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
     add_action( 'init', array( $this, 'add_endpoint' ), 10 );
     add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
   }

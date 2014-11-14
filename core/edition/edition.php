@@ -17,6 +17,7 @@ class PR_Edition
 
 		add_theme_support( 'post-thumbnails', array( PR_EDITION ) );
 
+		add_action( 'press_flush_rules', array( $this, 'add_edition_post_type' ), 10 );
 		add_action( 'init', array( $this, 'add_edition_post_type' ), 10 );
 		add_action( 'init', array( 'PR_Theme', 'search_themes' ), 20 );
 
@@ -35,6 +36,7 @@ class PR_Edition
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
 	}
+
 
 	/**
 	 * Add custom post type edition to worpress

@@ -60,6 +60,7 @@ class TPL_Pressroom
 		$this->_create_edition();
 		$this->_create_preview();
 
+
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
 		add_action( 'admin_notices', array( $this, 'check_pressroom_notice' ), 20 );
@@ -83,7 +84,9 @@ class TPL_Pressroom
 			<ul><li>' .implode( "</li><li>", $errors ). '</li></ul>';
 			wp_die( $html, __( 'Pressroom activation error', 'pressroom_setup' ), ('back_link=true') );
 		}
-		flush_rewrite_rules( false );
+
+		do_action( 'press_flush_rules' );
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -93,7 +96,9 @@ class TPL_Pressroom
 	 */
 	public function plugin_deactivation() {
 
-		flush_rewrite_rules( false );
+		// delete_option('rewrite_rules');
+		flush_rewrite_rules();
+
 	}
 
 	/**

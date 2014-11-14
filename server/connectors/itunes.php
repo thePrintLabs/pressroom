@@ -25,6 +25,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       $this->environment = $environment;
     }
     else {
+      add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
       add_action( 'init', array( $this, 'add_endpoint' ), 10 );
       add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
     }

@@ -9,6 +9,7 @@ class PR_Editorial_Project
 
   public function __construct() {
 
+    add_action( 'press_flush_rules', array( $this, 'add_editorial_project_taxonomy' ), 10 );
     add_action( 'init', array( $this, 'add_editorial_project_taxonomy' ), 0 );
 
     if ( is_admin() ) {
@@ -545,4 +546,4 @@ class PR_Editorial_Project
   }
 }
 
-$pressroom_editorial_project = new PR_Editorial_Project();
+$pr_editorial_project = new PR_Editorial_Project();

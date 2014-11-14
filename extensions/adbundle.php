@@ -15,6 +15,7 @@ class PR_ADBundle
 			return;
 		}
 
+		add_action( 'press_flush_rules', array( $this, 'add_adbundle_post_type' ), 10 );
 		add_action( 'init', array( $this, 'add_adbundle_post_type' ), 20 );
 		add_action( 'post_edit_form_tag', array( $this, 'form_add_enctype' ) );
 		add_action( 'save_post_pr_ad_bundle', array( $this, 'save_adbundle' ), 40 );
@@ -26,6 +27,7 @@ class PR_ADBundle
 
 		// Preview hooks
 		add_action( 'pr_preview_pr_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
+
 	}
 
 	/**

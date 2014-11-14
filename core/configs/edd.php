@@ -151,12 +151,10 @@ if (!class_exists('PR_EDD_License')) {
   			add_query_arg( $api_params, PR_API_URL ),
   			array(
   				'timeout'   => 15,
-  				//'body'      => $api_params,
   				'sslverify' => false
   			)
 		  );
-      
-      die(var_dump($response));
+
       // Make sure there are no errors
 		  if ( is_wp_error( $response ) ) {
 			  return;

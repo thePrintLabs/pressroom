@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Get id of posts linked to an edition
+ * Get posts ids array linked to the edition
+ *
  * @param int or object $edition
  * @param boolean $only_enabled
  * @return array
@@ -26,6 +27,7 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
 
 /**
  * Get posts linked to an edition
+ *
  * @param int or object $edition
  * @param boolean $only_enabled
  * @return array or boolean false
@@ -53,6 +55,7 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
 /**
  * Get single option from pressroom option array
+ *
  * @param  string $option
  * @return mixed or boolean false
  */
@@ -86,7 +89,8 @@ function pr_get_eproject_option( $term_id, $option ) {
 }
 
 /**
- * get edition link with book protocol
+ * Rewrite edition link with book protocol
+ *
  * @param  int $edition_id
  * @return string
  */
@@ -99,7 +103,8 @@ function pr_book( $edition_id ) {
 }
 
 /**
- * get previous or next post in edition posts array
+ * Get previous or next post from edition posts array
+ *
  * @param  int $post_id
  * @param  int $edition_id
  * @param  boolean $prev
@@ -140,7 +145,8 @@ function pr_get_edition_post( $post_id, $edition_id, $position = '' ) {
 }
 
 /**
- * get previous post
+ * Get previous post
+ *
  * @param  int $current_post_id
  * @param  int $edition_id
  * @return string or boolean
@@ -151,7 +157,8 @@ function pr_prev( $current_post_id, $edition_id ) {
 }
 
 /**
- * get next post
+ * Get next post
+ *
  * @param  int $current_post_id
  * @param  int $edition_id
  * @return string or boolean
@@ -159,4 +166,42 @@ function pr_prev( $current_post_id, $edition_id ) {
 function pr_next( $current_post_id, $edition_id ) {
 
   return pr_get_edition_post( $current_post_id, $edition_id, 'next' );
+}
+
+/**
+ * Rewrite post url with sharing domain
+ *
+ * @param  object $post
+ * @return string $permalink
+ */
+function pr_get_sharing_placeholder( $post ) {
+
+  $permalink = get_permalink( $post->ID );
+  $domain = get_site_url();
+
+  $options = get_option('pr_settings');
+  $sharing_domain = $options['pr-sharing-domain'];
+
+  if( $sharing_domain ) {
+    $permalink = str_replace( $domain, $sharing_domain, $permalink );
+  }
+
+  return $permalink;
+}
+
+/**
+ * Get sharing link
+ *
+ * @param  object $post
+ * @return string $sharing_link
+ */
+function pr_get_sharing_link( $post ) {
+
+  $sharing_link = get_post_meta( $post->ID, '_pr_sharing_link', true );
+
+  if( $sharing_link ) {
+      return $sharing_link;
+  }
+
+  return pr_get_sharing_placeholder( $post );
 }

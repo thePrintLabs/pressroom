@@ -83,6 +83,14 @@ class PR_options_page {
   		'tpl_pressroom_section'
   	);
 
+    add_settings_field(
+      'pr-sharing-domain',
+      __( 'Sharing Domain', 'pressroom' ),
+      array( $this, 'pr_sharing_domain' ),
+      'pressroom',
+      'tpl_pressroom_section'
+    );
+
     add_settings_section(
       'pr_plugin_pro',
       __( 'Pro settings', 'pressroom' ),
@@ -144,7 +152,14 @@ class PR_options_page {
   	?>
   	<input type='number' name='pr_settings[pr-maxnumber]' value='<?php echo ( isset( $options['pr-maxnumber'] ) ? $options['pr-maxnumber'] : '') ?>'>
   	<?php
+  }
 
+  public function pr_sharing_domain() {
+
+    $options = get_option( 'pr_settings' );
+    ?>
+    <input type='text' placeholder="<?=get_site_url();?>" name='pr_settings[pr-sharing-domain]' value='<?php echo ( isset( $options['pr-sharing-domain'] ) ? $options['pr-sharing-domain'] : '') ?>'>
+    <?php
   }
 
   /**

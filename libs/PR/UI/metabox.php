@@ -41,11 +41,11 @@ class PR_Metabox
   public function add_field( $id, $name, $description, $type, $default, $extra = array() ) {
 
     $params = array(
-       'id'       => $id,
-       'name'     => $name,
-       'desc'     => $description,
-       'type'     => $type,
-       'default'  => $default
+       'id'           => $id,
+       'name'         => $name,
+       'desc'         => $description,
+       'type'         => $type,
+       'default'      => $default,
     );
     $field = array_merge( $params, $extra );
     array_push( $this->fields, $field );
@@ -242,7 +242,7 @@ class PR_Metabox
       switch ( $field['type'] ) {
 
         case 'text':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
+          $html.= '<input type="text" placeholder="'.$field['placeholder'].'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'text_autocompleted':

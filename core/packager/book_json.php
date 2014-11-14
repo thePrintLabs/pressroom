@@ -45,24 +45,28 @@ final class PR_Packager_Book_JSON
 
       $press_options = self::_get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id );
 
+      $press_options['sharing_links'] = $press_options['contents'] = array();
       foreach ( $linked_query->posts as $post ) {
 
-         $post_title = PR_Utils::sanitize_string( $post->post_title );
+        $post_title = PR_Utils::sanitize_string( $post->post_title );
 
-         if ( !has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
+        $press_options['sharing_links'][] = pr_get_sharing_link( $post );
 
-            if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
-               $press_options['contents'][] = $post_title . '.html';
-            }
-            else {
-               PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
-            }
-         }
-         else {
-            $args = array( $press_options, $post, $edition_dir );
-            do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$args ) );
-            $press_options = $args[0];
-         }
+        if ( !has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
+
+          if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
+             $press_options['contents'][] = $post_title . '.html';
+          }
+          else {
+             PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
+          }
+
+        }
+        else {
+          $args = array( $press_options, $post, $edition_dir );
+          do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$args ) );
+          $press_options = $args[0];
+        }
       }
 
       return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );

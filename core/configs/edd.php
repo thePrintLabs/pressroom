@@ -177,36 +177,37 @@ if (!class_exists('PR_EDD_License')) {
   		}
 	  }
 
-    public function check_license() {
+    /**
+     * Validate license
+     * @return boolean
+     */
+    public static function check_license() {
 
-      global $wp_version;
-
-      $license = trim( get_option( 'edd_sample_license_key' ) );
+      $options = get_option( 'pr_settings' );
+      $license = isset( $options['pr_license_key'] ) ? $options['pr_license_key'] : '';
+      if ( !strlen( $license ) ) {
+        return false;
+      }
 
       $api_params = array(
         'edd_action' => 'check_license',
-        'license' => $license,
-        'item_name' => urlencode( EDD_SAMPLE_ITEM_NAME ),
-        'url'       => home_url()
+        'license'    => $license,
+        'item_name'  => urlencode( PR_PRODUCT_NAME ),
+        'url'        => home_url()
       );
 
-      // Call the custom API.
-      $response = wp_remote_get( add_query_arg( $api_params, EDD_SAMPLE_STORE_URL ), array( 'timeout' => 15, 'sslverify' => false ) );
+      $response = wp_remote_get( add_query_arg( $api_params, PR_API_URL ), array( 'timeout' => 15, 'sslverify' => false ) );
 
-
-      if ( is_wp_error( $response ) )
-        return false;
-
-      $license_data = json_decode( wp_remote_retrieve_body( $response ) );
-
-      if( $license_data->license == 'valid' ) {
-        echo 'valid'; exit;
-        // this license is still valid
-      } else {
-        echo 'invalid'; exit;
-        // this license is no longer valid
+      if ( !is_wp_error( $response ) ) {
+        $license_data = json_decode( wp_remote_retrieve_body( $response ) );
+        if( $license_data->license == 'valid' ) {
+          return true;
+        }
       }
-    }
 
+      return false;
+    }
   }
 }
+
+$pr_license = new PR_EDD_License( PR_PLUGIN_PATH . 'pressroom.php', PR_PRODUCT_NAME, PR_VERSION, 'thePrintLabs' );

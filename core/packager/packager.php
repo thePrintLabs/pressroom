@@ -34,6 +34,11 @@ class PR_Packager
 	public function run( $editorial_project ) {
 
 		ob_start();
+		if ( !PR_EDD_License::check_license() ) {
+			self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
+			exit;
+		}
+
 		if ( is_null( $this->_edition_post ) ) {
 			ob_end_flush();
 			return;

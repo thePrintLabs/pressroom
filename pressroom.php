@@ -40,8 +40,6 @@ require_once( PR_SERVER_PATH . 'server.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
 
-$license = new PR_EDD_License( __FILE__, 'PressRoom PRO', '1.0', 'thePrintLabs' );
-
 class TPL_Pressroom
 {
 	public $configs;

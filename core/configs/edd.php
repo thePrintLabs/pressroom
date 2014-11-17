@@ -132,7 +132,7 @@ if (!class_exists('PR_EDD_License')) {
         $new_value['pr_license_is_valid'] = $license_data->license;
         update_option( 'pr_settings', $new_value );
         $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );
-        wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=success&pmcode=success_activated_license&pmparam=' . $param ) );
+        wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_activated_license&pmparam=' . $param ) );
         exit;
 	    }
     }

@@ -199,8 +199,8 @@ class TPL_Pressroom
 				case 'failed_activated_license':
 					echo _e( sprintf('<b>Error during activation:</b> %s', $msg_param ) );
 					break;
-				case 'success_activated_licence':
-					echo _e( sprintf('<b>Error</b> Duplicate entry for <b>%s</b>. It must be unique', $msg_param ) );
+				case 'success_activated_license':
+					echo _e( sprintf('<b>Activation successful:</b> %s', $msg_param ) );
 					break;
 			}
 			echo '</p></div>';

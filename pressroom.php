@@ -186,7 +186,7 @@ class TPL_Pressroom
 
 			$msg_type = $_GET['pmtype'];
 			$msg_code = $_GET['pmcode'];
-			$msg_param = $_GET['pmparam'];
+			$msg_param = isset( $_GET['pmparam'] ) ? urldecode( $_GET['pmparam'] ) : '';
 
 			echo '<div class="' . $msg_type . '"><p>';
 			switch ( $msg_code ) {
@@ -194,6 +194,12 @@ class TPL_Pressroom
 					echo _e( '<b>Error:</b> You must specify a theme for edition!', 'pressroom_notice' );
 					break;
 				case 'duplicate_entry':
+					echo _e( sprintf('<b>Error:</b> Duplicate entry for <b>%s</b>. It must be unique', $msg_param ) );
+					break;
+				case 'failed_actived_license':
+					echo _e( sprintf('<b>Error during activation:</b> %s', $msg_param ) );
+					break;
+				case 'success_actived_licence':
 					echo _e( sprintf('<b>Error</b> Duplicate entry for <b>%s</b>. It must be unique', $msg_param ) );
 					break;
 			}
@@ -303,9 +309,13 @@ class TPL_Pressroom
 
 		$types = array();
 		if ( !empty( $this->configs ) && isset( $this->configs['pr_custom_post_type'] ) ) {
-			foreach ( $this->configs['pr_custom_post_type'] as $post_type ) {
-
-				array_push( $types, $post_type );
+			if ( is_array( $this->configs['pr_custom_post_type'] ) ) {
+				foreach ( $this->configs['pr_custom_post_type'] as $post_type ) {
+					array_push( $types, $post_type );
+				}
+			}
+			else {
+				array_push( $types, $this->configs['pr_custom_post_type'] );
 			}
 		}
 		return $types;

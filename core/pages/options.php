@@ -68,7 +68,7 @@ class PR_options_page {
   	);
 
   	add_settings_field(
-  		'pr-theme',
+  		'pr_theme',
   		__( 'Default theme', 'pressroom' ),
   		array( $this, 'pr_theme_render' ),
   		'pressroom',
@@ -76,7 +76,7 @@ class PR_options_page {
   	);
 
   	add_settings_field(
-  		'pr-maxnumber',
+  		'pr_maxnumber',
   		__( 'Max edition number', 'pressroom' ),
   		array( $this, 'pr_maxnumber' ),
   		'pressroom',
@@ -84,7 +84,7 @@ class PR_options_page {
   	);
 
     add_settings_field(
-      'pr-sharing-domain',
+      'pr_sharing_domain',
       __( 'Sharing Domain', 'pressroom' ),
       array( $this, 'pr_sharing_domain' ),
       'pressroom',
@@ -127,18 +127,17 @@ class PR_options_page {
     foreach ( $themes_list as $theme ) {
       $themes[$theme['value']] = $theme['text'];
     }
-  	$options = get_option( 'pr_settings' );
-  	?>
-  	<select name='pr_settings[pr-theme]' class="chosen-select">
-      <?php
-      foreach ( $themes as $theme ) {
-        echo '<option value="' . $theme . '" ' . selected( $options['pr-theme'], $theme ) . ' > ' . $theme . '</option>';
-      }
-      ?>
-  	</select>
-    <a href="#" class="button button-primary" id="theme_refresh">Flush themes cache</a>
-  <?php
 
+    $options = get_option( 'pr_settings' );
+    $options_theme = isset( $options['pr_theme'] ) ? $options['pr_theme'] : false;
+
+  	$html = '<select name="pr_settings[pr_theme]" class="chosen-select">';
+    foreach ( $themes as $theme ) {
+      $html.= '<option value="' . $theme . '" ' . selected( $options_theme, $theme, false ) . '>' . $theme . '</option>';
+    }
+
+    $html.= '</select> <a href="#" class="button button-primary" id="theme_refresh">Flush themes cache</a>';
+    echo $html;
   }
 
   /**
@@ -149,17 +148,17 @@ class PR_options_page {
   public function pr_maxnumber() {
 
   	$options = get_option( 'pr_settings' );
-  	?>
-  	<input type='number' name='pr_settings[pr-maxnumber]' value='<?php echo ( isset( $options['pr-maxnumber'] ) ? $options['pr-maxnumber'] : '') ?>'>
-  	<?php
+    $value = isset( $options['pr_maxnumber'] ) ? $options['pr_maxnumber'] : '';
+  	$html = '<input type="number" name="pr_settings[pr_maxnumber]" value="'. $value . '">';
+  	echo $html;
   }
 
   public function pr_sharing_domain() {
 
     $options = get_option( 'pr_settings' );
-    ?>
-    <input type='text' placeholder="<?=get_site_url();?>" name='pr_settings[pr-sharing-domain]' value='<?php echo ( isset( $options['pr-sharing-domain'] ) ? $options['pr-sharing-domain'] : '') ?>'>
-    <?php
+    $value = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '';
+    $html = '<input type="text" placeholder="' . get_site_url() . '" name="pr_settings[pr_sharing_domain]" value="' . $value . '">';
+    echo $html;
   }
 
   /**
@@ -170,24 +169,28 @@ class PR_options_page {
   public function pr_custom_post_type() {
 
   	$options = get_option( 'pr_settings' );
-  	?>
-  	<input id="pr_custom_post_type" type='text' name='pr_settings[pr_custom_post_type]' value='<?php echo ( isset( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type']) : '') ?>'>
-  	<?php
-
+    $value = isset( $options['pr_custom_post_type'] ) ? ( is_array( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type'] ) : $options['pr_custom_post_type'] ) : '';
+  	$html = '<input id="pr_custom_post_type" type="text" name="pr_settings[pr_custom_post_type]" value="' . $value . '">';
+  	echo $html;
   }
 
   /**
-   * Render custom_post_type field
+   * Render the licence field type
    *
    * @void
    */
   public function pr_license_key() {
 
-    edd_license_key_callback(array(
-      'id' => 'edd_pressroom_pro_license_key',
-      'options' => array('is_valid_license_option' => false),
-      'desc' => 'banana'
-    ));
+    $options = get_option( 'pr_settings' );
+    $value = isset( $options['pr_license_key'] ) ? $options['pr_license_key'] : '';
+    $is_valid = isset( $options['pr_license_is_valid'] ) && $options['pr_license_is_valid'] == 'valid';
+
+    $html = '<input type="text" id="pr_license_key" name="pr_settings[pr_license_key]" value="' . $value . '"/>';
+    if ( $is_valid ) {
+      $html .= '<input type="submit" class="button-secondary" name="pr_license_key_deactivate" value="' . __( 'Deactivate License',  'pr-settings' ) . '"/>';
+    }
+    echo $html;
+
   }
 
   /**
@@ -240,7 +243,8 @@ class PR_options_page {
   public function pr_save_options( $new_value, $old_value ) {
 
     if( isset( $new_value['pr_custom_post_type'] ) ) {
-      $new_value['pr_custom_post_type'] = explode( ',', $new_value['pr_custom_post_type'] );
+      $post_type = is_array( $new_value['pr_custom_post_type'] ) ? explode( ',', $new_value['pr_custom_post_type'] ) : $new_value['pr_custom_post_type'];
+      $new_value['pr_custom_post_type'] = $post_type;
     }
 
     return $new_value;

@@ -60,7 +60,7 @@ if (!class_exists('PR_EDD_License')) {
       // Activate license key on settings save
 		  add_action( 'update_option_pr_settings', array( $this, 'activate_license' ), 20, 2 );
 		  // Deactivate license key
-      add_action( 'update_option_pr_settings', array( $this, 'deactivate_license' ), 20, 2 );
+      add_action( 'update_option_pr_settings', array( $this, 'deactivate_license' ), 10, 2 );
     }
 
     /**

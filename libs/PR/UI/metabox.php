@@ -242,7 +242,7 @@ class PR_Metabox
       switch ( $field['type'] ) {
 
         case 'text':
-          $html.= '<input type="text" placeholder="'.$field['placeholder'].'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
+          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'text_autocompleted':

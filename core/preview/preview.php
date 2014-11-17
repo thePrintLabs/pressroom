@@ -188,6 +188,7 @@ class PR_Preview {
         $post_id = url_to_postid( $link );
         if ( $post_id ) {
           $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
+          $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
         }
       }
     }

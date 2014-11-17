@@ -25,12 +25,12 @@ if (!class_exists('PR_EDD_License')) {
 
       $this->options = get_option( 'pr_settings' );
 
-  		$this->file           = $_file;
-  		$this->item_name      = $_item_name;
-  		$this->item_shortname = 'edd_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
-  		$this->version        = $_version;
-  		$this->license        = $this->options && isset( $this->options['pr_license_key'] ) ? $this->options['pr_license_key'] : '';
-  		$this->author         = $_author;
+      $this->file           = $_file;
+      $this->item_name      = $_item_name;
+      $this->item_shortname = 'edd_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
+      $this->version        = $_version;
+      $this->license        = $this->options && isset( $this->options['pr_license_key'] ) ? $this->options['pr_license_key'] : '';
+      $this->author         = $_author;
 
       // Setup hooks
 		  $this->_includes();
@@ -115,7 +115,7 @@ if (!class_exists('PR_EDD_License')) {
           $new_value['pr_license_key'] = $new_value['pr_license_is_valid'] = '';
           update_option( 'pr_settings', $new_value );
           $param = urlencode( $response->get_error_message() );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_actived_license&pmparam=' . $param ) );
+          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
           exit;
         }
 
@@ -123,16 +123,16 @@ if (!class_exists('PR_EDD_License')) {
         if ( !isset( $license_data->license ) || $license_data->license != 'valid' ) {
           $new_value['pr_license_key'] = $new_value['pr_license_is_valid'] = '';
           update_option( 'pr_settings', $new_value );
-          $param = __( "The license key is invalid", 'pressroom-license' );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_actived_license&pmparam=' . $param ) );
+          $param = urlencode( __( "The license key is invalid", 'pressroom-license' ) );
+          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
           exit;
         }
 
         $new_value['pr_license_key'] = trim( $license );
         $new_value['pr_license_is_valid'] = $license_data->license;
-        update_option( 'pr_settings', $pr_settings );
-        $param = __( "The license key is valid", 'pressroom-license' );
-        wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=success&pmcode=success_actived_license&pmparam=' . $param ) );
+        update_option( 'pr_settings', $new_value );
+        $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );
+        wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=success&pmcode=success_activated_license&pmparam=' . $param ) );
         exit;
 	    }
     }

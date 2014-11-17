@@ -146,7 +146,7 @@ if (!class_exists('PR_EDD_License')) {
 	  public function deactivate_license( $old_value, $new_value ) {
 
       if ( isset( $_POST['pr_license_key_deactivate'] ) ) {
-        die ('here');
+
   			$api_params = array(
   				'edd_action' => 'deactivate_license',
   				'license'    => $this->license,
@@ -162,14 +162,17 @@ if (!class_exists('PR_EDD_License')) {
   			);
 
   			if ( is_wp_error( $response ) ) {
-  				return;
+  				$param = urlencode( $response->get_error_message() );
+          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_deactivated_license&pmparam=' . $param ) );
+          exit;
         }
 
-        // Decode the license data
   			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
   			if ( $license_data->license == 'deactivated' ) {
-          unset( $this->options['pr_license_key'], $this->options['pr_license_is_valid'] );
-          update_option( 'pr_settings', $this->options );
+          $new_value['pr_license_key'] = $new_value['pr_license_is_valid'] = '';
+          update_option( 'pr_settings', $new_value );
+          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
+          exit;
         }
   		}
 	  }

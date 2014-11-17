@@ -202,6 +202,12 @@ class TPL_Pressroom
 				case 'success_activated_license':
 					echo _e( sprintf('<b>Activation successful:</b> %s', $msg_param ) );
 					break;
+				case 'failed_deactivated_license':
+					echo _e( sprintf('<b>Error during deactivation:</b> %s', $msg_param ) );
+					break;
+				case 'success_deactivated_license':
+					echo _e( '<b>License Deactivated.</b>' );
+					break;
 			}
 			echo '</p></div>';
 		}

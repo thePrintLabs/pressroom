@@ -27,7 +27,7 @@ define( "PR_HPUB_URI", PR_PLUGIN_URI . 'api/hpub/' );
 define( "PR_THEME_URI", PR_PLUGIN_URI . 'themes/' );
 define( "PR_PREVIEW_URI", PR_PLUGIN_URI . 'api/tmp/preview/' );
 
-define( "PR_API_URL", 'http://app.press-room.io/' );
+define( "PR_API_URL", 'https://account.press-room.io/' );
 /* Packager */
 define( "PR_EDITION_MEDIA", 'gfx/' );
 

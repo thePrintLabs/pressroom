@@ -142,7 +142,8 @@ if (!class_exists('PR_EDD_License')) {
 		  $api_params = array(
   			'edd_action' => 'activate_license',
   			'license'    => $license,
-  			'item_name'  => urlencode( $this->item_name )
+  			'item_name'  => urlencode( $this->item_name ),
+        'url'        => home_url()
   		);
 
       // Call the API
@@ -150,7 +151,6 @@ if (!class_exists('PR_EDD_License')) {
   			add_query_arg( $api_params, PR_API_URL ),
   			array(
   				'timeout'   => 15,
-  				'body'      => $api_params,
   				'sslverify' => false
   			)
 		  );

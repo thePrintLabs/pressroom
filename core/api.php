@@ -180,7 +180,7 @@ function pr_get_sharing_placeholder( $post ) {
   $domain = get_site_url();
 
   $options = get_option('pr_settings');
-  $sharing_domain = $options['pr_sharing_domain'];
+  $sharing_domain = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '' ;
 
   if( $sharing_domain ) {
     $permalink = str_replace( $domain, $sharing_domain, $permalink );

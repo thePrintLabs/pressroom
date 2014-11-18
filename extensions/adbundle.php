@@ -205,8 +205,7 @@ class PR_ADBundle
 	* This function is called by a custom hook
 	* from the book_json class
 	*
-	* @param object $post
-	* @param string $edition_dir
+	* @param array $args
 	* @void
 	*/
 	public function adb_packager_book( &$args ) {

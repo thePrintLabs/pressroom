@@ -195,13 +195,13 @@ function pr_get_sharing_placeholder( $post ) {
  * @param  object $post
  * @return string $sharing_link
  */
-function pr_get_sharing_link( $post ) {
+function pr_get_sharing_link( $current_post_id ) {
 
-  $sharing_link = get_post_meta( $post->ID, '_pr_sharing_link', true );
+  $sharing_link = get_post_meta( $current_post_id->ID, '_pr_sharing_link', true );
 
   if( $sharing_link ) {
       return $sharing_link;
   }
 
-  return pr_get_sharing_placeholder( $post );
+  return pr_get_sharing_placeholder( $current_post_id );
 }

@@ -52,8 +52,10 @@ final class PR_Packager_Book_JSON
 
         $press_options['sharing_links'][] = pr_get_sharing_link( $post );
 
-        if ( !has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
-
+        if ( has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
+          do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$press_options, $post, $edition_dir ) );
+        }
+        else {
           if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
              $press_options['contents'][] = $post_title . '.html';
           }
@@ -61,11 +63,6 @@ final class PR_Packager_Book_JSON
              PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
           }
 
-        }
-        else {
-          $args = array( $press_options, $post, $edition_dir );
-          do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$args ) );
-          $press_options = $args[0];
         }
       }
 

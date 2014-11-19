@@ -23,7 +23,7 @@ class PR_ADBundle
 
 		// Packager hooks
 		add_action( 'pr_packager_run_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
-		add_action( 'pr_packager_generate_book_pr_ad_bundle', array( $this, 'adb_packager_book' ), 10 );
+		add_action( 'pr_packager_generate_book_pr_ad_bundle', array( $this, 'adb_packager_book' ), 10, 3 );
 
 		// Preview hooks
 		add_action( 'pr_preview_pr_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
@@ -205,12 +205,12 @@ class PR_ADBundle
 	* This function is called by a custom hook
 	* from the book_json class
 	*
-	* @param array $args
+	* @param array $press_options
+	* @param object $post
+	* @param string $edition_dir
 	* @void
 	*/
-	public function adb_packager_book( &$args ) {
-
-		list( $press_options, $post, $edition_dir ) = $args;
+	public function adb_packager_book( $press_options, $post, $edition_dir ) {
 
 		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
@@ -218,7 +218,6 @@ class PR_ADBundle
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
 			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
-			$args[0] = $press_options;
 		}
 		else {
 			PR_Packager::print_line( sprintf( __( "Can't find file %s. It won't add to book.json. See the wiki to know how to make an add bundle", 'edition' ), $file_index ), 'error' );
@@ -230,12 +229,13 @@ class PR_ADBundle
 	* This function is called by a custom hook
 	* from the preview class
 	*
-	* @param  array $args
+	* @param string $page_url
+	* @param object $edition
+	* @param object $post
 	* @void
 	*/
-	public function adb_preview( &$args ) {
+	public function adb_preview( $page_url, $edition, $post ) {
 
-		list( $url, $edition, $post ) = $args;
 		$attachment = self::get_adb_attachment( $post->ID );
 
 		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
@@ -254,7 +254,7 @@ class PR_ADBundle
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
 					if ( $index_file && file_exists( $adb_dir . DIRECTORY_SEPARATOR . $index_file ) ) {
-						$args[0] = PR_PREVIEW_URI . $edition_name . '/' . $adb_name . '/' . $index_file;
+						$page_url = PR_PREVIEW_URI . $edition_name . '/' . $adb_name . '/' . $index_file;
 					}
 				}
 				$zip->close();

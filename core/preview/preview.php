@@ -61,10 +61,7 @@ class PR_Preview {
 
     $page_url = '';
     if ( has_action( 'pr_preview_' . $post->post_type ) ) {
-
-      $args = array( '', $edition, $post );
-      do_action_ref_array( 'pr_preview_' . $post->post_type, array( &$args ) );
-      $page_url = $args[0];
+      do_action_ref_array( 'pr_preview_' . $post->post_type, array( &$page_url, $edition, $post ) );
     }
     else {
       $filename =  PR_Utils::sanitize_string( $post->post_title ) . '.html';

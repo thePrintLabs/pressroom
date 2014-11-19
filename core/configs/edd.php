@@ -23,19 +23,22 @@ if (!class_exists('PR_EDD_License')) {
   	 */
     function __construct( $_file, $_item_name, $_version, $_author, $_optname = null ) {
 
-      $this->options = get_option( 'pr_settings' );
+      if ( is_admin() ) {
 
-      $this->file           = $_file;
-      $this->item_name      = $_item_name;
-      $this->item_shortname = 'edd_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
-      $this->version        = $_version;
-      $this->license        = $this->options && isset( $this->options['pr_license_key'] ) ? $this->options['pr_license_key'] : '';
-      $this->author         = $_author;
+        $this->options = get_option( 'pr_settings' );
 
-      // Setup hooks
-		  $this->_includes();
-		  $this->_hooks();
-		  $this->_auto_updater();
+        $this->file           = $_file;
+        $this->item_name      = $_item_name;
+        $this->item_shortname = 'edd_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
+        $this->version        = $_version;
+        $this->license        = $this->options && isset( $this->options['pr_license_key'] ) ? $this->options['pr_license_key'] : '';
+        $this->author         = $_author;
+
+        // Setup hooks
+  		  $this->_includes();
+  		  $this->_hooks();
+  		  $this->_auto_updater();
+      }
     }
 
     /**

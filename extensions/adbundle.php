@@ -218,7 +218,7 @@ class PR_ADBundle
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
 			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
-			$press_options['sharing_links'][] = pr_get_sharing_link( $post );
+			$press_options['sharing_links'][] = pr_get_sharing_link( $post->ID );
 			PR_Packager::print_line( sprintf( __( "Adding ADBundle %s", 'edition' ), $file_index ) );
 		}
 		else {

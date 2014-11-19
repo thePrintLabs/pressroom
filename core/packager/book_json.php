@@ -56,7 +56,7 @@ final class PR_Packager_Book_JSON
         else {
           if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
              $press_options['contents'][] = $post_title . '.html';
-             $press_options['sharing_links'][] = pr_get_sharing_link( $post );
+             $press_options['sharing_links'][] = pr_get_sharing_link( $post->ID );
           }
           else {
              PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );

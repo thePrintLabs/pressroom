@@ -147,25 +147,25 @@ function pr_get_edition_post( $post_id, $edition_id, $position = '' ) {
 /**
  * Get previous post
  *
- * @param  int $current_post_id
+ * @param  int $post_id
  * @param  int $edition_id
  * @return string or boolean
  */
-function pr_prev( $current_post_id, $edition_id ) {
+function pr_prev( $post_id, $edition_id ) {
 
-  return pr_get_edition_post( $current_post_id, $edition_id, 'prev' );
+  return pr_get_edition_post( $post_id, $edition_id, 'prev' );
 }
 
 /**
  * Get next post
  *
- * @param  int $current_post_id
+ * @param  int $post_id
  * @param  int $edition_id
  * @return string or boolean
  */
-function pr_next( $current_post_id, $edition_id ) {
+function pr_next( $post_id, $edition_id ) {
 
-  return pr_get_edition_post( $current_post_id, $edition_id, 'next' );
+  return pr_get_edition_post( $post_id, $edition_id, 'next' );
 }
 
 /**
@@ -174,9 +174,9 @@ function pr_next( $current_post_id, $edition_id ) {
  * @param  object $post
  * @return string $permalink
  */
-function pr_get_sharing_placeholder( $post ) {
+function pr_get_sharing_placeholder( $post_id ) {
 
-  $permalink = get_permalink( $post->ID );
+  $permalink = get_permalink( $post_id );
   $domain = get_site_url();
 
   $options = get_option('pr_settings');
@@ -195,13 +195,13 @@ function pr_get_sharing_placeholder( $post ) {
  * @param  object $post
  * @return string $sharing_link
  */
-function pr_get_sharing_link( $current_post_id ) {
+function pr_get_sharing_link( $post_id ) {
 
-  $sharing_link = get_post_meta( $current_post_id->ID, '_pr_sharing_link', true );
+  $sharing_link = get_post_meta( $post_id, '_pr_sharing_link', true );
 
   if( $sharing_link ) {
       return $sharing_link;
   }
 
-  return pr_get_sharing_placeholder( $current_post_id );
+  return pr_get_sharing_placeholder( $post_id );
 }

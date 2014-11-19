@@ -100,7 +100,7 @@ class PR_options_page {
 
     add_settings_field(
       'custom_post_type',
-      __( 'Custom post types', 'pressroom' ),
+      __( 'Connected custom post types', 'pressroom' ),
       array( $this, 'pr_custom_post_type' ),
       'pressroom',
       'pr_plugin_pro'

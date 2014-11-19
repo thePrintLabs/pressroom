@@ -142,14 +142,12 @@ class PR_Packager
 
 			// Rewrite post url
 			$parsed_post = $this->_rewrite_url( $parsed_post );
-			if ( !has_action( 'pr_packager_run_' . $post->post_type ) ) {
-				if ( !$this->_save_html_file( $parsed_post, $post->post_title ) ) {
-					self::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
-					continue;
-				}
-			}
-			else {
-				do_action( 'pr_packager_run_' . $post->post_type, $post, $edition_dir );
+
+			do_action( 'pr_packager_run_' . $post->post_type, $post, $edition_dir );
+
+			if ( !$this->_save_html_file( $parsed_post, $post->post_title ) ) {
+				self::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
+				continue;
 			}
 
 			self::print_line(__('Adding ', 'edition') . $post->post_title);
@@ -388,7 +386,7 @@ class PR_Packager
 		$edition = $this->_edition_post;
 		$editorial_project_id = $editorial_project->term_id;
 		$pr_theme_url = PR_THEME::get_theme_uri( $this->_edition_post->ID );
-		
+
 		global $post;
 		$post = $linked_post;
 		setup_postdata($post);

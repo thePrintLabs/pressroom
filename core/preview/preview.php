@@ -97,6 +97,7 @@ class PR_Preview {
     }
 
     ob_start();
+    $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
     $posts = $linked_posts;
     self::add_functions_file( $edition->ID );
     require_once( $toc );
@@ -129,6 +130,7 @@ class PR_Preview {
     }
 
     ob_start();
+    $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
     global $post;
     $post = $connected_post;
     setup_postdata( $post );

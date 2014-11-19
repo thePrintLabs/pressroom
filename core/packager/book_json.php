@@ -44,13 +44,11 @@ final class PR_Packager_Book_JSON
    public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image, $term_id ) {
 
       $press_options = self::_get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id );
-
       $press_options['sharing_links'] = $press_options['contents'] = array();
+
       foreach ( $linked_query->posts as $post ) {
 
         $post_title = PR_Utils::sanitize_string( $post->post_title );
-
-        $press_options['sharing_links'][] = pr_get_sharing_link( $post );
 
         if ( has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
           do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$press_options, $post, $edition_dir ) );
@@ -58,11 +56,11 @@ final class PR_Packager_Book_JSON
         else {
           if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
              $press_options['contents'][] = $post_title . '.html';
+             $press_options['sharing_links'][] = pr_get_sharing_link( $post );
           }
           else {
              PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
           }
-
         }
       }
 

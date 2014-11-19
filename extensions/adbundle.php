@@ -210,7 +210,7 @@ class PR_ADBundle
 	* @param string $edition_dir
 	* @void
 	*/
-	public function adb_packager_book( $press_options, $post, $edition_dir ) {
+	public function adb_packager_book( &$press_options, $post, $edition_dir ) {
 
 		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
@@ -218,6 +218,8 @@ class PR_ADBundle
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
 			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+			$press_options['sharing_links'][] = pr_get_sharing_link( $post );
+			PR_Packager::print_line( sprintf( __( "Adding ADBundle %s", 'edition' ), $file_index ) );
 		}
 		else {
 			PR_Packager::print_line( sprintf( __( "Can't find file %s. It won't add to book.json. See the wiki to know how to make an add bundle", 'edition' ), $file_index ), 'error' );
@@ -234,7 +236,7 @@ class PR_ADBundle
 	* @param object $post
 	* @void
 	*/
-	public function adb_preview( $page_url, $edition, $post ) {
+	public function adb_preview( &$page_url, $edition, $post ) {
 
 		$attachment = self::get_adb_attachment( $post->ID );
 

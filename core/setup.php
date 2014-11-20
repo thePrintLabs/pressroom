@@ -1,9 +1,9 @@
 <?php
 /**
- * TPL database class.
+ * PressRoom database class.
  * Add custom tables into database
  */
-class TPL_Setup
+class PR_Setup
 {
   const VERSION_PRO = true; // @TODO: PRO
 
@@ -25,7 +25,7 @@ class TPL_Setup
        array_push( $errors, __( "Error creating required tables. Check your database permissions.", 'pressroom_setup' ) );
     }
     if ( !self::_setup_filesystem() ) {
-       array_push( $errors, __( "Error creating required directory: <b>&quot;" . TPL_PLUGIN_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
+       array_push( $errors, __( "Error creating required directory: <b>&quot;" . PR_PLUGIN_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
     }
     if ( !empty( $errors ) ) {
        return $errors;
@@ -65,10 +65,10 @@ class TPL_Setup
     if ( self::VERSION_PRO ) {
 
       global $wpdb;
-      $table_receipts = $wpdb->prefix . TPL_TABLE_RECEIPTS;
-      $table_receipt_transactions = $wpdb->prefix . TPL_TABLE_RECEIPT_TRANSACTIONS;
-      $table_purchased_issues = $wpdb->prefix . TPL_TABLE_PURCHASED_ISSUES;
-      $table_apns_tokens = $wpdb->prefix . TPL_TABLE_APNS_TOKENS;
+      $table_receipts = $wpdb->prefix . PR_TABLE_RECEIPTS;
+      $table_receipt_transactions = $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS;
+      $table_purchased_issues = $wpdb->prefix . PR_TABLE_PURCHASED_ISSUES;
+      $table_apns_tokens = $wpdb->prefix . PR_TABLE_APNS_TOKENS;
 
     	$charset_collate = '';
       if ( !empty( $wpdb->charset ) ) {
@@ -88,7 +88,7 @@ class TPL_Setup
         PRIMARY KEY (receipt_id),
         INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
       ) $charset_collate; ";
-      
+
       $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
         transaction_id VARCHAR(32),
         receipt_id bigint(20) UNSIGNED NOT NULL,
@@ -134,15 +134,15 @@ class TPL_Setup
    */
   private static function _setup_filesystem() {
 
-    $api_dir = TPL_Utils::make_dir( TPL_PLUGIN_PATH, 'api' );
+    $api_dir = PR_Utils::make_dir( PR_PLUGIN_PATH, 'api' );
     if ( !$api_dir ) {
       return false;
     }
 
-    $api_dir = TPL_Utils::make_dir( TPL_API_PATH, 'hpub' );
-    $api_dir = $api_dir && TPL_Utils::make_dir( TPL_API_PATH, 'tmp' );
-    $api_dir = $api_dir && TPL_Utils::make_dir( TPL_API_PATH, 'shelf' );
-    $api_dir = $api_dir && TPL_Utils::make_dir( TPL_TMP_PATH, 'preview' );
+    $api_dir = PR_Utils::make_dir( PR_API_PATH, 'hpub' );
+    $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'tmp' );
+    $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'shelf' );
+    $api_dir = $api_dir && PR_Utils::make_dir( PR_TMP_PATH, 'preview' );
 
     return !$api_dir ? false : true;
   }

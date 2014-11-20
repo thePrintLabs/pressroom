@@ -3,6 +3,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
 {
   public function __construct() {
 
+    add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
     add_action( 'init', array( $this, 'add_endpoint' ), 10 );
     add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
   }
@@ -48,7 +49,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
       $this->send_response( 400, 'Bad request. Please specify an editorial project.' );
     }
 
-    $shelf_json = file_get_contents( TPL_SHELF_PATH . DIRECTORY_SEPARATOR . $eproject_slug . '_shelf.json' );
+    $shelf_json = file_get_contents( PR_SHELF_PATH . DIRECTORY_SEPARATOR . $eproject_slug . '_shelf.json' );
     if ( $shelf_json ) {
       status_header( 200 );
       header('Content-Type: application/json');

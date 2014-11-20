@@ -139,10 +139,10 @@ $( ".wp-list-table tbody" ).delegate( ".presslist-status", "click", function(e) 
 
     jQuery.post(ajaxurl, data, function(response) {
         if( response ) {
-            el.find('i').addClass('icon-eye-off').removeClass('icon-eye');
+            el.find('i').addClass('press-eye-off').removeClass('press-eye');
         }
         else {
-            el.find('i').addClass('icon-eye').removeClass('icon-eye-off');;
+            el.find('i').addClass('press-eye').removeClass('press-eye-off');;
         }
 
     });
@@ -187,10 +187,10 @@ $('#doaction').on( "click", function(e) {
 
           el = $('#r_'+$(this).val());
           if( response ) {
-            el.find('i').removeClass('icon-eye-off').addClass('icon-eye');
+            el.find('i').removeClass('press-eye-off').addClass('press-eye');
           }
           else {
-            el.find('i').removeClass('icon-eye').addClass('icon-eye-off');
+            el.find('i').removeClass('press-eye').addClass('press-eye-off');
           }
       });
     });

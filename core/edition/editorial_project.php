@@ -1,29 +1,33 @@
 <?php
 /**
- * TPL Editorial Project class.
+ * PressRoom Editorial Project class.
  * Custom taxonomies for Edition custom post type
  */
-class TPL_Editorial_Project
+class PR_Editorial_Project
 {
   protected $_metaboxes;
 
   public function __construct() {
 
+    add_action( 'press_flush_rules', array( $this, 'add_editorial_project_taxonomy' ), 10 );
     add_action( 'init', array( $this, 'add_editorial_project_taxonomy' ), 0 );
 
     if ( is_admin() ) {
-      add_filter( 'manage_edit-' . TPL_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
-      add_filter( 'manage_' . TPL_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
+      add_filter( 'manage_edit-' . PR_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
+      add_filter( 'manage_' . PR_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
       add_filter( 'wp_tag_cloud', array( $this, 'remove_tag_cloud' ), 10, 2 );
 
-      add_action( TPL_EDITORIAL_PROJECT . '_pre_edit_form', array( $this, 'add_tabs_to_form' ), 10, 2 );
-      add_action( TPL_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
-      add_action( TPL_EDITORIAL_PROJECT . '_add_form', array( $this,'customize_form' ) );
-      add_action( TPL_EDITORIAL_PROJECT . '_edit_form', array( $this,'customize_form' ) );
-      add_action( 'edited_' . TPL_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
-      add_action( 'create_' . TPL_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
-      add_action( TPL_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
+      add_action( PR_EDITORIAL_PROJECT . '_pre_edit_form', array( $this, 'add_tabs_to_form' ), 10, 2 );
+      add_action( PR_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
+      add_action( PR_EDITORIAL_PROJECT . '_add_form', array( $this,'customize_form' ) );
+      add_action( PR_EDITORIAL_PROJECT . '_edit_form', array( $this,'customize_form' ) );
+      add_action( 'edited_' . PR_EDITORIAL_PROJECT, array( $this, 'update_form_meta_fields' ) );
+      add_action( 'create_' . PR_EDITORIAL_PROJECT, array( $this, 'save_form_meta_fields' ) );
+      add_action( PR_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
       add_action( 'wp_ajax_remove_upload_file', array( $this, 'remove_upload_file_callback' ) );
+      add_action( 'wp_ajax_reset_editorial_project', array( $this, 'reset_editorial_project' ) );
+      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
+
     }
   }
 
@@ -61,7 +65,7 @@ class TPL_Editorial_Project
       'rewrite'               => array( 'slug' => 'editorial-project' ),
     );
 
-    register_taxonomy( TPL_EDITORIAL_PROJECT, TPL_EDITION, $args );
+    register_taxonomy( PR_EDITORIAL_PROJECT, PR_EDITION, $args );
   }
 
 
@@ -76,9 +80,9 @@ class TPL_Editorial_Project
     $new_columns = array(
        'cb'           => '<input type="checkbox" />',
        'name'         => __( 'Name' ),
-       'header_icon'  => __( 'Shelf.json', 'editorial_project'),
        'slug'         => __( 'Slug' ),
-       'posts'        => __( 'Posts' )
+       'posts'        => __( 'Posts' ),
+       'actions'  => __( 'Actions', 'editorial_project'),
     );
 
     return $new_columns;
@@ -94,12 +98,11 @@ class TPL_Editorial_Project
   */
   public function manage_columns( $out, $column_name, $editorial_id ) {
 
-    $editorial = get_term( $editorial_id, TPL_EDITORIAL_PROJECT );
+    $editorial = get_term( $editorial_id, PR_EDITORIAL_PROJECT );
     switch ( $column_name ) {
 
-       case 'header_icon':
-          $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
-          echo '<a target="_blank" href="' . $shelf_url . '">' . __("View endpoint", 'editorial_project') . '</a>';
+       case 'actions':
+          echo '<a href="#" data-term="'.$editorial_id.'" class="pr-reset" style="color:#A00">Restore default settings</a>';
           break;
        default:
           break;
@@ -115,13 +118,13 @@ class TPL_Editorial_Project
    */
   public function get_custom_metabox( $term_id ) {
 
-    $basic_meta = new TPL_Metabox( 'basic_metabox', __( 'Basic', 'editorial_project' ), 'normal', 'high', $term_id );
+    $basic_meta = new PR_Metabox( 'basic_metabox', __( 'Basic', 'editorial_project' ), 'normal', 'high', $term_id );
 
-    $vis_meta = new TPL_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
+    $vis_meta = new PR_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
     $vis_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
       'options' => array(
-        array( 'value' => 'horizontal', 'name' => __( "Horizontal", 'editorial_project' ) ),
-        array( 'value' => 'vertical', 'name' => __( "Vertical", 'editorial_project' ) ),
+        array( 'value' => 'portrait', 'name' => __( "Portrait", 'editorial_project' ) ),
+        array( 'value' => 'landscape', 'name' => __( "Landscape", 'editorial_project' ) ),
         array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
       )
     ) );
@@ -134,39 +137,26 @@ class TPL_Editorial_Project
     $vis_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Opacity for page numbers to be shown before pages are loaded. (min 0 => max 1)', 'editorial_project' ), 'decimal', 0.3 );
     //$vis_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
 
-    $behavior_meta = new TPL_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
-    $behavior_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed.', 'editorial_project' ), 'number', 1 );
+    $behavior_meta = new PR_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
+    $behavior_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
     $behavior_meta->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),
         array( 'value' => 'three-cards', 'name' => __( "Three cards", 'editorial_project' ) )
       )
     ) );
-    $behavior_meta->add_field( '_pr_verticle_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
+    $behavior_meta->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
     $behavior_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
     $behavior_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
     $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
     $behavior_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Swipe on the page to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
 
-    $toc_meta = new TPL_Metabox( 'toc_metabox', __( 'TOC', 'editorial_project' ), 'normal', 'high', $term_id );
+    $toc_meta = new PR_Metabox( 'toc_metabox', __( 'TOC', 'editorial_project' ), 'normal', 'high', $term_id );
     $toc_meta->add_field( '_pr_index_height', __( 'TOC height', 'edition' ), __( 'Height (in pixels) for the toc bar.', 'editorial_project' ), 'number', 150 );
     $toc_meta->add_field( '_pr_index_width', __( 'TOC width', 'edition' ), __( 'Width (in pixels) for the toc bar. When empty, the width is automatically set to the width of the page.', 'editorial_project' ), 'number', '' );
     $toc_meta->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
 
-    $sub_meta = new TPL_Metabox( 'sub_metabox', __( 'In-App Purchases', 'editorial_project' ), 'normal', 'high', $term_id );
-    $sub_meta->add_field( '_pr_itunes_secret', __( 'iTunes Shared Secret', 'editorial_project' ), __( 'A shared secret is a unique code that you should use when you make the call to our servers for your In-App Purchase receipts.', 'editorial_project' ), 'text', '' );
-    $sub_meta->add_field( '_pr_prefix_bundle_id', __( 'App Bundle ID', 'edition' ), __( 'Application Bundle ID is the unique identifier of your application', 'editorial_project' ), 'text', '' );
-    $sub_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'editorial_project' ), 'text_autocompleted', '' );
-    $sub_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'editorial_project' ), 'text_autocompleted', '' );
-    $sub_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'editorial_project' ), 'repeater_with_radio', '', array(
-      'radio_field'   => '_pr_subscription_method',
-      'radio_options' => array(
-        array( 'value' => 'all', 'name' => __( "All", 'editorial_project' ) ),
-        array( 'value' => 'last', 'name' => __( "Last edition", 'editorial_project' ) )
-      ),
-    ) );
-
-    $push_meta = new TPL_Metabox( 'push_metabox', __( 'Push notification', 'editorial_project' ), 'normal', 'high', $term_id );
+    $push_meta = new PR_Metabox( 'push_metabox', __( 'Push notification', 'editorial_project' ), 'normal', 'high', $term_id );
     $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push notification service', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
@@ -181,14 +171,14 @@ class TPL_Editorial_Project
       $vis_meta,
       $behavior_meta,
       $toc_meta,
-      $sub_meta,
       $push_meta
     );
   }
 
   /**
-   * Add tabs to edit form
+   * Add tabs menu to edit form
    *
+   * @param object $term
    * @echo
    */
   public function add_tabs_to_form( $term ) {
@@ -199,6 +189,25 @@ class TPL_Editorial_Project
       echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
     }
     echo '</h2>';
+  }
+
+
+  /**
+   * delete editorial project options
+   *
+   * @echo
+   */
+  public function reset_editorial_project() {
+
+    $term_id = $_POST['term_id'];
+    if( delete_option( 'taxonomy_term_' . $term_id ) ){
+      $this->get_custom_metabox( $term_id );
+      foreach ( $this->_metaboxes as $metabox ) {
+        $metabox->save_term_values();
+      }
+      wp_send_json_success();
+    }
+    exit;
   }
 
   /**
@@ -212,6 +221,8 @@ class TPL_Editorial_Project
     foreach ( $this->_metaboxes as $key => $metabox ) {
       echo $metabox->fields_to_html( true, $metabox->id );
     }
+
+    // echo $this->add_reset_to_form();
   }
 
   /**
@@ -222,11 +233,11 @@ class TPL_Editorial_Project
   */
   public function save_form_meta_fields( $term_id ) {
 
-    $terms = get_terms( TPL_EDITORIAL_PROJECT );
+    $terms = get_terms( PR_EDITORIAL_PROJECT );
     foreach( $terms as $term ) {
       $option = self::get_config( $term->term_id, '_pr_prefix_bundle_id');
       if ( isset($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
-        $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
+        $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
         wp_redirect( $url );
         exit;
       }
@@ -239,7 +250,7 @@ class TPL_Editorial_Project
 
 
     if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
-      $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
+      $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
       wp_redirect( $url );
       exit;
     }
@@ -254,11 +265,11 @@ class TPL_Editorial_Project
    */
   public function update_form_meta_fields( $term_id ) {
 
-    $terms = get_terms( TPL_EDITORIAL_PROJECT );
+    $terms = get_terms( PR_EDITORIAL_PROJECT );
     foreach( $terms as $term ) {
       $option = self::get_config( $term->term_id, '_pr_prefix_bundle_id');
       if ( isset($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
-        $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
+        $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
         wp_redirect( $url );
         exit;
       }
@@ -270,7 +281,7 @@ class TPL_Editorial_Project
     }
 
     if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
-      $url = admin_url( 'edit-tags.php?action=edit&post_type='. TPL_EDITION .'&taxonomy=' . TPL_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
+      $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
       wp_redirect( $url );
       exit;
     }
@@ -320,7 +331,7 @@ class TPL_Editorial_Project
   }
 
   public function remove_tag_cloud ( $return, $args ) {
-    if ( $args['taxonomy'] == TPL_EDITORIAL_PROJECT ) {
+    if ( $args['taxonomy'] == PR_EDITORIAL_PROJECT ) {
       return false;
     }
   }
@@ -332,7 +343,7 @@ class TPL_Editorial_Project
    */
   public static function get_by_slug( $slug ) {
 
-    $eproject = get_term_by( 'slug', $slug, TPL_EDITORIAL_PROJECT );
+    $eproject = get_term_by( 'slug', $slug, PR_EDITORIAL_PROJECT );
     return $eproject;
   }
 
@@ -361,23 +372,6 @@ class TPL_Editorial_Project
     return isset( $options[$meta_name] ) ? $options[$meta_name] : false;
   }
 
-  public static function get_subscription_method( $term_id, $product_id ) {
-
-    $options = self::get_configs( $term_id );
-    $subscription_types = $options['_pr_subscription_types'];
-    $subscription_methods = $options['_pr_subscription_method'];
-
-    if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
-      foreach ( $subscription_types as $k => $type ) {
-        $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
-        if ( $identifier == $product_id ) {
-          return $subscription_methods[$k];
-        }
-      }
-    }
-    return false;
-  }
-
   /**
    * Get all editions in a range of dates
    * linked to an editiorial project
@@ -392,12 +386,12 @@ class TPL_Editorial_Project
       'nopaging'        => true,
       'posts_per_page'  => -1,
       'post_status'     => 'publish',
-      'post_type'       => TPL_EDITION,
+      'post_type'       => PR_EDITION,
       'meta_key'        => '_pr_date',
       'orderby'         => 'meta_value',
       'tax_query'       => array(
         array(
-          'taxonomy'  => TPL_EDITORIAL_PROJECT,
+          'taxonomy'  => PR_EDITORIAL_PROJECT,
           'field'     => 'slug',
           'terms'     => $eproject->slug
         )
@@ -427,12 +421,12 @@ class TPL_Editorial_Project
       'nopaging'        => true,
       'posts_per_page'  => $limit,
       'post_status'     => 'publish',
-      'post_type'       => TPL_EDITION,
+      'post_type'       => PR_EDITION,
       'meta_key'        => '_pr_date',
       'orderby'         => 'meta_value',
       'tax_query'       => array(
         array(
-          'taxonomy'  => TPL_EDITORIAL_PROJECT,
+          'taxonomy'  => PR_EDITORIAL_PROJECT,
           'field'     => 'slug',
           'terms'     => is_string( $eproject ) ? $eproject : $eproject->slug
         )
@@ -455,12 +449,12 @@ class TPL_Editorial_Project
       'numberposts'     => 1,
       'posts_per_page'  => 1,
       'post_status'     => 'publish',
-      'post_type'       => TPL_EDITION,
+      'post_type'       => PR_EDITION,
       'meta_key'        => '_pr_date',
       'orderby'         => 'meta_value',
       'tax_query'       => array(
         array(
-          'taxonomy'  => TPL_EDITORIAL_PROJECT,
+          'taxonomy'  => PR_EDITORIAL_PROJECT,
           'field'     => 'slug',
           'terms'     => $eproject->slug
         )
@@ -481,9 +475,9 @@ class TPL_Editorial_Project
   public static function get_bundle_id( $editorial_project_id ) {
 
     $eproject_bundle_id = false;
-    $eproject_options = TPL_Editorial_Project::get_configs( $editorial_project_id );
+    $eproject_options = PR_Editorial_Project::get_configs( $editorial_project_id );
     if ( $eproject_options ) {
-      $eproject_bundle_id = $eproject_options['_pr_prefix_bundle_id'];
+      $eproject_bundle_id = isset( $eproject_options['_pr_prefix_bundle_id'] ) ? $eproject_options['_pr_prefix_bundle_id'] : '';
     }
     return $eproject_bundle_id;
   }
@@ -496,7 +490,7 @@ class TPL_Editorial_Project
   public function remove_upload_file_callback() {
 
     $editorial_project_id = $_POST['term_id'];
-    $term_meta = TPL_Editorial_Project::get_configs( $editorial_project_id );
+    $term_meta = PR_Editorial_Project::get_configs( $editorial_project_id );
     $attach_id = $_POST['attach_id'];
     $field = $_POST['field'];
     $term_meta[$field] = '';
@@ -506,6 +500,17 @@ class TPL_Editorial_Project
     }
     exit;
   }
+
+  /**
+   * add custom script to metabox
+   *
+   * @void
+   */
+  public function add_custom_script() {
+
+    wp_register_script( 'eproject', PR_ASSETS_URI . '/js/pr.eproject.min.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'eproject' );
+  }
 }
 
-$pressroom_editorial_project = new TPL_Editorial_Project();
+$pr_editorial_project = new PR_Editorial_Project();

@@ -16,7 +16,7 @@ if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
 $edition_id = (int)$_GET['edition_id'];
 
 if ( !isset( $_GET['post_id'] ) || !strlen( $_GET['post_id'] ) ) {
-  $linked_posts = TPL_Preview::init( $edition_id );
+  $linked_posts = PR_Preview::init( $edition_id );
   $concurrent_slides = min( count( $linked_posts ), CONCURRENT_PAGES );
 }
 else {
@@ -29,14 +29,14 @@ if ( empty( $linked_posts ) ) {
   <li>Check if the edition with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
 }
 
-$terms = wp_get_post_terms( $_GET['edition_id'], TPL_EDITORIAL_PROJECT );
+$terms = wp_get_post_terms( $_GET['edition_id'], PR_EDITORIAL_PROJECT );
 if ( empty( $terms ) ) {
   wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
   <li>Ensure that there is least one editorial project linked to this edition</li></ul>", 'pressroom' ) );
 }
 
 $edition = get_post( $edition_id );
-$edition_name = TPL_Utils::sanitize_string( $edition->post_title );
+$edition_name = PR_Utils::sanitize_string( $edition->post_title );
 $index_height = 150;
 ?>
 <!DOCTYPE html>
@@ -46,7 +46,6 @@ $index_height = 150;
   <title>Pressroom - Preview</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../../assets/css/reset.css">
   <link rel="stylesheet" href="../../assets/css/preview/preview.ish.min.css">
   <link rel="stylesheet" type="text/css" href="../../assets/css/preview/preview.min.css" />
   <link rel="stylesheet" type="text/css" href="../../assets/css/preview/idangerous.swiper.min.css" />
@@ -150,14 +149,14 @@ $index_height = 150;
       </div>
     </div>
     <div id="toc" style="height:<?php echo $index_height ?>px;display:none">
-      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo TPL_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe>
+      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe>
     </div>
   </div>
 </div>
 <script src="../../assets/js/preview/jquery-2.0.3.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
-<script src="../../assets/js/preview/tpl.reader.min.js"></script>
-<script src="../../assets/js/preview/tpl.reader.ish.min.js"></script>
+<script src="../../assets/js/preview/pr.reader.min.js"></script>
+<script src="../../assets/js/preview/pr.reader.ish.min.js"></script>
 </body>
 </html>

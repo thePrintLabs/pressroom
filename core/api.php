@@ -200,14 +200,14 @@ function pr_get_sharing_placeholder( $post_id ) {
  * Get sharing link
  *
  * @param  object $post
- * @return string $sharing_link
+ * @return string $sharing_url
  */
-function pr_get_sharing_link( $post_id ) {
+function pr_get_sharing_url( $post_id ) {
 
-  $sharing_link = get_post_meta( $post_id, '_pr_sharing_link', true );
+  $sharing_url = get_post_meta( $post_id, '_pr_sharing_url', true );
 
-  if( $sharing_link ) {
-      return $sharing_link;
+  if( $sharing_url ) {
+      return $sharing_url;
   }
 
   return pr_get_sharing_placeholder( $post_id );

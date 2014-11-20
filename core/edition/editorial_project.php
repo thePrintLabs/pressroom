@@ -510,7 +510,7 @@ class PR_Editorial_Project
     $eproject_bundle_id = false;
     $eproject_options = PR_Editorial_Project::get_configs( $editorial_project_id );
     if ( $eproject_options ) {
-      $eproject_bundle_id = $eproject_options['_pr_prefix_bundle_id'];
+      $eproject_bundle_id = isset( $eproject_options['_pr_prefix_bundle_id'] ) ? $eproject_options['_pr_prefix_bundle_id'] : '';
     }
     return $eproject_bundle_id;
   }

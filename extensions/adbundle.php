@@ -220,21 +220,21 @@ class PR_ADBundle
 		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
 
 		$contents = $press_options['contents'];
-		$sharing_links = $press_options['sharing_links'];
+		$sharing_urls = $press_options['sharing_urls'];
 
 		end( $contents );
-		end( $sharing_links );
+		end( $sharing_urls );
 
 		$contents_key = key( $contents );
-		$sharing_links_key = key( $sharing_links );
+		$sharing_urls_key = key( $sharing_urls );
 
-		unset( $press_options['sharing_links'][$sharing_links_key], $press_options['contents'][$contents_key]);
+		unset( $press_options['sharing_urls'][$sharing_urls_key], $press_options['contents'][$contents_key]);
 
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
 
 			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
-			$press_options['sharing_links'][] = pr_get_sharing_link( $post->ID );
+			$press_options['sharing_urls'][] = pr_get_sharing_url( $post->ID );
 			PR_Packager::print_line( sprintf( __( "Adding ADBundle %s", 'edition' ), $file_index ) );
 		}
 		else {

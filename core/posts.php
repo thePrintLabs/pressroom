@@ -63,7 +63,7 @@ class PR_posts
 
     $placeholder = pr_get_sharing_placeholder( $post->ID );
     $e_meta = new PR_Metabox( 'sharing_metabox', __( 'Sharing', 'edition' ), 'normal', 'high', $post->ID );
-		$e_meta->add_field( '_pr_sharing_link', __( 'Sharing Link', 'edition' ), __( 'Sharing link inside application. Leave it blank, for default value. ', 'pressroom' ), 'text', '', array( 'placeholder' => $placeholder ) );
+		$e_meta->add_field( '_pr_sharing_url', __( 'Sharing Link', 'edition' ), __( 'Sharing link inside application. Leave it blank, for default value. ', 'pressroom' ), 'text', '', array( 'placeholder' => $placeholder ) );
 
     array_push( $this->_metaboxes, $e_meta );
   }

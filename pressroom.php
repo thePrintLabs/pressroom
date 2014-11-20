@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Pressroom Pro
  * Plugin URI:
- * Description: Wordpress Pressroom.
+ * Description: PressRoom turns Wordpress into a multi channel publishing environment.
  * Version: 1.0
  * Author: ThePrintLabs
  * Author URI: http://www.theprintlabs.com

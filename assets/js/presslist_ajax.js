@@ -187,10 +187,10 @@ $('#doaction').on( "click", function(e) {
 
           el = $('#r_'+$(this).val());
           if( response ) {
-            el.find('i').removeClass('icon-eye-off').addClass('icon-eye');
+            el.find('i').removeClass('press-eye-off').addClass('press-eye');
           }
           else {
-            el.find('i').removeClass('icon-eye').addClass('icon-eye-off');
+            el.find('i').removeClass('press-eye').addClass('press-eye-off');
           }
       });
     });

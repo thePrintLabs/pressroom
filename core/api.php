@@ -38,7 +38,14 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
   if ( !empty( $linked_posts_id) ) {
 
-    $post_types = array_merge( array( 'post', 'page' ), pr_get_option( 'pr_custom_post_type' ) );
+    $custom_post_types = pr_get_option( 'pr_custom_post_type' );
+    if ( is_array( $custom_post_types ) ) {
+      $post_types = array_merge( array( 'post', 'page' ), pr_get_option( 'pr_custom_post_type' ) );
+    }
+    else {
+      $post_types = array( 'post', 'page', $custom_post_types );
+    }
+
     $edition_query = new WP_Query( array(
       'post_type'           => $post_types,
       'post_status'         => 'any',

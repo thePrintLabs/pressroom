@@ -50,18 +50,23 @@ final class PR_Packager_Book_JSON
 
         $post_title = PR_Utils::sanitize_string( $post->post_title );
 
-        if ( has_action( 'pr_packager_generate_book_' . $post->post_type ) ) {
-          do_action_ref_array( 'pr_packager_generate_book_' . $post->post_type, array( &$press_options, $post, $edition_dir ) );
+        if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
+           $press_options['contents'][] = $post_title . '.html';
+           $press_options['sharing_links'][] = pr_get_sharing_link( $post->ID );
         }
         else {
-          if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
-             $press_options['contents'][] = $post_title . '.html';
-             $press_options['sharing_links'][] = pr_get_sharing_link( $post->ID );
-          }
-          else {
-             PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
-          }
+           PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
         }
+
+        do_action_ref_array( 'pr_packager_generate_book', array( &$press_options, $post, $edition_dir ) );
+      }
+
+      if ( !empty( $press_options['contents'] ) ) {
+        $press_options['contents'] = array_values( $press_options['contents'] );
+      }
+
+      if ( !empty( $press_options['sharing_links'] ) ) {
+        $press_options['sharing_links'] = array_values( $press_options['sharing_links'] );
       }
 
       return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );

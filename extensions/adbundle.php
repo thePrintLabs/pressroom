@@ -23,7 +23,7 @@ class PR_ADBundle
 
 		// Packager hooks
 		add_action( 'pr_packager_run_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
-		add_action( 'pr_packager_generate_book_pr_ad_bundle', array( $this, 'adb_packager_book' ), 10, 3 );
+		add_action( 'pr_packager_generate_book', array( $this, 'adb_packager_book' ), 10, 3 );
 
 		// Preview hooks
 		add_action( 'pr_preview_pr_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
@@ -212,11 +212,27 @@ class PR_ADBundle
 	*/
 	public function adb_packager_book( &$press_options, $post, $edition_dir ) {
 
+		if ( $post->post_type != 'pr_ad_bundle' ) {
+			return;
+		}
+
 		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
 
+		$contents = $press_options['contents'];
+		$sharing_links = $press_options['sharing_links'];
+
+		end( $contents );
+		end( $sharing_links );
+
+		$contents_key = key( $contents );
+		$sharing_links_key = key( $sharing_links );
+
+		unset( $press_options['sharing_links'][$sharing_links_key], $press_options['contents'][$contents_key]);
+
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
+
 			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 			$press_options['sharing_links'][] = pr_get_sharing_link( $post->ID );
 			PR_Packager::print_line( sprintf( __( "Adding ADBundle %s", 'edition' ), $file_index ) );

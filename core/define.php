@@ -2,7 +2,7 @@
 define( "PR_VERSION", "1.0" );
 define( "PR_PRODUCT_NAME", "PressRoom PRO" );
 
-define( "PR_PLUGIN_PATH", __DIR__ . '/../' );
+define( "PR_PLUGIN_PATH", realpath( __DIR__ . '/../' ) . '/' );
 define( "PR_LIBS_PATH", PR_PLUGIN_PATH . 'libs/' );
 define( "PR_LIBS_PR_PATH", PR_LIBS_PATH . 'PR/' );
 define( "PR_THEMES_PATH", PR_PLUGIN_PATH . 'themes/' );
@@ -45,4 +45,3 @@ define( "PR_EDITORIAL_PROJECT", 'pr_editorial_project' );
 define( "PR_TABLE_RECEIPTS", 'pr_receipts' );
 define( "PR_TABLE_RECEIPT_TRANSACTIONS", 'pr_receipt_transactions' );
 define( "PR_TABLE_PURCHASED_ISSUES", 'pr_purchased_issues' );
-define( "PR_TABLE_APNS_TOKENS", 'pr_apns_tokens' );

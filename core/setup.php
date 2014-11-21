@@ -68,7 +68,6 @@ class PR_Setup
       $table_receipts = $wpdb->prefix . PR_TABLE_RECEIPTS;
       $table_receipt_transactions = $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS;
       $table_purchased_issues = $wpdb->prefix . PR_TABLE_PURCHASED_ISSUES;
-      $table_apns_tokens = $wpdb->prefix . PR_TABLE_APNS_TOKENS;
 
     	$charset_collate = '';
       if ( !empty( $wpdb->charset ) ) {
@@ -105,23 +104,14 @@ class PR_Setup
         PRIMARY KEY(app_id, user_id, product_id)
       ) $charset_collate; ";
 
-      $sql_apns_tokens = "CREATE TABLE IF NOT EXISTS $table_apns_tokens (
-        app_id VARCHAR(255),
-        user_id VARCHAR(255),
-        apns_token VARCHAR(64),
-        PRIMARY KEY(app_id, user_id, apns_token)
-      ) $charset_collate;";
-
       require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
       dbDelta( $sql_receipts );
       dbDelta( $sql_receipt_transactions );
       dbDelta( $sql_purchased_issues );
-      dbDelta( $sql_apns_tokens  );
 
       return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts
          && $wpdb->get_var("SHOW TABLES LIKE '$table_receipt_transactions'") == $table_receipt_transactions
-         && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues
-         && $wpdb->get_var("SHOW TABLES LIKE '$table_apns_tokens'") == $table_apns_tokens );
+         && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues );
     }
 
     return true;

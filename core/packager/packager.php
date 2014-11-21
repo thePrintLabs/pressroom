@@ -79,7 +79,7 @@ class PR_Packager
 		}
 		$this->set_progress( 10, __( 'Parsing cover', 'edition' ) );
 
-		// Parse html of cover index.php file
+		// Parse html of cover
 		$cover = $this->_cover_parse( $editorial_project );
 		if ( !$cover ) {
 			self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );
@@ -93,7 +93,7 @@ class PR_Packager
 		$this->set_progress( 20, __( 'Saving cover file', 'edition' ) );
 
 		// Save cover html file
-		if ( $this->_save_html_file( $cover, 'index' ) ) {
+		if ( $this->_save_html_file( $cover, 'cover' ) ) {
 			self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
 			$this->set_progress( 22, __( 'Parsing toc file', 'edition' ) );
 		}
@@ -103,7 +103,7 @@ class PR_Packager
 			return;
 		}
 
-		// Parse html of cover index.php file
+		// Parse html of toc
 		$toc = $this->_toc_parse( $editorial_project );
 		if ( !$toc ) {
 			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
@@ -111,12 +111,12 @@ class PR_Packager
 			return;
 		}
 
-		// Rewrite cover url
+		// Rewrite toc url
 		$toc = $this->_rewrite_url( $toc );
 		$this->set_progress( 28, __( 'Saving toc file', 'edition' ) );
 
-		// Save cover html file
-		if ( $this->_save_html_file( $toc, 'toc' ) ) {
+		// Save toc html file
+		if ( $this->_save_html_file( $toc, 'index' ) ) {
 			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
 			$this->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
 		}

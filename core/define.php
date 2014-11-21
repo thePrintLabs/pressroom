@@ -2,7 +2,7 @@
 define( "PR_VERSION", "1.0" );
 define( "PR_PRODUCT_NAME", "PressRoom" );
 
-define( "PR_PLUGIN_PATH", __DIR__ . '/../' );
+define( "PR_PLUGIN_PATH", realpath( __DIR__ . '/../' ) . '/' );
 define( "PR_LIBS_PATH", PR_PLUGIN_PATH . 'libs/' );
 define( "PR_LIBS_PR_PATH", PR_LIBS_PATH . 'PR/' );
 define( "PR_THEMES_PATH", PR_PLUGIN_PATH . 'themes/' );
@@ -22,7 +22,7 @@ define( "PR_TMP_PATH", PR_API_PATH . 'tmp/' );
 define( "PR_PREVIEW_TMP_PATH", PR_TMP_PATH . 'preview/' );
 define( "PR_SHELF_PATH", PR_API_PATH . 'shelf/' );
 
-define( "PR_PLUGIN_URI", plugins_url( 'pressroom' ) . '/' );
+define( "PR_PLUGIN_URI", plugin_dir_url(PR_LIBS_PATH) );
 define( "PR_CORE_URI", PR_PLUGIN_URI . 'core/' );
 define( "PR_SHELF_URI", PR_PLUGIN_URI . 'api/shelf/' );
 define( "PR_ASSETS_URI", PR_PLUGIN_URI. 'assets/' );

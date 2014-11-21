@@ -149,7 +149,7 @@ $index_height = 150;
       </div>
     </div>
     <div id="toc" style="height:<?php echo $index_height ?>px;display:none">
-      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "toc.html"  ?>"></iframe>
+      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "index.html"  ?>"></iframe>
     </div>
   </div>
 </div>

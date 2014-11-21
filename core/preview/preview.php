@@ -105,7 +105,7 @@ class PR_Preview {
     $output = self::rewrite_toc_url( $output, $edition->ID );
 
     $edition_dir = PR_Utils::sanitize_string( $edition->post_title );
-    file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . 'toc.html', $output );
+    file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . 'index.html', $output );
   }
 
   /**

@@ -102,6 +102,8 @@ class PR_Editorial_Project
     switch ( $column_name ) {
 
        case 'actions':
+          $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
+          echo '<a target="_blank" href="' . $shelf_url . '">' . __("View shelf endpoint", 'editorial_project') . '</a><br/>';
           echo '<a href="#" data-term="'.$editorial_id.'" class="pr-reset" style="color:#A00">Restore default settings</a>';
           break;
        default:

@@ -112,6 +112,8 @@
   background-image: url('../img/trash_hover.png');
 }
 
+.tabbed h3 { margin: 0 }
+
 /****************************/
 /* PUSH NOTIFICATION PAGE  */
 /****************************/

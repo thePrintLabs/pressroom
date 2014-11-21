@@ -67,9 +67,8 @@ jQuery(function(){
     jQuery(this).parent().remove();
   });
 
-  jQuery('#name').closest('.form-field').addClass('tabbed basic_metabox');
-  jQuery('#slug').closest('.form-field').addClass('tabbed basic_metabox');
   jQuery('.tabbed').css('display','none');
+  jQuery('.hpub_metabox').css('display','table-row');
   jQuery('.basic_metabox').css('display','table-row');
 
   jQuery('.nav-tab').click(function(e) {

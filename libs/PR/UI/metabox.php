@@ -237,7 +237,7 @@ class PR_Metabox
       }
 
       $html.= '<tr ' . ( $class ? 'class="tabbed ' . $class.'"' : "") . '>
-      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . ' style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
+      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . '><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
       <td>';
       switch ( $field['type'] ) {
 
@@ -258,7 +258,7 @@ class PR_Metabox
           foreach ( $field['options'] as $option ) {
             $html.= '<option value="'. $option['value'] .'" '. ( $meta_value == $option['value'] ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
           }
-          $html.= '</select>';
+          $html.= '</select><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'select_multiple':

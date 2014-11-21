@@ -5,6 +5,7 @@
  */
 
 require_once( PR_CORE_PATH . '/packager/hpub/hpub_package.php' );
+require_once( PR_CORE_PATH . '/packager/web/web_package.php' );
 require_once( PR_CORE_PATH . '/packager/progressbar.php' );
 
 class PR_Packager

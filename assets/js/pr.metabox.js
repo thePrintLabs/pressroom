@@ -67,9 +67,12 @@ jQuery(function(){
     jQuery(this).parent().remove();
   });
 
+  jQuery('#pressroom_metabox').removeClass('postbox');
   jQuery('.tabbed').css('display','none');
   jQuery('.hpub_metabox').css('display','table-row');
   jQuery('.basic_metabox').css('display','table-row');
+  jQuery('.flatplan').css('display','table-row');
+
 
   jQuery('.nav-tab').click(function(e) {
     e.preventDefault();

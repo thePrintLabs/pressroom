@@ -53,10 +53,6 @@
 }
 
 
-
-#pressroom_metaboxe .wp-list-table tr:hover {cursor: move}
-.number_element_input {margin-right: 5px;}
-
 .pr_autocompleted, .repeater-completer {
   background: rgba(33,33,33,0.1);
   border: 1px solid #fff;
@@ -113,6 +109,65 @@
 }
 
 .tabbed h3 { margin: 0 }
+
+/****************************/
+/*         EDITION          */
+/****************************/
+
+#pressroom_metabox .hndle {
+  display: none;
+}
+
+#pressroom_metabox .press-container {
+  padding: 10px 40px;
+}
+
+#pressroom_metabox .press-pr-logo-gray-wp {
+  font-size: 80px;
+}
+
+#pressroom_metabox .postbox {
+  box-shadow: none;
+  border-bottom: 0px;
+}
+
+#pressroom_metabox .press-header h2 {
+  padding: 10px 40px 0 40px;
+  margin: 0px !important;
+}
+
+#pressroom_metabox .press-header-right {
+  position: absolute;
+  right: 20px;
+  top: 40px;
+}
+
+#pressroom_metabox #publish_edition {
+  margin-right: 10px;
+}
+
+#pressroom_metabox .nav-tab {
+  background: #fff;
+  border: 0px;
+  color: #a8a8ac;
+  border-bottom: 1px solid #ccc;
+}
+
+#pressroom_metabox .nav-tab-active,
+#pressroom_metabox .nav-tab-active:hover,
+#pressroom_metabox .nav-tab-active:focus {
+  background: #f1f1f1;
+  outline: none;
+  box-shadow: none;
+  border-top: 1px solid #ccc;
+  color: #333334;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+#pressroom_metabox .wp-list-table tr:hover {cursor: move}
+.number_element_input {margin-right: 5px;}
 
 /****************************/
 /* PUSH NOTIFICATION PAGE  */

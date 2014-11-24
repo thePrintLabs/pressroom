@@ -67,10 +67,12 @@ jQuery(function(){
     jQuery(this).parent().remove();
   });
 
-  jQuery('#name').closest('.form-field').addClass('tabbed basic_metabox');
-  jQuery('#slug').closest('.form-field').addClass('tabbed basic_metabox');
+
+  jQuery('#pressroom_metabox').removeClass('postbox');
   jQuery('.tabbed').css('display','none');
   jQuery('.basic_metabox').css('display','table-row');
+  jQuery('.flatplan').css('display','table-row');
+
 
   jQuery('.nav-tab').click(function(e) {
     e.preventDefault();

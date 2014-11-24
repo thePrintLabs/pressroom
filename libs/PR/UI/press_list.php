@@ -57,7 +57,7 @@ class Pressroom_List_Table extends WP_List_Table
 
     $this->_column_headers = array( $columns, $hidden, $sortable );
 
-    $per_page = !empty( $_REQUEST['post_per_page'] ) ? $_REQUEST['post_per_page'] : 5;
+    $per_page = !empty( $_REQUEST['post_per_page'] ) ? $_REQUEST['post_per_page'] : 10;
     $this->_per_page = $per_page;
     $current_page = $this->get_pagenum();
     $total_items = count( $data );

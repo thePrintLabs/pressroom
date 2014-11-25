@@ -65,7 +65,7 @@ class PR_Edition
 			'label'                => __( 'edition_type', 'edition' ),
 			'description'          => __( 'Press room edition', 'edition' ),
 			'labels'               => $labels,
-			'supports'             => array( 'title', 'author', 'thumbnail', 'custom-fields' ),
+			'supports'             => array( 'title', 'excerpt', 'author', 'thumbnail', 'custom-fields' ),
 			'hierarchical'         => false,
 			'public'               => true,
 			'show_ui'              => true,

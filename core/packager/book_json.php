@@ -30,6 +30,7 @@ final class PR_Packager_Book_JSON
     '_pr_package_date'                => 'date',
     '_pr_package_updated_date'        => 'updated_date',
     'post_title'                      => 'title',
+    'post_excerpt'                    => 'info',
     'contents'                        => 'contents',
     'sharing_urls'                    => 'sharing_urls',
     'titles'                          => 'titles'

@@ -23,8 +23,15 @@
 	position: relative;
 	width: 33.33333333333333333333%;
 	header {
-		width: inherit;
+		position: absolute;
+		z-index: 100;
+		word-wrap: break-word;
+		width: 100%;
 		height: inherit;
+		padding: 1rem 2rem;
+		a {
+			text-decoration: none;
+		}
 	}
 }
 
@@ -45,16 +52,8 @@
 }
 
 .toc__title {
-	padding: 1rem 2rem;
 	margin: 0;
 	@include remType(28px, 40px);
-	position: absolute;
-	// top: 2rem;
-	// left: 2rem;
-	z-index: 100;
-	word-wrap: break-word;
-	width: inherit;
-	height: inherit;
 	@extend %line-clamp;
 }
 

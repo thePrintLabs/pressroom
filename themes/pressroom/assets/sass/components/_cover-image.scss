@@ -66,6 +66,7 @@ h1.cover__title--resize {
 .toc__title,
 .cover__title {
 	transition: all 1s ease-in-out;
+	color: white; // fixed color. All the lines below are meant to be removed.
 	&.background--light {
 	}
 	&.background--dark {
@@ -98,6 +99,8 @@ h1.cover__title--resize {
 
 .cover__overlay {
 	@extend %fullScreen;
+	background-color: rgba(0, 0, 0, 0.5);
+	background-size:5px;
 }
 
 .cover__overlay--scanline {

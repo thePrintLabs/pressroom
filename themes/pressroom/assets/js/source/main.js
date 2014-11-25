@@ -1,17 +1,17 @@
-$checkImage = $('.cover__image');
+// $checkImage = $('.cover__image');
 $checkTitle = $('.cover__title--resize');
 $checkEmbed = $('.entry-content-asset');
 
-document.addEventListener('DOMContentLoaded', function () {
-	if ($checkImage.length > 0){
-		BackgroundCheck.init({
-			targets: '.check',
-			images: '.cover__image',
-			windowEvents: false
-		});
-		// var s = skrollr.init();
-	}
-});
+// document.addEventListener('DOMContentLoaded', function () {
+// 	if ($checkImage.length > 0){
+// 		BackgroundCheck.init({
+// 			targets: '.check',
+// 			images: '.cover__image',
+// 			windowEvents: false
+// 		});
+// 		// var s = skrollr.init();
+// 	}
+// });
 
 if ($checkTitle.length > 0){
 	textFit(document.getElementsByClassName('cover__title--resize')[0], {minFontSize:10, maxFontSize: 150});

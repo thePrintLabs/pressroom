@@ -8,8 +8,8 @@
 */
 
 // temporary fix to enable wp hook & filters inside PR-themes
-require_once('inc/function.php');
-$url = plugin_dir_url( __FILE__ ).'assets/';
+//require_once('inc/function.php');
+
 $stylesheet = 'assets/css/toc.css';
 ?>
 <!DOCTYPE html>
@@ -44,10 +44,10 @@ $stylesheet = 'assets/css/toc.css';
                 ?>
                 
                 <article class="toc__item swiper-slide cover__image" style="<?php echo ($tocItemBg ? $tocItemBg : ''); ?>">
-                    <div class="cover__overlay"></div>
+                    <!-- <div class="cover__overlay <?php // echo $coverClass; ?>"></div> -->
                     <header>
-                        <a href="<?php echo get_permalink(); ?>" target="_parent">
-                            <h1 class="toc__title check"><?php the_title(); ?></h1>
+                        <h1 class="toc__title check"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h1>
+                        <!-- <p class="toc__description"><?php //the_excerpt(); ?></p> -->
                         </a>
                     </header>
                 </article>

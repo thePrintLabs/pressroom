@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Get id of posts linked to an edition
+ * Get posts ids array linked to the edition
+ *
  * @param int or object $edition
  * @param boolean $only_enabled
  * @return array
@@ -26,6 +27,7 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
 
 /**
  * Get posts linked to an edition
+ *
  * @param int or object $edition
  * @param boolean $only_enabled
  * @return array or boolean false
@@ -36,7 +38,14 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
   if ( !empty( $linked_posts_id) ) {
 
-    $post_types = array_merge( array( 'post', 'page' ), pr_get_option( 'pr_custom_post_type' ) );
+    $custom_post_types = pr_get_option( 'pr_custom_post_type' );
+    if ( is_array( $custom_post_types ) ) {
+      $post_types = array_merge( array( 'post', 'page' ), pr_get_option( 'pr_custom_post_type' ) );
+    }
+    else {
+      $post_types = array( 'post', 'page', $custom_post_types );
+    }
+
     $edition_query = new WP_Query( array(
       'post_type'           => $post_types,
       'post_status'         => 'any',
@@ -53,6 +62,7 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
 /**
  * Get single option from pressroom option array
+ *
  * @param  string $option
  * @return mixed or boolean false
  */
@@ -76,7 +86,7 @@ function pr_get_option( $option ) {
  */
 function pr_get_eproject_option( $term_id, $option ) {
 
-  $option = TPL_Editorial_Project::get_config( $term_id, $option);
+  $option = PR_Editorial_Project::get_config( $term_id, $option);
 
   if ( $option ) {
     return $option;
@@ -86,20 +96,22 @@ function pr_get_eproject_option( $term_id, $option ) {
 }
 
 /**
- * get edition link with book protocol
+ * Rewrite edition link with book protocol
+ *
  * @param  int $edition_id
  * @return string
  */
 function pr_book( $edition_id ) {
 
   $edition = get_post( $edition_id );
-  $book_url = str_replace( array( 'http://', 'https://' ), 'book://', TPL_HPUB_URI );
+  $book_url = str_replace( array( 'http://', 'https://' ), 'book://', PR_HPUB_URI );
 
-  return $book_url . TPL_Utils::sanitize_string( $edition->post_title . '.hpub' );
+  return $book_url . PR_Utils::sanitize_string( $edition->post_title . '.hpub' );
 }
 
 /**
- * get previous or next post in edition posts array
+ * Get previous or next post from edition posts array
+ *
  * @param  int $post_id
  * @param  int $edition_id
  * @param  boolean $prev
@@ -140,23 +152,63 @@ function pr_get_edition_post( $post_id, $edition_id, $position = '' ) {
 }
 
 /**
- * get previous post
- * @param  int $current_post_id
+ * Get previous post
+ *
+ * @param  int $post_id
  * @param  int $edition_id
  * @return string or boolean
  */
-function pr_prev( $current_post_id, $edition_id ) {
+function pr_prev( $post_id, $edition_id ) {
 
-  return pr_get_edition_post( $current_post_id, $edition_id, 'prev' );
+  return pr_get_edition_post( $post_id, $edition_id, 'prev' );
 }
 
 /**
- * get next post
- * @param  int $current_post_id
+ * Get next post
+ *
+ * @param  int $post_id
  * @param  int $edition_id
  * @return string or boolean
  */
-function pr_next( $current_post_id, $edition_id ) {
+function pr_next( $post_id, $edition_id ) {
 
-  return pr_get_edition_post( $current_post_id, $edition_id, 'next' );
+  return pr_get_edition_post( $post_id, $edition_id, 'next' );
+}
+
+/**
+ * Rewrite post url with sharing domain
+ *
+ * @param  object $post
+ * @return string $permalink
+ */
+function pr_get_sharing_placeholder( $post_id ) {
+
+  $permalink = get_permalink( $post_id );
+  $domain = get_site_url();
+
+  $options = get_option('pr_settings');
+  $sharing_domain = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '' ;
+
+  if( $sharing_domain ) {
+    $permalink = str_replace( $domain, $sharing_domain, $permalink );
+  }
+
+  return $permalink;
+}
+
+/**
+ * Get sharing link
+ *
+ * @param  object $post
+ * @return string $sharing_url
+ */
+function pr_get_sharing_url( $post_id ) {
+
+  $sharing_url = get_post_meta( $post_id, '_pr_sharing_url', true );
+
+  if( $sharing_url ) {
+      return $sharing_url;
+  }
+
+  return pr_get_sharing_placeholder( $post_id );
 }

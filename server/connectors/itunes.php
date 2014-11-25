@@ -25,6 +25,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       $this->environment = $environment;
     }
     else {
+      add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
       add_action( 'init', array( $this, 'add_endpoint' ), 10 );
       add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
     }
@@ -72,7 +73,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
    */
   public function get_shared_secret() {
 
-    return TPL_Editorial_Project::get_config( $this->eproject->term_id , '_pr_itunes_secret' );
+    return PR_Editorial_Project::get_config( $this->eproject->term_id , '_pr_itunes_secret' );
   }
 
   /**
@@ -85,16 +86,16 @@ final class PR_Connector_iTunes extends PR_Server_API {
     global $wpdb;
     // Old receipt validation method
     if ( $transaction_id ) {
-      $sql = "SELECT receipt_id FROM " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " ";
+      $sql = "SELECT receipt_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS . " ";
       $sql.= "WHERE app_bundle_id = %s AND device_id = %s AND transaction_id = %s";
       $receipt_id = $wpdb->get_var( $wpdb->prepare( $sql, $this->app_id, $this->user_id, $transaction_id ) );
       if ( $receipt_id ) {
-        $sql = "UPDATE " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " SET base64_receipt = %s WHERE receipt_id = %d";
+        $sql = "UPDATE " . $wpdb->prefix . PR_TABLE_RECEIPTS . " SET base64_receipt = %s WHERE receipt_id = %d";
         $wpdb->query( $wpdb->prepare( $sql, $this->base64_receipt, $receipt_id ) );
       }
       else {
         $wpdb->insert(
-          $wpdb->prefix . TPL_TABLE_RECEIPTS,
+          $wpdb->prefix . PR_TABLE_RECEIPTS,
           array(
              'app_bundle_id'  => $this->app_id,
              'device_id'      => $this->user_id,
@@ -106,16 +107,16 @@ final class PR_Connector_iTunes extends PR_Server_API {
       }
     }
     else {
-      $sql = "SELECT receipt_id FROM " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " ";
+      $sql = "SELECT receipt_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS . " ";
       $sql.= "WHERE app_bundle_id = %s AND device_id = %s";
       $receipt_id = $wpdb->get_var( $wpdb->prepare( $sql, $this->app_id, $this->user_id ) );
       if ( $receipt_id ) {
-        $sql = "UPDATE " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " SET base64_receipt = %s WHERE receipt_id = %d";
+        $sql = "UPDATE " . $wpdb->prefix . PR_TABLE_RECEIPTS . " SET base64_receipt = %s WHERE receipt_id = %d";
         $wpdb->query( $wpdb->prepare( $sql, $this->base64_receipt, $receipt_id ) );
       }
       else {
         $wpdb->insert(
-          $wpdb->prefix . TPL_TABLE_RECEIPTS,
+          $wpdb->prefix . PR_TABLE_RECEIPTS,
           array(
              'app_bundle_id'  => $this->app_id,
              'device_id'      => $this->user_id,
@@ -138,7 +139,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
   public function save_receipt_transactions( $receipt_record_id, $receipt, $purchase_type ) {
 
     global $wpdb;
-    $sql = "INSERT IGNORE INTO " . $wpdb->prefix . TPL_TABLE_RECEIPT_TRANSACTIONS . " SET ";
+    $sql = "INSERT IGNORE INTO " . $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS . " SET ";
     $sql.= "receipt_id = %d, transaction_id = %s, product_id = %s, type = %s";
     return $wpdb->query( $wpdb->prepare( $sql, $receipt_record_id, $receipt->transaction_id, $receipt->product_id, $purchase_type ) );
   }
@@ -208,8 +209,8 @@ final class PR_Connector_iTunes extends PR_Server_API {
   public function get_latest_subscription_receipt() {
 
     global $wpdb;
-    $sql = "SELECT DISTINCT r.base64_receipt, t.transaction_id FROM " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " r ";
-    $sql.= "LEFT JOIN " . $wpdb->prefix . TPL_TABLE_RECEIPT_TRANSACTIONS . " t ON r.receipt_id = t.receipt_id ";
+    $sql = "SELECT DISTINCT r.base64_receipt, t.transaction_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS . " r ";
+    $sql.= "LEFT JOIN " . $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS . " t ON r.receipt_id = t.receipt_id ";
     $sql.= "WHERE r.app_bundle_id = %s AND r.device_id = %s AND t.type = 'auto-renewable-subscription' ";
     $sql.= "ORDER BY t.transaction_id DESC LIMIT 0, 1";
     $data = $wpdb->get_row( $wpdb->prepare( $sql, $this->app_id, $this->user_id ) );
@@ -226,8 +227,8 @@ final class PR_Connector_iTunes extends PR_Server_API {
   public function get_purchased_editions() {
 
     global $wpdb;
-    $sql = "SELECT DISTINCT t.product_id FROM " . $wpdb->prefix . TPL_TABLE_RECEIPTS . " r ";
-    $sql.= "LEFT JOIN " . $wpdb->prefix . TPL_TABLE_RECEIPT_TRANSACTIONS . " t ON r.receipt_id = t.receipt_id ";
+    $sql = "SELECT DISTINCT t.product_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS . " r ";
+    $sql.= "LEFT JOIN " . $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS . " t ON r.receipt_id = t.receipt_id ";
     $sql.= "WHERE r.app_bundle_id = %s AND r.device_id = %s AND t.type = 'issue' ";
     $sql.= "ORDER BY t.transaction_id DESC";
     $data = $wpdb->get_results( $wpdb->prepare( $sql, $this->app_id, $this->user_id ) );
@@ -276,21 +277,21 @@ final class PR_Connector_iTunes extends PR_Server_API {
     }
 
     // Get the editorial project settings
-    $eproject_options = TPL_Editorial_Project::get_configs( $this->eproject->term_id );
+    $eproject_options = PR_Editorial_Project::get_configs( $this->eproject->term_id );
     // Get the last published edition in editorial project and retrieve the date
     $last_edition_date = false;
-    $last_edition = TPL_Editorial_Project::get_latest_edition( $this->eproject );
+    $last_edition = PR_Editorial_Project::get_latest_edition( $this->eproject );
     if ( $last_edition ) {
       $last_edition_date = get_post_meta( $last_edition, '_pr_date', true );
     }
 
     $today = date('Y-m-d');
-    $subscription_method = TPL_Editorial_Project::get_subscription_method( $this->eproject->term_id, $receipt->product_id );
+    $subscription_method = PR_Editorial_Project::get_subscription_method( $this->eproject->term_id, $receipt->product_id );
 
     // Enable all editions if the subscription method is not defined or is setted on all
     // and the current date is between the subscription range
     if ( ( !$subscription_method || $subscription_method == 'all' ) && ( $from_date <= $today && $to_date >= $today ) ) {
-      $editions = TPL_Editorial_Project::get_all_editions( $this->eproject );
+      $editions = PR_Editorial_Project::get_all_editions( $this->eproject );
     }
     elseif ( $subscription_method == 'last' ) {
       // Set the start date of subscription equal to latest published edition date,
@@ -299,12 +300,12 @@ final class PR_Connector_iTunes extends PR_Server_API {
       if ( $to_date >= $today && $from_date > $last_edition_date ) {
         $from_date = $last_edition_date;
       }
-      $editions = TPL_Editorial_Project::get_editions_in_range( $this->eproject, $from_date, $to_date );
+      $editions = PR_Editorial_Project::get_editions_in_range( $this->eproject, $from_date, $to_date );
     }
 
     if ( !empty( $editions ) ) {
       foreach ( $editions as $edition ) {
-        $edition_bundle_id = TPL_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
+        $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
         array_push( $issues, $edition_bundle_id );
       }
     }
@@ -376,7 +377,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       $this->send_response( 400, "Bad request. Receipt data and/or purchase type doesn't exist." );
     }
 
-    $this->eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
+    $this->eproject = PR_Editorial_Project::get_by_slug( $eproject_slug );
     if( !$this->eproject ) {
       $this->send_response( 404, "Not found. Editorial project not found." );
     }
@@ -426,7 +427,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     parent::validate_request();
     $eproject_slug = $wp->query_vars['editorial_project'];
 
-    $this->eproject = TPL_Editorial_Project::get_by_slug( $eproject_slug );
+    $this->eproject = PR_Editorial_Project::get_by_slug( $eproject_slug );
     if( !$this->eproject ) {
       $this->send_response( 404, "Not found. Editorial project not found." );
     }

@@ -413,7 +413,8 @@ class PR_Metabox
   public function add_custom_script() {
 
     wp_enqueue_style( 'wp-color-picker' );
-    wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.min.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    //wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.min.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'editorial_project' );
   }
 }

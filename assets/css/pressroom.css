@@ -108,6 +108,12 @@
   background-image: url('../img/trash_hover.png');
 }
 
+.tabbed h3 { margin: 0 }
+
+.taxonomy-pr_editorial_project .form-table td {
+  padding: 15px 0px;
+}
+
 /****************************/
 /*         EDITION          */
 /****************************/

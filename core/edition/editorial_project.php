@@ -120,43 +120,44 @@ class PR_Editorial_Project
    */
   public function get_custom_metabox( $term_id ) {
 
-    $basic_meta = new PR_Metabox( 'basic_metabox', __( 'Basic', 'editorial_project' ), 'normal', 'high', $term_id );
-
-    $vis_meta = new PR_Metabox( 'vis_metabox', __( 'Visualization', 'editorial_project' ), 'normal', 'high', $term_id );
-    $vis_meta->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
+    $hpub = new PR_Metabox( 'hpub_metabox', __( 'hpub', 'editorial_project' ), 'normal', 'high', $term_id );
+    $hpub->add_field( '_pr_default', '<h3>Visualization properties</h3><hr>', '', 'textnode', '' );
+    $hpub->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'portrait', 'name' => __( "Portrait", 'editorial_project' ) ),
         array( 'value' => 'landscape', 'name' => __( "Landscape", 'editorial_project' ) ),
         array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
+        )
       )
-    ) );
-    $vis_meta->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'editorial_project' ), 'checkbox', false );
-    $vis_meta->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '' );
+    );
+    $hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'editorial_project' ), 'checkbox', false );
+    $hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '' );
 
-    $vis_meta->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in portrait mode.', 'editorial_project' ), 'file', '' );
-    $vis_meta->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in landscape mode.', 'editorial_project' ), 'file', '' );
-    $vis_meta->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Color for page numbers to be shown before pages are loaded.', 'editorial_project' ), 'color', '#ffffff' );
-    $vis_meta->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Opacity for page numbers to be shown before pages are loaded. (min 0 => max 1)', 'editorial_project' ), 'decimal', 0.3 );
-    //$vis_meta->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
+    $hpub->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in portrait mode.', 'editorial_project' ), 'file', '' );
+    $hpub->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in landscape mode.', 'editorial_project' ), 'file', '' );
+    $hpub->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Color for page numbers to be shown before pages are loaded.', 'editorial_project' ), 'color', '#ffffff' );
+    $hpub->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Opacity for page numbers to be shown before pages are loaded. (min 0 => max 1)', 'editorial_project' ), 'decimal', 0.3 );
+    $hpub->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
+    $hpub->add_field( '_pr_default', '<h3>Behaviour properties</h3><hr>', '', 'textnode', '' );
 
-    $behavior_meta = new PR_Metabox( 'behavior_metabox', __( 'Behaviour', 'editorial_project' ), 'normal', 'high', $term_id );
-    $behavior_meta->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
-    $behavior_meta->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
+    $hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
+    $hpub->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),
         array( 'value' => 'three-cards', 'name' => __( "Three cards", 'editorial_project' ) )
+        )
       )
-    ) );
-    $behavior_meta->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
-    $behavior_meta->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
-    $behavior_meta->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
-    $behavior_meta->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
-    $behavior_meta->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Swipe on the page to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
+    );
+    $hpub->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
+    $hpub->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
+    $hpub->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
+    $hpub->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
+    $hpub->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Swipe on the page to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
 
-    $toc_meta = new PR_Metabox( 'toc_metabox', __( 'TOC', 'editorial_project' ), 'normal', 'high', $term_id );
-    $toc_meta->add_field( '_pr_index_height', __( 'TOC height', 'edition' ), __( 'Height (in pixels) for the toc bar.', 'editorial_project' ), 'number', 150 );
-    $toc_meta->add_field( '_pr_index_width', __( 'TOC width', 'edition' ), __( 'Width (in pixels) for the toc bar. When empty, the width is automatically set to the width of the page.', 'editorial_project' ), 'number', '' );
-    $toc_meta->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
+    $hpub->add_field( '_pr_default', '<h3>Toc properties</h3><hr>', '', 'textnode', '' );
+    $hpub->add_field( '_pr_index_height', __( 'TOC height', 'edition' ), __( 'Height (in pixels) for the toc bar.', 'editorial_project' ), 'number', 150 );
+    $hpub->add_field( '_pr_index_width', __( 'TOC width', 'edition' ), __( 'Width (in pixels) for the toc bar. When empty, the width is automatically set to the width of the page.', 'editorial_project' ), 'number', '' );
+    $hpub->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
 
     $sub_meta = new PR_Metabox( 'sub_metabox', __( 'In-App Purchases', 'editorial_project' ), 'normal', 'high', $term_id );
     $sub_meta->add_field( '_pr_itunes_secret', __( 'iTunes Shared Secret', 'editorial_project' ), __( 'A shared secret is a unique code that you should use when you make the call to our servers for your In-App Purchase receipts.', 'editorial_project' ), 'text', '' );
@@ -169,26 +170,28 @@ class PR_Editorial_Project
         array( 'value' => 'all', 'name' => __( "All", 'editorial_project' ) ),
         array( 'value' => 'last', 'name' => __( "Last edition", 'editorial_project' ) )
       ),
-    ) );
+    ));
 
     $push_meta = new PR_Metabox( 'push_metabox', __( 'Push notification', 'editorial_project' ), 'normal', 'high', $term_id );
     $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push notification service', 'edition' ), 'radio', '', array(
       'options' => array(
-        array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
-        array( 'value' => 'urbanairship', 'name' => __( "Urban Airship", 'editorial_project' ) ),
+      array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
+      array( 'value' => 'urbanairship', 'name' => __( "Urban Airship", 'editorial_project' ) ),
       )
-    ) );
+    ));
     $push_meta->add_field( 'pr_push_api_app_id', __( 'App key', 'edition' ), __( 'The main identifier of your app. <b>Urban Airship</b>: <i>App Key</i><b> - Parse: </b><i>Application Id</i>', 'editorial_project' ), 'text', '' );
     $push_meta->add_field( 'pr_push_api_key', __( 'App secret', 'edition' ), __( 'The secret token for authentication <b>Urban Airship</b>: <i>App Master Secret</i><b> - Parse: </b><i>REST API Key</i> ', 'editorial_project' ), 'text', '' );
 
+    $metaboxes = array();
+    do_action_ref_array( 'pr_add_eproject_tab', array( &$metaboxes, $term_id ) );
+
     $this->_metaboxes = array(
-      $basic_meta,
-      $vis_meta,
-      $behavior_meta,
-      $toc_meta,
-      $sub_meta,
-      $push_meta
+    $hpub,
+    $sub_meta,
+    $push_meta,
     );
+
+    $this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );
   }
 
   /**
@@ -199,12 +202,24 @@ class PR_Editorial_Project
    */
   public function add_tabs_to_form( $term ) {
 
+    echo '<div id="pressroom_metabox">';
+    echo '<div class="press-header postbox">';
+    echo '<div class="press-container">';
+    echo '<i class="press-pr-logo-gray-wp"></i>';
+    echo '<div class="press-header-right">';
+    echo '</div>';
+    echo '</div>';
+    echo '<hr/>';
     $this->get_custom_metabox( $term->term_id );
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
     foreach ( $this->_metaboxes as $key => $metabox ) {
       echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
     }
     echo '</h2>';
+    echo '</div>';
+    echo '</div>';
+
+
   }
 
 
@@ -320,29 +335,31 @@ class PR_Editorial_Project
    */
   public function customize_form() {
   ?>
-    <script type="text/javascript">
-      jQuery(function(){
-        jQuery('#tag-description, #description, #parent').closest('.form-field').remove();
-        jQuery('.nav-tab-wrapper').insertAfter(jQuery('.wrap>h2'));
-        jQuery('#edittag').addClass('postbox pr-edittag');
-        jQuery('input[name="pr_push_service"]').change(function(){
-          var $this = jQuery(this);
-          if ( $this.is(':checked') ) {
-            if ( $this.val() == 'urbanairship' ) {
-              jQuery('label[for="pr_push_api_app_id"]').html('App Key');
-              jQuery('label[for="pr_push_api_key"]').html('App Master Secret');
-              jQuery('#pr_push_api_app_id').next('.description').html('Urban Airship generated string identifying the app setup. Used in the application bundle.');
-              jQuery('#pr_push_api_key').next('.description').html('Urban Airship generated string used for server to server API access. This should never be shared or placed in an application bundle.');
-            } else if ( $this.val() == 'parse' ) {
-              jQuery('label[for="pr_push_api_app_id"]').html('Application ID');
-              jQuery('label[for="pr_push_api_key"]').html('REST API Key');
-              jQuery('#pr_push_api_app_id').next('.description').html('This is the main identifier that uniquely specifies your application. This is paired with a key to provide your clients access to your application\'s data.');
-              jQuery('#pr_push_api_key').next('.description').html('This key should be used when making requests to the REST API. It also adheres to object level permissions.');
-            }
-          }
-        }).change();
-      });
-    </script>
+  <script type="text/javascript">
+  jQuery(function(){
+    jQuery('#tag-description, #description, #parent').closest('.form-field').remove();
+    var tr = jQuery('<tr><td id="moved-tab" colspan="2"></td></tr>');
+    tr.insertAfter(jQuery('#slug').closest('.form-field'));
+    jQuery('#pressroom_metabox').appendTo('#moved-tab');
+    jQuery('.submit').appendTo('.press-header-right');
+    jQuery('input[name="pr_push_service"]').change(function(){
+      var $this = jQuery(this);
+      if ( $this.is(':checked') ) {
+        if ( $this.val() == 'urbanairship' ) {
+          jQuery('label[for="pr_push_api_app_id"]').html('App Key');
+          jQuery('label[for="pr_push_api_key"]').html('App Master Secret');
+          jQuery('#pr_push_api_app_id').next('.description').html('Urban Airship generated string identifying the app setup. Used in the application bundle.');
+          jQuery('#pr_push_api_key').next('.description').html('Urban Airship generated string used for server to server API access. This should never be shared or placed in an application bundle.');
+        } else if ( $this.val() == 'parse' ) {
+          jQuery('label[for="pr_push_api_app_id"]').html('Application ID');
+          jQuery('label[for="pr_push_api_key"]').html('REST API Key');
+          jQuery('#pr_push_api_app_id').next('.description').html('This is the main identifier that uniquely specifies your application. This is paired with a key to provide your clients access to your application\'s data.');
+          jQuery('#pr_push_api_key').next('.description').html('This key should be used when making requests to the REST API. It also adheres to object level permissions.');
+        }
+      }
+    }).change();
+  });
+  </script>
   <?php
   }
 

@@ -70,7 +70,7 @@ jQuery(function(){
 
   jQuery('#pressroom_metabox').removeClass('postbox');
   jQuery('.tabbed').css('display','none');
-  jQuery('.basic_metabox').css('display','table-row');
+  jQuery('.hpub_metabox').css('display','table-row');
   jQuery('.flatplan').css('display','table-row');
 
 

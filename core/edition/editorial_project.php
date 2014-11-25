@@ -188,7 +188,7 @@ class PR_Editorial_Project
       $sub_meta,
       $push_meta,
     );
-    
+
     $this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );
   }
 
@@ -200,12 +200,24 @@ class PR_Editorial_Project
    */
   public function add_tabs_to_form( $term ) {
 
+    echo '<div id="pressroom_metabox">';
+    echo '<div class="press-header postbox">';
+    echo '<div class="press-container">';
+    echo '<i class="press-pr-logo-gray-wp"></i>';
+    echo '<div class="press-header-right">';
+    echo '</div>';
+    echo '</div>';
+    echo '<hr/>';
     $this->get_custom_metabox( $term->term_id );
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
     foreach ( $this->_metaboxes as $key => $metabox ) {
       echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
     }
     echo '</h2>';
+    echo '</div>';
+    echo '</div>';
+
+
   }
 
 
@@ -327,7 +339,8 @@ class PR_Editorial_Project
         jQuery('#tag-description, #description, #parent').closest('.form-field').remove();
         var tr = jQuery('<tr><td id="moved-tab" colspan="2"></td></tr>');
         tr.insertAfter(jQuery('#slug').closest('.form-field'));
-        jQuery('.nav-tab-wrapper').appendTo('#moved-tab');
+        jQuery('#pressroom_metabox').appendTo('#moved-tab');
+        jQuery('.submit').appendTo('.press-header-right');
         jQuery('input[name="pr_push_service"]').change(function(){
           var $this = jQuery(this);
           if ( $this.is(':checked') ) {

@@ -26,7 +26,6 @@ require_once( PR_LIBS_PR_PATH . 'utils.php' );
 require_once( PR_CORE_PATH . 'setup.php' );
 require_once( PR_CORE_PATH . 'edition/edition.php' );
 require_once( PR_CORE_PATH . 'edition/editorial_project.php' );
-require_once( PR_CORE_PATH . 'posts.php' );
 require_once( PR_CORE_PATH . 'theme.php' );
 require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );

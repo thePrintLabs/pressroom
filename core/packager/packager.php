@@ -79,7 +79,7 @@ class PR_Packager
 		}
 		$this->set_progress( 10, __( 'Parsing cover', 'edition' ) );
 
-		// Parse html of cover
+		// Parse html of cover index.php file
 		$cover = $this->_cover_parse( $editorial_project );
 		if ( !$cover ) {
 			self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );

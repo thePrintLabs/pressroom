@@ -30,6 +30,8 @@ final class PR_Packager_Book_JSON
       '_pr_package_date'                => 'date',
       '_pr_package_updated_date'        => 'updated_date',
       'post_title'                      => 'title',
+      'post_excerpt'                    => 'info',
+      'contents'                        => 'contents',
    );
 
    /**
@@ -44,7 +46,7 @@ final class PR_Packager_Book_JSON
    public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image, $term_id ) {
 
       $press_options = self::_get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id );
-      $press_options['sharing_url'] = $press_options['contents'] = array();
+      $press_options['contents'] = array();
 
       foreach ( $linked_query->posts as $post ) {
 
@@ -52,7 +54,6 @@ final class PR_Packager_Book_JSON
 
         if ( is_file( $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ) ) {
            $press_options['contents'][] = $post_title . '.html';
-           $press_options['sharing_url'][] = pr_get_sharing_url( $post->ID );
         }
         else {
            PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $edition_dir . DIRECTORY_SEPARATOR . $post_title . '.html' ), 'error' );
@@ -65,9 +66,6 @@ final class PR_Packager_Book_JSON
         $press_options['contents'] = array_values( $press_options['contents'] );
       }
 
-      if ( !empty( $press_options['sharing_url'] ) ) {
-        $press_options['sharing_url'] = array_values( $press_options['sharing_url'] );
-      }
 
       return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
    }

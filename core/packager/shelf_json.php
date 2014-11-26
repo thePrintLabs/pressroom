@@ -8,7 +8,7 @@ final class PR_Packager_Shelf_JSON
   private static $_press_to_baker = array(
     'post_name'                 => 'name',
     'post_title'                => 'title',
-    'post_content'              => 'info',
+    'post_excerpt'              => 'info',
     '_pr_package_date'          => 'date',
     '_pr_package_updated_date'  => 'updated_date',
   );

@@ -39,7 +39,7 @@ $stylesheet = 'assets/css/toc.css';
                             $metaClass = 'check';
                             $tocItemBg = 'background-image: url('.$image[0].'); background-position:0 0; background-repeat:no-repeat; background-size:cover;';
                         else:
-                            $tocItemBg = 'background-image: url(\''.$url.'img/fallback.gif\'); background-position:0 0; background-repeat:no-repeat; background-size:cover;';
+                            $tocItemBg = 'background-image: url(\''.$pr_theme_url.'assets/img/fallback.gif\'); background-position:0 0; background-repeat:no-repeat; background-size:cover;';
                         endif;
                 ?>
                 

@@ -4,12 +4,19 @@
 
 ![](PR-github.png?raw=true "PressRoom for Wordpress")
 
+**Requires at least:** 3.8    
+**Tested up to:** 4.0    
+**Stable tag:** 1.0    
+**License:** GPL v2   
+
 ## What is PressRoom?
 PressRoom aims to turn WordPress into a multiple channel publishing platform. It is being developed around a vision for digital publishing that we see growing and struggling with the available technologies. 
 
 Everything in PressRoom is structured around the concept of **Editorial Projects**; they are containers for an unlimited number of **Editions**, which are containers for any kind of content that you can already add and manage in WordPress. 
 
 An **Edition** can be exported at the same time to an iOS client based on the [Baker Framework ](https://github.com/bakerframework/baker) and to the web as standalone microsite. 
+
+**PressRoom** is the perfect tool to embrace a sub-compact publishing model, but you’re not restriced to any kind of content structure since everything is being build to be flexible and highly customizable. Suitable for books, magazines, newspapers or just to manage your static websites.  
 
 ##Installation
 
@@ -47,7 +54,7 @@ Each editorial project has 4 to 6 sections that need configuration:
 - **Push Notifications:** Insert your [Parse](https://parse.com/) or [Urban Airship](http://urbanairship.com/) api credentials. 
 
 ## Connecting Baker Framework Apps to PressRoom
-After you've created your first **Editorial Project** and endpoint for your Baker client will be generated. You find it under the shelf.json column in the Editorial Projects list view. Add your endpoint to the ```settings.plist``` file in your Baker client Xcode project. Pretty straightforward.    
+After you've created your first **Editorial Project** an endpoint for your Baker client will be generated. You find it under the ```shelf.json``` column in the Editorial Projects list view. Add your endpoint to the ```settings.plist``` file in your Baker client Xcode project. Pretty straightforward.    
 Some background info available at [https://github.com/bakerframework/baker/issues/354](https://github.com/bakerframework/baker/issues/354)
 
 ##Edition
@@ -71,9 +78,16 @@ Each Edition must be part of an Editorial Project in order to be published. When
 Free Newsstand subscriptions can be created on iTunes Connect to support Newsstand Apps with free content and automatic updates.
 
 ## How to get support
-Open an issue here on GitHub or head over at [http://discourse.press-room.io](http://discourse.press-room.io) for general usage question.
+Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues) or head over [http://discourse.press-room.io](http://discourse.press-room.io) for general usage question.
+
+##Roadmap
+
+- web export via ftp, sftp, local filesystem
+- more themes
+- extensive documentation
 
 ##Contributing
+Contributions are always welcomed to further improve this plugin:
 
 - Fork it
 - Create your feature branch (git checkout -b my-new-feature)
@@ -82,4 +96,6 @@ Open an issue here on GitHub or head over at [http://discourse.press-room.io](ht
 - Create new Pull Request
 
 ##Licence
-GPL2 license terms. Copyright is ©[thePrintLabs Ltd.](http://theprintlabs.com)
+Each part of PressRoom is open source and licensed under GPL v2.    
+**License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)    
+© 2014 [thePrintLabs Ltd.](http://theprintlabs.com)

@@ -1,5 +1,5 @@
 #PressRoom for Wordpress
-=========
+
 >freedom for the modern storyteller
 
 ![](PR-github.png?raw=true "PressRoom for Wordpress")

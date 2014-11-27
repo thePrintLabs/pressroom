@@ -116,4 +116,34 @@ jQuery(function(){
 
   });
 
+  jQuery('#test-connection').click(function(e) {
+    e.preventDefault();
+    jQuery('#connection-result').html('<div class="spinner"></div>');
+    jQuery("#connection-result .spinner").css('display','inline-block').css('float','none');
+
+    var server    = jQuery('input[name="_pr_ftp_server[0]"]').val();
+    var port      = jQuery('input[name="_pr_ftp_server[1]"]').val();
+    var base      = jQuery('input[name="_pr_ftp_destination_path"]').val();
+    var user      = jQuery('input[name="_pr_ftp_user"]').val();
+    var password  = jQuery('input[name="_pr_ftp_password"]').val();
+    var protocol  = jQuery('input[name="_pr_ftp_protocol"]:checked').val();
+
+    var data = {
+      'server'      : server,
+      'port'        : port,
+      'base'        : base,
+      'user'        : user,
+      'password'    : password,
+      'protocol'    : protocol,
+      'action'      : 'test_ftp_connection'
+    };
+
+    jQuery.post(ajaxurl, data, function(response) {
+      if( response ) {
+        jQuery('#connection-result').html(response.data.message);
+        jQuery('#connection-result').removeClass( 'connection-result-success connection-result-failure' );
+        jQuery('#connection-result').addClass('connection-result connection-result-'+response.data.class);
+      }
+    })
+  });
 });

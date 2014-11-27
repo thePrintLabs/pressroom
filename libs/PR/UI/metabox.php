@@ -150,6 +150,12 @@ class PR_Metabox
         default:
           $term_meta[$field_id] = isset( $_POST[$field_id] ) ? $_POST[$field_id] : $default;
           break;
+
+        case 'double_text':
+          $term_meta[$field_id][0] = isset( $_POST[$field_id][0] ) ? $_POST[$field_id][0] : $default;
+          $term_meta[$field_id][1] = isset( $_POST[$field_id][1] ) ? $_POST[$field_id][1] : $default;
+          break;
+
         case 'repeater':
           $term_meta[$field_id] = array_filter( $_POST[$field_id] );
           break;
@@ -245,6 +251,15 @@ class PR_Metabox
           $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
+        case 'password':
+          $html.= '<input type="password" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
+          break;
+
+        case 'double_text':
+          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '[0]" id="' . $field['id'] . '_0" value="' . ( $meta_value ? $meta_value[0] : $field['default'] ) . '" size="20" style="width:94%" />';
+          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '[1]" id="' . $field['id'] . '_1" value="' . ( $meta_value ? $meta_value[1] : $field['default'] ) . '" size="20" style="width:5%" /><p class="description">'. $field['desc'] . '</p>';
+          break;
+
         case 'text_autocompleted':
           $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><div class="pr_autocompleted"></div>';
           break;
@@ -337,6 +352,10 @@ class PR_Metabox
             $html.= $field['desc'];
           break;
 
+        case 'custom_html':
+          $html.= $field['desc'];
+          break;
+
         case 'repeater':
           $i = 0;
           $values = array('');
@@ -413,7 +432,7 @@ class PR_Metabox
   public function add_custom_script() {
 
     wp_enqueue_style( 'wp-color-picker' );
-    wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.min.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'editorial_project' );
   }
 }

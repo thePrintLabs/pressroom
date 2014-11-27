@@ -114,6 +114,25 @@
   padding: 15px 0px;
 }
 
+.taxonomy-pr_editorial_project .connection-result {
+  padding: 1px 12px;
+  background-color: #fff;
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  display: inline-block;
+  display: none;
+  height: 26px;
+  line-height: 27px;
+}
+
+.taxonomy-pr_editorial_project .connection-result-success {
+  border-right: 4px solid #7ad03a;
+}
+
+.taxonomy-pr_editorial_project .connection-result-failure {
+  border-right: 4px solid #f02a20;
+}
+
 /****************************/
 /*         EDITION          */
 /****************************/

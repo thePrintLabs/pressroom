@@ -41,7 +41,7 @@ class PR_Setup
   private static function _check_php_libs() {
 
     $errors = array();
-    $extensions = array( 'zlib', 'zip', 'libxml' );
+  $extensions = array( 'zlib', 'zip', 'libxml'/*, 'ssh2'*/ ); //@TODO: rimuovere il commento
     foreach ( $extensions as $extension ) {
 
        if( !extension_loaded( $extension ) ) {

@@ -68,18 +68,15 @@ module.exports = function(grunt) {
           'assets/bower_components/modernizer/modernizr.js',
           'assets/bower_components/jquery/dist/jquery.min.js',
           'assets/bower_components/textFit/textFit.min.js',
-          // 'assets/bower_components/backgroundCheck/background-check.js',
           'assets/bower_components/FitVids/jquery.fitvids.js',
           'assets/bower_components/swiper/src/idangerous.swiper.js',
           'assets/bower_components/fastclick/lib/fastclick.js',
-          // 'assets/bower_components/skrollr/dist/skrollr.min.js',
           'assets/js/source/main.js'
           ],
           'assets/js/toc.min.js': [
           'assets/bower_components/modernizer/modernizr.js',
           'assets/bower_components/jquery/dist/jquery.min.js',
           'assets/bower_components/textFit/textFit.min.js',
-          // 'assets/bower_components/backgroundCheck/background-check.js',
           'assets/bower_components/swiper/src/idangerous.swiper.js',
           'assets/js/source/_toc__init.js'
           ]
@@ -95,16 +92,16 @@ module.exports = function(grunt) {
         stage: {
             options: {
                 src: "../pressroom/",
-                dest: "/var/www/wordpress/wp-content/plugins/pressroom-pro/themes/pressroom",
-                host: "tpl@app.press-room.io",
+                dest: "",
+                host: "",
                 syncDestIgnoreExcl: false
             }
         },
         prod: {
             options: {
                 src: "../pressroom/",
-                dest: "/var/www/wordpress/wp-content/plugins/pressroom-pro/themes/pressroom",
-                host: "tpl@app.press-room.io",
+                dest: "",
+                host: "",
                 syncDestIgnoreExcl: false
             }
         }
@@ -144,7 +141,6 @@ module.exports = function(grunt) {
           'assets/sass/pages/*.scss'
         ],
         tasks: ['clean','uglify', 'sass:dev']
-        // tasks: ['clean','uglify', 'sass', 'cssmin']
       },
       livereload: {
         // Browser live reloading
@@ -187,5 +183,6 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', [
     'watch'
   ]);
-  grunt.registerTask('dploy', ['rsync:stage']);
+  grunt.registerTask('stage', ['rsync:stage']);
+  grunt.registerTask('deploy', ['rsync:prod']);
 };

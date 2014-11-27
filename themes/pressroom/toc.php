@@ -1,16 +1,15 @@
 <?php
 
 /*
-*
-* theme: Pressroom
-* rule: toc
-*
+*     
+*     theme:        Pressroom
+*     rule:         toc
+*     description:  Table of Contents theme file
+*     
 */
 
-// temporary fix to enable wp hook & filters inside PR-themes
-//require_once('inc/function.php');
-
 $stylesheet = 'assets/css/toc.css';
+
 ?>
 <!DOCTYPE html>
     <head>
@@ -39,12 +38,12 @@ $stylesheet = 'assets/css/toc.css';
                             $metaClass = 'check';
                             $tocItemBg = 'background-image: url('.$image[0].'); background-position:0 0; background-repeat:no-repeat; background-size:cover;';
                         else:
-                            $tocItemBg = 'background-image: url(\''.$url.'img/fallback.gif\'); background-position:0 0; background-repeat:no-repeat; background-size:cover;';
+                            $tocItemBg = 'background-image: url(\''.$pr_theme_url.'assets/img/fallback.gif\'); background-position:0 0; background-repeat:no-repeat; background-size:cover;';
                         endif;
                 ?>
                 
                 <article class="toc__item swiper-slide cover__image" style="<?php echo ($tocItemBg ? $tocItemBg : ''); ?>">
-                    <!-- <div class="cover__overlay <?php // echo $coverClass; ?>"></div> -->
+                    <div class="cover__overlay"></div>
                     <header>
                         <h1 class="toc__title check"><a href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a></h1>
                         <!-- <p class="toc__description"><?php //the_excerpt(); ?></p> -->

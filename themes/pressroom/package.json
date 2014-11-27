@@ -1,5 +1,5 @@
 {
-  "name": "presstheme",
+  "name": "pressroom",
   "version": "1.0.0",
   "private": true,
   "description": "opinionated pressroom theme",
@@ -7,15 +7,15 @@
   "homepage": "http://press-room.io",
   "repository": {
     "type": "git",
-    "url": "http://"
+    "url": "https://github.com/thePrintLabs/pressroom"
   },
   "bugs": {
-    "url": "http://"
+    "url": "https://github.com/thePrintLabs/pressroom/issues"
   },
   "licenses": [
     {
-      "type": "MIT",
-      "url": "http://opensource.org/licenses/MIT"
+      "type": "GPL",
+      "url": "http://www.gnu.org/licenses/gpl-2.0.html"
     }
   ],
   "engines": {

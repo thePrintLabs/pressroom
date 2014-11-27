@@ -166,14 +166,6 @@ final class PR_Packager_Book_JSON
                      }
                   }
                   break;
-              case '_pr_index_height':
-              case '_pr_index_width':
-                if ( is_numeric( $meta_value[0] ) ) {
-                  $options[$baker_option] = $meta_value[0];
-                }
-                else {
-                  unset( $options[$baker_option] );
-                }
                default:
                   if ( isset( $meta_value[0] ) ) {
                      $options[$baker_option] = $meta_value[0];

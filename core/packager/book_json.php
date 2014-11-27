@@ -101,7 +101,7 @@ final class PR_Packager_Book_JSON
             case '_pr_index_height':
             case '_pr_index_width':
               if( is_numeric( $option ) ) {
-                $options[$baker_option] = $option;
+                $options[$baker_option] = (int)$option;
               }
               break;
             case '_pr_start_at_page':

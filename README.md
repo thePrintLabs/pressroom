@@ -82,7 +82,7 @@ Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues)
 
 ##Roadmap
 
-- web static export via ftp, sftp, local filesystem
+- web static export via ftp, sftp, local filesystem *(very soon)*
 - fix push notification UI (align with the overall seamless plugin' style)
 - more themes
 - extensive documentation

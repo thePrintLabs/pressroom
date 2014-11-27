@@ -6,7 +6,7 @@
 
 **Requires at least:** 3.8    
 **Tested up to:** 4.0    
-**Stable tag:** 1.0    
+**Stable tag:** 0.7    
 **License:** GPL v2   
 
 ## What is PressRoom?

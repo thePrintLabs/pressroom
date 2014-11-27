@@ -2,12 +2,6 @@
    ENTRY META
    ========================================================================== */
 
-// mobile:  320px,
-// fablet:  480px,
-// tablet:  740px,
-// desktop: 980px,
-// wide:    1300px
-
 .cover + .main {
 	margin-top: 2rem;
 }
@@ -50,17 +44,6 @@ h1.cover__title--resize {
 
 .cover__wrapper {
 	@include scut-center-transform;
-	// .cover__title {
-	// 	&.background--light {
-	// 		color: #222;
-	// 	}
-	// 	&.background--dark {
-	// 		color: white;
-	// 	}
-	// 	&.background--complex {
-	// 		color: white;
-	// 	}
-	// }
 }
 
 .toc__title,

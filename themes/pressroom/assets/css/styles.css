@@ -267,9 +267,6 @@ a:active, a:focus {
    BREAKPOINT MQ
    ========================================================================== */
 /* ==========================================================================
-   old
-   ========================================================================== */
-/* ==========================================================================
    COLORS
    ========================================================================== */
 /* ==========================================================================
@@ -345,58 +342,71 @@ figcaption {
    Embed styles
    ========================================================================== */
 /* ==========================================================================
-   Project Font Families
+   Font Families
    ========================================================================== */
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\000038}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000314}}
 h1.alt,
 h2.alt,
 h3.alt,
 h4.alt,
 h5.alt,
 h6.alt {
-  font-family: "Proxima Nova Rg", "ProximaNova-Regular", "Helvetica Neue", Helvetica, sans-serif;
+  font-family: "Lato", "Lato-Bold", "Helvetica Neue", Helvetica, sans-serif;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000355}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000318}}
 em {
   font-style: italic;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000359}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000322}}
 strong {
   font-weight: 700;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000363}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_fonts\.scss}line{font-family:\0000326}}
 em strong,
 strong em {
   font-style: normal;
   font-weight: 700;
 }
 
+/*
+
+Font Families Name in xCode:
+
+"Lato-Italic"
+"Lato-Bold"
+"Lato-BoldItalic"
+"PlayfairDisplay-Regular"
+"PlayfairDisplay-Italic"
+"PlayfairDisplay-Bold"
+"PlayfairDisplay-BoldItalic"
+
+*/
 /* ==========================================================================
    TYPOGRAPHY
    ========================================================================== */
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000310}}
 html {
-  font-size: 17px;
-  line-height: 28px;
+  font-size: 15px;
+  line-height: 27px;
 }
 @media all and (min-width: 46.25em) {
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000310}}
   html {
-    font-size: 21px;
-    line-height: 32px;
+    font-size: 19px;
+    line-height: 31px;
   }
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000317}}
 body {
-  font-family: "Minion Web Pro", "MinionWebPro", "Times New Roman", serif;
-  font-size: 21px;
-  line-height: 32px;
+  font-family: "Lato", "Lato-Regular", "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 19px;
+  line-height: 31px;
   font-size: 1rem;
-  line-height: 1.5238095rem;
+  line-height: 1.6315789rem;
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000322}}
@@ -406,182 +416,182 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Minion Web Pro", "MinionWebPro", "Times New Roman", serif;
+  font-family: "Playfair Display", "PlayfairDisplay-Bold", "Times New Roman", serif;
   font-style: normal;
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000335}}
 h1 {
-  font-size: 50px;
-  font-size: 2.3809524rem;
-  line-height: 64px;
-  line-height: 3.047619rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
-  margin-bottom: 32px;
-  margin-bottom: 1.5238095rem;
+  font-size: 46px;
+  font-size: 2.4210526rem;
+  line-height: 62px;
+  line-height: 3.2631579rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
+  margin-bottom: 31px;
+  margin-bottom: 1.6315789rem;
 }
 @media all and (min-width: 37.5em) {
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000335}}
   h1 {
-    font-size: 67px;
-    font-size: 3.1904762rem;
-    line-height: 96px;
-    line-height: 4.5714286rem;
-    margin-top: 64px;
-    margin-top: 3.047619rem;
-    margin-bottom: 32px;
-    margin-bottom: 1.5238095rem;
+    font-size: 60px;
+    font-size: 3.1578947rem;
+    line-height: 62px;
+    line-height: 3.2631579rem;
+    margin-top: 62px;
+    margin-top: 3.2631579rem;
+    margin-bottom: 31px;
+    margin-bottom: 1.6315789rem;
     line-height: 1.3;
   }
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000342}}
-h2 {
-  font-size: 67px;
-  font-size: 3.1904762rem;
-  line-height: 96px;
-  line-height: 4.5714286rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
-  margin-bottom: 32px;
-  margin-bottom: 1.5238095rem;
-}
-
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000343}}
-h3 {
-  font-size: 50px;
-  font-size: 2.3809524rem;
-  line-height: 64px;
-  line-height: 3.047619rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
-  margin-bottom: 32px;
-  margin-bottom: 1.5238095rem;
+h2 {
+  font-size: 60px;
+  font-size: 3.1578947rem;
+  line-height: 62px;
+  line-height: 3.2631579rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
+  margin-bottom: 31px;
+  margin-bottom: 1.6315789rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000344}}
-h4 {
-  font-size: 38px;
-  font-size: 1.8095238rem;
-  line-height: 64px;
-  line-height: 3.047619rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
-  margin-bottom: 32px;
-  margin-bottom: 1.5238095rem;
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000345}}
+h3 {
+  font-size: 46px;
+  font-size: 2.4210526rem;
+  line-height: 62px;
+  line-height: 3.2631579rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
+  margin-bottom: 31px;
+  margin-bottom: 1.6315789rem;
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000347}}
+h4 {
+  font-size: 34px;
+  font-size: 1.7894737rem;
+  line-height: 62px;
+  line-height: 3.2631579rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
+  margin-bottom: 31px;
+  margin-bottom: 1.6315789rem;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000350}}
 h5 {
-  font-size: 28px;
-  font-size: 1.3333333rem;
-  line-height: 32px;
-  line-height: 1.5238095rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
+  font-size: 26px;
+  font-size: 1.3684211rem;
+  line-height: 31px;
+  line-height: 1.6315789rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
   margin-bottom: 0px;
   margin-bottom: 0rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000351}}
-blockquote {
-  margin-top: 0;
-  margin-bottom: 0;
-}
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000354}}
-blockquote cite {
-  display: block;
-  font-style: normal;
-  font-size: 1rem;
-  line-height: 1.4285714rem;
-  color: #A6A8AB;
-  text-align: center;
-}
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000360}}
-blockquote cite:before {
-  content: '\2014\2009';
-}
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000363}}
-blockquote cite:after {
-  content: '\2009\2014';
-}
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000369}}
-blockquote > p {
-  font-size: 1.3333333rem;
-  line-height: 1.9047619rem;
-  font-style: italic;
-}
-
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000374}}
 h6 {
-  font-size: 21px;
+  font-size: 19px;
   font-size: 1rem;
-  line-height: 32px;
-  line-height: 1.5238095rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
+  line-height: 31px;
+  line-height: 1.6315789rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
   margin-bottom: 0px;
   margin-bottom: 0rem;
   font-weight: normal;
   text-transform: capitalize;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000380}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000361}}
+blockquote {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000364}}
+blockquote cite {
+  display: block;
+  font-style: normal;
+  font-size: 1.1052632rem;
+  line-height: 1.5789474rem;
+  color: #A6A8AB;
+  text-align: center;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000370}}
+blockquote cite:before {
+  content: '\2014\2009';
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000373}}
+blockquote cite:after {
+  content: '\2009\2014';
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000379}}
+blockquote > p {
+  font-size: 1.4736842rem;
+  line-height: 2.1052632rem;
+  font-style: italic;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000385}}
 p, ul, ol {
-  font-size: 21px;
+  font-size: 19px;
   font-size: 1rem;
-  line-height: 32px;
-  line-height: 1.5238095rem;
+  line-height: 31px;
+  line-height: 1.6315789rem;
   margin-top: 0px;
   margin-top: 0rem;
-  margin-bottom: 32px;
-  margin-bottom: 1.5238095rem;
+  margin-bottom: 31px;
+  margin-bottom: 1.6315789rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000384}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000389}}
 p.intro {
-  font-size: 1.3333333rem;
-  line-height: 1.9047619rem;
+  font-size: 1.4736842rem;
+  line-height: 2.1052632rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000387}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000392}}
 small,
 aside,
 figcaption {
-  font-size: 0.8095238rem;
-  line-height: 1.2380952rem;
+  font-size: 0.8947368rem;
+  line-height: 1.3684211rem;
   display: block;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000394}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000399}}
 aside,
 figcaption {
-  font-family: "Proxima Nova Rg", "ProximaNova-Regular", "Helvetica Neue", Helvetica, sans-serif;
+  font-family: "Lato", "Lato-Regular", "Helvetica Neue", Helvetica, sans-serif;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\0000399}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\00003104}}
 p > small {
   padding: 0;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\00003103}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\00003108}}
 .main > p:empty,
 p:empty {
   display: none;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\00003108}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/base\/_typography\.scss}line{font-family:\00003113}}
 .main p:empty + p {
-  font-size: 21px;
+  font-size: 19px;
   font-size: 1rem;
-  line-height: 32px;
-  line-height: 1.5238095rem;
-  margin-top: 32px;
-  margin-top: 1.5238095rem;
-  margin-bottom: 32px;
-  margin-bottom: 1.5238095rem;
+  line-height: 31px;
+  line-height: 1.6315789rem;
+  margin-top: 31px;
+  margin-top: 1.6315789rem;
+  margin-bottom: 31px;
+  margin-bottom: 1.6315789rem;
 }
 
 /* ==========================================================================
@@ -603,7 +613,7 @@ p:empty {
 .entry-meta p {
   margin: 0;
   padding-top: 0.3em;
-  padding-bottom: 0.1em;
+  padding-bottom: 0.5em;
   border-top: 4px double rgba(0, 0, 0, 0.3);
   border-bottom: 4px double rgba(0, 0, 0, 0.3);
 }
@@ -611,25 +621,26 @@ p:empty {
 .entry-meta p:before {
   font-style: italic;
   content: 'di ';
+  font-family: "Playfair Display", "PlayfairDisplay-Regular", "Times New Roman", serif;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000321}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000322}}
 .entry-meta.background--dark p {
   color: white;
   border-top: 4px double rgba(255, 255, 255, 0.3);
   border-bottom: 4px double rgba(255, 255, 255, 0.3);
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000328}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000329}}
 .entry-meta.background--light p {
   color: #222;
   border-top: 4px double rgba(0, 0, 0, 0.3);
   border-bottom: 4px double rgba(0, 0, 0, 0.3);
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000334}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000335}}
 .entry-meta.aligned {
   margin-bottom: 1.5238095rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000340}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_entry-meta\.scss}line{font-family:\0000341}}
 .cover__wrapper .entry-meta p {
   color: white;
   border-top: 4px double rgba(255, 255, 255, 0.3);
@@ -639,19 +650,19 @@ p:empty {
 /* ==========================================================================
    ENTRY META
    ========================================================================== */
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000311}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\000035}}
 .cover + .main {
   margin-top: 2rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000315}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\000039}}
 .cover {
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000321}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000315}}
 .cover__image {
   background-repeat: no-repeat;
   background-size: cover;
@@ -660,44 +671,44 @@ p:empty {
   overflow: hidden;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000330}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000324}}
 h1.cover__title--resize {
   line-height: 1.4em;
   width: 320px;
   padding: 0 2rem;
 }
 @media all and (min-width: 30em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000330}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000324}}
   h1.cover__title--resize {
     width: 480px;
   }
 }
 @media all and (min-width: 37.5em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000330}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000324}}
   h1.cover__title--resize {
     width: 600px;
   }
 }
 @media all and (min-width: 46.25em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000330}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000324}}
   h1.cover__title--resize {
     width: 740px;
   }
 }
 @media all and (min-width: 61.25em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000330}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000324}}
   h1.cover__title--resize {
     width: 980px;
   }
 }
 @media all and (min-width: 81.25em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000330}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000324}}
   h1.cover__title--resize {
     width: 1300px;
   }
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000351}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000345}}
 .cover__wrapper {
   position: absolute;
   top: 50%;
@@ -711,36 +722,36 @@ h1.cover__title--resize {
   transform: translate(-50%, -50%);
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000366}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000349}}
 .toc__title,
 .cover__title {
   transition: all 1s ease-in-out;
   color: white;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000372}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000355}}
 .toc__title.background--dark,
 .cover__title.background--dark {
   color: white;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000375}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000358}}
 .toc__title.background--complex,
 .cover__title.background--complex {
   color: white;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000380}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000363}}
 .cover__overlay--scanline.background--light {
   background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgdmlld0JveD0iLTIuNSA5OTcuNSA1IDUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgLTIuNSA5OTcuNSA1IDUiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiB4MT0iLTIuNSIgeTE9IjEwMDIuNSIgeDI9IjIuNSIgeTI9Ijk5Ny41Ii8+PC9zdmc+") repeat 0 0;
   background-size: 5px;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000385}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000368}}
 .cover__overlay--scanline.background--dark, .cover__overlay--scanline.background--complex {
   background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgdmlld0JveD0iLTIuNSA5OTcuNSA1IDUiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgLTIuNSA5OTcuNSA1IDUiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzExMSIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiB4MT0iLTIuNSIgeTE9IjEwMDIuNSIgeDI9IjIuNSIgeTI9Ijk5Ny41Ii8+PC9zdmc+") repeat 0 0;
   background-size: 5px;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000390}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000373}}
 .cover__overlay, .cover__overlay--simple {
   width: 100%;
   height: 100%;
@@ -751,46 +762,46 @@ h1.cover__title--resize {
   bottom: 0;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003100}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000383}}
 .cover__overlay {
   background-color: rgba(0, 0, 0, 0.5);
   background-size: 5px;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003106}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000389}}
 .cover__overlay--scanline {
   transition: all 1s ease-in-out;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003108}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000391}}
 .cover__overlay--scanline.background--light {
   background-color: rgba(255, 255, 255, 0.7);
   opacity: .35;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003113}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\0000396}}
 .cover__overlay--scanline.background--dark {
   color: white;
   background-color: rgba(0, 0, 0, 0.5);
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003118}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003101}}
 .cover__overlay--scanline.background--complex {
   background-color: rgba(0, 0, 0, 0.2);
   opacity: .35;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003125}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003108}}
 .cover__overlay--simple {
   transition: all 1s ease-in-out;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003128}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003111}}
 .cover__overlay--simple.background--light {
   background-color: rgba(255, 255, 255, 0.2);
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003131}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003114}}
 .cover__overlay--simple.background--dark {
   color: white;
   background-color: rgba(0, 0, 0, 0.2);
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003135}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/components\/_cover-image\.scss}line{font-family:\00003118}}
 .cover__overlay--simple.background--complex {
   background-color: rgba(0, 0, 0, 0.2);
 }
@@ -801,7 +812,7 @@ h1.cover__title--resize {
 /* ==========================================================================
    GRID
    ========================================================================== */
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000312}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\000035}}
 .main h2,
 .main h3,
 .main h4,
@@ -875,7 +886,7 @@ aside:after, .wrapper:after {
   clear: both;
 }
 @media all and (min-width: 30em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000312}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\000035}}
   .main h2,
   .main h3,
   .main h4,
@@ -950,7 +961,7 @@ aside:after, .wrapper:after {
   }
 }
 @media all and (min-width: 37.5em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000312}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\000035}}
   .main h2,
   .main h3,
   .main h4,
@@ -1025,7 +1036,7 @@ aside:after, .wrapper:after {
   }
 }
 @media all and (min-width: 46.25em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000312}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\000035}}
   .main h2,
   .main h3,
   .main h4,
@@ -1100,7 +1111,7 @@ aside:after, .wrapper:after {
   }
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000325}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000318}}
 .article__title,
 blockquote,
 .aligned {
@@ -1130,7 +1141,7 @@ blockquote:after,
   clear: both;
 }
 @media all and (min-width: 30em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000325}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000318}}
   .article__title,
   blockquote,
   .aligned {
@@ -1161,7 +1172,7 @@ blockquote:after,
   }
 }
 @media all and (min-width: 37.5em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000325}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000318}}
   .article__title,
   blockquote,
   .aligned {
@@ -1192,7 +1203,7 @@ blockquote:after,
   }
 }
 @media all and (min-width: 46.25em) {
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000325}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000318}}
   .article__title,
   blockquote,
   .aligned {
@@ -1223,12 +1234,12 @@ blockquote:after,
   }
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000338}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000331}}
 .main {
   padding-bottom: 2rem;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000370}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/layout\/_grid\.scss}line{font-family:\0000363}}
 .main figure .aligncenter,
 .main figure .alignleft,
 .main figure .alignright {
@@ -1241,7 +1252,7 @@ blockquote:after,
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/pages\/_all\.scss}line{font-family:\000031}}
 body {
   background-color: #FAFAFA;
-  color: #363636;
+  color: #505050;
   width: 100%;
 }
 
@@ -1308,8 +1319,8 @@ body {
 @media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/nico\/Siti\/pressroom\/wp-content\/plugins\/pressroom-pro\/themes\/pressroom\/assets\/sass\/pages\/_toc\.scss}line{font-family:\0000354}}
 .toc__title {
   margin: 0;
-  font-size: 1.3333333rem;
-  line-height: 1.9047619rem;
+  font-size: 1.4736842rem;
+  line-height: 2.1052632rem;
 }
 
 /*# sourceMappingURL=styles.css.map */

@@ -9,12 +9,13 @@
 	p {
 		margin: 0;
 		padding-top: 0.3em;
-		padding-bottom: 0.1em;
+		padding-bottom: 0.5em;
 		border-top: 4px double rgba(0,0,0,.3);
 		border-bottom: 4px double rgba(0,0,0,.3);
 		&:before {
 			font-style: italic;
 			content: 'di ';
+			font-family: $font-serif;
 		}
 	}
 	&.background--dark {

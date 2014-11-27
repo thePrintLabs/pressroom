@@ -66,7 +66,6 @@ final class PR_Packager_Book_JSON
         $press_options['contents'] = array_values( $press_options['contents'] );
       }
 
-
       return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
    }
 
@@ -99,25 +98,27 @@ final class PR_Packager_Book_JSON
           $option = isset( $configs[$key] ) ? $configs[$key] : '';
 
           switch ( $key ) {
-             case '_pr_index_height':
-             case '_pr_index_width':
-             case '_pr_start_at_page':
-             case '_pr_page_numbers_alpha':
-                $options[$baker_option] = (int)$option;
-                break;
-             case '_pr_orientation':
-             case '_pr_rendering':
-                $options[$baker_option] = strtolower($option);
-                break;
-             case '_pr_zoomable':
-             case '_pr_vertical_bounce':
-             case '_pr_vertical_pagination':
-             case '_pr_index_bounce':
-             case '_pr_media_autoplay':
-             case '_pr_page_turn_tap':
-             case '_pr_page_turn_swipe':
-                $options[$baker_option] = $option == 'on';
-                break;
+            case '_pr_index_height':
+            case '_pr_index_width':
+              $options[$baker_option] = is_numeric( $option ) ? $option : null;
+              break;
+            case '_pr_start_at_page':
+            case '_pr_page_numbers_alpha':
+              $options[$baker_option] = (int)$option;
+              break;
+            case '_pr_orientation':
+            case '_pr_rendering':
+              $options[$baker_option] = strtolower($option);
+              break;
+            case '_pr_zoomable':
+            case '_pr_vertical_bounce':
+            case '_pr_vertical_pagination':
+            case '_pr_index_bounce':
+            case '_pr_media_autoplay':
+            case '_pr_page_turn_tap':
+            case '_pr_page_turn_swipe':
+              $options[$baker_option] = $option == 'on';
+              break;
             case '_pr_background_image_portrait':
             case '_pr_background_image_landscape':
               $media = get_attached_file( $option );

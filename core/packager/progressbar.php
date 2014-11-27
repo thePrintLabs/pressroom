@@ -31,7 +31,8 @@ class ProgressBar {
       document.getElementById("'.$this->pprogressid.'").innerHTML = "'.htmlspecialchars( $percentage ).'";';
 
     if ( $percentDone == 100 ) {
-      echo 'document.getElementById("'.$this->pbarid.'").style.background = "#86e01e";';
+      echo 'document.getElementById("'.$this->pbarid.'").style.background = "#7DC42A";';
+      echo 'document.getElementById("'.$this->pbarid.'").className = document.getElementById("'.$this->pbarid.'").className + " complete";';
     }
     elseif ( $percentDone >= 75 ) {
       echo 'document.getElementById("'.$this->pbarid.'").style.background = "#f2d31b";';
@@ -122,10 +123,6 @@ class ProgressBar {
         z-index: 2;
         bottom: 45%;
         border-radius: 4px;
-        background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-        background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-        background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
-        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
       }
 
       @keyframes progress-bar-stripes{
@@ -152,6 +149,10 @@ class ProgressBar {
         margin-left: -30px;
         top: 20px;
         z-index: 10;
+      }
+
+      #progress-bar.complete:before {
+        background: #7DC42A;
       }
 
     </style>'."\r\n";

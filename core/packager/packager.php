@@ -45,7 +45,7 @@ class PR_Packager
 			exit;
 		}
 
-		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'info' );
+		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'success' );
 
 		// Create edition folder
 		$edition_post = $this->_edition_post;
@@ -219,7 +219,7 @@ class PR_Packager
 	 * @param string $class
 	 * @echo
  	 */
-	public static function print_line( $output, $class = 'info' ) {
+	public static function print_line( $output, $class = 'success' ) {
 
 		if ( self::$verbose ) {
 			echo '<p class="liveoutput ' . $class . '"><span class="label">' . $class . '</span> ' . $output . '</p>';

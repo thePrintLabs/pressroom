@@ -10,13 +10,13 @@
 **License:** GPL v2   
 
 ## What is PressRoom?
-PressRoom aims to turn WordPress into a multiple channel publishing platform. It is being developed around a vision for digital publishing that we see growing and struggling with the available technologies. 
+PressRoom turns WordPress into a multiple channel publishing platform. It is being developed around a vision for digital publishing that we see growing and struggling with the available technologies. 
 
 Everything in PressRoom is structured around the concept of **Editorial Projects**; they are containers for an unlimited number of **Editions**, which are containers for any kind of content that you can already add and manage in WordPress. 
 
-An **Edition** can be exported at the same time to an iOS client based on the [Baker Framework ](https://github.com/bakerframework/baker) and to the web as standalone microsite. 
+An **Edition** can be exported at the same time to an iOS client based on the [Baker Framework ](https://github.com/bakerframework/baker) and to the web as a standalone microsite. 
 
-**PressRoom** is the perfect tool to embrace a sub-compact publishing model, but you’re not restriced to any kind of content structure since everything is being build to be flexible and highly customizable. Suitable for books, magazines, newspapers or just to manage your static websites.  
+**PressRoom** is the perfect tool to embrace a sub-compact publishing model, but you’re not restricted to any kind of content structure, since everything is being built to be flexible and highly customizable. Suitable for books, magazines, newspapers or just to manage your static websites and release your blog to multiple channels.
 
 ##Installation
 
@@ -24,7 +24,8 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 2. Unzip and rename the folder to "pressroom"
 3. Extract or upload it to your ```/wp-content/plugins/``` directory, then activate
 4. Set permalinks to ```/%postname%/```
-5. Follow the next steps
+5. PressRoom requires the free P2P plugin
+6. Follow the next steps
 
 #Initial Configuration
 1. Configure the basic settings
@@ -44,8 +45,6 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 ## Editorial Project settings
 Each Editorial Project has its own settings and a unique endpoint for Baker clients. Basically this means that a single PressRoom powered WordPress install could manage an unlimited number of *Editorial Projects*, and thus an unlimited number of Baker based Apps.   
 
-*[screenshot placeholder]*
-
 Each editorial project has 4 to 6 sections that need configuration:
 
 - **Basic:** the name and slug of the editorial project.
@@ -59,8 +58,6 @@ If you wish some background info about the ```settings.plist```you could look at
 
 ##Edition
 Create a new *Editions* under the 'Editions' admin menu item, then you'll proceed customizing the basic settings. 
-
-*[screenshot placeholder]*
 
 - ###Flatplan 
 When you edit a post, page or allowed custom post type, you are able to select one or more *Edition* for the content item to be part of. You could even create new *Editions* from the same meta box. Items belonging to an *Edition* are listed under the *Edition* **flatplan**.     

@@ -1,55 +1,18 @@
 /* ==========================================================================
-   Project Font Families
+   Font Families
    ========================================================================== */
 
-$font-sans: "Proxima Nova Rg", "ProximaNova-Regular", "Helvetica Neue", Helvetica, sans-serif;
-$font-serif: "Minion Web Pro", "MinionWebPro", "Times New Roman", serif;
+$font-sans: "Lato", "Lato-Regular", "Helvetica Neue", Helvetica, sans-serif;
+$font-sans-bold: "Lato", "Lato-Bold", "Helvetica Neue", Helvetica, sans-serif;
+$font-serif: "Playfair Display", "PlayfairDisplay-Regular", "Times New Roman", serif;
+$font-serif-bold: "Playfair Display", "PlayfairDisplay-Bold", "Times New Roman", serif;
 
 %alt {
   font-family: $font-sans;
 }
 
-%gotham-thin {
-  font-family: 'Gotham Thin', "Gotham-Thin", AvenirNext-UltraLight, Helvetica-Light, sans-serif;
-  font-style:   normal;
-  font-weight:  200;
-}
-
-%bodoni {
-  font-family: 'Bodoni Std Poster', "BodoniStd-Poster";
-  font-style:   normal;
-  font-weight:  400;
-}
-
-%metro {
-  font-family: 'Metropolis 1920', Metropolis1920;
-  font-style:   normal;
-  font-weight:  400;
-}
-// "ProximaNova-RegularIt",
-// "ProximaNova-Bold"
-%prox-black {
-  font-family: 'Proxima Nova Bl', "ProximaNova-Black";
-  font-style:   normal;
-  font-weight:  400;
-}
-
-%sanotra {
-  font-family: 'Sanotra';       
-  font-style:   normal;
-  font-weight:  400;
-}
-
-%alt-ren {
-  font-family: 'Alt Ren';
-  font-style:   normal;
-  font-weight:  400;
-}
-  
-%figa {
-  font-family: 'Figa';
-  font-style:   normal;
-  font-weight:  400;
+%alt-bold {
+  font-family: $font-sans-bold;
 }
 
 em {
@@ -65,3 +28,17 @@ strong em {
   font-style:   normal;
   font-weight:  700;
 }
+
+/*
+
+Font Families Name in xCode:
+
+"Lato-Italic"
+"Lato-Bold"
+"Lato-BoldItalic"
+"PlayfairDisplay-Regular"
+"PlayfairDisplay-Italic"
+"PlayfairDisplay-Bold"
+"PlayfairDisplay-BoldItalic"
+
+*/

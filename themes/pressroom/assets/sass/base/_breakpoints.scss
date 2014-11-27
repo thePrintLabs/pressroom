@@ -12,12 +12,12 @@ $mq-responsive: true;
 // across team members. It will improve communication between
 // stakeholders, designers, developers, and testers.
 $mq-breakpoints: (
-    basic:   320px,
-    mobile:  480px,
-    fablet:  600px,
-    tablet:  740px,
-    desktop: 980px,
-    wide:    1300px
+	basic:   320px,
+	mobile:  480px,
+	fablet:  600px,
+	tablet:  740px,
+	desktop: 980px,
+	wide:    1300px
 );
 
 // Define the breakpoint from the $mq-breakpoints list that should
@@ -31,36 +31,3 @@ $mq-static-breakpoint: desktop;
 // $mq-show-breakpoints: (mobile, fablet, tablet, desktop, wide);
 
 @import "sass-mq/mq";
-
-/* ==========================================================================
-   old
-   ========================================================================== */
-
-
-//  Horizontal 
-
-	$xs: 320px;
-
-	$s: 480px;
-
-	$sm: 481px 767px;
-
-	$ms: 730px;
-
-	$m: 768px;
-
-	$ml: 900px;
-
-	$l: 996px;
-
-	$xl: 1140px;
-
-	$xxl: 1280px;
-
-	$xxxl: 1440px;
-
-//  Vertical  
-
-	$hs: min-height 45em;
-
-	$hm: min-height 48em;

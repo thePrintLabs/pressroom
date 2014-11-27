@@ -56,23 +56,3 @@
 	@include remType(28px, 40px);
 	@extend %line-clamp;
 }
-
-// .item__overlay {
-// 	@extend %fullScreen;
-// }
-
-// .item__overlay--simple {
-// 	transition: all 1s ease-in-out;
-// 	@extend %fullScreen;
-// 	&.background--light {
-// 		background-color: rgba(255, 255, 255, 0.5);
-// 	}
-// 	&.background--dark {
-// 		color: white;
-// 		background-color: rgba(0, 0, 0, 0.5);
-// 	}
-// 	&.background--complex {
-// 		color: white;
-// 		background-color: rgba(0, 0, 0, 0.5);
-// 	}
-// }

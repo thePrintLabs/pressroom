@@ -77,31 +77,32 @@ class PR_Packager
 			$this->_exit_on_error();
 			return;
 		}
-		$this->set_progress( 10, __( 'Parsing cover', 'edition' ) );
+		//@TODO: rimuovere il metodo cover_parse @DEPRECATED
+		//$this->set_progress( 10, __( 'Parsing cover', 'edition' ) );
 
 		// Parse html of cover index.php file
-		$cover = $this->_cover_parse( $editorial_project );
-		if ( !$cover ) {
-			self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );
-			$this->_exit_on_error();
-			return;
-		}
-		$this->set_progress( 15, __( 'Rewriting cover urls', 'edition' ) );
+		// $cover = $this->_cover_parse( $editorial_project );
+		// if ( !$cover ) {
+		// 	self::print_line( __( 'Failed to parse cover file', 'edition' ), 'error' );
+		// }
+		// else {
+		// 	$this->set_progress( 15, __( 'Rewriting cover urls', 'edition' ) );
+		//
+		// 	// Rewrite cover url
+		// 	$cover = $this->_rewrite_url( $cover );
+		// 	$this->set_progress( 20, __( 'Saving cover file', 'edition' ) );
 
-		// Rewrite cover url
-		$cover = $this->_rewrite_url( $cover );
-		$this->set_progress( 20, __( 'Saving cover file', 'edition' ) );
-
-		// Save cover html file
-		if ( $this->_save_html_file( $cover, 'cover' ) ) {
-			self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
-			$this->set_progress( 22, __( 'Parsing toc file', 'edition' ) );
-		}
-		else {
-			self::print_line( __( 'Failed to save cover file', 'edition' ), 'error' );
-			$this->_exit_on_error();
-			return;
-		}
+			// Save cover html file
+			// if ( $this->_save_html_file( $cover, 'cover' ) ) {
+			// 	self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
+			// 	$this->set_progress( 22, __( 'Parsing toc file', 'edition' ) );
+			// }
+			// else {
+			// 	self::print_line( __( 'Failed to save cover file', 'edition' ), 'error' );
+			// 	$this->_exit_on_error();
+			// 	return;
+			// }
+		//}
 
 		// Parse html of toc
 		$toc = $this->_toc_parse( $editorial_project );
@@ -322,7 +323,8 @@ class PR_Packager
 	protected function _cover_parse( $editorial_project ) {
 
 		$cover = PR_Theme::get_theme_cover( $this->_edition_post->ID );
-		if ( !$cover ) {
+
+		if ( !$cover || !file_exists( $cover ) ) {
 			return false;
 		}
 

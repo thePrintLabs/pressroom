@@ -151,11 +151,13 @@ class PR_Theme
 
 		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
 		$themes = self::get_themes();
-		$files = $themes[$theme];
-		foreach ( $files as $file ) {
-			if ( $file['rule'] == 'cover') {
-				$cover = $file['filename'];
-				return PR_THEMES_PATH . $cover;
+		$files = isset( $themes[$theme] ) ? $themes[$theme] : false;
+		if( $files ) {
+			foreach ( $files as $file ) {
+				if ( $file['rule'] == 'cover') {
+					$cover = $file['filename'];
+					return PR_THEMES_PATH . $cover;
+				}
 			}
 		}
 
@@ -254,9 +256,9 @@ class PR_Theme
 				if ( !isset( $page['rule'] ) || !strlen( $page['rule'] ) ) {
 					array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'rule', $page['filename'] ) );
 				}
-				elseif ( $page['rule'] == 'cover' ) {
-					array_push( $cover, $page['rule'] );
-				}
+				// elseif ( $page['rule'] == 'cover' ) {
+				// 	array_push( $cover, $page['rule'] );
+				// }
 				elseif ( $page['rule'] == 'toc' ) {
 					array_push( $toc, $page['rule'] );
 				}
@@ -265,9 +267,6 @@ class PR_Theme
 				}
 			}
 
-			if ( empty( $cover ) ) {
-				array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'cover' ) );
-			}
 			if ( empty( $toc ) ) {
 				array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'toc' ) );
 			}
@@ -289,14 +288,7 @@ class PR_Theme
 	protected static function _theme_missing_notice( $theme_name, $param = '', $filename = '' ) {
 
 		$html = '<div class="error">';
-		switch ( $param ) {
-			case 'cover':
-				$html.= "<p>Missing <b>$param</b> in theme <b>$theme_name</b></p>";
-				break;
-			default:
-				$html.= "<p>Missing <b>$param</b> in <b>$filename</b> of theme <b>$theme_name</b></p>";
-				break;
-		}
+		$html.= "<p>Missing <b>$param</b> in <b>$filename</b> of theme <b>$theme_name</b></p>";
 		$html.= '</div>';
 
 		return $html;

@@ -49,7 +49,7 @@ class PR_Packager
 			exit;
 		}
 
-		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'info' );
+		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'success' );
 
 		// Create edition folder
 		$edition_post = $this->_edition_post;
@@ -100,11 +100,6 @@ class PR_Packager
 		if ( $this->_save_html_file( $cover, 'cover' ) ) {
 			self::print_line( __( 'Cover file correctly generated', 'edition' ), 'success' );
 			$this->set_progress( 22, __( 'Parsing toc file', 'edition' ) );
-		}
-		else {
-			self::print_line( __( 'Failed to save cover file', 'edition' ), 'error' );
-			$this->_exit_on_error();
-			return;
 		}
 
 		// Parse html of toc
@@ -223,7 +218,7 @@ class PR_Packager
 	 * @param string $class
 	 * @echo
  	 */
-	public static function print_line( $output, $class = 'info' ) {
+	public static function print_line( $output, $class = 'success' ) {
 
 		if ( self::$verbose ) {
 			echo '<p class="liveoutput ' . $class . '"><span class="label">' . $class . '</span> ' . $output . '</p>';

@@ -193,7 +193,7 @@ class PR_Edition
 	*/
 	public function add_publication_metabox_callback() {
 
-		echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true" class="button button-primary button-large thickbox">' . __( "Packaging", "edition" ) . '</a> ';
+		echo '<a id="publish_edition" target="_blank" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true" class="button button-primary button-large">' . __( "Packaging", "edition" ) . '</a> ';
 		echo '<a id="preview_edition" target="_blank" href="' . PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button button-primary button-large">' . __( "Preview", "edition" ) . '</a><br/><br/>';
 		echo __( 'Be sure to save your edition before run an action', 'edition' );
 	}
@@ -292,7 +292,7 @@ class PR_Edition
 		#publishing_popup .label {color:#fff; text-transform:capitalize; padding:2px;width:60px;text-align:center;display:inline-block}
 		#publishing_popup p { font-size: 12px; line-height: 20px; margin: 5px 0;}
 		#publishing_popup h1 {margin:0 0 10px; color:#333;font-weight:300}
-		#publishing_console { padding:10px; height:435px; margin: 0 auto; overflow:scroll;font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }
+		#publishing_console { padding:10px; margin: 0 auto; font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }
 		</style>';
 		echo '<div id="publishing_popup">
 		<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
@@ -463,7 +463,7 @@ class PR_Edition
 
 			case 'action':
 				echo '<a target="_blank" href="'. PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';
-				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true" class=" thickbox">' . __( "Packaging", "edition" ) . '</a> ';
+				echo '<a target="_blank" id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true">' . __( "Packaging", "edition" ) . '</a> ';
 				break;
 
 			default:

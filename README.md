@@ -73,7 +73,7 @@ Do you got a project you would like to discuss? [Tell us more](https://theprintl
 <a href="http://theprintlabs.com" title="thePrintLabs" alt="thePrintLabs" target="_blank">![](logo.png?raw=true "thePrintlabs")<a>
 
 ##Licence
-PressRoom is open source and licensed under GPL v2.    
+PressRoom is open source, licensed under GPL v2.    
 **License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)    
 © 2014 [thePrintLabs Ltd.](http://theprintlabs.com)
 

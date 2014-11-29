@@ -39,7 +39,7 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 - [Configuring an Editorial Project](../../wiki/Editorial-Project-settings)
 - [Configuring an Edition](../../wiki/Edition-settings)
 - [Connecting to Baker Framework Apps](../../wiki/Connecting-to-Baker-Framework-Apps)
-- [Adding custom fonts](Custom-fonts)
+- [Adding custom fonts](../../wiki/Custom-fonts)
 - [Other Resources](../../wiki/Other-Resources)
 
 ##Dev Docs

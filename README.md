@@ -7,6 +7,7 @@
 **Requires at least:** 3.8    
 **Tested up to:** 4.0    
 **Stable tag:** 0.9    
+**Dependecies:** [Posts 2 Posts](https://github.com/scribu/wp-posts-to-posts)    
 **License:** GPL v2   
 
 ## What is PressRoom?
@@ -23,9 +24,8 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 1. [Download the package](https://github.com/thePrintLabs/pressroom/archive/master.zip)
 2. Unzip and rename the folder to "pressroom"
 3. Extract or upload it to your ```/wp-content/plugins/``` directory, then activate
-4. Set permalinks to ```/%postname%/```
-5. PressRoom requires the free P2P plugin
-6. Follow the next steps
+4. You'll be asked to install the [Posts 2 Posts](https://github.com/scribu/wp-posts-to-posts) plugin if it's not present
+5. Set permalinks to ```/%postname%/```
 
 ##Quick start
 1. Configure the basic settings
@@ -35,10 +35,11 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 
 ##User Guide
 
-- [Basic settings](../../wiki/PressRoom-settings) 
+- [PressRoom settings](../../wiki/PressRoom-settings) 
 - [Configuring an Editorial Project](../../wiki/Editorial-Project-settings)
 - [Configuring an Edition](../../wiki/Edition-settings)
 - [Connecting to Baker Framework Apps](../../wiki/Connecting-to-Baker-Framework-Apps)
+- [Adding custom fonts](Custom-fonts)
 - [Other Resources](../../wiki/Other-Resources)
 
 ##Dev Docs
@@ -54,6 +55,7 @@ Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues)
 ##Roadmap
 
 - web static export via ftp, sftp, local filesystem *(very soon)*
+- remove external plugin depencies
 - fix push notification UI (align with the overall seamless plugin' style)
 - more themes
 - extensive documentation

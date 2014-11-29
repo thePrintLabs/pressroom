@@ -35,17 +35,17 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 
 ##User Guide
 
-- [Basic settings](wiki/Basic-settings) 
-- [Editorial Project settings](wiki/Editorial-Project-settings)
-- [Edition settings](wiki/Edition)
-- [Useful Resources](wiki/Useful-Resources)
+- [Basic settings](../../wiki/Basic-settings) 
+- [Editorial Project settings](../../wiki/Editorial-Project-settings)
+- [Edition settings](../../wiki/Edition)
+- [Useful Resources](../../wiki/Useful-Resources)
 
 ##Dev Docs
 
-- [Theming](wiki/Theming) 
-- [Api](wiki/Api)
-- [Hooks](wiki/Hooks)
--  [Customizing the default theme](wiki/Customizing-the-default-theme)
+- [Theming](../../wiki/Theming) 
+- [Api](../../wiki/Api)
+- [Hooks](../../wiki/Hooks)
+-  [Customizing the default theme](../../wiki/Customizing-the-default-theme)
 
 ## How to get support
 Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues) or head over [http://discourse.press-room.io](http://discourse.press-room.io) for general usage question.

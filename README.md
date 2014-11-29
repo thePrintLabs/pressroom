@@ -68,7 +68,7 @@ Contributions are always welcomed to further improve this plugin:
 
 
 ##Custom Development
-Do you got a project you would like to discuss? [Tell us more](https://theprintlabs.typeform.com/to/QyHaBj)
+Have you got a project you would like to discuss? [Tell us more](https://theprintlabs.typeform.com/to/QyHaBj)
 
 <a href="https://theprintlabs.typeform.com/to/QyHaBj" title="thePrintLabs" alt="thePrintLabs" target="_blank">![](logo-tpl.png?raw=true "thePrintlabs")</a>
 

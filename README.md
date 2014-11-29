@@ -35,9 +35,10 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 
 ##User Guide
 
-- [Basic settings](../../wiki/Basic-settings) 
-- [Editorial Project settings](../../wiki/Editorial-Project-settings)
-- [Edition settings](../../wiki/Edition)
+- [Basic settings](../../wiki/PressRoom-settings) 
+- [Configuring an Editorial Project](../../wiki/Editorial-Project-settings)
+- [Configuring an Edition](../../wiki/Edition-settings)
+- [Connecting to Baker Framework Apps](../../wiki/Connecting-to-Baker-Framework-Apps)
 - [Other Resources](../../wiki/Other-Resources)
 
 ##Dev Docs

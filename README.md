@@ -2,7 +2,7 @@
 
 >freedom for the modern storyteller
 
-![](PR-github.png?raw=true "PressRoom for Wordpress")
+<a>![](PR-github.png?raw=true "PressRoom for Wordpress")</a>
 
 **Requires at least:** 3.8    
 **Tested up to:** 4.0    
@@ -26,56 +26,25 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 4. Set permalinks to ```/%postname%/```
 5. Follow the next steps
 
-#Initial Configuration
+##Quick start
 1. Configure the basic settings
 2. Create your first **Editorial Project**
 3. Connect your Baker Framework iOS App to your editorial project's **endpoint**
 4. Create an **Edition**, review and publish ```;)```
 
-## Basic settings
+##User Guide
 
-*[screenshot placeholder]*
+- [Basic settings](wiki/Basic-settings) 
+- [Editorial Project settings](wiki/Editorial-Project-settings)
+- [Edition settings](wiki/Edition)
+- [Useful Resources](wiki/Useful-Resources)
 
-- **Default theme:** a global setting for the default theme to be used for new *Editorial Projects* and *Editions*. It could be overwritten at *Editorial Project* or *Edition* level.
-- **Max edition number:** this is the maximum number of *Editions* (issues) in the Baker ```shelf.json``` Baker clients will read the ```shelf.json``` to find available *Editions* (issues) and download related meta as cover image, price tag etc. 
-- **Flush themes cache:** refresh cache when you add new themes or new templates inside your existing theme.
-- **Connected custom post types:** Defines which custom post types are allowed to be included into an *Edition*.
+##Dev Docs
 
-## Editorial Project settings
-Each Editorial Project has its own settings and a unique endpoint for Baker clients. Basically this means that a single PressRoom powered WordPress install could manage an unlimited number of *Editorial Projects*, and thus an unlimited number of Baker based Apps.   
-
-*[screenshot placeholder]*
-
-Each editorial project has 4 to 6 sections that need configuration:
-
-- **Basic:** the name and slug of the editorial project.
-- **Visualization / Behaviour:** these are the ```book.json``` settings that are allowed on Baker. PressRoom supports all the available ```book.json``` parameters. For a comprehensive guide about the topic please head over [Book.json Baker extension parameters](https://github.com/bakerframework/baker/wiki/Book.json-Baker-extension-parameters) on the official Baker Framework repository. 
-- **TOC:** ```book.json``` settings for the table of contents. More info at [Adding an Index Bar to your publication](https://github.com/bakerframework/baker/wiki/Adding-an-Index-Bar-to-your-publication)
-- **Push Notifications:** Insert your [Parse](https://parse.com/) or [Urban Airship](http://urbanairship.com/) api credentials. 
-
-## Connecting Baker Framework Apps to PressRoom
-After you've created your first **Editorial Project** an endpoint for your Baker client will be generated. You could find it under the ```shelf.json``` column in the Editorial Projects list view. Add your endpoint to the ```settings.plist``` file in your Baker client Xcode project and you're done. Pretty straightforward, isn't it ?    
-If you wish some background info about the ```settings.plist```you could look at [https://github.com/bakerframework/baker/issues/354](https://github.com/bakerframework/baker/issues/354)
-
-##Edition
-Create a new *Editions* under the 'Editions' admin menu item, then you'll proceed customizing the basic settings. 
-
-*[screenshot placeholder]*
-
-- ###Flatplan 
-When you edit a post, page or allowed custom post type, you are able to select one or more *Edition* for the content item to be part of. You could even create new *Editions* from the same meta box. Items belonging to an *Edition* are listed under the *Edition* **flatplan**.     
-Items in the **flatplan** can be visible or hidden. Hidden items will not be included in the final package. Items can also be dragged to change their final order. 
-
-- ###Themes
-PressRoom comes pre-bundled with an initial theme to let you start quickly. You could use it it as starting point to learn how PressRoom themes works or to start developing and adding your own. Themes added to the ```/pressroom/themes/``` folder will show up automatically.    
-For each *Edition* you are able to define a custom theme. Under each theme you are able to define an unlimited number of template files. Next to each content item in the **flatplan** you could select which template file to use for that particular item.
-
-- ###Preview
-Inside the *Edition* edit page and *Editions* list view, you are able perform a complete web preview of the overall edition. 
-
-- ###Publish
-Each Edition must be part of an Editorial Project in order to be published. When an *Edition* is ready you'll use the **distribute** button to package all the content items, media and template assets and create a complete ```.hpub``` file. At the same time the related ```shelf.json``` gets updated on the parent *Editorial Project* endpoint.     
-Free Newsstand subscriptions can be created on iTunes Connect to support Newsstand Apps with free content and automatic updates.
+- [Theming](wiki/Theming) 
+- [Api](wiki/Api)
+- [Hooks](wiki/Hooks)
+-  [Customizing the default theme](wiki/Customizing-the-default-theme)
 
 ## How to get support
 Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues) or head over [http://discourse.press-room.io](http://discourse.press-room.io) for general usage question.
@@ -96,7 +65,14 @@ Contributions are always welcomed to further improve this plugin:
 - Push to the branch (git push origin my-new-feature)
 - Create new Pull Request
 
+
+##Custom Development
+Do you got a project you would like to discuss? [Tell us more](https://theprintlabs.typeform.com/to/QyHaBj)
+
+<a href="http://theprintlabs.com" title="thePrintLabs" alt="thePrintLabs" target="_blank">![](logo.png?raw=true "thePrintlabs")<a>
+
 ##Licence
-Each part of PressRoom is open source and licensed under GPL v2.    
+PressRoom is open source and licensed under GPL v2.    
 **License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)    
 © 2014 [thePrintLabs Ltd.](http://theprintlabs.com)
+

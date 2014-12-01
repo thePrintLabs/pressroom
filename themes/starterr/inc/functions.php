@@ -1,8 +1,5 @@
 <?php
 
-
-// remove_filter( 'the_content', 'wpautop' );
-
 /**
     Remove Empty <p>
  */
@@ -14,15 +11,6 @@ function remove_empty_p($content) {
     return preg_replace('#<p>\s*+(<br\s*/*>)?\s*</p>#i', '', $content);
 }
 
-/**
-    Wrap images in a <figure> tag
- */
-
-// add_filter('the_content', 'filter_images', 30, 1);
-
-function filter_images($content){
-    return preg_replace('/<img (.*) \/>\s*/iU', '<figure><img \1 /></figure>', $content);
-}
 
 /**
     Image with caption clean up
@@ -79,32 +67,11 @@ function another_filter_images($content){
 }
 
 /**
-    Remove <p> from images and iframes
- */
-
-function filter_ptags_on_images($content)
-{
-    $content = preg_replace('/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/iU', '\1\2\3', $content);
-    return preg_replace('/<p>\s*(<iframe .*>*.<\/iframe>)\s*<\/p>/iU', '\1', $content);
-}
-// add_filter('the_content', 'filter_ptags_on_images');
-
-/**
-    Remove <p> from images and iframes
+    Remove <p> from iframes
  */
 
 add_filter('embed_oembed_html', 'my_embed_oembed_html', 99, 4);
+
 function my_embed_oembed_html($html, $url, $attr, $post_id) {
   return '<div class="entry-content-asset">' . $html . '</div>';
-}
-
-/**
-    Filter applied at image insert
- */
-
-// add_filter( 'image_send_to_editor', 'wp_image_wrap_init', 10, 8 );
-function wp_image_wrap_init( $html, $id, $caption, $title, $align, $url, $size, $alt ) {
-    $meta_w_img = wp_get_attachment_metadata($id);
-    $meta_w_img_title = $meta_w_img['image_meta']['title'];
-    return '<figure id="'. $id .'" class="'. $align .'"><a href="'. wp_get_attachment_url( $id ) .'" class="img-gallery" data-gallery data-share=""><img class="lazy-load img-thumbnail" data-src="'. wp_get_attachment_url( $id ) .'"src="'.get_stylesheet_directory_uri().'/assets/img/blank.gif" title="'.$meta_w_img_title.'" alt="'.$meta_w_img_title.'"/><span class="icons"></span><noscript><img src="'. wp_get_attachment_url( $id ) .'" /></noscript></a></figure>';
 }

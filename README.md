@@ -52,11 +52,13 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 ## How to get support
 Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues) or head over [http://discourse.press-room.io](http://discourse.press-room.io) for general usage question.
 
-##Roadmap
+##Roadmap to v.1.0
 
 - web static export via ftp, sftp, local filesystem *(very soon)*
-- remove external plugin depencies
+- remove external plugin dependecies
 - fix push notification UI (align with the overall seamless plugin' style)
+- move **starterr** theme in its own repo
+- add **starterr** as a submodule
 - more themes
 - extensive documentation
 

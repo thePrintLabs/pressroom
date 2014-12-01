@@ -4,6 +4,7 @@ class PR_Server
 {
   public function __construct() {
 
+    require_once( PR_CORE_PATH . 'stats.php' );
     require_once( PR_SERVER_PATH . 'api.php' );
     require_once( PR_SERVER_PATH . 'shelf.php' );
     require_once( PR_SERVER_PATH . 'issue.php' );

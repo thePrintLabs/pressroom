@@ -45,3 +45,4 @@ define( "PR_EDITORIAL_PROJECT", 'pr_editorial_project' );
 define( "PR_TABLE_RECEIPTS", 'pr_receipts' );
 define( "PR_TABLE_RECEIPT_TRANSACTIONS", 'pr_receipt_transactions' );
 define( "PR_TABLE_PURCHASED_ISSUES", 'pr_purchased_issues' );
+define( "PR_TABLE_STATS" , 'pr_statistics' );

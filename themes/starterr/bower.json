@@ -1,0 +1,18 @@
+{
+  "name": "pressroom default theme",
+  "dependencies": {
+    "textFit": "~2.1.0",
+    "modernizer": "~2.8.2",
+    "knife": "~0.3.2",
+    "Sassifaction": "~0.0.2",
+    "sass-mq": "~2.1.1",
+    "scut": "~1.0.1",
+    "jeet": "~6.1.2",
+    "geoffgraham.animate.scss": "*",
+    "mobile-detect": "~0.4.0",
+    "fluidvids": "latest",
+    "fastclick": "~1.0.3",
+    "swiper": "~2.7.0",
+    "bourbon": "~4.0.2"
+  }
+}

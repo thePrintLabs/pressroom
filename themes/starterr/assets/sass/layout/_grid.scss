@@ -1,0 +1,67 @@
+/* ==========================================================================
+   GRID
+   ========================================================================== */
+
+%wrap {
+	@include center(mq-get-breakpoint-width(basic), 1rem);
+	@include mq($from: mobile) {
+		@include center(mq-get-breakpoint-width(mobile), 1rem);
+	}
+	@include mq($from: fablet) {
+		@include center(mq-get-breakpoint-width(fablet), 1rem);
+	}
+	@include mq($from: tablet) {
+		@include center(mq-get-breakpoint-width(tablet), 2rem);
+	}
+}
+
+%wide-wrap {
+	@include center(mq-get-breakpoint-width(mobile), 1rem);
+	@include mq($from: mobile) {
+		@include center(mq-get-breakpoint-width(fablet), 1rem);
+	}
+	@include mq($from: fablet) {
+		@include center(mq-get-breakpoint-width(tablet), 1rem);
+	}
+	@include mq($from: tablet) {
+		@include center(mq-get-breakpoint-width(desktop), 2rem);
+	}
+}
+
+.main {
+	padding-bottom: 2rem;
+}
+
+.article__title,
+blockquote,
+.aligned 
+{
+	@extend %wide-wrap;
+}
+
+.main h2,
+.main h3,
+.main h4,
+.main h5,
+.main h6,
+.main > p,
+ul,
+ol,
+dl,
+.aligncenter,
+.alignleft,
+.alignright,
+small,
+aside {
+	@extend %wrap;
+}
+
+.wrapper {
+	@extend %wrap;
+}
+
+.main figure .aligncenter,
+.main figure .alignleft,
+.main figure .alignright {
+	width: 100%;
+}

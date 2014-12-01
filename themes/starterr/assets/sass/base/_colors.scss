@@ -1,0 +1,37 @@
+/* ==========================================================================
+   COLORS
+   ========================================================================== */
+
+    $white: #fff; 
+    $black: #505050; 
+    $grey: #A6A8AB;
+
+    $light-grey: #FAFAFA;
+    $dark-grey: #666666;
+
+    $accent: #2e7d78;  
+
+//  functional:
+
+    $textColor: $dark-grey;
+    $linkColor: $accent;
+    $borderColor: $light-grey;
+    $bgColor: $black;
+
+//  borders:
+
+    $bd: 1px solid $light-grey;
+    $bd-black: 1px solid $dark-grey;
+
+//  placeholders 
+
+%baseColor {
+    color: $textColor;
+    background: $black;
+} 
+
+%nightColor {
+    color: $textColor;
+    background: $black;
+} 
+

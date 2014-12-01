@@ -1,0 +1,46 @@
+/* ==========================================================================
+   Font Families
+   ========================================================================== */
+
+$font-sans: "Lato", "Lato-Regular", "Helvetica Neue", Helvetica, sans-serif;
+$font-sans-bold: "Lato", "Lato-Bold", "Helvetica Neue", Helvetica, sans-serif;
+$font-serif: "Playfair Display", "PlayfairDisplay-Regular", "Times New Roman", serif;
+$font-serif-bold: "Playfair Display", "PlayfairDisplay-Bold", "Times New Roman", serif;
+
+%alt {
+  font-family: $font-sans;
+}
+
+%alt-bold {
+  font-family: $font-sans-bold;
+}
+
+em {
+  font-style:   italic;
+}
+
+strong {
+  font-weight:  700;
+}
+
+em strong,
+strong em {
+  font-style:   normal;
+  font-weight:  700;
+}
+
+/*
+
+Font Families Name in xCode:
+
+"Lato-Italic"
+"Lato-Bold"
+"Lato-BoldItalic"
+"PlayfairDisplay-Regular"
+"PlayfairDisplay-Italic"
+"PlayfairDisplay-Bold"
+"PlayfairDisplay-BoldItalic"
+
+Read https://github.com/thePrintLabs/pressroom/wiki/Custom-fonts
+
+*/

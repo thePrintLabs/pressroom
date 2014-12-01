@@ -31,7 +31,9 @@ class PR_Preview {
 
     if ( PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_dir ) ) {
       $font_path = PR_Theme::get_theme_path( $edition->ID ) . 'assets' . DIRECTORY_SEPARATOR . 'fonts';
-      PR_Utils::recursive_copy( $font_path, $edition_path . DIRECTORY_SEPARATOR . 'fonts');
+      if( file_exists( $font_path ) ) {
+        PR_Utils::recursive_copy( $font_path, $edition_path . DIRECTORY_SEPARATOR . 'fonts');
+      }
       self::draw_toc( $edition, $linked_query );
     }
 

@@ -230,18 +230,6 @@ class PR_Edition
 	}
 
 	/**
-	 * Pressroom metabox callback
-	 *
-	 * @return void
-	 */
-	public function add_pressroom_metabox_callback() {
-
-		$pr_table = new Pressroom_List_Table();
-		$pr_table->prepare_items();
-		$pr_table->display();
-	}
-
-	/**
 	* Pressroom metabox callback
 	*
 	* @return void

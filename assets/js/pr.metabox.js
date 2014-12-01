@@ -37,7 +37,6 @@ jQuery(function(){
   jQuery( "#add-field" ).click(function(e) {
     e.preventDefault();
 
-
     var clone = jQuery( "#pr_repeater" ).clone();
     var minus = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAARBAMAAAA1VnEDAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAF3AAABdwE7iaVvAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAA9QTFRF////AAAAAAAAAAAAAAAAUTtq8AAAAAR0Uk5TADVCUDgXPZIAAAAaSURBVAhbY2CgKVA2BgIjCJvRBQwEMGVoBQCxXAPsAZwyyQAAAABJRU5ErkJggg60a8c977b5851eb7a101a51c617fd8ad"/>';
     var last_index = jQuery( ".pr_repeater" ).last().data('index');
@@ -67,10 +66,12 @@ jQuery(function(){
     jQuery(this).parent().remove();
   });
 
-  jQuery('#name').closest('.form-field').addClass('tabbed basic_metabox');
-  jQuery('#slug').closest('.form-field').addClass('tabbed basic_metabox');
+
+  jQuery('#pressroom_metabox').removeClass('postbox');
   jQuery('.tabbed').css('display','none');
-  jQuery('.basic_metabox').css('display','table-row');
+  jQuery('.hpub_metabox').css('display','table-row');
+  jQuery('.flatplan').css('display','table-row');
+
 
   jQuery('.nav-tab').click(function(e) {
     e.preventDefault();

@@ -108,8 +108,6 @@ class PR_Packager
 		$toc = $this->_toc_parse( $editorial_project );
 		if ( !$toc ) {
 			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
-			$this->_exit_on_error();
-			return;
 		}
 
 		// Rewrite toc url
@@ -123,8 +121,6 @@ class PR_Packager
 		}
 		else {
 			self::print_line( __( 'Failed to save toc file', 'edition' ), 'error' );
-			$this->_exit_on_error();
-			return;
 		}
 
 		$total_progress = 40;
@@ -250,7 +246,7 @@ class PR_Packager
 	 * Stop packager procedure and clear temp folder
 	 * @void
 	 */
-	protected function _packager_exit_on_error() {
+	protected function _exit_on_error() {
 
 		$this->_clean_temp_dir();
 		$this->set_progress( 100, __( 'Errore creating package', 'edition' ) );
@@ -350,7 +346,7 @@ class PR_Packager
 	protected function _toc_parse( $editorial_project ) {
 
     $toc = PR_Theme::get_theme_toc( $this->_edition_post->ID );
-    if ( !$toc ) {
+    if ( !$toc || !file_exists( $toc ) ) {
       return false;
     }
 

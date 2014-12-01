@@ -1,0 +1,36 @@
+{
+  "name": "pressroom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "opinionated pressroom theme",
+  "author": "theprintlabs",
+  "homepage": "http://press-room.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thePrintLabs/pressroom"
+  },
+  "bugs": {
+    "url": "https://github.com/thePrintLabs/pressroom/issues"
+  },
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "http://www.gnu.org/licenses/gpl-2.0.html"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-clean": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-sass": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-rsync": "latest",
+    "grunt-ver": "latest"
+  },
+  "dependencies": {}
+}

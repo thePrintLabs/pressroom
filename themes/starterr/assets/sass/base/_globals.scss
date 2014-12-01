@@ -1,0 +1,95 @@
+/* ==========================================================================
+   "not just for webkit" optimizations
+   ========================================================================== */
+*, 
+*:before, 
+*:after {
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
+}
+
+*{
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+html {
+  -ms-text-size-adjust: 100%; 
+  -webkit-text-size-adjust: 100%; 
+}
+
+body {
+  padding: 0;
+    margin: 0;
+}
+
+%line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;  
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-rendering: optimizeLegibility;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+
+audio,
+canvas,
+progress,
+video {
+  display: inline-block; 
+  vertical-align: baseline; 
+}
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+
+a, a:link, a:hover, a:visited, img {
+  -webkit-touch-callout: none;
+}
+
+a, a:link, a:hover, a:visited {
+  text-decoration: none;
+  color: #1872B9;
+}
+
+:focus, :active {outline:none;}
+::-moz-focus-inner {border:0;}
+
+a:active,a:focus {
+  outline: none;
+}

@@ -58,7 +58,7 @@ class PR_Stats
     echo '<canvas id="dwnEditionChart" width="400" height="400"></canvas>';
     echo '<script type="text/javascript">
     jQuery(document).ready(function($){var d=' . $js_data . ', ctx = $("#dwnEditionChart").get(0).getContext("2d"),
-    downloadedChart = new Chart(ctx).Line(d); });
+    downloadedChart = new Chart(ctx).Line(d, {responsive:true}); });
     </script>';
   }
 
@@ -90,7 +90,7 @@ class PR_Stats
     echo '<canvas id="prchEditionChart" width="400" height="400"></canvas>';
     echo '<script type="text/javascript">
     jQuery(document).ready(function($){var d=' . $js_data . ', ctx = $("#prchEditionChart").get(0).getContext("2d"),
-    downloadedChart = new Chart(ctx).Bar(d); });
+    downloadedChart = new Chart(ctx).Bar(d, {responsive:true}); });
     </script>';
   }
 

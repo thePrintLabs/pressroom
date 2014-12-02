@@ -4,9 +4,9 @@
  *
  */
 
-require_once( PR_CORE_PATH . '/packager/hpub/hpub_package.php' );
-require_once( PR_CORE_PATH . '/packager/web/web_package.php' );
-require_once( PR_CORE_PATH . '/packager/progressbar.php' );
+require_once( PR_PACKAGER_EXPORTERS_PATH . '/hpub/hpub_package.php' );
+require_once( PR_PACKAGER_EXPORTERS_PATH . '/web/web_package.php' );
+require_once( PR_PACKAGER_PATH . '/progressbar.php' );
 
 class PR_Packager
 {
@@ -224,7 +224,7 @@ class PR_Packager
 	 * Stop packager procedure and clear temp folder
 	 * @void
 	 */
-	protected function _packager_exit_on_error() {
+	protected function _exit_on_error() {
 
 		$this->_clean_temp_dir();
 		$this->set_progress( 100, __( 'Errore creating package', 'edition' ) );

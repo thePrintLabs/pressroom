@@ -11,6 +11,11 @@ define( "PR_CORE_PATH", PR_PLUGIN_PATH . 'core/' );
 define( "PR_PAGES_PATH", PR_CORE_PATH . 'pages/' );
 define( "PR_CONFIGS_PATH", PR_CORE_PATH . 'configs/' );
 
+/* PACKAGER */
+define( "PR_PACKAGER_PATH", PR_CORE_PATH . 'packager/' );
+define( "PR_PACKAGER_CONNECTORS_PATH", PR_PACKAGER_PATH . 'connectors/' );
+define( "PR_PACKAGER_EXPORTERS_PATH", PR_PACKAGER_PATH . 'exporters/' );
+
 /* SERVER */
 define( "PR_SERVER_PATH", PR_PLUGIN_PATH . 'server/' );
 define( "PR_CONNECTORS_PATH", PR_SERVER_PATH . 'connectors/' );

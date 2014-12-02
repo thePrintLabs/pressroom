@@ -30,7 +30,6 @@ class PR_Edition
 		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
-		add_action( 'edit_form_advanced', array( $this, 'form_add_thickbox' ) );
 
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
@@ -261,7 +260,7 @@ class PR_Edition
 	public function add_publication_action() {
 
 		echo '<a id="preview_edition" target="_blank" href="' . PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<a id="publish_edition" target="_blank" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true" class="button button-primary button-large thickbox">' . __( "Distribute", "edition" ) . '</a> ';
+		echo '<a id="publish_edition" target="_blank" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
 	}
 
 	/**
@@ -293,6 +292,7 @@ class PR_Edition
 		}
 
 		$this->get_custom_metaboxes( $post );
+		
 		foreach ( $this->_metaboxes as $metabox ) {
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
@@ -398,16 +398,6 @@ class PR_Edition
 	public function form_add_enctype() {
 
 		echo ' enctype="multipart/form-data"';
-	}
-
-	/**
-	 * Add thickbox to form for the packager support
-	 *
-	 * @void
-	 */
-	public function form_add_thickbox() {
-
-		add_thickbox();
 	}
 
 	/**
@@ -530,7 +520,7 @@ class PR_Edition
 
 			case 'action':
 				echo '<a target="_blank" href="'. PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';
-				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true" class=" thickbox">' . __( "Packaging", "edition" ) . '</a> ';
+				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true">' . __( "Packaging", "edition" ) . '</a> ';
 				break;
 
 			default:

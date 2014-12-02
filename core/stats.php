@@ -26,28 +26,72 @@ class PR_Stats
 
   public function add_pr_stats_db_widgets() {
     wp_add_dashboard_widget(
-      'download_editions_db_widget',
+      'downloaded_editions_db_widget',
       __( 'Downloaded editions' ),
       array( $this, 'render_downloaded_editions_widget' )
+    );
+    wp_add_dashboard_widget(
+      'purchased_editions_db_widget',
+      __( 'Purchased editions and subscriptions' ),
+      array( $this, 'render_purchased_editions_widget' )
     );
   }
 
   public function render_downloaded_editions_widget() {
 
-    $data = $this->_get_chart_data_downloaded_editions( date('Y-m-d')  );
-    echo '<canvas id="myChart" width="400" height="400"></canvas>';
-    echo '<script>';
-    // Get context with jQuery - using jQuery's .get() method.
-    echo 'jQuery(document).ready(function($){
+    $data = $this->_get_chart_data( 'download_edition', date('Y-m-d'), 15 );
+    $js_data = json_encode( array(
+      'labels' => array_keys( $data ),
+      'datasets' => array(
+        array(
+          'label' => "Downloaded editions",
+          'fillColor' => "rgba(151,187,205,0.2)",
+          'strokeColor' => "rgba(151,187,205,1)",
+          'pointColor' => "rgba(151,187,205,1)",
+          'pointStrokeColor' => "#fff",
+          'pointHighlightFill' => "#fff",
+          'pointHighlightStroke' => "rgba(151,187,205,1)",
+          'data' => array_values( $data )
+        )
+      )
+    ) );
+    echo '<canvas id="dwnEditionChart" width="400" height="400"></canvas>';
+    echo '<script type="text/javascript">
+    jQuery(document).ready(function($){var d=' . $js_data . ', ctx = $("#dwnEditionChart").get(0).getContext("2d"),
+    downloadedChart = new Chart(ctx).Line(d); });
+    </script>';
+  }
 
-      var data = ' . $data . ';
+  public function render_purchased_editions_widget() {
 
-
-
-      var ctx = $("#myChart").get(0).getContext("2d");';
-    // This will get the first returned node in the jQuery collection.
-    echo 'var myNewChart = new Chart(ctx).Line(data); });';
-    echo '</script>';
+    $editions_data = $this->_get_chart_data( 'purchase_issue', date('Y-m-d'), 15 );
+    $subscriptions_data = $this->_get_chart_data( 'purchase_auto-renewable-subscription', date('Y-m-d'), 15 );
+    $js_data = json_encode( array(
+      'labels' => array_keys( $editions_data ),
+      'datasets' => array(
+        array(
+          'label' => "Purchased editions",
+          'fillColor' => "rgba(220,220,220,0.5)",
+          'strokeColor' => "rgba(220,220,220,0.8)",
+          'highlightFill' => "rgba(220,220,220,0.75)",
+          'highlightStroke' => "rgba(220,220,220,1)",
+          'data' => array_values( $editions_data )
+        ),
+        array(
+          'label' => "Purchased subscriptions",
+          'fillColor' => "rgba(151,187,205,0.5)",
+          'strokeColor' => "rgba(151,187,205,0.8)",
+          'highlightFill' => "rgba(151,187,205,0.75)",
+          'highlightStroke' => "rgba(151,187,205,1)",
+          'data' => array_values( $subscriptions_data )
+        ),
+      )
+    ) );
+    echo '<canvas id="prchEditionChart" width="400" height="400"></canvas>';
+    echo '<script type="text/javascript">
+    jQuery(document).ready(function($){var d=' . $js_data . ', ctx = $("#prchEditionChart").get(0).getContext("2d"),
+    downloadedChart = new Chart(ctx).Bar(d); });
+    </script>';
   }
 
   /**
@@ -75,17 +119,19 @@ class PR_Stats
     }
   }
 
-  protected function _get_chart_data_downloaded_editions( $end_date, $sub_days = 15 ) {
+  protected function _get_chart_data( $scenario, $end_date, $sub_days = 30 ) {
 
     global $wpdb;
+
     $end_date = strtotime( $end_date );
     $start_date = strtotime( '-' . $sub_days . ' days', $end_date );
 
     $dates = PR_Utils::get_days( $start_date, $end_date, 'y-m-d' );
     $dates = array_fill_keys( $dates, 0 );
 
-    $sql = $wpdb->prepare( "SELECT FROM_UNIXTIME( stat_date, '%%y-%%m-%%d' ) AS stat_date, SUM(counter) AS counter FROM " . $wpdb->prefix . PR_TABLE_STATS . " WHERE scenario = 'download_edition'
-    AND stat_date BETWEEN %d AND %d GROUP BY stat_date ORDER BY stat_date", $start_date, $end_date );
+    $sql = $wpdb->prepare( "SELECT FROM_UNIXTIME( stat_date, '%%y-%%m-%%d' ) AS stat_date, SUM(counter) AS counter
+    FROM " . $wpdb->prefix . PR_TABLE_STATS . " WHERE scenario = %s
+    AND stat_date BETWEEN %d AND %d GROUP BY stat_date ORDER BY stat_date", $scenario, $start_date, $end_date );
     $results = $wpdb->get_results( $sql );
     if ( $results ) {
       foreach ( $results as $result ) {
@@ -93,21 +139,7 @@ class PR_Stats
       }
     }
 
-    return json_encode( array(
-      'labels' => array_keys( $dates ),
-      'datasets' => array(
-        array(
-          'label' => "My Second dataset",
-          'fillColor' => "rgba(151,187,205,0.2)",
-          'strokeColor' => "rgba(151,187,205,1)",
-          'pointColor' => "rgba(151,187,205,1)",
-          'pointStrokeColor' => "#fff",
-          'pointHighlightFill' => "#fff",
-          'pointHighlightStroke' => "rgba(151,187,205,1)",
-          'data' => array_values( $dates )
-        )
-      )
-    ) );
+    return $dates;
   }
 }
 

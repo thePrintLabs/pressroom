@@ -46,6 +46,8 @@ final class PR_Packager_Web_Package
 
   public function test_ftp_connection() {
 
+    define('FS_CONNECT_TIMEOUT', 30);
+    define('FS_TIMEOUT', 30);
     $server = isset( $_POST['server'] ) ? $_POST['server'] : false ;
     $port = isset( $_POST['port'] ) ? $_POST['port'] : false ;
     $base = isset( $_POST['base'] ) ? $_POST['base'] : false ;
@@ -56,7 +58,7 @@ final class PR_Packager_Web_Package
     $params = array(
       "hostname"  => $server,
       "base"      => $base,
-      "port"      => $port,
+      "port"      => (int) $port,
       "username"  => $username,
       "password"  => $password,
       "protocol"  => $protocol,
@@ -64,22 +66,27 @@ final class PR_Packager_Web_Package
 
     foreach( $params as $key => $param ) {
       if( !$param ) {
-        echo "Missing params $key. Please fill it and retry.";
+        wp_send_json_error( array( 'message'=> "Missing params $key. Please fill it and retry.", 'class'=>'failure' ) );
         exit;
       }
     }
 
-    if( !extension_loaded('ssh2') ) {
-      wp_send_json_error( array( 'message'=> 'No ssh2 extension. Please install it.', 'class'=>'failure' ) );
-      exit;
-    }
-
     switch( $protocol ) {
+
       case 'ftp':
-      $ftp = new WP_Filesystem_ftpsockets( $params );
+        if( !extension_loaded('sockets') || !function_exists('fsockopen') ) {
+          wp_send_json_error( array( 'message'=> 'No sockets extension founds.', 'class'=>'failure' ) );
+          exit;
+        }
+        $ftp = new WP_Filesystem_ftpsockets( $params );
         break;
+
       case 'sftp':
-      $ftp = new WP_Filesystem_SSH2( $params );
+        if( !extension_loaded('ssh2') ) {
+          wp_send_json_error( array( 'message'=> 'No ssh2 extension founds. Please install it.', 'class'=>'failure' ) );
+          exit;
+        }
+        $ftp = new WP_Filesystem_SSH2( $params );
         break;
       default:
         break;

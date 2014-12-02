@@ -119,18 +119,18 @@
   background-color: #fff;
   -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
   box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-  display: inline-block;
   display: none;
   height: 26px;
   line-height: 27px;
+  margin-top: 20px;
 }
 
 .taxonomy-pr_editorial_project .connection-result-success {
-  border-right: 4px solid #7ad03a;
+  border-left: 4px solid #7ad03a;
 }
 
 .taxonomy-pr_editorial_project .connection-result-failure {
-  border-right: 4px solid #f02a20;
+  border-left: 4px solid #f02a20;
 }
 
 /****************************/

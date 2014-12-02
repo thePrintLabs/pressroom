@@ -119,6 +119,7 @@ jQuery(function(){
   jQuery('#test-connection').click(function(e) {
     e.preventDefault();
     jQuery('#connection-result').html('<div class="spinner"></div>');
+    jQuery('#connection-result').css('display','block');
     jQuery("#connection-result .spinner").css('display','inline-block').css('float','none');
 
     var server    = jQuery('input[name="_pr_ftp_server[0]"]').val();

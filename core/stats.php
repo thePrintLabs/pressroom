@@ -39,7 +39,7 @@ class PR_Stats
 
   public function render_downloaded_editions_widget() {
 
-    $data = $this->_get_chart_data( 'download_edition', date('Y-m-d'), 14 );
+    $data = $this->_get_chart_data( 'download_edition', date('Y-m-d'), 13 );
     $js_data = json_encode( array(
       'labels' => array_keys( $data ),
       'datasets' => array(
@@ -64,8 +64,8 @@ class PR_Stats
 
   public function render_purchased_editions_widget() {
 
-    $editions_data = $this->_get_chart_data( 'purchase_issue', date('Y-m-d'), 14 );
-    $subscriptions_data = $this->_get_chart_data( 'purchase_auto-renewable-subscription', date('Y-m-d'), 14 );
+    $editions_data = $this->_get_chart_data( 'purchase_issue', date('Y-m-d'), 13 );
+    $subscriptions_data = $this->_get_chart_data( 'purchase_auto-renewable-subscription', date('Y-m-d'), 13 );
     $js_data = json_encode( array(
       'labels' => array_keys( $editions_data ),
       'datasets' => array(

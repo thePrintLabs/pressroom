@@ -18,12 +18,20 @@ class PR_Stats
     }
   }
 
+  /**
+  * Add chartjs to scripts
+  * @void
+  */
   public function register_dashboard_scripts() {
 
     wp_register_script( 'chartjs', PR_ASSETS_URI . '/js/chartjs.min.js', array( 'jquery'), '1.0', true );
     wp_enqueue_script( 'chartjs' );
   }
 
+  /**
+   * Add statistics charts to dashboard
+   * @void
+   */
   public function add_pr_stats_db_widgets() {
     wp_add_dashboard_widget(
       'downloaded_editions_db_widget',
@@ -37,6 +45,10 @@ class PR_Stats
     );
   }
 
+  /**
+   * Render downloaded editions chart
+   * @echo
+   */
   public function render_downloaded_editions_widget() {
 
     $data = $this->_get_chart_data( 'download_edition', date('Y-m-d'), 13 );
@@ -62,6 +74,10 @@ class PR_Stats
     </script>';
   }
 
+  /**
+   * Render purchased editions and subscriptions chart
+   * @echo
+   */
   public function render_purchased_editions_widget() {
 
     $editions_data = $this->_get_chart_data( 'purchase_issue', date('Y-m-d'), 13 );
@@ -119,6 +135,26 @@ class PR_Stats
     }
   }
 
+  /**
+   * Get counter
+   * @param  string  $scenario
+   * @param integer $object_id
+   * @return integer
+   */
+  public static function get_counter( $scenario, $object_id = 0 ) {
+
+    global $wpdb;
+    $counter = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(counter) AS counter FROM " . $wpdb->prefix . PR_TABLE_STATS . " WHERE scenario = %s AND object_id = %d GROUP BY object_id", $scenario, $object_id ), 0, 0 );
+    return is_null( $counter ) ? 0 : $counter;
+  }
+
+  /**
+   * Get statistics data for charts
+   * @param  string  $scenario
+   * @param string $end_date ( format: Y-m-d )
+   * @param  integer $sub_days
+   * @return array
+   */
   protected function _get_chart_data( $scenario, $end_date, $sub_days = 30 ) {
 
     global $wpdb;

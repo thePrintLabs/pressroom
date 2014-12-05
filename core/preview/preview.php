@@ -8,6 +8,7 @@ class PR_Preview {
     add_action( 'wp_ajax_preview_draw_page', array( $this, 'draw_page' ), 10 );
   }
 
+
   /**
    * Init preview slider
    * @param int $edition_id
@@ -20,7 +21,10 @@ class PR_Preview {
       return;
     }
 
-    $linked_query = pr_get_edition_posts( $edition, true );
+    delete_transient( 'pr_preview_linked_query_' . $edition_id );
+
+    $linked_query = self::_get_linked_query( $edition );
+
     if ( empty( $linked_query ) ) {
       return;
     }
@@ -71,6 +75,7 @@ class PR_Preview {
 
       $html = self::parse_html( $edition, $post );
       $html = self::rewrite_html_url( $edition, $html );
+      $html = self::rewrite_post_url( $edition, $html );
 
       if ( PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_dir ) ) {
         file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
@@ -176,6 +181,42 @@ class PR_Preview {
   }
 
   /**
+  * Get all url from the html string and replace with internal url of the package
+  *
+  * @param  string $html
+  * @param  string $ext  = 'html' extension file output
+  * @return string or false
+  */
+  public static function rewrite_post_url( $edition, $html, $extension = 'html' ) {
+
+    if ( $html ) {
+
+      $linked_query = self::_get_linked_query( $edition );
+      $post_rewrite_urls = array();
+      $urls = PR_Utils::extract_urls( $html );
+
+      foreach ( $urls as $url ) {
+
+        if ( strpos( $url, site_url() ) !== false ) {
+          $post_id = url_to_postid( $url );
+          if ( $post_id ) {
+            foreach( $linked_query->posts as $post ) {
+
+              if ( $post->ID == $post_id ) {
+                $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
+                $html = str_replace( $url, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition->ID . '#toc-' . $post_id, $html );
+                $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
+              }
+            }
+          }
+        }
+      }
+
+      return $html;
+    }
+  }
+
+  /**
    * Rewrite toc url for preview with hashtag
    * @param  string $html
    * @param  int $edition_id
@@ -256,5 +297,21 @@ class PR_Preview {
         }
       }
     }
+  }
+
+  /**
+   * Get edition posts array
+   *
+   * @void
+   */
+  protected static function _get_linked_query( $edition ) {
+
+    if ( false === ( $linked_query = get_transient( 'pr_preview_linked_query_' . $edition->ID ) ) ) {
+
+      $linked_query = pr_get_edition_posts( $edition, true );
+      set_transient( 'pr_preview_linked_query_' . $edition->ID, $linked_query, 6 * HOUR_IN_SECONDS);
+    }
+
+    return $linked_query;
   }
 }

@@ -466,7 +466,7 @@ class PR_Edition
 
 				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
 				if ( $term_meta ) {
-					$term_types = $term_meta['_pr_subscription_types'];
+					$term_types = isset( $term_meta['_pr_subscription_types'] ) ? $term_meta['_pr_subscription_types'] : '';
 					if( $term_types ) {
 						foreach ( $term_types as $type ) {
 

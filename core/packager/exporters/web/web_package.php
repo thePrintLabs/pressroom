@@ -27,6 +27,7 @@ final class PR_Packager_Web_Package
     $web->add_field( 'pr_container_theme', __( 'Container theme', 'web_package' ), __( 'Web viewer theme', 'edition' ), 'select', '', array(
       'options' => array(
         array( 'value' => 'standard', 'text' => __( "Standard Web Viewer", 'web_package' ) ),
+        array( 'value' => 'no-container', 'text' => __( "No container", 'web_package' ) ),
         )
       )
     );

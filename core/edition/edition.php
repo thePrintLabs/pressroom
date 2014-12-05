@@ -26,6 +26,7 @@ class PR_Edition
 		add_action( 'save_post_' . PR_EDITION, array( $this, 'save_edition'), 40 );
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
+		add_action( 'wp_ajax_render_console', array( $this, 'publishing_render_console' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
 
@@ -33,6 +34,8 @@ class PR_Edition
 
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
+
+		add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
 
 	}
 
@@ -105,7 +108,7 @@ class PR_Edition
 			)
 		) );
 		$e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
-			'options' => $this->_get_subscription_types()
+			'options' => $this->_get_subscription_types( $post )
 		) );
 		foreach ( $editorial_terms as $term) {
 			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
@@ -260,7 +263,9 @@ class PR_Edition
 	public function add_publication_action() {
 
 		echo '<a id="preview_edition" target="_blank" href="' . PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<a id="publish_edition" target="_blank" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
+		echo '<select id="pr_packager_type"><option value="web">web</option><option value="hpub">hpub</option></select>';
+		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
+
 	}
 
 	/**
@@ -292,7 +297,7 @@ class PR_Edition
 		}
 
 		$this->get_custom_metaboxes( $post );
-		
+
 		foreach ( $this->_metaboxes as $metabox ) {
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
@@ -343,12 +348,7 @@ class PR_Edition
 		}
 	}
 
-	/**
-	 * Ajax publishing callback function
-	 *
-	 * @echo
-	 */
-	public function ajax_publishing_callback() {
+	public function publishing_render_console() {
 
 		$packager = new PR_Packager();
 		echo '<style type="text/css">
@@ -361,6 +361,7 @@ class PR_Edition
 		#publishing_popup h1 {margin:0 0 10px; color:#333;font-weight:300}
 		#publishing_console { padding:10px; height:435px; margin: 0 auto; overflow:scroll;font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }
 		</style>';
+
 		echo '<div id="publishing_popup">
 		<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
 		$packager->pb->render();
@@ -377,6 +378,31 @@ class PR_Edition
 		echo '</div>
 		</div>';
 		exit;
+	}
+
+	/**
+	 * Ajax publishing callback function
+	 *
+	 * @echo
+	 */
+	public function ajax_publishing_callback() {
+
+		$post = get_post( $_POST['edition_id'] );
+
+		if ( !$post || $post->post_type != PR_EDITION ) {
+			return;
+		}
+
+		$this->get_custom_metaboxes( $post );
+
+		foreach ( $this->_metaboxes as $metabox ) {
+			if( $metabox->id != 'flatplan') {
+				$metabox->save_values();
+			}
+		}
+
+		wp_send_json_success();
+
 	}
 
 	/**
@@ -457,9 +483,8 @@ class PR_Edition
 	 *
 	 * @return array
 	 */
-	protected function _get_subscription_types() {
+	protected function _get_subscription_types( $post ) {
 
-		global $post;
 		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
 		$types = array();
 		if ( !empty( $terms ) ) {
@@ -520,7 +545,7 @@ class PR_Edition
 
 			case 'action':
 				echo '<a target="_blank" href="'. PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';
-				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true&width=800&height=600&TB_iframe=true">' . __( "Packaging", "edition" ) . '</a> ';
+				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true">' . __( "Packaging", "edition" ) . '</a> ';
 				break;
 
 			default:
@@ -564,5 +589,16 @@ class PR_Edition
 			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
 		}
 		return $edition_bundle_id;
+	}
+
+	/**
+	* add custom script to metabox
+	*
+	* @void
+	*/
+	public function add_custom_script() {
+
+		wp_register_script( 'edition', PR_ASSETS_URI . '/js/pr.edition.js', array( 'jquery' ), '1.0', true );
+		wp_enqueue_script( 'edition' );
 	}
 }

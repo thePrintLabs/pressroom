@@ -312,4 +312,24 @@ class PR_Utils
 		$post_links = array_unique( $post_links[0] );
 		return array_values( $post_links );
 	}
+
+	/**
+	* Return an array of days between two dates
+	* @param int start_date
+	* @param int end_date
+	* @param string $format
+	* @return array
+	*/
+
+	public static function get_days( $start_date, $end_date, $format = null ) {
+		$range = array();
+		// Start the variable off with the start date
+		$range[] = is_null( $format ) ? $start_date : date( $format, $start_date );
+		$current_date = $start_date;
+		while ($current_date < $end_date) {
+			$current_date = strtotime("+1 day", $current_date);
+			$range[] = is_null( $format ) ? $current_date : date( $format, $current_date );
+		}
+		return $range;
+	}
 }

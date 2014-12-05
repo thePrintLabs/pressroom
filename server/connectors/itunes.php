@@ -406,13 +406,18 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
         if ( $product_id && $product_id == $single_receipt->product_id ) {
           $this->save_receipt_transactions( $receipt_record_id, $single_receipt, $purchase_type );
+          // Record purchase
+          PR_Stats::increment_counter( 'purchase_' . $purchase_type );
         }
       }
     }
     else {
       $receipt_unique_id = $this->save_receipt( $receipt->transaction_id );
       $this->save_receipt_transactions( $receipt_record_id, $receipt, $purchase_type );
+      // Record purchase
+      PR_Stats::increment_counter( 'purchase_' . $purchase_type );
     }
+
     $this->send_response( 200 );
   }
 

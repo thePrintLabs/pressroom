@@ -101,10 +101,12 @@ final class PR_Server_Issue extends PR_Server_API
       header( "Content-Length:" . filesize( $edition_hpub ) );
       header( "Content-Disposition: attachment; filename=" . basename( $edition_hpub ) );
       readfile( $edition_hpub );
-      // MEMORIZZARE DOWNLOAD DELL'EDIZIONE
-      // MEMORIZZARE ACQUISTO SUBSCRIPTION
-      // MEMORIZZARE ACQUISTI SINGOLI
-    } else {
+      // Record download
+      if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
+        PR_Stats::increment_counter( 'download_edition', $edition->ID );
+      }
+    }
+    else {
       $this->send_response( 404, "Not found. Edition not found." );
     }
   }

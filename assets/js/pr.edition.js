@@ -7,7 +7,7 @@
     var post = $('#post').serialize();
     var data = post + '&action=publishing&edition_id='+edition_id;
 
-    var url = ajaxurl + '?action=render_console&edition_id=' + edition_id + '&pr_no_theme=true?packager_type='+packager_type;
+    var url = ajaxurl + '?action=render_console&edition_id=' + edition_id + '&pr_no_theme=true&packager_type='+packager_type;
     window.open(url,"_blank");
 
     jQuery.ajax({

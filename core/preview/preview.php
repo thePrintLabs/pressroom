@@ -183,6 +183,7 @@ class PR_Preview {
   /**
   * Get all url from the html string and replace with internal url of the package
   *
+  * @param  object $edition
   * @param  string $html
   * @param  string $ext  = 'html' extension file output
   * @return string or false
@@ -302,6 +303,7 @@ class PR_Preview {
   /**
    * Get edition posts array
    *
+   * @param object $edition
    * @void
    */
   protected static function _get_linked_query( $edition ) {

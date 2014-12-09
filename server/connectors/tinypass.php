@@ -117,12 +117,10 @@ final class PR_Connector_TinyPass extends PR_Server_API {
 
     // $this->app_id = $wp->query_vars['app_id'];
     // $this->user_id = $wp->query_vars['user_id'];
-    $_POST['environment'] = 'dev';
+
     $this->environment = isset( $_POST['environment'] ) ? $_POST['environment'] : 'production';
-    // $this->account_username = $_POST['username'];
-    // $this->account_password = $_POST['password'];
-
-
+    $this->user_ref = $_POST['username'];
+    //$this->account_password = $_POST['password'];
 
     $data = $this->_sendRequest();
     if ( !$data ) {
@@ -144,37 +142,30 @@ final class PR_Connector_TinyPass extends PR_Server_API {
    * @return object or boolean false
    */
   protected function _sendRequest() {
-    $this->user_ref = 'gaetano.fiorello@theprintlabs.com';
 
     $private_key = $this->get_private_key();
     $app_id = $this->get_application_id();
     $resource_id = $this->get_resource_id();
 
-    $url = $this->environment == 'production' ? self::PRODUCTION_URL : self::SANDBOX_URL;
-    $url.= '/r2/access?rid=' . $resource_id . '&user_ref=' . $this->user_ref;
+    // Include the SDK loader.
+    require_once( PR_LIBS_PATH . 'TinyPass/TinyPass.php' );
 
-    $test = "GET /r2/access?rid=$resource_id&user_ref={$this->user_ref}";
-    $hash = hash_hmac('sha256', $test, $private_key);
+    TinyPass::$SANDBOX     = $this->environment != 'production';
+    TinyPass::$AID         = self::get_application_id();
+    TinyPass::$PRIVATE_KEY = self::get_private_key();
 
-    $response = wp_remote_request( $url, array(
-      'method'  => 'GET',
-      'headers' => array(
-        'Authorization' => $app_id . ':' . base64_encode( $hash ),
-      ),
-    ));
-    die( var_dump( $response ) );
-    if ( is_wp_error( $response ) ) {
-      $this->_error_msg = $response->get_error_message();
-      return false;
-    } else {
-      $body = json_decode( wp_remote_retrieve_body( $response ) );
-      if ( isset($body->login) && $body->login == 'success' ) {
-        return $body;
+    $details = TinyPass::fetchAccessDetails( array( "rid" => $resource_id, "email" => $this->user_ref ) );
+    if ( !empty( $details['data'] ) ) {
+      foreach( $details['data']  as $data ) {
+        if( $data['expires'] > time() ) {
+          return true;
+        }
       }
-      $this->_error_msg = $body->error;
-      return false;
     }
+
+    $this->_error_msg = __("No active subscriptions.", 'pressroom-tinypass');
+    return false;
   }
 }
 
-//$pr_server_connector_tinypass = new PR_Connector_TinyPass;
+$pr_server_connector_tinypass = new PR_Connector_TinyPass;

@@ -10,6 +10,7 @@
  * --- 	img
  * --- 	js
  */
+const PR_THEME_CONFIG_FILE = 'config.xml';
 
 class PR_Theme
 {
@@ -18,6 +19,7 @@ class PR_Theme
 
 	public function __construct() {
 
+		$this->_hooks();
 		$this->search_themes();
 	}
 
@@ -31,39 +33,31 @@ class PR_Theme
 		$themes = get_option( 'pressroom_themes' );
 		if ( !$themes ) {
 			$themes = array();
-			$default_headers = array(
-				'theme'	=> 'theme',
-				'rule'   => 'rule',
-				'name'	=> 'name'
-			);
-
 			$dirs = self::_scan_themes_dir();
 			if ( empty( $dirs ) ) {
 				return;
 			}
 
 			foreach ( $dirs as $dir ) {
-
-				$files = PR_Utils::search_files( $dir, 'php', true );
+				$files = PR_Utils::search_files( $dir, 'xml', false );
 				foreach ( $files as $file ) {
-
-					$metadata = get_file_data( $file, $default_headers);
-					if ( !strlen( $metadata['theme'] ) && !strlen( $metadata['rule'] )  && !strlen( $metadata['name'] ) ) {
-						continue;
+					$filename = basename( $file );
+					if ( $filename != PR_THEME_CONFIG_FILE ) {
+						return;
 					}
 
-					$metadata['theme_path'] = basename( $dir );
-					$metadata['filename'] = str_replace( PR_THEMES_PATH, '', $file );
-					$theme_name = PR_Utils::sanitize_string( $metadata['theme_path'] );
-
-					$themes[$theme_name][] = $metadata;
+					array_push( $themes, array(
+						'path' => str_replace( PR_THEMES_PATH, '', dirname( $file ) ),
+					));
 				}
 			}
-		}
 
+			$themes = self::_validate_themes( $themes );
+			if ( empty( self::$_errors ) ) {
+				update_option( 'pressroom_themes', $themes );
+			}
+		}
 		self::$_themes = $themes;
-		self::_validate_themes();
-		add_action( 'admin_notices', array( 'PR_Theme', 'themes_notice' ) );
 	}
 
 	/**
@@ -77,12 +71,12 @@ class PR_Theme
 		$themes_list = array();
 		if ( !empty( $model::$_themes ) ) {
 			foreach ( $model::$_themes as $k => $theme ) {
-
-				$theme_name = self::_get_theme_name( $theme );
-				array_push( $themes_list, array(
-					'value' => $k,
-					'text'  => $theme_name
-				) );
+				if ( $theme['active'] ) {
+					array_push( $themes_list, array(
+						'value' => $theme['uniqueid'],
+						'text'  => $theme['name']
+					) );
+				}
 			}
 		}
 
@@ -119,9 +113,11 @@ class PR_Theme
 	 */
 	public static function get_theme_path( $edition_id ) {
 
-		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
-		if ( $theme ) {
-			return PR_THEMES_PATH . $theme . DIRECTORY_SEPARATOR;
+		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
+		if ( $theme_id ) {
+			$themes = self::get_themes();
+			$options = $themes[$theme_id];
+			return PR_THEMES_PATH . $options['path'] . DIRECTORY_SEPARATOR;
 		}
 
 		return false;
@@ -134,50 +130,32 @@ class PR_Theme
 	 */
 	public static function get_theme_uri( $edition_id ) {
 
-		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
-		if ( $theme ) {
-			return PR_THEME_URI . $theme . DIRECTORY_SEPARATOR;
+		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
+		if ( $theme_id ) {
+			$themes = self::get_themes();
+			$options = $themes[$theme_id];
+			return PR_THEME_URI . $options['path'] . DIRECTORY_SEPARATOR;
 		}
 
 		return false;
 	}
 
 	/**
-	 * Get the path of cover edition
+	 * Get the path of layout
 	 * @param  int $edition_id
+	 * @param string $rule
 	 * @return string or boolean false
 	 */
-	public static function get_theme_cover( $edition_id ) {
+	public static function get_theme_layout( $edition_id, $rule ) {
 
-		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
-		$themes = self::get_themes();
-		$files = isset( $themes[$theme] ) ? $themes[$theme] : false;
-		if( $files ) {
-			foreach ( $files as $file ) {
-				if ( $file['rule'] == 'cover') {
-					$cover = $file['filename'];
-					return PR_THEMES_PATH . $cover;
+		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
+		if ( $theme_id ) {
+			$themes = self::get_themes();
+			$options = $themes[$theme_id];
+			foreach ( $options['layouts'] as $layout ) {
+				if ( $layout['rule'] == $rule) {
+					return PR_THEMES_PATH . $options['path'] . DIRECTORY_SEPARATOR . $layout['path'];
 				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	* Get the path of toc edition
-	* @param  int $edition_id
-	* @return string or boolean false
-	*/
-	public static function get_theme_toc( $edition_id ) {
-
-		$theme = get_post_meta( $edition_id, '_pr_theme_select', true );
-		$themes = self::get_themes();
-		$files = $themes[$theme];
-		foreach ( $files as $file ) {
-			if ( $file['rule'] == 'toc') {
-				$toc = $file['filename'];
-				return PR_THEMES_PATH . $toc;
 			}
 		}
 
@@ -197,6 +175,57 @@ class PR_Theme
 			return PR_THEMES_PATH . $template;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Delete installed theme
+	 * @param string $theme_id
+	 * @return boolean
+	 */
+	public static function delete_theme( $theme_id ) {
+
+		if ( !isset( $wp_filesystem ) || is_null( $wp_filesystem ) ) {
+			WP_Filesystem();
+			global $wp_filesystem;
+		}
+
+		$themes = self::get_themes();
+		if ( isset( $themes[$theme_id] ) ) {
+			$theme_data = $themes[$theme_id];
+			$theme_path = PR_THEMES_PATH . $theme_data['path'] . DIRECTORY_SEPARATOR;
+			if ( file_exists( $theme_path ) ) {
+				return $wp_filesystem->rmdir( $theme_path, true );
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check if a theme is installed
+	 * @param  string $theme_id
+	 * @return boolean
+	 */
+	public static function check_theme_exist( $theme_id ) {
+
+		$themes = self::get_themes();
+		return array_key_exists( $theme_id, $themes );
+	}
+
+	/**
+	 * Set installed theme status
+	 * @param string $theme_id
+	 * @param boolean $status
+	 * @return boolean
+	 */
+	public static function set_theme_status( $theme_id, $status = true ) {
+
+		$themes = self::get_themes();
+		if ( isset( $themes[$theme_id] ) ) {
+			$themes[$theme_id]['active'] = $status;
+			update_option( 'pressroom_themes', $themes );
+			return true;
+		}
 		return false;
 	}
 
@@ -234,78 +263,126 @@ class PR_Theme
 		}
 	}
 
+	protected static function _parse_theme_config( $config_file ) {
+
+		$xml = simplexml_load_file( $config_file );
+
+		if ( !isset( $xml->layouts ) ) {
+			return false;
+		}
+
+		$author = isset( $xml->author ) ? $xml->author : false;
+		// Get properties
+		$metadata = array(
+			'uniqueid'			=> isset( $xml->uniqueid ) ? $xml->uniqueid[0]->__toString() : false ,
+			'name'					=> isset( $xml->name ) ? $xml->name[0]->__toString() : false ,
+			'date'					=> isset( $xml->date ) ? $xml->date[0]->__toString() : false ,
+			'version'				=> isset( $xml->version ) ? $xml->version[0]->__toString() : false ,
+			'description'		=> isset( $xml->description ) ? $xml->description[0]->__toString() : false ,
+			'thumbnail'			=> isset( $xml->thumbnail ) ? $xml->thumbnail[0]->__toString() : false ,
+			'website'			=> isset( $xml->website ) ? $xml->website[0]->__toString() : false ,
+			'active'				=> 1,
+			'author_name'		=> $author && isset( $author->name ) ? $author->name[0]->__toString() : false ,
+			'author_email'	=> $author && isset( $author->email ) ? $author->email[0]->__toString() : false ,
+			'author_site'		=> $author && isset( $author->url ) ? $author->url[0]->__toString() : false ,
+			'layouts'				=> array()
+		);
+
+		foreach( $xml->layouts->item as $layout ) {
+			$metadata['layouts'][] = array(
+				'name'				=> $layout->name[0]->__toString(),
+				'rule'				=> $layout->rule[0]->__toString(),
+				'description'	=> $layout->description[0]->__toString(),
+				'path'				=> $layout->path[0]->__toString(),
+			);
+		}
+
+		return $metadata;
+	}
+
 	/**
 	 * Validate themes array and check if all property is set to theme pages
 	 *
-	 * @void
+	 * @return array
 	 */
-	protected static function _validate_themes() {
+	protected static function _validate_themes( $themes ) {
 
 		self::$_errors = array();
-		if ( empty(self::$_themes) ) {
+		if ( empty($themes) ) {
 			return;
 		}
 
-		foreach ( self::$_themes as $k => $theme ) {
-
-			$cover = array();
-			$toc = array();
-			$theme_name = self::_get_theme_name( $theme );
-			foreach ( $theme as $page ) {
-
-				if ( !isset( $page['rule'] ) || !strlen( $page['rule'] ) ) {
-					array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'rule', $page['filename'] ) );
-				}
-				// elseif ( $page['rule'] == 'cover' ) {
-				// 	array_push( $cover, $page['rule'] );
-				// }
-				elseif ( $page['rule'] == 'toc' ) {
-					array_push( $toc, $page['rule'] );
-				}
-				elseif ( !strlen( $page['name'] ) ) {
-					array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'name', $page['filename'] ) );
-				}
+		foreach ( $themes as $k => $theme ) {
+			$config_file = PR_THEMES_PATH . $theme['path'] . DIRECTORY_SEPARATOR . PR_THEME_CONFIG_FILE;
+			$theme_meta = self::_parse_theme_config( $config_file );
+			if ( !$theme_meta ) {
+				array_push( self::$_errors, self::_theme_error_notice( 'Error: <b>malformed xml config file ' . $config_file .'</b>' ) );
+				continue;
 			}
 
-			if ( empty( $toc ) ) {
-				array_push( self::$_errors, self::_theme_missing_notice( $theme_name, 'toc' ) );
+			if ( !$theme_meta['uniqueid'] ) {
+				array_push( self::$_errors, self::_theme_error_notice( 'Error: <b>uniqueid can\'t be empty</b> in <b>' . $config_file .'</b>' ) );
+				continue;
 			}
+
+			if ( empty( $theme_meta['layouts'] ) ) {
+				array_push( self::$_errors, self::_theme_error_notice( 'Error: <b>layouts section can\'t be empty</b> in <b>' . $config_file .'</b>' ) );
+				continue;
+			}
+
+			foreach ( $theme_meta['layouts'] as $layout ) {
+				if ( !$layout['rule'] ) {
+					array_push( self::$_errors, self::_theme_missing_notice( $theme_meta['name'], 'rule' ) );
+				}
+				elseif ( !strlen( $layout['name'] ) ) {
+					array_push( self::$_errors, self::_theme_missing_notice( $theme_meta['name'], 'name' ) );
+				}
+				elseif ( !strlen( $layout['path'] ) ) {
+					array_push( self::$_errors, self::_theme_missing_notice( $theme_meta['name'], 'path' ) );
+				}
+			}
+			self::$_themes[$theme_meta['uniqueid']] = array_merge( $theme, $theme_meta );
 		}
 
-		if ( empty( self::$_errors ) ) {
-			update_option( 'pressroom_themes', self::$_themes );
-		}
+		return self::$_themes;
+	}
+
+	/**
+	 * Register wordpress hooks
+	 * @void
+	 */
+	protected function _hooks() {
+		add_action( 'admin_notices', array( 'PR_Theme', 'themes_notice' ) );
 	}
 
 	/**
 	 * Generate a notice message
 	 * @param  string $theme_name
 	 * @param  string $param
-	 * @param  string $filename
 	 *
 	 * @return string;
 	 */
-	protected static function _theme_missing_notice( $theme_name, $param = '', $filename = '' ) {
+	protected static function _theme_missing_notice( $theme_name, $param = '' ) {
 
 		$html = '<div class="error">';
-		$html.= "<p>Missing <b>$param</b> in <b>$filename</b> of theme <b>$theme_name</b></p>";
+		$html.= "<p>Missing <b>$param</b> in <b>layouts section</b> of theme <b>$theme_name</b></p>";
 		$html.= '</div>';
 
 		return $html;
 	}
 
 	/**
-	 * Get template name by key
-	 * @param  string $theme
-	 * @return string
+	 * Generate a error notice for config files
+	 * @param  string $message
+	 *
+	 * @return string;
 	 */
-	protected static function _get_theme_name( $theme ) {
+	protected static function _theme_error_notice( $message ) {
 
-		$key = 'theme';
-		$theme_name = array_unique( array_map( function( $item ) use ( $key ) {
-			return $item[$key];
-		}, $theme) );
+		$html = '<div class="error">';
+		$html.= '<p>' . _e( $message ) . '</p>';
+		$html.= '</div>';
 
-		return $theme_name[0];
+		return $html;
 	}
 }

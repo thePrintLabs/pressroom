@@ -316,7 +316,7 @@ class PR_Packager
 	 */
 	protected function _cover_parse( $editorial_project ) {
 
-		$cover = PR_Theme::get_theme_cover( $this->_edition_post->ID );
+		$cover = PR_Theme::get_theme_layout( $this->_edition_post->ID, 'cover' );
 		if ( !$cover ) {
 			return false;
 		}
@@ -342,7 +342,7 @@ class PR_Packager
 	*/
 	protected function _toc_parse( $editorial_project ) {
 
-    $toc = PR_Theme::get_theme_toc( $this->_edition_post->ID );
+    $toc = PR_Theme::get_theme_layout( $this->_edition_post->ID, 'toc' );
     if ( !$toc ) {
       return false;
     }

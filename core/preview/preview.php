@@ -95,7 +95,7 @@ class PR_Preview {
    */
   public static function draw_toc( $edition, $linked_posts ) {
 
-    $toc = PR_Theme::get_theme_toc( $edition->ID );
+    $toc = PR_Theme::get_theme_layout( $edition->ID, 'toc' );
     if ( !$toc || !file_exists( $toc ) ) {
       return false;
     }

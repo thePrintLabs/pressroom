@@ -26,27 +26,7 @@ final class PR_Packager_HPUB_Package
   public function hpub_start( $packager, $editorial_project ) {
 
     // Parse html of toc index.php file
-    $toc = $packager->toc_parse( $editorial_project);
-    if ( !$toc ) {
-      PR_Packager::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
-      $this->_exit_on_error();
-      return;
-    }
-
-    // Rewrite toc url
-    $toc = $packager->rewrite_url( $toc );
-    $packager->set_progress( 28, __( 'Saving toc file', 'edition' ) );
-
-    // Save cover html file
-    if ( $packager->save_html_file( $toc, 'toc' ) ) {
-      PR_Packager::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
-      $packager->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
-    }
-    else {
-      PR_Packager::print_line( __( 'Failed to save toc file', 'edition' ), 'error' );
-      $packager->_exit_on_error();
-      return;
-    }
+    $packager->make_toc( $editorial_project );
   }
 
   /**
@@ -59,15 +39,15 @@ final class PR_Packager_HPUB_Package
    * @param string $parsed_html_post
    * @void
    */
-  public function hpub_run( $packager, $post, $editorial_project, $parsed_html_post) {
+  public function hpub_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
     // Rewrite post url
-    $parsed_html_post = $packager->rewrite_url( $parsed_html_post, 'html', $packager->linked_query->posts );
+    $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
 
-    do_action( 'pr_packager_run_' . $post->post_type, $post, $packager->edition_dir );
+    do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
 
     if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
+      PR_Packager::print_line( __( 'Failed to save post file: ', 'packager' ) . $post->post_title, 'error' );
       continue;
     }
   }
@@ -85,7 +65,7 @@ final class PR_Packager_HPUB_Package
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
       PR_Packager::print_line( __( 'Failed to create folder ', 'edition' ) . $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA, 'error' );
-      $packager->_exit_on_error();
+      $packager->exit_on_error();
       return;
     }
     $packager->set_progress( 70, __( 'Saving edition attachments files', 'edition' ) );
@@ -104,7 +84,7 @@ final class PR_Packager_HPUB_Package
     }
     else {
       PR_Packager::print_line( __( 'Failed to generate book.json ', 'edition' ), 'error' );
-      $packager->_exit_on_error();
+      $packager->exit_on_error();
       return;
     }
 
@@ -113,7 +93,7 @@ final class PR_Packager_HPUB_Package
       PR_Packager::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
     } else {
       PR_Packager::print_line( __( 'Failed to create hpub package ', 'edition' ), 'error' );
-      $packager->_exit_on_error();
+      $packager->exit_on_error();
       return;
     }
 
@@ -122,7 +102,7 @@ final class PR_Packager_HPUB_Package
     }
     else {
       PR_Packager::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );
-      $packager->_exit_on_error();
+      $packager->exit_on_error();
       return;
     }
   }

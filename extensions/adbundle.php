@@ -22,7 +22,8 @@ class PR_ADBundle
 		add_filter( 'add_meta_boxes', array( $this, 'add_adbundle_metaboxes' ), 40, 2 );
 
 		// Packager hooks
-		add_action( 'pr_packager_run_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_run_hpub_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_run_web_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_generate_book', array( $this, 'adb_packager_book' ), 10, 3 );
 
 		// Preview hooks

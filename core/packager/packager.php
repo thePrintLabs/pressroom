@@ -75,7 +75,7 @@ class PR_Packager
 		$theme_dir = PR_Theme::get_theme_path( $edition_post->ID );
 		if ( !$theme_dir ) {
 			self::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
-			$this->_exit_on_error();
+			$this->exit_on_error();
 			return;
 		}
 
@@ -84,7 +84,7 @@ class PR_Packager
 		// Download all assets
 		$downloaded_assets = $this->_download_assets( $theme_dir . 'assets' );
 		if ( !$downloaded_assets ) {
-			$this->_exit_on_error();
+			$this->exit_on_error();
 			return;
 		}
 
@@ -235,6 +235,32 @@ class PR_Packager
 		return $output;
 	}
 
+	public function make_toc( $editorial_project ) {
+
+		// Parse html of toc index.php file
+		$toc = $this->toc_parse( $editorial_project );
+		if ( !$toc ) {
+			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
+			$this->exit_on_error();
+			return;
+		}
+
+		// Rewrite toc url
+		$toc = $this->rewrite_url( $toc );
+		$this->set_progress( 28, __( 'Saving toc file', 'edition' ) );
+
+		// Save cover html file
+		if ( $this->save_html_file( $toc, 'toc' ) ) {
+			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
+			$this->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
+		}
+		else {
+			self::print_line( __( 'Failed to save toc file', 'edition' ), 'error' );
+			$this->exit_on_error();
+			return;
+		}
+	}
+
 	/**
 	* Get all url from the html string and replace with internal url of the package
 	*
@@ -312,7 +338,7 @@ class PR_Packager
 	* Stop packager procedure and clear temp folder
 	* @void
 	*/
-	protected function _exit_on_error() {
+	public function exit_on_error() {
 
 		$this->_clean_temp_dir();
 		$this->set_progress( 100, __( 'Errore creating package', 'edition' ) );

@@ -169,7 +169,7 @@ class TPL_Pressroom
 				$pages = $themes[$theme_code];
 				foreach ( $pages as $page ) {
 					if ( $page['rule'] == 'post' ) {
-						p2p_add_meta( $p2p_id, 'template', $page['filename'] );
+						p2p_add_meta( $p2p_id, 'template', $page['path'] );
 					}
 				}
 			}
@@ -226,13 +226,16 @@ class TPL_Pressroom
 					echo _e( sprintf('<b>Error during activation:</b> %s', $msg_param ) );
 					break;
 				case 'success_activated_license':
-					echo _e( sprintf('<b>Activation successful:</b> %s', $msg_param ) );
+					echo _e( sprintf('<b>Activation successfully:</b> %s', $msg_param ) );
 					break;
 				case 'failed_deactivated_license':
 					echo _e( sprintf('<b>Error during deactivation:</b> %s', $msg_param ) );
 					break;
 				case 'success_deactivated_license':
 					echo _e( '<b>License Deactivated.</b>' );
+					break;
+				case 'themes_cache_flushed':
+					echo _e( '<b>Themes cache flushed successfully</b>' );
 					break;
 			}
 			echo '</p></div>';

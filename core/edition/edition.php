@@ -325,7 +325,7 @@ class PR_Edition
 
 				if ( $current_theme ) {
 					$themes = PR_Theme::get_themes();
-					$default_template = $themes[$current_theme][0]['filename'];
+					$default_template = $themes[$current_theme][0]['path'];
 					p2p_update_meta( $post->p2p_id, 'template', $default_template);
 				}
 			}

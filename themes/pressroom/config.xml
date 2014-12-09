@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+  <uniqueid>pressroom</uniqueid>
+  <name>PressRoom</name>
+  <date>2005-11-31</date>
+  <version>1.0</version>
+  <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque mauris tortor, tincidunt in luctus nec, lacinia quis nulla. Curabitur rhoncus orci tellus, in venenatis nunc maximus quis.</description>
+  <thumbnail>assets/img/screenshot.png</thumbnail>
+  <website>http://account.press-room.io/</website>
+  <author>
+    <name>Banano</name>
+    <email>gigio@topo.it</email>
+  </author>
+  <layouts>
+    <item>
+      <name>fullwidth</name>
+      <rule>page</rule>
+      <description>default layout</description>
+      <path>layout/fullwidth.php</path>
+    </item>
+    <item>
+      <name>cover</name>
+      <rule>cover</rule>
+      <description>Edition Cover layout file</description>
+      <path>layout/index.php</path>
+    </item>
+    <item>
+      <name>toc</name>
+      <rule>toc</rule>
+      <description>Table of Contents theme file</description>
+      <path>toc.php</path>
+    </item>
+  </layouts>
+</theme>

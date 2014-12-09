@@ -81,9 +81,13 @@ class PR_Ftp_Sftp
   public function ssh2_copy( $source, $remote_path ) {
 
     $files = PR_Utils::search_files( $source, '*', true);
+
     foreach( $files as $file ) {
-      $this->connection->copy( $file, $remote_path, true );
+      if( !$this->connection->copy( $file, $remote_path, true ) ) {
+        return false;
+      }
     }
+    return true;
   }
 
   public function pr_add_field( $metabox ) {

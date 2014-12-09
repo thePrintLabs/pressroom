@@ -14,7 +14,7 @@
   <layouts>
     <item>
       <name>fullwidth</name>
-      <rule>page</rule>
+      <rule>content</rule>
       <description>default layout</description>
       <path>layout/fullwidth.php</path>
     </item>

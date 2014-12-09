@@ -1,15 +1,5 @@
 <?php
-/**
- * PR_Theme class.
- * Theme folder structure:
- * - 	theme_name
- * -- 	index.php (required, must have comments theme: theme_name, rule: cover)
- * --	anyotherfile.php (template, must have comments theme: theme_name, rule: post, name: template_name)
- * -- 	assets
- * --- 	css
- * --- 	img
- * --- 	js
- */
+
 const PR_THEME_CONFIG_FILE = 'config.xml';
 
 class PR_Theme

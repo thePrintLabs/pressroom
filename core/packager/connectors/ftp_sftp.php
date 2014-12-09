@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL ^ E_DEPRECATED);
 require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php' );
 require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-ssh2.php' );
 require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-ftpsockets.php' );
@@ -6,6 +7,7 @@ require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-ftpsockets.php' )
 class PR_Ftp_Sftp
 {
   public $errors = null;
+  protected $_connection;
 
   public function __construct() {
 
@@ -52,11 +54,36 @@ class PR_Ftp_Sftp
       }
 
     if( $ftp->connect() ) {
+      $this->connection = $ftp;
       return true;
     }
 
     return $this->errors->add( 'connect', $ftp->errors->get_error_messages() );
 
+  }
+
+  public function recursive_copy( $source, $remote_path ) {
+
+    if ( is_a( $this->connection, 'WP_Filesystem_ftpsockets' ) ) {
+      if( $this->connection->ftp->mput( $source, $remote_path, true ) ) {
+        return true;
+      }
+    }
+    else if( is_a( $this->connection, 'WP_Filesystem_SSH2' ) ) {
+      if( $this->ssh2_copy( $source, $remote_path ) ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public function ssh2_copy( $source, $remote_path ) {
+
+    $files = PR_Utils::search_files( $source, '*', true);
+    foreach( $files as $file ) {
+      $this->connection->copy( $file, $remote_path, true );
+    }
   }
 
   public function pr_add_field( $metabox ) {

@@ -86,7 +86,7 @@ final class PR_Packager_Web_Package
     $packager->set_package_date();
     $packager->set_progress( 90, __( 'Generating web package', 'edition' ) );
 
-    $this->_web_write( $packager );
+    $this->_web_write( $packager, $editorial_project );
 
   }
 
@@ -139,11 +139,18 @@ final class PR_Packager_Web_Package
     exit;
   }
 
-  protected function _web_write( $packager ) {
+  protected function _web_write( $packager, $editorial_project ) {
 
     switch( $this->package_settings['_pr_ftp_protocol'] ) {
       case 'local':
-        //download immediato o salvo in una cartella locale?
+        $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
+        PR_Utils::recursive_copy( $packager->edition_dir, PR_WEB_PATH . $package_name );
+        $filename = PR_WEB_PATH . $package_name . '.zip';
+        $cover_post = $packager->linked_query->posts[0];
+        $cover = PR_Utils::sanitize_string($cover_post->post_title) . '.html';
+        if ( PR_Utils::create_zip_file( $packager->edition_dir, $filename, '' ) ) {
+          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR . $cover .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'edition' ), 'success' );
+        }
         break;
       case 'ftp':
       case 'sftp':
@@ -160,11 +167,16 @@ final class PR_Packager_Web_Package
 
         if( $ftp->connect( $params ) ) {
           PR_Packager::print_line( __( 'Ftp connection successfull  ', 'edition' ) , 'success' );
+          if( $ftp->recursive_copy( $packager->edition_dir, $this->package_settings['_pr_ftp_destination_path'] ) ) {
+            PR_Packager::print_line( __( 'Transfer complete', 'edition' ), 'success' );
+          }
+          else {
+            PR_Packager::print_line( __( 'Error during transfer', 'edition' ), 'error' );
+          }
         }
         else {
           $error = $ftp->errors->get_error_message('connect');
-
-          PR_Packager::print_line( __( 'Failed to connect. More details: ', 'edition' ) . $error[0], 'error' );
+          PR_Packager::print_line( __( 'Failed to connect. More details: ', 'edition' ) . ( is_array( $error) ? $error[0] : $error ) , 'error' );
           $packager->exit_on_error();
           exit;
 

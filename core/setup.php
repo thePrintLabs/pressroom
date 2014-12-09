@@ -41,7 +41,7 @@ class PR_Setup
   private static function _check_php_libs() {
 
     $errors = array();
-  $extensions = array( 'zlib', 'zip', 'libxml'/*, 'ssh2'*/ ); //@TODO: rimuovere il commento
+  $extensions = array( 'zlib', 'zip', 'libxml' );
     foreach ( $extensions as $extension ) {
 
        if( !extension_loaded( $extension ) ) {
@@ -140,6 +140,7 @@ class PR_Setup
     }
 
     $api_dir = PR_Utils::make_dir( PR_API_PATH, 'hpub' );
+    $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'web' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'tmp' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'shelf' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_TMP_PATH, 'preview' );

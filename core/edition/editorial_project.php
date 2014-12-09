@@ -26,8 +26,8 @@ class PR_Editorial_Project
       add_action( PR_EDITORIAL_PROJECT . '_term_edit_form_tag', array( $this,'form_add_enctype' ) );
       add_action( 'wp_ajax_remove_upload_file', array( $this, 'remove_upload_file_callback' ) );
       add_action( 'wp_ajax_reset_editorial_project', array( $this, 'reset_editorial_project' ) );
-      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
 
+      add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
     }
   }
 
@@ -556,10 +556,13 @@ class PR_Editorial_Project
    *
    * @void
    */
-  public function add_custom_script() {
+  public function add_custom_scripts() {
 
-    wp_register_script( 'eproject', PR_ASSETS_URI . '/js/pr.eproject.min.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'eproject' );
+    global $pagenow;
+    if( $pagenow == 'edit-tags.php' && $_GET['taxonomy'] == PR_EDITORIAL_PROJECT ) {
+      wp_register_script( 'eproject', PR_ASSETS_URI . '/js/pr.eproject.min.js', array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( 'eproject' );
+    }
   }
 }
 

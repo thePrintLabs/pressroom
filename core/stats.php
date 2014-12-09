@@ -24,8 +24,11 @@ class PR_Stats
   */
   public function register_dashboard_scripts() {
 
-    wp_register_script( 'chartjs', PR_ASSETS_URI . '/js/chartjs.min.js', array( 'jquery'), '1.0', true );
-    wp_enqueue_script( 'chartjs' );
+    global $pagenow;
+    if( $pagenow == 'index.php' ) {
+      wp_register_script( 'chartjs', PR_ASSETS_URI . '/js/chartjs.min.js', array( 'jquery'), '1.0', true );
+      wp_enqueue_script( 'chartjs' );
+    }
   }
 
   /**

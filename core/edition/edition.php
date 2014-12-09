@@ -27,16 +27,14 @@ class PR_Edition
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
 
-		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
-
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
 		add_action( 'edit_form_advanced', array( $this, 'form_add_thickbox' ) );
 
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_edition_scripts' ) );
 	}
-
 
 	/**
 	 * Add custom post type edition to worpress
@@ -372,11 +370,16 @@ class PR_Edition
 	 * Add jQuery datepicker script and css styles
 	 * @void
 	 */
-	public function register_edition_script() {
+	public function register_edition_scripts() {
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 		wp_enqueue_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.css' );
+
+		global $pagenow, $post_type;
+		if ( $pagenow == 'post.php' && $post_type == PR_EDITION ) {
+			Pressroom_List_Table::add_presslist_scripts();
+		}
 	}
 
 	/**

@@ -104,8 +104,11 @@ $index_height = 150;
           </li>
         </ol>
       </li>
-      <li id="desktop" >
-        <a id="reset" class="sg-acc-handle group-device" data-agent="desktop" title="Desktop">Reset</a>
+      <li id="desktop">
+        <a id="reset" class="sg-acc-handle group-device" data-agent="desktop" title="Reset">Reset</a>
+      </li>
+      <li>
+        <a id="open" title="Open">Open</a>
       </li>
     <ol>
     <div class="sg-controls" id="sg-controls">

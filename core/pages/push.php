@@ -17,11 +17,11 @@ class PR_push_notification_page {
       return;
     }
 
+    add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
+
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'wp_ajax_pr_push_get_editions_list', array( $this, 'ajax_push_editions_list' ) );
     add_action( 'wp_ajax_pr_send_push_notification', array( $this, 'ajax_send_push_notification' ) );
-    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
-
   }
 
   /**
@@ -186,19 +186,21 @@ class PR_push_notification_page {
    *
    * @void
    */
-  public function add_custom_script() {
+  public function add_custom_scripts() {
 
-    wp_register_style( 'push_notification_page', PR_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
-    wp_enqueue_style( 'push_notification_page' );
-    wp_register_script( 'push_notification_moment', PR_ASSETS_URI . '/js/moment.min.js' );
-    wp_enqueue_script( 'push_notification_moment' );
-    wp_register_script( 'push_notification_moment_tz', PR_ASSETS_URI . '/js/moment.timezone.min.js', array( 'push_notification_moment' ) );
-    wp_enqueue_script( 'push_notification_moment_tz' );
-    wp_register_script( 'push_notification_datepicker', PR_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'push_notification_datepicker' );
-    wp_register_script( 'push_notification_page', PR_ASSETS_URI . '/js/pr.pushnotification.js', array( 'push_notification_datepicker' ) );
-    wp_enqueue_script( 'push_notification_page' );
-
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-push' ) {
+      wp_register_style( 'push_notification_page', PR_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
+      wp_enqueue_style( 'push_notification_page' );
+      wp_register_script( 'push_notification_moment', PR_ASSETS_URI . '/js/moment.min.js' );
+      wp_enqueue_script( 'push_notification_moment' );
+      wp_register_script( 'push_notification_moment_tz', PR_ASSETS_URI . '/js/moment.timezone.min.js', array( 'push_notification_moment' ) );
+      wp_enqueue_script( 'push_notification_moment_tz' );
+      wp_register_script( 'push_notification_datepicker', PR_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( 'push_notification_datepicker' );
+      wp_register_script( 'push_notification_page', PR_ASSETS_URI . '/js/pr.pushnotification.js', array( 'push_notification_datepicker' ) );
+      wp_enqueue_script( 'push_notification_page' );
+    }
   }
 
   public function send_parse_push_notification( $data, $push_time = false ) {

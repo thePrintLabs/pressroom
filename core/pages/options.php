@@ -14,12 +14,8 @@ class PR_options_page {
       return;
     }
 
-    global $pagenow;
-    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom' ) {
-
-      add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
-      add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
-    }
+    add_action( 'admin_enqueue_scripts', array( $this, 'add_chosen_script' ) );
+    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
 
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'admin_init', array( $this, 'pr_settings_init' ) );
@@ -223,8 +219,11 @@ class PR_options_page {
    */
   public function add_custom_script() {
 
-    wp_register_script( 'options_page', PR_ASSETS_URI . '/js/pr.option_page.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'options_page' );
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom' ) {
+      wp_register_script( 'options_page', PR_ASSETS_URI . '/js/pr.option_page.js', array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( 'options_page' );
+    }
   }
 
   /**
@@ -234,12 +233,15 @@ class PR_options_page {
    */
   public function add_chosen_script() {
 
-    wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
-    wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
-    wp_enqueue_script( 'chosen' );
-    wp_enqueue_style( 'tagsinput', PR_ASSETS_URI . 'css/jquery.tagsinput.css' );
-    wp_register_script( 'tagsinput', PR_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
-    wp_enqueue_script( 'tagsinput' );
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom' ) {
+      wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
+      wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
+      wp_enqueue_script( 'chosen' );
+      wp_enqueue_style( 'tagsinput', PR_ASSETS_URI . 'css/jquery.tagsinput.css' );
+      wp_register_script( 'tagsinput', PR_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
+      wp_enqueue_script( 'tagsinput' );
+    }
   }
 }
 

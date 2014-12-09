@@ -8,10 +8,7 @@ class PR_themes_page {
       return;
     }
 
-    global $pagenow;
-    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-themes' ) {
-      add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
-    }
+    add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
 
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'wp_ajax_pr_delete_theme', array( $this, 'pr_delete_theme' ) );
@@ -110,9 +107,12 @@ class PR_themes_page {
    */
   public function add_custom_scripts() {
 
-    wp_register_script( "pr_themes_page", PR_ASSETS_URI . "/js/pr.themes_page.js", array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( "pr_themes_page" );
-    wp_localize_script( "pr_themes_page", "pr", $this->_get_i18n_strings() );
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-themes' ) {
+      wp_register_script( "pr_themes_page", PR_ASSETS_URI . "/js/pr.themes_page.js", array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( "pr_themes_page" );
+      wp_localize_script( "pr_themes_page", "pr", $this->_get_i18n_strings() );
+    }
   }
 
   /**

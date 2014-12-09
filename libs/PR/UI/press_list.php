@@ -38,7 +38,6 @@ class Pressroom_List_Table extends WP_List_Table
     add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
     add_action( 'wp_ajax_bulk_presslist', array( $this, 'ajax_bulk_callback' ) );
     add_action( 'wp_ajax_update-custom-post-order', array( $this, 'ajax_update_post_order' ) );
-    add_action( 'admin_enqueue_scripts', array( $this, 'add_presslist_scripts' ) );
   }
 
   /**
@@ -485,15 +484,15 @@ class Pressroom_List_Table extends WP_List_Table
     *
     * @void
     */
-   public function add_presslist_scripts() {
+  public static function add_presslist_scripts() {
 
-      wp_register_script( 'presslist-ajax', PR_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
-      wp_register_script( 'presslist-drag-drop', PR_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
-      wp_enqueue_script('jquery-ui-core');
-      wp_enqueue_script('jquery-ui-sortable');
-      wp_enqueue_script( 'presslist-ajax' );
-      wp_enqueue_script( 'presslist-drag-drop' );
-   }
+    wp_register_script( 'presslist-ajax', PR_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
+    wp_register_script( 'presslist-drag-drop', PR_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script('jquery-ui-core');
+    wp_enqueue_script('jquery-ui-sortable');
+    wp_enqueue_script( 'presslist-ajax' );
+    wp_enqueue_script( 'presslist-drag-drop' );
+  }
 
    /**
     * Manage posts via ajax

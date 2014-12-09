@@ -1,7 +1,6 @@
 <?php
 /**
 * PressRoom packager: Web package
-*
 */
 require_once( PR_PACKAGER_CONNECTORS_PATH . '/ftp_sftp.php' );
 
@@ -13,11 +12,22 @@ final class PR_Packager_Web_Package
     add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 2 );
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );
 
-    add_action( 'pr_packager_make', array( $this, 'web_run' ), 10, 2 );
+    add_action( 'pr_packager_web_start', array( $this, 'web_packager_start' ), 10, 2 );
+    add_action( 'pr_packager_web', array( $this, 'web_packager_run' ), 10, 4 );
+    add_action( 'pr_packager_web_end', array( $this, 'web_packager_end' ), 10, 2 );
   }
 
-  public function web_run() {
+
+  public function web_packager_start() {
+
+  }
+
+  public function web_packager_run() {
     //mi aggancio al packager e mi copio la cartell temporanea
+  }
+
+  public function web_packager_end() {
+
   }
 
   public function pr_add_option( &$metaboxes, $item_id ) {

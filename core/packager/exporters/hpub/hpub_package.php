@@ -1,7 +1,6 @@
 <?php
 /**
 * PressRoom packager: Hpub package
-*
 */
 
 require_once( 'book_json.php' );
@@ -9,8 +8,6 @@ require_once( 'shelf_json.php' );
 
 final class PR_Packager_HPUB_Package
 {
-  protected $_posts_attachments = array();
-
   public function __construct() {
 
     add_action( 'pr_packager_hpub_start', array( $this, 'hpub_start' ), 10, 2 );
@@ -29,7 +26,7 @@ final class PR_Packager_HPUB_Package
   public function hpub_start( $packager, $editorial_project ) {
 
     // Parse html of toc index.php file
-    $toc = $this->_toc_parse( $editorial_project, $packager );
+    $toc = $packager->toc_parse( $editorial_project);
     if ( !$toc ) {
       PR_Packager::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
       $this->_exit_on_error();
@@ -37,11 +34,11 @@ final class PR_Packager_HPUB_Package
     }
 
     // Rewrite toc url
-    $toc = $this->_rewrite_url( $toc, 'html', $packager->linked_query->posts );
+    $toc = $packager->rewrite_url( $toc );
     $packager->set_progress( 28, __( 'Saving toc file', 'edition' ) );
 
     // Save cover html file
-    if ( $this->_save_html_file( $toc, 'toc', $packager->edition_dir ) ) {
+    if ( $packager->save_html_file( $toc, 'toc' ) ) {
       PR_Packager::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
       $packager->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
     }
@@ -65,11 +62,11 @@ final class PR_Packager_HPUB_Package
   public function hpub_run( $packager, $post, $editorial_project, $parsed_html_post) {
 
     // Rewrite post url
-    $parsed_html_post = $this->_rewrite_url( $parsed_html_post, 'html', $packager->linked_query->posts );
+    $parsed_html_post = $packager->rewrite_url( $parsed_html_post, 'html', $packager->linked_query->posts );
 
     do_action( 'pr_packager_run_' . $post->post_type, $post, $packager->edition_dir );
 
-    if ( !$this->_save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
+    if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
       PR_Packager::print_line( __( 'Failed to save post file: ', 'edition' ) . $post->post_title, 'error' );
       continue;
     }
@@ -93,7 +90,7 @@ final class PR_Packager_HPUB_Package
     }
     $packager->set_progress( 70, __( 'Saving edition attachments files', 'edition' ) );
 
-    $this->_save_posts_attachments( $media_dir );
+    $packager->save_posts_attachments( $media_dir );
     $packager->set_progress( 78, __( 'Saving edition cover image', 'edition' ) );
 
     $packager->save_cover_image();
@@ -156,132 +153,21 @@ final class PR_Packager_HPUB_Package
   }
 
   /**
-  * Parse toc file
-  *
-  * @return string or boolean false
+  * Save json string to file
+  * @param  array $content
+  * @param  string $filename
+  * @param  string $path
+  * @return boolean
   */
-  protected function _toc_parse( $editorial_project, $packager ) {
+  public static function save_json_file( $content, $filename, $path ) {
 
-    $toc = PR_Theme::get_theme_toc( $packager->edition_post->ID );
-    if ( !$toc ) {
-      return false;
+    $encoded = json_encode( $content );
+    $json_file = $path . DIRECTORY_SEPARATOR . $filename;
+    if ( file_put_contents( $json_file, $encoded ) ) {
+      return true;
     }
-
-    ob_start();
-    $edition = $packager->edition_post;
-    $editorial_project_id = $editorial_project->term_id;
-    $pr_theme_url = PR_THEME::get_theme_uri( $packager->edition_post->ID );
-
-    $posts = $packager->linked_query;
-    $packager->add_functions_file();
-    require( $toc );
-    $output = ob_get_contents();
-    ob_end_clean();
-
-    return $output;
+    return false;
   }
-
-  /**
-  * Save the html output into file
-  * @param  string $post
-  * @param  boolean
-  */
-  protected function _save_html_file( $post, $filename, $edition_dir ) {
-
-    return file_put_contents( $edition_dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
-  }
-
-  //SPOSTARE SU HPUB?
-  /**
-  * Get all url from the html string and replace with internal url of the package
-  * @param  string $html
-  * @param  string $ext  = 'html' extension file output
-  * @return string or false
-  */
-  protected function _rewrite_url( $html, $extension = 'html', $linked_posts ) {
-
-    if ( $html ) {
-
-      $post_rewrite_urls = array();
-      $urls = PR_Utils::extract_urls( $html );
-
-      foreach ( $urls as $url ) {
-
-        if ( strpos( $url, site_url() ) !== false ) {
-          $post_id = url_to_postid( $url );
-          if ( $post_id ) {
-
-            foreach( $linked_posts as $post ) {
-
-              if ( $post->ID == $post_id ) {
-                $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
-                $post_rewrite_urls[$url] = $path;
-              }
-            }
-          }
-          else {
-
-            $attachment_id = $this->_get_attachment_from_url( $url );
-            if ( $attachment_id ) {
-              $info = pathinfo( $url );
-              $filename = $info['basename'];
-              $post_rewrite_urls[$url] = PR_EDITION_MEDIA . $filename;
-
-              // Add attachments that will be downloaded
-              $this->_posts_attachments[$filename] = $url;
-            }
-          }
-        }
-      }
-
-      if ( !empty( $post_rewrite_urls ) ) {
-        $html = str_replace( array_keys( $post_rewrite_urls ), $post_rewrite_urls, $html );
-      }
-    }
-
-    return $html;
-  }
-
-  /**
-  * Copy attachments into the package folder
-  * @param  array $attachments
-  * @param  string $media_dir path of the package folder
-  * @void
-  */
-  protected function _save_posts_attachments( $media_dir ) {
-
-    if ( !empty( $this->_posts_attachments ) ) {
-      $attachments = array_unique( $this->_posts_attachments );
-      foreach ( $attachments as $filename => $url ) {
-
-        if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
-          PR_Packager::print_line( __( 'Copied ', 'edition' ) . $url, 'success' );
-        }
-        else {
-          PR_Packager::print_line(__('Failed to copy ', 'edition') . $url, 'error' );
-        }
-      }
-    }
-  }
-
-  /**
-  * Get attachment ID by url
-  * @param string $attachment_url
-  * @return string or boolean false
-  */
-  protected function _get_attachment_from_url( $attachment_url ) {
-
-    global $wpdb;
-    $attachment_url = preg_replace( '/-[0-9]{1,4}x[0-9]{1,4}\.(jpg|jpeg|png|gif|bmp)$/i', '.$1', $attachment_url );
-    $attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid RLIKE '%s' LIMIT 1;", $attachment_url ) );
-    if ( $attachment ) {
-      return $attachment[0];
-    }
-    else {
-      return false;
-    }
-  }
-
 }
 
 $pr_packager_hpub_package = new PR_Packager_HPUB_Package;

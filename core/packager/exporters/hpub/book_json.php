@@ -69,7 +69,7 @@ final class PR_Packager_Book_JSON
         $press_options['sharing_urls'] = array_values( $press_options['sharing_urls'] );
       }
 
-      return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
+      return PR_Packager_HPUB_Package::save_json_file( $press_options, 'book.json', $edition_dir );
    }
 
    /**

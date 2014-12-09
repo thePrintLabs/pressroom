@@ -76,7 +76,7 @@ final class PR_Packager_Shelf_JSON
       }
     }
 
-    if( !PR_Packager::save_json_file( $press_options, $editorial_project->slug . '_shelf.json', PR_SHELF_PATH ) ) {
+    if( !PR_Packager_HPUB_Package::save_json_file( $press_options, $editorial_project->slug . '_shelf.json', PR_SHELF_PATH ) ) {
       return false;
     }
     return true;

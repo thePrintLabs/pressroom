@@ -17,6 +17,7 @@ class PR_Packager
 	public $edition_cover_image;
 	public $edition_post;
 	public $package_type;
+	protected $_posts_attachments = array();
 
 	public function __construct() {
 
@@ -144,26 +145,173 @@ class PR_Packager
 	}
 
 	/**
-	 * Save json string to file
-	 * @param  array $content
- 	 * @param  string $filename
-	 * @param  string $path
-	 * @return boolean
+	 * Save cover image into edition package
+	 * @void
 	 */
-	public static function save_json_file( $content, $filename, $path ) {
+	public function save_cover_image() {
 
-		$encoded = json_encode( $content );
-		$json_file = $path . DIRECTORY_SEPARATOR . $filename;
-		if ( file_put_contents( $json_file, $encoded ) ) {
-			return true;
+		$edition_cover_id = get_post_thumbnail_id( $this->edition_post->ID );
+		if ( $edition_cover_id ) {
+
+			$upload_dir = wp_upload_dir();
+			$edition_cover_metadata = wp_get_attachment_metadata( $edition_cover_id );
+			$edition_cover_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $edition_cover_metadata['file'];
+			$info = pathinfo( $edition_cover_path );
+
+			if ( copy( $edition_cover_path, $this->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $info['basename'] ) ) {
+				$this->edition_cover_image = $info['basename'];
+				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $edition_cover_path ), 'success' );
+			}
+			else {
+				self::print_line( sprintf( __( 'Can\'t copy cover image %s ', 'edition' ), $edition_cover_path ), 'error' );
+			}
 		}
-		return false;
 	}
 
 	/**
-	 * Stop packager procedure and clear temp folder
+	 * Add package meta data to edition
+	 *
 	 * @void
 	 */
+	public function set_package_date() {
+
+		$date = date( 'Y-m-d H:i:s' );
+		add_post_meta( $this->edition_post->ID, '_pr_package_date', $date, true );
+		update_post_meta( $this->edition_post->ID, '_pr_package_updated_date', $date );
+	}
+
+	/**
+	 * Add function file if exist
+	 *
+	 * @void
+	 */
+	public function add_functions_file() {
+
+		$theme_dir = PR_Theme::get_theme_path( $this->edition_post->ID );
+		$files = PR_Utils::search_files( $theme_dir, 'php', true );
+		if ( !empty( $files ) ) {
+			foreach ( $files as $file ) {
+				if ( strpos( $file, 'functions.php' ) !== false ) {
+					require_once $file;
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	* Save the html output into file
+	* @param  string $post
+	* @param  boolean
+	*/
+	public function save_html_file( $post, $filename ) {
+
+		return file_put_contents( $this->edition_dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
+	}
+
+	/**
+	* Parse toc file
+	*
+	* @return string or boolean false
+	*/
+	public function toc_parse( $editorial_project) {
+
+		$toc = PR_Theme::get_theme_toc( $this->edition_post->ID );
+		if ( !$toc ) {
+			return false;
+		}
+
+		ob_start();
+		$edition = $this->edition_post;
+		$editorial_project_id = $editorial_project->term_id;
+		$pr_theme_url = PR_THEME::get_theme_uri( $this->edition_post->ID );
+
+		$posts = $this->linked_query;
+		$this->add_functions_file();
+		require( $toc );
+		$output = ob_get_contents();
+		ob_end_clean();
+
+		return $output;
+	}
+
+	/**
+	* Get all url from the html string and replace with internal url of the package
+	*
+	* @param  string $html
+	* @param  string $ext  = 'html' extension file output
+	* @return string or false
+	*/
+	public function rewrite_url( $html, $extension = 'html' ) {
+
+		if ( $html ) {
+
+			$post_rewrite_urls = array();
+			$urls = PR_Utils::extract_urls( $html );
+
+			foreach ( $urls as $url ) {
+
+				if ( strpos( $url, site_url() ) !== false ) {
+					$post_id = url_to_postid( $url );
+					if ( $post_id ) {
+
+						foreach( $this->linked_query->posts as $post ) {
+
+							if ( $post->ID == $post_id ) {
+								$path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
+								$post_rewrite_urls[$url] = $path;
+							}
+						}
+					}
+					else {
+
+						$attachment_id = $this->_get_attachment_from_url( $url );
+						if ( $attachment_id ) {
+							$info = pathinfo( $url );
+							$filename = $info['basename'];
+							$post_rewrite_urls[$url] = PR_EDITION_MEDIA . $filename;
+
+							// Add attachments that will be downloaded
+							$this->_posts_attachments[$filename] = $url;
+						}
+					}
+				}
+			}
+
+			if ( !empty( $post_rewrite_urls ) ) {
+				$html = str_replace( array_keys( $post_rewrite_urls ), $post_rewrite_urls, $html );
+			}
+		}
+
+		return $html;
+	}
+
+	/**
+	* Copy attachments into the package folder
+	* @param  array $attachments
+	* @param  string $media_dir path of the package folder
+	* @void
+	*/
+	public function save_posts_attachments( $media_dir ) {
+
+		if ( !empty( $this->_posts_attachments ) ) {
+			$attachments = array_unique( $this->_posts_attachments );
+			foreach ( $attachments as $filename => $url ) {
+
+				if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
+					PR_Packager::print_line( __( 'Copied ', 'edition' ) . $url, 'success' );
+				}
+				else {
+					PR_Packager::print_line(__('Failed to copy ', 'edition') . $url, 'error' );
+				}
+			}
+		}
+	}
+
+	/**
+	* Stop packager procedure and clear temp folder
+	* @void
+	*/
 	protected function _exit_on_error() {
 
 		$this->_clean_temp_dir();
@@ -172,10 +320,10 @@ class PR_Packager
 	}
 
 	/**
-	 * Select all posts in p2p connection with the current edition
-	 *
-	 * @void
-	 */
+	* Select all posts in p2p connection with the current edition
+	*
+	* @void
+	*/
 	protected function _get_linked_posts() {
 
 		if ( !isset( $_GET['edition_id'] ) ) {
@@ -196,10 +344,10 @@ class PR_Packager
 	}
 
 	/**
-	 * Download assets into package folder
-	 * @param  stirng $theme_assets_dir
-	 * @return boolean
-	 */
+	* Download assets into package folder
+	* @param  stirng $theme_assets_dir
+	* @return boolean
+	*/
 	protected function _download_assets( $theme_assets_dir ) {
 
 		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, 'assets' );
@@ -230,10 +378,10 @@ class PR_Packager
 	}
 
 	/**
-	 * Parse cover file
-	 *
-	 * @return string or boolean false
-	 */
+	* Parse cover file
+	*
+	* @return string or boolean false
+	*/
 	protected function _cover_parse( $editorial_project ) {
 
 		$cover = PR_Theme::get_theme_cover( $this->edition_post->ID );
@@ -256,10 +404,10 @@ class PR_Packager
 	}
 
 	/**
-	 * Parsing html file
-	 * @param  object $post
-	 * @return string
-	 */
+	* Parsing html file
+	* @param  object $post
+	* @return string
+	*/
 	protected function _post_parse( $linked_post, $editorial_project ) {
 
 		$page = PR_Theme::get_theme_page( $this->edition_post->ID, $linked_post->p2p_id );
@@ -285,68 +433,31 @@ class PR_Packager
 	}
 
 	/**
-	 * Save cover image into edition package
-	 * @void
-	 */
-	public function save_cover_image() {
+	* Get attachment ID by url
+	* @param string $attachment_url
+	* @return string or boolean false
+	*/
+	protected function _get_attachment_from_url( $attachment_url ) {
 
-		$edition_cover_id = get_post_thumbnail_id( $this->edition_post->ID );
-		if ( $edition_cover_id ) {
-
-			$upload_dir = wp_upload_dir();
-			$edition_cover_metadata = wp_get_attachment_metadata( $edition_cover_id );
-			$edition_cover_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $edition_cover_metadata['file'];
-			$info = pathinfo( $edition_cover_path );
-
-			if ( copy( $edition_cover_path, $this->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $info['basename'] ) ) {
-				$this->edition_cover_image = $info['basename'];
-				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $edition_cover_path ), 'success' );
-			}
-			else {
-				self::print_line( sprintf( __( 'Can\'t copy cover image %s ', 'edition' ), $edition_cover_path ), 'error' );
-			}
+		global $wpdb;
+		$attachment_url = preg_replace( '/-[0-9]{1,4}x[0-9]{1,4}\.(jpg|jpeg|png|gif|bmp)$/i', '.$1', $attachment_url );
+		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid RLIKE '%s' LIMIT 1;", $attachment_url ) );
+		if ( $attachment ) {
+			return $attachment[0];
+		}
+		else {
+			return false;
 		}
 	}
 
 	/**
-	 * Clean the temporary files folder
-	 *
-	 * @void
-	 */
+	* Clean the temporary files folder
+	*
+	* @void
+	*/
 	protected function _clean_temp_dir() {
 
 		self::print_line(__('Cleaning temporary files ', 'edition') );
 		PR_Utils::remove_dir( $this->edition_dir );
-	}
-
-	/**
-	 * Add package meta data to edition
-	 *
-	 * @void
-	 */
-	public function _set_package_date() {
-
-		$date = date( 'Y-m-d H:i:s' );
-		add_post_meta( $this->edition_post->ID, '_pr_package_date', $date, true );
-		update_post_meta( $this->edition_post->ID, '_pr_package_updated_date', $date );
-	}
-
-	/**
-	 * Add function file if exist
-	 *
-	 * @void
-	 */
-	public function add_functions_file() {
-
-		$theme_dir = PR_Theme::get_theme_path( $this->edition_post->ID );
-		$files = PR_Utils::search_files( $theme_dir, 'php', true );
-		if ( !empty( $files ) ) {
-			foreach ( $files as $file ) {
-				if ( strpos( $file, 'functions.php' ) !== false ) {
-					require_once $file;
-					break;
-				}
-			}
-		}
 	}
 }

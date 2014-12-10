@@ -71,20 +71,20 @@ final class PR_Packager_Web_Package
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
-      PR_Packager::print_line( __( 'Failed to create folder ', 'edition' ) . $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA, 'error' );
+      PR_Packager::print_line( __( 'Failed to create folder ', 'web_package' ) . $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA, 'error' );
       $packager->exit_on_error();
       return;
     }
-    $packager->set_progress( 70, __( 'Saving edition attachments files', 'edition' ) );
+    $packager->set_progress( 70, __( 'Saving edition attachments files', 'web_package' ) );
 
     $packager->save_posts_attachments( $media_dir );
-    $packager->set_progress( 78, __( 'Saving edition cover image', 'edition' ) );
+    $packager->set_progress( 78, __( 'Saving edition cover image', 'web_package' ) );
 
     $packager->save_cover_image();
-    $packager->set_progress( 80, __( 'Generating book json', 'edition' ) );
+    $packager->set_progress( 80, __( 'Generating book json', 'web_package' ) );
 
     $packager->set_package_date();
-    $packager->set_progress( 90, __( 'Generating web package', 'edition' ) );
+    $packager->set_progress( 90, __( 'Generating web package', 'web_package' ) );
 
     $this->_web_write( $packager, $editorial_project );
 
@@ -94,7 +94,7 @@ final class PR_Packager_Web_Package
 
     $web = new PR_Metabox( 'web_metabox', __( 'web', 'web_package' ), 'normal', 'high', $item_id );
 
-    $web->add_field( '_pr_container_theme', __( 'Container theme', 'web_package' ), __( 'Web viewer theme', 'edition' ), 'select', '', array(
+    $web->add_field( '_pr_container_theme', __( 'Container theme', 'web_package' ), __( 'Web viewer theme', 'web_package' ), 'select', '', array(
       'options' => array(
         array( 'value' => 'standard', 'text' => __( "Standard Web Viewer", 'web_package' ) ),
         array( 'value' => 'no-container', 'text' => __( "No container", 'web_package' ) ),
@@ -149,7 +149,7 @@ final class PR_Packager_Web_Package
         $cover_post = $packager->linked_query->posts[0];
         $cover = PR_Utils::sanitize_string($cover_post->post_title) . '.html';
         if ( PR_Utils::create_zip_file( $packager->edition_dir, $filename, '' ) ) {
-          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR . $cover .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'edition' ), 'success' );
+          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR . $cover .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
         }
         break;
       case 'ftp':
@@ -166,17 +166,18 @@ final class PR_Packager_Web_Package
         );
 
         if( $ftp->connect( $params ) ) {
-          PR_Packager::print_line( __( 'Ftp connection successfull  ', 'edition' ) , 'success' );
+          PR_Packager::print_line( __( 'Ftp connection successfull  ', 'web_package' ) , 'success' );
+          PR_Packager::print_line( __( 'Start transfer', 'web_package' ) , 'success' );
           if( $ftp->recursive_copy( $packager->edition_dir, $this->package_settings['_pr_ftp_destination_path'] ) ) {
-            PR_Packager::print_line( __( 'Transfer complete', 'edition' ), 'success' );
+            PR_Packager::print_line( __( 'Transfer complete', 'web_package' ), 'success' );
           }
           else {
-            PR_Packager::print_line( __( 'Error during transfer', 'edition' ), 'error' );
+            PR_Packager::print_line( __( 'Error during transfer', 'web_package' ), 'error' );
           }
         }
         else {
           $error = $ftp->errors->get_error_message('connect');
-          PR_Packager::print_line( __( 'Failed to connect. More details: ', 'edition' ) . ( is_array( $error) ? $error[0] : $error ) , 'error' );
+          PR_Packager::print_line( __( 'Failed to connect. More details: ', 'web_package' ) . ( is_array( $error) ? $error[0] : $error ) , 'error' );
           $packager->exit_on_error();
           exit;
 

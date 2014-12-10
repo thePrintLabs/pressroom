@@ -13,6 +13,10 @@ class PR_Ftp_Sftp
 
     add_action( 'pr_add_ftp_field', array( $this, 'pr_add_field' ), 10, 1 );
     $this->errors = new WP_Error();
+
+    if( !defined( 'FS_CHMOD_DIR' ) ) {
+      define('FS_CHMOD_DIR', 755);
+    }
   }
 
   public function connect( $params ) {
@@ -70,6 +74,7 @@ class PR_Ftp_Sftp
       }
     }
     else if( is_a( $this->connection, 'WP_Filesystem_SSH2' ) ) {
+      $this->connection->mkdir( $remote_path . DIRECTORY_SEPARATOR . basename( $source ) );
       if( $this->ssh2_copy( $source, $remote_path ) ) {
         return true;
       }
@@ -78,15 +83,47 @@ class PR_Ftp_Sftp
     return false;
   }
 
-  public function ssh2_copy( $source, $remote_path ) {
+  public function ssh2_copy( $source, $remote_path) {
 
-    $files = PR_Utils::search_files( $source, '*', true);
+    $source = str_replace( '\\', '/', realpath( $source ) );
 
-    foreach( $files as $file ) {
-      if( !$this->connection->copy( $file, $remote_path, true ) ) {
-        return false;
+    if ( is_dir( $source ) ) {
+      $files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $source ), RecursiveIteratorIterator::SELF_FIRST );
+      foreach ( $files as $file ) {
+
+        $info = pathinfo( $file );
+        if ( !in_array( $info['basename'], PR_Utils::$excluded_files ) ) {
+          $file = str_replace('\\', '/', realpath( $file ));
+          if ( is_dir( $file ) ) {
+            if( $this->connection->mkdir( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR,  $file ) ) ) {
+              PR_Packager::print_line( sprintf( __( 'Folder %s  transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
+            }
+            else {
+              PR_Packager::print_line( sprintf( __( 'Fail to transfer folder %s', 'web_package' ), $info['basename'] ) , 'error' );
+            }
+
+          }
+          elseif ( is_file( $file ) ) {
+            if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR, $file ), file_get_contents( $file ), true ) ) {
+              PR_Packager::print_line( sprintf( __( 'File %s transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
+            }
+            else {
+              PR_Packager::print_line( sprintf( __( 'Fail to transfer file %s', 'web_package' ), $info['basename'] ) , 'error' );
+            }
+          }
+        }
       }
     }
+    elseif ( is_file( $source ) ) {
+      $info = pathinfo( $source );
+      if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR, $file ), file_get_contents( $source ), true ) ) {
+        PR_Packager::print_line( sprintf( __( 'File %s transfered', 'web_package' ), $info['basename'] ) , 'success' );
+      }
+      else {
+        PR_Packager::print_line( sprintf( __( 'Fail to transfer file %s', 'web_package' ), $info['basename'] ) , 'error' );
+      }
+    }
+
     return true;
   }
 

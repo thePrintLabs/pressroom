@@ -34,6 +34,7 @@ class PR_Packager
 
 	/**
 	 * Generate the edition package
+	 *
 	 * object $editorial_project
 	 * @void
 	 */
@@ -120,6 +121,7 @@ class PR_Packager
 
 	/**
 	* Set progressbar percentage
+	*
 	* @param int $percentage
 	* @void
 	*/
@@ -146,6 +148,7 @@ class PR_Packager
 
 	/**
 	 * Save cover image into edition package
+	 *
 	 * @void
 	 */
 	public function save_cover_image() {
@@ -201,6 +204,7 @@ class PR_Packager
 
 	/**
 	* Save the html output into file
+	*
 	* @param  string $post
 	* @param  boolean
 	*/
@@ -314,6 +318,7 @@ class PR_Packager
 
 	/**
 	* Copy attachments into the package folder
+	*
 	* @param  array $attachments
 	* @param  string $media_dir path of the package folder
 	* @void
@@ -336,6 +341,7 @@ class PR_Packager
 
 	/**
 	* Stop packager procedure and clear temp folder
+	*
 	* @void
 	*/
 	public function exit_on_error() {
@@ -371,6 +377,7 @@ class PR_Packager
 
 	/**
 	* Download assets into package folder
+	*
 	* @param  stirng $theme_assets_dir
 	* @return boolean
 	*/
@@ -431,6 +438,7 @@ class PR_Packager
 
 	/**
 	* Parsing html file
+	*
 	* @param  object $post
 	* @return string
 	*/
@@ -460,6 +468,7 @@ class PR_Packager
 
 	/**
 	* Get attachment ID by url
+	* 
 	* @param string $attachment_url
 	* @return string or boolean false
 	*/

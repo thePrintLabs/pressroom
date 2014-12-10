@@ -20,6 +20,13 @@ final class PR_Packager_Web_Package
     add_action( 'pr_packager_web_end', array( $this, 'web_packager_end' ), 10, 2 );
   }
 
+  /**
+   * Check edition post settings else check for editorial project settings
+   *
+   * @param  int $edition_id
+   * @param  int $eproject_id
+   * @void
+   */
   public function load_settings( $edition_id, $eproject_id ) {
 
     $settings = array(
@@ -46,7 +53,13 @@ final class PR_Packager_Web_Package
 
   }
 
-
+  /**
+   * Create toc and load settings.
+   *
+   * @param  object $packager
+   * @param  object $editorial_project
+   * @void
+   */
   public function web_packager_start( $packager, $editorial_project ) {
 
     $packager->make_toc( $editorial_project );
@@ -54,6 +67,15 @@ final class PR_Packager_Web_Package
 
   }
 
+  /**
+   * Rewrite urls from html string and save file.
+   *
+   * @param  object $packager
+   * @param  object $post
+   * @param  object $editorial_project
+   * @param  string $parsed_html_post
+   * @void
+   */
   public function web_packager_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
     // Rewrite post url
@@ -67,6 +89,13 @@ final class PR_Packager_Web_Package
     }
   }
 
+  /**
+   * Save attachments, set package date and close the package.
+   *
+   * @param  object $packager
+   * @param  object $editorial_project
+   * @void
+   */
   public function web_packager_end( $packager, $editorial_project ) {
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
@@ -90,6 +119,12 @@ final class PR_Packager_Web_Package
 
   }
 
+  /**
+   * Create metabox and custom fields
+   *
+   * @param object &$metaboxes
+   * @param int $item_id (it can be editorial project id or edition id);
+   */
   public function pr_add_option( &$metaboxes, $item_id ) {
 
     $web = new PR_Metabox( 'web_metabox', __( 'web', 'web_package' ), 'normal', 'high', $item_id );
@@ -107,6 +142,11 @@ final class PR_Packager_Web_Package
     array_push( $metaboxes, $web );
   }
 
+  /**
+   * test ftp connection
+   *
+   * @void
+   */
   public function test_ftp_connection() {
 
     $server = isset( $_POST['server'] ) ? $_POST['server'] : false ;
@@ -139,6 +179,12 @@ final class PR_Packager_Web_Package
     exit;
   }
 
+  /**
+   * Check transfer protocol and transfer files
+   *
+   * @param  object $editorial_project
+   * @void
+   */
   protected function _web_write( $packager, $editorial_project ) {
 
     switch( $this->package_settings['_pr_ftp_protocol'] ) {
@@ -182,10 +228,9 @@ final class PR_Packager_Web_Package
           exit;
 
         }
+
         break;
     }
   }
-
-
 }
 $pr_packager_web_package = new PR_Packager_Web_Package;

@@ -19,6 +19,12 @@ class PR_Ftp_Sftp
     }
   }
 
+  /**
+   * Check protocol type and establishes a properly connection
+   *
+   * @param  array $params
+   * @return boolean
+   */
   public function connect( $params ) {
 
     if ( !defined( 'FS_CONNECT_TIMEOUT' ) ) {
@@ -62,10 +68,18 @@ class PR_Ftp_Sftp
       return true;
     }
 
-    return $this->errors->add( 'connect', $ftp->errors->get_error_messages() );
+    $this->errors->add( 'connect', $ftp->errors->get_error_messages() );
+    return false;
 
   }
 
+  /**
+   * Copy local package dir to remote
+   *
+   * @param  string $source
+   * @param  string $remote_path
+   * @return bool
+   */
   public function recursive_copy( $source, $remote_path ) {
 
     if ( is_a( $this->connection, 'WP_Filesystem_ftpsockets' ) ) {
@@ -83,6 +97,13 @@ class PR_Ftp_Sftp
     return false;
   }
 
+  /**
+   * Recursive copy from sftp protocol
+   *
+   * @param  string $source
+   * @param  string $remote_path
+   * @return bool
+   */
   public function ssh2_copy( $source, $remote_path) {
 
     $source = str_replace( '\\', '/', realpath( $source ) );
@@ -127,6 +148,11 @@ class PR_Ftp_Sftp
     return true;
   }
 
+  /**
+   * add ftp fields in called metabox
+   * 
+   * @void
+   */
   public function pr_add_field( $metabox ) {
     $metabox->add_field( '_pr_ftp_protocol', __( 'Transfer protocol', 'editorial_project' ), '', 'radio', '', array(
       'options' => array(

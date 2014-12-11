@@ -202,20 +202,31 @@ class Pressroom_List_Table extends WP_List_Table
 		$themes = PR_Theme::get_themes();
     $current_theme = get_post_meta( $this->_edition_id, '_pr_theme_select', true );
 
-    $html = '<select class="presslist-template">';
-		if ( $current_theme ) {
-      $pages = $themes[$current_theme]['layouts'];
-      foreach ( $pages as $page ) {
-          if ( $page['rule'] == 'content' || $page['rule'] == 'cover' ) {
-            $html.= '<option ' . ( $template == $page['path'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page['path'] . '" >' . $page['name'] . '</option>';
+    if ( $current_theme ) {
+      if ( array_key_exists( $current_theme, $themes ) ) {
+        if ( $themes[$current_theme]['active'] ) {
+          $html = '<select class="presslist-template">';
+          $pages = $themes[$current_theme]['layouts'];
+          foreach ( $pages as $page ) {
+            if ( $page['rule'] == 'content' || $page['rule'] == 'cover' ) {
+              $html.= '<option ' . ( $template == $page['path'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page['path'] . '" >' . $page['name'] . '</option>';
+            }
           }
+          $html .= '</select>';
         }
-      } else {
-         $html.= '<option value="">' . __('Please assign a theme edition', 'edition') . '</option>';
+        else {
+          $html = '<i>' . __('Theme is disabled. Activate it or change to another theme.', 'edition') . '</i>';
+        }
       }
-      $html .= '</select>';
+      else {
+        $html = '<i>' . __('The theme was not found. Update the edition to fix.', 'edition') . '</i>';
+      }
+    }
+    else {
+      $html = '<i>' . __('Please assign a theme.', 'edition') . '</i>';
+    }
 
-      return $html;
+    return $html;
    }
 
    /**

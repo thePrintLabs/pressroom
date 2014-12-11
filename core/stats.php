@@ -70,7 +70,7 @@ class PR_Stats
         )
       )
     ) );
-    echo '<canvas id="dwnEditionChart" width="460" height="460"></canvas>';
+    echo '<div><canvas id="dwnEditionChart" width="460" height="460"></canvas></div>';
     echo '<script type="text/javascript">
     jQuery(document).ready(function($){var d=' . $js_data . ', ctx = $("#dwnEditionChart").get(0).getContext("2d"),
     downloadedChart = new Chart(ctx).Line(d, {responsive:true}); });
@@ -106,7 +106,7 @@ class PR_Stats
         ),
       )
     ) );
-    echo '<canvas id="prchEditionChart" width="460" height="460"></canvas>';
+    echo '<div><canvas id="prchEditionChart" width="460" height="460"></canvas></div>';
     echo '<script type="text/javascript">
     jQuery(document).ready(function($){var d=' . $js_data . ', ctx = $("#prchEditionChart").get(0).getContext("2d"),
     downloadedChart = new Chart(ctx).Bar(d, {responsive:true}); });
@@ -165,10 +165,10 @@ class PR_Stats
     $end_date = strtotime( $end_date );
     $start_date = strtotime( '-' . $sub_days . ' days', $end_date );
 
-    $dates = PR_Utils::get_days( $start_date, $end_date, 'y-m-d' );
+    $dates = PR_Utils::get_days( $start_date, $end_date, 'm-d' );
     $dates = array_fill_keys( $dates, 0 );
 
-    $sql = $wpdb->prepare( "SELECT FROM_UNIXTIME( stat_date, '%%y-%%m-%%d' ) AS stat_date, SUM(counter) AS counter
+    $sql = $wpdb->prepare( "SELECT FROM_UNIXTIME( stat_date, '%%m-%%d' ) AS stat_date, SUM(counter) AS counter
     FROM " . $wpdb->prefix . PR_TABLE_STATS . " WHERE scenario = %s
     AND stat_date BETWEEN %d AND %d GROUP BY stat_date ORDER BY stat_date", $scenario, $start_date, $end_date );
     $results = $wpdb->get_results( $sql );

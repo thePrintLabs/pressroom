@@ -11,6 +11,7 @@ class PR_themes_page {
     add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
 
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
+    add_action( 'wp_ajax_pr_flush_themes_cache', array( $this, 'pr_flush_themes_cache' ) );
     add_action( 'wp_ajax_pr_delete_theme', array( $this, 'pr_delete_theme' ) );
     add_action( 'wp_ajax_pr_upload_theme', array( $this, 'pr_upload_theme' ) );
   }
@@ -68,14 +69,13 @@ class PR_themes_page {
   public function pr_themes_page() {
 
     $this->_update_theme_status();
-    $this->_refresh_themes_cache();
     $this->_upload_theme();
 
     $themes = PR_Theme::get_themes();
     echo '<div class="wrap" id="edd-add-ons">
     <h2>PressRoom Themes <span class="title-count theme-count" id="pr-theme-count">' . count( $themes ) . '</span>
     <a href="' . PR_API_URL . '" target="_blank" class="hide-if-no-js add-new-h2">' . __('Ottieni altri temi', 'pressroom-themes') . '</a>
-    <a href="' . admin_url('admin.php?page=pressroom-themes&refresh_cache=true&pmtype=updated&pmcode=themes_cache_flushed') . '" class="button button-primary right" id="pr-theme-refresh">' . __("Flush themes cache", 'pressroom-themes') . '</a>
+    <a href="#" class="button button-primary right" id="pr-flush-themes-cache">' . __("Flush themes cache", 'pressroom-themes') . '</a>
     </h2>
     <br>
     <div class="theme-browser rendered">
@@ -131,12 +131,24 @@ class PR_themes_page {
   }
 
   /**
-  * Ajax function for upload theme
-  * @return json string
-  */
+   * Ajax function for upload theme
+   * @return json string
+   */
   public function pr_upload_theme() {
 
     if ( $this->_upload_theme() ) {
+      wp_send_json_success();
+    }
+    wp_send_json_error();
+  }
+
+  /**
+   * Ajax function for flush themes cache
+   * @return json string
+   */
+  public function pr_flush_themes_cache() {
+
+    if ( delete_option( 'pressroom_themes' ) ) {
       wp_send_json_success();
     }
     wp_send_json_error();
@@ -152,6 +164,8 @@ class PR_themes_page {
       'delete_confirm'      => __( "Are you sure you want to delete this theme?", 'pressroom-themes' ),
       'delete_failed'       => __( "An error occurred during deletion", 'pressroom-themes' ),
       'theme_upload_error'  => __( "An error occurred during theme upload", 'pressroom-themes' ),
+      'flush_failed'        => __( "An error occurred during cache flush", 'pressroom-themes' ),
+      'flush_redirect_url'  => admin_url('admin.php?page=pressroom-themes&refresh_cache=true&pmtype=updated&pmcode=themes_cache_flushed'),
     );
   }
 
@@ -182,17 +196,6 @@ class PR_themes_page {
         unlink( $uploaded['file'] );
       }
       return false;
-    }
-  }
-
-  /**
-  * Flush themes cache
-  * @void
-  */
-  protected function _refresh_themes_cache() {
-
-    if ( isset( $_GET['refresh_cache'] ) && $_GET['refresh_cache'] == 'true' ) {
-      delete_option( 'pressroom_themes' );
     }
   }
 

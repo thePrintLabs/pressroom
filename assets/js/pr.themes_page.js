@@ -16,6 +16,18 @@
     });
   }});
 
+  $("#pr-flush-themes-cache").click(function(){
+    $.post(ajaxurl, {
+      'action':'pr_flush_themes_cache'
+    }, function(response) {
+      if (response.success) {
+        document.location.href = pr.flush_redirect_url;
+      } else {
+        alert(pr.flush_failed);
+      }
+    });
+  });
+
   $("#pr-theme-add").on('click', function(e){
     e.stopPropagation();
     e.preventDefault();

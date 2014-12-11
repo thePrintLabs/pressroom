@@ -1,6 +1,7 @@
 <?php
 const CONCURRENT_PAGES = 3;
-require_once( '../../../../../wp-load.php' );
+$wp_root = file_get_contents( '.pr_path' );
+require_once( $wp_root . 'wp-load.php' );
 if ( !defined( 'WP_ADMIN' ) ) {
   define( 'WP_ADMIN', true );
 }

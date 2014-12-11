@@ -30,6 +30,7 @@ class PR_Setup
     if ( !empty( $errors ) ) {
        return $errors;
     }
+
     return false;
   }
 
@@ -144,6 +145,8 @@ class PR_Setup
     $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'tmp' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'shelf' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_TMP_PATH, 'preview' );
+
+    file_put_contents( PR_CORE_PATH . 'preview' . DIRECTORY_SEPARATOR . '.pr_path', get_home_path() );
 
     return !$api_dir ? false : true;
   }

@@ -340,6 +340,42 @@ class PR_Packager
 	}
 
 	/**
+	* Check edition post settings else check for editorial project settings
+	*
+	* @param  int $edition_id
+	* @param  int $eproject_id
+	* @void
+	*/
+	// public static function load_settings( $edition_id, $eproject_id, $settings ) {
+	//
+	// 	if( !$settings ) {
+	// 		return false;
+	// 	}
+	//
+	// 	$package_settings = array();
+	// 	foreach( $settings as $setting ) {
+	//
+	// 		if( $edition_id ) {
+	// 			$option = get_post_meta( $edition_id, $setting, true );
+	//
+	// 			if ( !$option || ( is_string( $option ) && !strlen( $option ) ) || ( is_array( $option ) && empty( $option[0] ) || empty( $option[1] )  ) ) {
+	//
+	// 				if( $eproject_id ) {
+	// 					$option = PR_Editorial_Project::get_config( $eproject_id, $setting);
+	// 				}
+	// 			}
+	//
+	// 			if( $option ) {
+	// 				$package_settings[$setting] = $option;
+	// 			}
+	// 		}
+	//
+	// 	}
+	//
+	// 	return $package_settings;
+	// }
+
+	/**
 	* Stop packager procedure and clear temp folder
 	*
 	* @void
@@ -468,7 +504,7 @@ class PR_Packager
 
 	/**
 	* Get attachment ID by url
-	* 
+	*
 	* @param string $attachment_url
 	* @return string or boolean false
 	*/

@@ -11,7 +11,7 @@ class PR_Ftp_Sftp
 
   public function __construct() {
 
-    add_action( 'pr_add_ftp_field', array( $this, 'pr_add_field' ), 10, 1 );
+    add_action( 'pr_add_web_field', array( $this, 'pr_add_field' ), 10, 1 );
     $this->errors = new WP_Error();
 
     if( !defined( 'FS_CHMOD_DIR' ) ) {
@@ -44,6 +44,9 @@ class PR_Ftp_Sftp
 
     switch( $params['protocol'] ) {
 
+      case 'local':
+        return true;
+        break;
       case 'ftp':
         if( !extension_loaded( 'sockets' ) || !function_exists( 'fsockopen' ) ) {
           $this->errors->add( 'connect', __( 'No sockets extension founds.' ) );
@@ -150,7 +153,7 @@ class PR_Ftp_Sftp
 
   /**
    * add ftp fields in called metabox
-   * 
+   *
    * @void
    */
   public function pr_add_field( $metabox ) {

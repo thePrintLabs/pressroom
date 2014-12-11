@@ -147,4 +147,41 @@ jQuery(function(){
       }
     })
   });
+
+
+  var override_web = jQuery('#_pr_web_override_eproject');
+  var override_hpub = jQuery('#_pr_hpub_override_eproject');
+
+  override_web.click(function(e) {
+    checkOverride(jQuery(this), 'web_metabox');
+  });
+
+  override_hpub.click(function(e) {
+    checkOverride(jQuery(this), 'hpub');
+  });
+
+  if(override_web.length) {
+    checkOverride(override_web, 'web_metabox');
+  }
+
+  if(override_hpub.length) {
+    checkOverride(override_hpub, 'hpub');
+  }
+
 });
+
+function checkOverride(element, metabox) {
+
+  if(element.is(':checked')) {
+    jQuery( '.'+metabox + ' input').removeAttr('disabled');
+    jQuery( '.'+metabox + ' select').removeAttr('disabled');
+    jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#222');
+  }
+  else {
+    jQuery( '.'+metabox+' input').attr('disabled','disabled');
+    jQuery( '.'+metabox+' select').attr('disabled','disabled');
+    jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
+    element.removeAttr('disabled');
+    element.parent().parent().find('label').css('color','#222');
+  }
+}

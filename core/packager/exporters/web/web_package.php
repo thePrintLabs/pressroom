@@ -38,19 +38,24 @@ final class PR_Packager_Web_Package
       '_pr_ftp_destination_path'
     );
 
+    if( !$settings ) {
+      return false;
+    }
+
+    $override = get_post_meta( $edition_id, '_pr_web_override_eproject', true );
+
     foreach( $settings as $setting ) {
 
-      $option = get_post_meta( $edition_id, $setting, true );
-
-      if ( !$option || ( is_string( $option ) && !strlen( $option ) ) || ( is_array( $option ) && empty( $option[0] ) || empty( $option[1] )  ) ) {
-        $option = $options = PR_Editorial_Project::get_config( $eproject_id, $setting);
+      if( $override ) {
+        $option = get_post_meta( $edition_id, $setting, true );
       }
-
+      else if( $eproject_id ) {
+        $option = PR_Editorial_Project::get_config( $eproject_id, $setting);
+      }
       if( $option ) {
         $this->package_settings[$setting] = $option;
       }
     }
-
   }
 
   /**
@@ -127,7 +132,13 @@ final class PR_Packager_Web_Package
    */
   public function pr_add_option( &$metaboxes, $item_id ) {
 
+    global $post;
+
     $web = new PR_Metabox( 'web_metabox', __( 'web', 'web_package' ), 'normal', 'high', $item_id );
+
+    if( $post ) {
+      $web->add_field( '_pr_web_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
+    }
 
     $web->add_field( '_pr_container_theme', __( 'Container theme', 'web_package' ), __( 'Web viewer theme', 'web_package' ), 'select', '', array(
       'options' => array(
@@ -137,7 +148,7 @@ final class PR_Packager_Web_Package
       )
     );
 
-    do_action_ref_array( 'pr_add_ftp_field', array( &$web ) );
+    do_action_ref_array( 'pr_add_web_field', array( &$web ) );
 
     array_push( $metaboxes, $web );
   }
@@ -202,13 +213,14 @@ final class PR_Packager_Web_Package
       case 'sftp':
         $ftp = new PR_Ftp_Sftp();
 
+        var_dump($this->package_settings);
         $params = array(
-          "hostname"  => $this->package_settings['_pr_ftp_server'][0],
-          "base"      => $this->package_settings['_pr_ftp_destination_path'],
-          "port"      => (int) $this->package_settings['_pr_ftp_server'][1],
-          "username"  => $this->package_settings['_pr_ftp_user'],
-          "password"  => $this->package_settings['_pr_ftp_password'],
-          "protocol"  => $this->package_settings['_pr_ftp_protocol'],
+          "hostname"  => isset( $this->package_settings['_pr_ftp_server'][0] ) ? $this->package_settings['_pr_ftp_server'][0] : '',
+          "base"      => isset( $this->package_settings['_pr_ftp_destination_path'] ) ? $this->package_settings['_pr_ftp_destination_path'] : '',
+          "port"      => isset( $this->package_settings['_pr_ftp_server'][1] ) ? (int) $this->package_settings['_pr_ftp_server'][1] : '',
+          "username"  => isset( $this->package_settings['_pr_ftp_user'] ) ? $this->package_settings['_pr_ftp_user'] : '',
+          "password"  => isset( $this->package_settings['_pr_ftp_password'] ) ? $this->package_settings['_pr_ftp_password'] : '',
+          "protocol"  => isset( $this->package_settings['_pr_ftp_protocol'] ) ? $this->package_settings['_pr_ftp_protocol'] : '',
         );
 
         if( $ftp->connect( $params ) ) {

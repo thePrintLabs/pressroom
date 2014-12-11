@@ -90,7 +90,18 @@ final class PR_Packager_Book_JSON
          'url'    => $hpub_url
       );
 
-      $configs = get_option( 'taxonomy_term_' . $term_id );
+      $override = get_post_meta( $edition_post->ID, '_pr_hpub_override_eproject', true );
+
+      if( !$override ) {
+        $configs = get_option( 'taxonomy_term_' . $term_id );
+      }
+      else {
+        $custom_configs = get_post_meta( $edition_post->ID );
+        $configs = array();
+        foreach( $custom_configs as $key => $custom_config ) {
+          $configs[$key] = $custom_config[0];
+        }
+      }
 
       if ( !$configs ) {
         return $options;
@@ -161,7 +172,7 @@ final class PR_Packager_Book_JSON
                   if ( isset( $meta_value[0] ) && !empty( $meta_value[0] ) ) {
                      $authors = explode( ',', $meta_value[0] );
                      foreach ( $authors as $author ) {
-                        $options[$baker_option][] = $author;
+                        $options[$baker_option] = $author;
                      }
                   }
                   break;

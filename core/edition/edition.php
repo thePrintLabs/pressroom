@@ -153,7 +153,7 @@ class PR_Edition
 		$hpub->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
 
 		$metaboxes = array();
-		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID ) );
+		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID, true ) );
 
 		$flatplan = array(
 			'id' 		=> 'flatplan',

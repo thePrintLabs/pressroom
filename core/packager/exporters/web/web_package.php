@@ -12,7 +12,7 @@ final class PR_Packager_Web_Package
   public function __construct() {
 
     add_action( 'pr_add_eproject_tab', array( $this, 'pr_add_option' ), 10, 2 );
-    add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 2 );
+    add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 3 );
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );
 
     add_action( 'pr_packager_web_start', array( $this, 'web_packager_start' ), 10, 2 );
@@ -130,13 +130,11 @@ final class PR_Packager_Web_Package
    * @param object &$metaboxes
    * @param int $item_id (it can be editorial project id or edition id);
    */
-  public function pr_add_option( &$metaboxes, $item_id ) {
-
-    global $post;
+  public function pr_add_option( &$metaboxes, $item_id, $edition = false ) {
 
     $web = new PR_Metabox( 'web_metabox', __( 'web', 'web_package' ), 'normal', 'high', $item_id );
 
-    if( $post ) {
+    if( $edition ) {
       $web->add_field( '_pr_web_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
     }
 
@@ -198,6 +196,11 @@ final class PR_Packager_Web_Package
    */
   protected function _web_write( $packager, $editorial_project ) {
 
+    if(!isset($this->package_settings['_pr_ftp_protocol'])) {
+      PR_Packager::print_line( __( 'Missing connetion protocol parameter', 'web_package' ), 'error' );
+      return false;
+    }
+
     switch( $this->package_settings['_pr_ftp_protocol'] ) {
       case 'local':
         $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
@@ -213,7 +216,6 @@ final class PR_Packager_Web_Package
       case 'sftp':
         $ftp = new PR_Ftp_Sftp();
 
-        var_dump($this->package_settings);
         $params = array(
           "hostname"  => isset( $this->package_settings['_pr_ftp_server'][0] ) ? $this->package_settings['_pr_ftp_server'][0] : '',
           "base"      => isset( $this->package_settings['_pr_ftp_destination_path'] ) ? $this->package_settings['_pr_ftp_destination_path'] : '',

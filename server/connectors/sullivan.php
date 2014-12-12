@@ -93,7 +93,7 @@ final class PR_Connector_Sullivan extends PR_Server_API {
 
     $data = $this->_sendRequest();
     if ( !$data ) {
-      $this->send_response( 500, $this->_error_msg );
+      $this->send_response( 500, array( 'error' => $this->_error_msg ), false );
     }
 
     $status = !empty( $data->subscriptions ) ? 'subscribed' : 'nosubscription';
@@ -140,4 +140,4 @@ final class PR_Connector_Sullivan extends PR_Server_API {
   }
 }
 
-//$pr_server_connector_sullivan = new PR_Connector_Sullivan;
+$pr_server_connector_sullivan = new PR_Connector_Sullivan;

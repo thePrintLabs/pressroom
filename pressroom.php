@@ -344,13 +344,16 @@ class TPL_Pressroom
 
 		$types = array();
 		if ( !empty( $this->configs ) && isset( $this->configs['pr_custom_post_type'] ) ) {
-			if ( is_array( $this->configs['pr_custom_post_type'] ) ) {
-				foreach ( $this->configs['pr_custom_post_type'] as $post_type ) {
-					array_push( $types, $post_type );
+			$custom_types = $this->configs['pr_custom_post_type'];
+			if ( is_array( $custom_types ) ) {
+				foreach ( $custom_types as $post_type ) {
+					if ( strlen( $post_type ) ) {
+						array_push( $types, $post_type );
+					}
 				}
 			}
-			else {
-				array_push( $types, $this->configs['pr_custom_post_type'] );
+			elseif ( is_string( $custom_types ) && strlen( $custom_types ) ) {
+				array_push( $types, $custom_types );
 			}
 		}
 		return $types;

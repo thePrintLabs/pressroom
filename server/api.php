@@ -56,11 +56,15 @@ abstract class PR_Server_API
    * This sends a JSON response to the browser
    * @param int $code
    * @param string $msg
+   * @param int $force_header
    * @return json response;
    */
-  protected function send_response( $code, $msg = '' ) {
+  protected function send_response( $code, $msg = '', $force_header = true ) {
 
-    status_header( $code );
+    if ( $force_header ) {
+      status_header( $code );
+    }
+
     if ( $code == 200 ) {
       wp_send_json_success( $msg );
     }

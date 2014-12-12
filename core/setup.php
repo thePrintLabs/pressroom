@@ -170,7 +170,7 @@ class PR_Setup
       $regex = new RegexIterator( $it, '/wp-load.php$/i', RecursiveRegexIterator::GET_MATCH );
       $files = iterator_to_array( $regex );
       if ( !empty( $files ) ) {
-        return key( $results );
+        return key( $files );
       }
     }
     return false;

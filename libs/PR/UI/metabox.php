@@ -70,8 +70,16 @@ class PR_Metabox
           if ( isset( $_POST[$field_id] ) ) {
             $new_value = $_POST[$field_id];
           }
+          else {
+            $new_value = $field['default'];
+          }
           break;
 
+        case 'checkbox':
+          if ( isset( $_POST[$field_id] ) ) {
+            $new_value = $_POST[$field_id];
+          }
+          break;
         case 'file':
           if ( !empty( $_FILES[$field_id]['name'] ) ) {
             $supported_types = get_allowed_mime_types();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PressRoom packager class.
  *
@@ -239,6 +240,13 @@ class PR_Packager
 		return $output;
 	}
 
+	/**
+	 * Create toc
+	 *
+	 * @param  object $editorial_project
+	 * @param  string $dir
+	 * @void
+	 */
 	public function make_toc( $editorial_project, $dir ) {
 
 		// Parse html of toc index.php file

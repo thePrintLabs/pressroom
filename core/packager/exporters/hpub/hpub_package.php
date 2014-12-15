@@ -26,7 +26,7 @@ final class PR_Packager_HPUB_Package
   public function hpub_start( $packager, $editorial_project ) {
 
     // Parse html of toc index.php file
-    $packager->make_toc( $editorial_project );
+    $packager->make_toc( $editorial_project, $packager->edition_dir );
   }
 
   /**

@@ -125,7 +125,7 @@ class PR_Edition
 				)
 				) );
 		$hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'edition' ), 'checkbox', false );
-		$hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '' );
+		$hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '#fff' );
 
 		$hpub->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in portrait mode.', 'editorial_project' ), 'file', '' );
 		$hpub->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in landscape mode.', 'editorial_project' ), 'file', '' );

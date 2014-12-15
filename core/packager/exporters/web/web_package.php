@@ -8,7 +8,6 @@ final class PR_Packager_Web_Package
 {
 
   public $pstgs = array();
-  public $destionation;
   public $root_folder;
 
   public function __construct() {
@@ -209,11 +208,23 @@ final class PR_Packager_Web_Package
     exit;
   }
 
+  /**
+   * Copy web reader in the package
+   *
+   * @param  string $dir
+   * @void
+   */
   protected function _get_container( $dir ) {
 
     PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DIRECTORY_SEPARATOR . 'reader', $dir);
   }
 
+  /**
+   * Replace shortcode reader index.html with posts iframes
+   *
+   * @param  object $packager
+   * @void
+   */
   protected function _shortcode_replace( $packager ) {
 
     $html = file_get_contents( $packager->edition_dir  . DIRECTORY_SEPARATOR . '../' . 'index.html');
@@ -232,6 +243,7 @@ final class PR_Packager_Web_Package
   /**
    * Check transfer protocol and transfer files
    *
+   * @param  object $packager
    * @param  object $editorial_project
    * @void
    */

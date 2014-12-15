@@ -13,22 +13,13 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
   /**
    * iTunes connector
-   * @param string $app_id
-   * @param string $user_id
-   * @param string $environment
    */
-  public function __construct( $app_id = false, $user_id = false, $environment = 'production' ) {
+  public function __construct() {
 
-    if ( $app_id && $user_id ) {
-      $this->app_id = $app_id;
-      $this->user_id = $user_id;
-      $this->environment = $environment;
-    }
-    else {
-      add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
-      add_action( 'init', array( $this, 'add_endpoint' ), 10 );
-      add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
-    }
+    add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
+    add_action( 'init', array( $this, 'add_endpoint' ), 10 );
+    add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
+    add_action( 'pr_issue_download', array( $this, 'validate_purchases_on_download' ), 10, 6 );
   }
 
   /**
@@ -360,6 +351,33 @@ final class PR_Connector_iTunes extends PR_Server_API {
       'issues'      => $purchases,
       'subscribed'  => $is_subscribed
     );
+  }
+
+  /**
+   * Check purchased editions on issue download
+   * @param  boolean $allow_download
+   * @param  string $app_id
+   * @param  string $user_id
+   * @param  string $environment
+   * @param  object $edition
+   * @param  object $eproject
+   * @void
+   */
+  public function validate_purchases_on_download( &$allow_download, $app_id, $user_id, $environment, $edition, $eproject ) {
+
+    $this->app_id = $app_id;
+    $this->user_id = $user_id;
+    $this->environment = $environment;
+    $this->eproject = $eproject;
+
+    $purchases = $this->get_purchases();
+    if ( !empty( $purchases['issues'] ) ) {
+      // Get the editorial project settings
+      $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $eproject->term_id );
+      if ( in_array( $edition_bundle_id, $purchases['issues'] ) ) {
+        $allow_download = true;
+      }
+    }
   }
 
   /**

@@ -69,6 +69,7 @@ class PR_Setup
       $table_receipts = $wpdb->prefix . PR_TABLE_RECEIPTS;
       $table_receipt_transactions = $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS;
       $table_purchased_issues = $wpdb->prefix . PR_TABLE_PURCHASED_ISSUES;
+      $table_auth_tokens = $wpdb->prefix . PR_TABLE_AUTH_TOKENS;
       $table_stats = $wpdb->prefix . PR_TABLE_STATS;
 
     	$charset_collate = '';
@@ -106,6 +107,15 @@ class PR_Setup
         PRIMARY KEY(app_id, user_id, product_id)
       ) $charset_collate; ";
 
+      $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_auth_tokens (
+        app_id VARCHAR(255),
+        user_id VARCHAR(255),
+        access_token VARCHAR(255),
+        created_time int(10) UNSIGNED NOT NULL,
+        expires_in int(10) UNSIGNED NOT NULL,
+        PRIMARY KEY(app_id, user_id, access_token)
+      ) $charset_collate; ";
+
       $sql_stats = "CREATE TABLE IF NOT EXISTS $table_stats (
         scenario VARCHAR(128),
         object_id INT(10) UNSIGNED NOT NULL,
@@ -123,6 +133,7 @@ class PR_Setup
       return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts
          && $wpdb->get_var("SHOW TABLES LIKE '$table_receipt_transactions'") == $table_receipt_transactions
          && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues
+         && $wpdb->get_var("SHOW TABLES LIKE '$table_auth_tokens'") == $table_auth_tokens
          && $wpdb->get_var("SHOW TABLES LIKE '$table_stats'") == $table_stats );
     }
 

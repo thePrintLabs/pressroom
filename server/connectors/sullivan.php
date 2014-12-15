@@ -20,18 +20,12 @@ final class PR_Connector_Sullivan extends PR_Server_API {
    * @param string $user_id
    * @param string $environment
    */
-  public function __construct( $app_id = false, $user_id = false, $environment = 'production' ) {
+  public function __construct() {
 
-    if ( $app_id && $user_id ) {
-      $this->app_id = $app_id;
-      $this->user_id = $user_id;
-      $this->environment = $environment;
-    }
-    else {
-      add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
-      add_action( 'init', array( $this, 'add_endpoint' ), 10 );
-      add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
-    }
+    add_action( 'press_flush_rules', array( $this, 'add_endpoint' ), 10 );
+    add_action( 'init', array( $this, 'add_endpoint' ), 10 );
+    add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
+    add_action( 'pr_issue_download', array( $this, 'validate_token_on_download' ), 20, 6 );
   }
 
   /**
@@ -66,6 +60,69 @@ final class PR_Connector_Sullivan extends PR_Server_API {
   }
 
   /**
+   * Save authorization token into the db.
+   * @param string $token
+   * @param int $expire_time
+   * @return mixed
+   */
+  public function save_auth_token( $token, $expire_time ) {
+
+    global $wpdb;
+    $sql = "INSERT IGNORE INTO " . $wpdb->prefix . PR_TABLE_AUTH_TOKENS . " SET ";
+    $sql.= "app_id = %s, user_id = %s, access_token = %s, created_time = %d, expires_in = %d";
+    return $wpdb->query( $wpdb->prepare( $sql, $this->app_id, $this->user_id, $token, time(), $expire_time ) );
+  }
+
+  /**
+   * Delete authorization tokens from db.
+   * @void
+   */
+  public function delete_auth_tokens() {
+
+    global $wpdb;
+    $wpdb->delete( $wpdb->prefix . PR_TABLE_AUTH_TOKENS, array( 'app_id' => $this->app_id, 'user_id' => $this->user_id ), array( '%s', '%s' ) );
+  }
+
+  /*
+  * Verify the access token
+  * @param string $token
+  * @return string or boolean false
+  */
+  public function validate_token( $token ) {
+
+    global $wpdb;
+    $sql = "SELECT access_token FROM " . $wpdb->prefix . PR_TABLE_AUTH_TOKENS . " ";
+    $sql.= "WHERE app_id = %s AND user_id = %s AND ( created_time + expires_in ) > UNIX_TIMESTAMP()";
+    $access_token = $wpdb->get_var( $wpdb->prepare( $sql, $this->app_id, $this->user_id ) );
+    if ( $access_token ) {
+      return $access_token;
+    }
+    return false;
+  }
+
+  /**
+   * Validate token on issue download
+   * @param  boolean $allow_download
+   * @param  string $app_id
+   * @param  string $user_id
+   * @param  string $environment
+   * @param  object $edition
+   * @param  object $eproject
+   * @void
+   */
+  public function validate_token_on_download( &$allow_download, $app_id, $user_id, $environment, $edition, $eproject ) {
+
+    if ( isset( $_GET['access_token'] ) ) {
+      $this->app_id = $app_id;
+      $this->user_id = $user_id;
+      $this->environment = $environment;
+      if ( $this->validate_token( $_GET['access_token'] ) ) {
+        $allow_download = true;
+      }
+    }
+  }
+
+  /**
    * Client will call this API endpoint
    * to send the login credential to the remote server.
    * @return json string
@@ -85,25 +142,41 @@ final class PR_Connector_Sullivan extends PR_Server_API {
       $this->send_response( 404, "Not found. Editorial project not found." );
     }
 
-    // $this->app_id = $wp->query_vars['app_id'];
-    // $this->user_id = $wp->query_vars['user_id'];
+    $this->app_id = $wp->query_vars['app_id'];
+    $this->user_id = $wp->query_vars['user_id'];
+
     $this->environment = isset( $_POST['environment'] ) ? $_POST['environment'] : 'production';
     $this->account_username = $_POST['username'];
     $this->account_password = $_POST['password'];
 
     $data = $this->_sendRequest();
     if ( !$data ) {
-      $this->send_response( 500, array( 'error' => $this->_error_msg ), false );
+      $this->send_response( 500, $this->_error_msg, false );
     }
 
     $status = !empty( $data->subscriptions ) ? 'subscribed' : 'nosubscription';
-    $params = array(
-      'email'         => $data->email,
-      'status'        => $status,
-      'subscriptions' => $data->subscriptions
-    );
 
-    $this->send_response( 200, $params );
+    if ( $status == 'nosubscription' ) {
+      $this->send_response( 500, __("Not found a valid subscription"), false );
+    }
+    else {
+
+      $max_expiry_time = 3600 * 3; // @TODO: Inserire controllo data scadenza abbonamento
+
+      $access_token = bin2hex(openssl_random_pseudo_bytes(16));
+      $this->delete_auth_tokens();
+      $this->save_auth_token( $access_token, $max_expiry_time );
+
+      $params = array(
+        'email'         => $data->email,
+        'status'        => $status,
+        'subscriptions' => $data->subscriptions,
+        'access_token'  => $access_token,
+        'expires_in'    => $max_expiry_time
+      );
+
+      $this->send_response( 200, $params );
+    }
   }
 
   /**

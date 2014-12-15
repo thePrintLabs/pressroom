@@ -33,7 +33,7 @@ final class PR_Server_Issue extends PR_Server_API
     global $wp;
     $request = parent::parse_request();
     if ( $request && $request == 'edition' ) {
-      $this->_action_validate_issue();
+      $this->_action_download_issue();
     }
   }
 
@@ -41,7 +41,7 @@ final class PR_Server_Issue extends PR_Server_API
    *
    * @void
    */
-  protected function _action_validate_issue() {
+  protected function _action_download_issue() {
 
     global $wp;
     $edition_slug = $wp->query_vars['edition_name'];
@@ -70,19 +70,9 @@ final class PR_Server_Issue extends PR_Server_API
     $allow_download = false;
     $edition_hpub = get_post_meta( $edition->ID, '_pr_edition_hpub_' . $eproject->term_id, true );
     $edition_type = get_post_meta( $edition->ID, '_pr_edition_free', true );
-    if ( $edition_type == 0 ) {
-      // @TODO: Implement management of multiple connectors
-      $itunes_connector = new PR_Connector_iTunes( $app_id, $user_id, $environment );
-      $itunes_connector->eproject = $eproject;
 
-      $purchases = $itunes_connector->get_purchases();
-      if ( !empty( $purchases['issues'] ) ) {
-        // Get the editorial project settings
-        $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $eproject->term_id );
-        if ( in_array( $edition_bundle_id, $purchases['issues'] ) ) {
-          $allow_download = true;
-        }
-      }
+    if ( $edition_type == 0 ) {
+      do_action_ref_array( 'pr_issue_download', array( &$allow_download, $app_id, $user_id, $environment, $edition, $eproject ) );
     }
     else {
       $allow_download = true;
@@ -101,6 +91,7 @@ final class PR_Server_Issue extends PR_Server_API
       header( "Content-Length:" . filesize( $edition_hpub ) );
       header( "Content-Disposition: attachment; filename=" . basename( $edition_hpub ) );
       readfile( $edition_hpub );
+
       // Record download
       if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'GET' ) {
         PR_Stats::increment_counter( 'download_edition', $edition->ID );

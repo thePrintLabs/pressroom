@@ -80,6 +80,8 @@ class PR_Packager
 			return;
 		}
 
+		do_action( "pr_packager_{$this->package_type}_start", $this, $editorial_project );
+
 		$this->set_progress( 5, __( 'Downloading assets', 'edition' ) );
 
 		// Download all assets
@@ -88,8 +90,6 @@ class PR_Packager
 			$this->exit_on_error();
 			return;
 		}
-
-		do_action( "pr_packager_{$this->package_type}_start", $this, $editorial_project );
 
 		$total_progress = 40;
 		$progress_step = round( $total_progress / count( $this->linked_query->posts ) );
@@ -208,9 +208,9 @@ class PR_Packager
 	* @param  string $post
 	* @param  boolean
 	*/
-	public function save_html_file( $post, $filename ) {
+	public function save_html_file( $post, $filename, $dir ) {
 
-		return file_put_contents( $this->edition_dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
+		return file_put_contents( $dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
 	}
 
 	/**
@@ -239,22 +239,29 @@ class PR_Packager
 		return $output;
 	}
 
-	public function make_toc( $editorial_project ) {
+	public function make_toc( $editorial_project, $dir ) {
 
 		// Parse html of toc index.php file
-		$toc = $this->toc_parse( $editorial_project );
-		if ( !$toc ) {
+		$html = $this->toc_parse( $editorial_project );
+		if ( !$html ) {
 			self::print_line( __( 'Failed to parse toc file', 'edition' ), 'error' );
 			$this->exit_on_error();
 			return;
 		}
 
 		// Rewrite toc url
-		$toc = $this->rewrite_url( $toc );
+		if ( has_action( "pr_{$this->package_type}_toc_rewrite_url" ) ) {
+			do_action_ref_array( "pr_{$this->package_type}_toc_rewrite_url", array( $this, &$html ) );
+
+		}
+		else {
+			$html = $this->rewrite_url( $html );
+		}
+
 		$this->set_progress( 28, __( 'Saving toc file', 'edition' ) );
 
 		// Save cover html file
-		if ( $this->save_html_file( $toc, 'toc' ) ) {
+		if ( $this->save_html_file( $html, 'toc', $dir ) ) {
 			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
 			$this->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
 		}
@@ -339,41 +346,6 @@ class PR_Packager
 		}
 	}
 
-	/**
-	* Check edition post settings else check for editorial project settings
-	*
-	* @param  int $edition_id
-	* @param  int $eproject_id
-	* @void
-	*/
-	// public static function load_settings( $edition_id, $eproject_id, $settings ) {
-	//
-	// 	if( !$settings ) {
-	// 		return false;
-	// 	}
-	//
-	// 	$package_settings = array();
-	// 	foreach( $settings as $setting ) {
-	//
-	// 		if( $edition_id ) {
-	// 			$option = get_post_meta( $edition_id, $setting, true );
-	//
-	// 			if ( !$option || ( is_string( $option ) && !strlen( $option ) ) || ( is_array( $option ) && empty( $option[0] ) || empty( $option[1] )  ) ) {
-	//
-	// 				if( $eproject_id ) {
-	// 					$option = PR_Editorial_Project::get_config( $eproject_id, $setting);
-	// 				}
-	// 			}
-	//
-	// 			if( $option ) {
-	// 				$package_settings[$setting] = $option;
-	// 			}
-	// 		}
-	//
-	// 	}
-	//
-	// 	return $package_settings;
-	// }
 
 	/**
 	* Stop packager procedure and clear temp folder

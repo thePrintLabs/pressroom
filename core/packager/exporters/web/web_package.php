@@ -7,7 +7,9 @@ require_once( PR_PACKAGER_CONNECTORS_PATH . '/ftp_sftp.php' );
 final class PR_Packager_Web_Package
 {
 
-  public $package_settings = array();
+  public $pstgs = array();
+  public $destionation;
+  public $root_folder;
 
   public function __construct() {
 
@@ -18,6 +20,7 @@ final class PR_Packager_Web_Package
     add_action( 'pr_packager_web_start', array( $this, 'web_packager_start' ), 10, 2 );
     add_action( 'pr_packager_web', array( $this, 'web_packager_run' ), 10, 4 );
     add_action( 'pr_packager_web_end', array( $this, 'web_packager_end' ), 10, 2 );
+    add_action( 'pr_web_toc_rewrite_url', array( $this, 'rewrite_url' ), 10, 2 );
   }
 
   /**
@@ -53,7 +56,7 @@ final class PR_Packager_Web_Package
         $option = PR_Editorial_Project::get_config( $eproject_id, $setting);
       }
       if( $option ) {
-        $this->package_settings[$setting] = $option;
+        $this->pstgs[$setting] = $option;
       }
     }
   }
@@ -67,9 +70,16 @@ final class PR_Packager_Web_Package
    */
   public function web_packager_start( $packager, $editorial_project ) {
 
-    $packager->make_toc( $editorial_project );
     $this->load_settings( $packager->edition_post->ID, $editorial_project->term_id );
 
+    $this->root_folder = $packager->edition_dir;
+
+    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
+      $this->_get_container( $packager->edition_dir );
+      $packager->edition_dir = $packager->edition_dir . DIRECTORY_SEPARATOR . 'contents';
+    }
+
+    $packager->make_toc( $editorial_project, $this->root_folder );
   }
 
   /**
@@ -84,7 +94,12 @@ final class PR_Packager_Web_Package
   public function web_packager_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
     // Rewrite post url
-    $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
+      self::rewrite_url( $packager, $parsed_html_post );
+    }
+    else {
+      $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+    }
 
     do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir );
 
@@ -102,6 +117,10 @@ final class PR_Packager_Web_Package
    * @void
    */
   public function web_packager_end( $packager, $editorial_project ) {
+
+    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
+      $this->_shortcode_replace( $packager );
+    }
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
@@ -121,6 +140,8 @@ final class PR_Packager_Web_Package
     $packager->set_progress( 90, __( 'Generating web package', 'web_package' ) );
 
     $this->_web_write( $packager, $editorial_project );
+
+    PR_Utils::remove_dir( $this->root_folder );
 
   }
 
@@ -188,6 +209,26 @@ final class PR_Packager_Web_Package
     exit;
   }
 
+  protected function _get_container( $dir ) {
+
+    PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DIRECTORY_SEPARATOR . 'reader', $dir);
+  }
+
+  protected function _shortcode_replace( $packager ) {
+
+    $html = file_get_contents( $packager->edition_dir  . DIRECTORY_SEPARATOR . '../' . 'index.html');
+
+    $replace = "";
+    foreach( $packager->linked_query->posts as $post ) {
+      $replace.= '<div class="swiper-slide" data-hash="item-'. $post->ID .'">
+      <iframe height="100%" width="100%" frameborder="0" src="contents/'. PR_Utils::sanitize_string( $post->post_title ) .'.html"></iframe>
+      </div>';
+    }
+
+    $html = str_replace( '[EDITION_POSTS]', $replace, $html );
+    file_put_contents( $packager->edition_dir . DIRECTORY_SEPARATOR . '../' . 'index.html' , $html );
+  }
+
   /**
    * Check transfer protocol and transfer files
    *
@@ -196,19 +237,28 @@ final class PR_Packager_Web_Package
    */
   protected function _web_write( $packager, $editorial_project ) {
 
-    if(!isset($this->package_settings['_pr_ftp_protocol'])) {
+    if(!isset($this->pstgs['_pr_ftp_protocol'])) {
       PR_Packager::print_line( __( 'Missing connetion protocol parameter', 'web_package' ), 'error' );
       return false;
     }
 
-    switch( $this->package_settings['_pr_ftp_protocol'] ) {
+    switch( $this->pstgs['_pr_ftp_protocol'] ) {
       case 'local':
         $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
-        PR_Utils::recursive_copy( $packager->edition_dir, PR_WEB_PATH . $package_name );
+        PR_Utils::recursive_copy( $this->root_folder, PR_WEB_PATH . $package_name );
+
         $filename = PR_WEB_PATH . $package_name . '.zip';
-        $cover_post = $packager->linked_query->posts[0];
-        $cover = PR_Utils::sanitize_string($cover_post->post_title) . '.html';
-        if ( PR_Utils::create_zip_file( $packager->edition_dir, $filename, '' ) ) {
+
+        if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
+          $cover = "index.html";
+        }
+        else {
+          $cover_post = $packager->linked_query->posts[0];
+          $cover = PR_Utils::sanitize_string($cover_post->post_title) . '.html';
+        }
+
+
+        if ( PR_Utils::create_zip_file( $this->root_folder, $filename, '' ) ) {
           PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR . $cover .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
         }
         break;
@@ -217,18 +267,18 @@ final class PR_Packager_Web_Package
         $ftp = new PR_Ftp_Sftp();
 
         $params = array(
-          "hostname"  => isset( $this->package_settings['_pr_ftp_server'][0] ) ? $this->package_settings['_pr_ftp_server'][0] : '',
-          "base"      => isset( $this->package_settings['_pr_ftp_destination_path'] ) ? $this->package_settings['_pr_ftp_destination_path'] : '',
-          "port"      => isset( $this->package_settings['_pr_ftp_server'][1] ) ? (int) $this->package_settings['_pr_ftp_server'][1] : '',
-          "username"  => isset( $this->package_settings['_pr_ftp_user'] ) ? $this->package_settings['_pr_ftp_user'] : '',
-          "password"  => isset( $this->package_settings['_pr_ftp_password'] ) ? $this->package_settings['_pr_ftp_password'] : '',
-          "protocol"  => isset( $this->package_settings['_pr_ftp_protocol'] ) ? $this->package_settings['_pr_ftp_protocol'] : '',
+          "hostname"  => isset( $this->pstgs['_pr_ftp_server'][0] ) ? $this->pstgs['_pr_ftp_server'][0] : '',
+          "base"      => isset( $this->pstgs['_pr_ftp_destination_path'] ) ? $this->pstgs['_pr_ftp_destination_path'] : '',
+          "port"      => isset( $this->pstgs['_pr_ftp_server'][1] ) ? (int) $this->pstgs['_pr_ftp_server'][1] : '',
+          "username"  => isset( $this->pstgs['_pr_ftp_user'] ) ? $this->pstgs['_pr_ftp_user'] : '',
+          "password"  => isset( $this->pstgs['_pr_ftp_password'] ) ? $this->pstgs['_pr_ftp_password'] : '',
+          "protocol"  => isset( $this->pstgs['_pr_ftp_protocol'] ) ? $this->pstgs['_pr_ftp_protocol'] : '',
         );
 
         if( $ftp->connect( $params ) ) {
           PR_Packager::print_line( __( 'Ftp connection successfull  ', 'web_package' ) , 'success' );
           PR_Packager::print_line( __( 'Start transfer', 'web_package' ) , 'success' );
-          if( $ftp->recursive_copy( $packager->edition_dir, $this->package_settings['_pr_ftp_destination_path'] ) ) {
+          if( $ftp->recursive_copy( $this->root_folder, $this->pstgs['_pr_ftp_destination_path'] ) ) {
             PR_Packager::print_line( __( 'Transfer complete', 'web_package' ), 'success' );
           }
           else {
@@ -244,6 +294,38 @@ final class PR_Packager_Web_Package
         }
 
         break;
+    }
+  }
+
+  /**
+  * Get all url from the html string and replace with internal url of the package
+  *
+  * @param  object $edition
+  * @param  string $html
+  * @param  string $ext  = 'html' extension file output
+  * @return string or false
+  */
+  public static function rewrite_url( $packager, &$html, $extension = 'html' ) {
+
+    if ( $html ) {
+
+      $linked_query = $packager->linked_query;
+      $post_rewrite_urls = array();
+      $urls = PR_Utils::extract_urls( $html );
+
+      foreach ( $urls as $url ) {
+        if ( strpos( $url, site_url() ) !== false ) {
+          $post_id = url_to_postid( $url );
+          if ( $post_id ) {
+            foreach( $linked_query->posts as $post ) {
+              if ( $post->ID == $post_id ) {
+                $html = str_replace( $url, 'index.html#toc-' . $post_id, $html );
+                $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

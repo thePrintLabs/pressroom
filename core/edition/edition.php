@@ -263,10 +263,10 @@ class PR_Edition
 	*/
 	public function add_publication_action() {
 
-		echo '<a id="preview_edition" target="_blank" href="' . PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
+		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
 		echo '<select id="pr_packager_type"><option value="web">web</option><option value="hpub">hpub</option></select>';
 		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
-
+		echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
 	}
 
 	/**

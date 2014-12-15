@@ -229,6 +229,7 @@ class PR_Packager
 		ob_start();
 		$edition = $this->edition_post;
 		$editorial_project_id = $editorial_project->term_id;
+		$pr_package_type = $this->package_type;
 		$pr_theme_url = PR_THEME::get_theme_uri( $this->edition_post->ID );
 
 		$posts = $this->linked_query;
@@ -441,6 +442,7 @@ class PR_Packager
 		ob_start();
 		$edition = $this->edition_post;
 		$editorial_project_id = $editorial_project->term_id;
+		$pr_package_type = $this->package_type;
 		$pr_theme_url = PR_THEME::get_theme_uri( $this->edition_post->ID );
 
 		$posts = $this->linked_query;
@@ -468,6 +470,7 @@ class PR_Packager
 		ob_start();
 		$edition = $this->edition_post;
 		$editorial_project_id = $editorial_project->term_id;
+		$pr_package_type = $this->package_type;
 		$pr_theme_url = PR_THEME::get_theme_uri( $this->edition_post->ID );
 
 		global $post;

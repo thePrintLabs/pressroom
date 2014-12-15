@@ -21,4 +21,15 @@
       }
     });
   });
+
+  $("#preview_edition").click(function(e) {
+    e.preventDefault();
+
+    var packager_type = $("#pr_packager_type option:selected").val();
+    var edition_id = $('#post_ID').val();
+    var pr_core_uri = $('#pr_core_uri').val();
+    var url = pr_core_uri + 'preview/reader.php?edition_id=' + edition_id + '&package_type='+packager_type;
+    window.open(url,"_blank");
+  });
+
 }(jQuery));

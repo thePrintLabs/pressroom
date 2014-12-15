@@ -29,6 +29,7 @@ $(function() {
       return $.get(reader.data( "url" ), {
         'post_id'     : $item.data( "post" ),
         'edition_id'  : reader.data( "edition" ),
+        'package_type'  : reader.data( "package-type" ),
         'action'      : 'preview_draw_page',
         'pr_no_theme' : true
       }, function(s) {

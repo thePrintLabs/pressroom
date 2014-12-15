@@ -520,7 +520,6 @@ class PR_Edition
 
 		$columns["cover"] = "Cover";
 		$columns["paid_free"] = "Paid/Free";
-		$columns["action"] = "Action";
 
 		return $columns;
 	}
@@ -543,11 +542,6 @@ class PR_Edition
       case 'paid_free' :
       	echo get_post_meta( $id, '_pr_edition_free', true ) ? 'Free' : 'Paid';
       	break;
-
-			case 'action':
-				echo '<a target="_blank" href="'. PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';
-				echo '<a id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true">' . __( "Packaging", "edition" ) . '</a> ';
-				break;
 
 			default:
 				break;

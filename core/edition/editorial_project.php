@@ -17,7 +17,7 @@ class PR_Editorial_Project
       add_filter( 'manage_' . PR_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
       add_filter( 'wp_tag_cloud', array( $this, 'remove_tag_cloud' ), 10, 2 );
 
-      add_action( PR_EDITORIAL_PROJECT . '_pre_edit_form', array( $this, 'add_tabs_to_form' ), 10, 2 );
+      add_action( PR_EDITORIAL_PROJECT . '_edit_form', array( $this, 'add_tabs_to_form' ), 10, 2 );
       add_action( PR_EDITORIAL_PROJECT . '_edit_form_fields', array( $this, 'edit_form_meta_fields' ), 10, 2 );
       add_action( PR_EDITORIAL_PROJECT . '_add_form', array( $this,'customize_form' ) );
       add_action( PR_EDITORIAL_PROJECT . '_edit_form', array( $this,'customize_form' ) );
@@ -128,8 +128,7 @@ class PR_Editorial_Project
         array( 'value' => 'landscape', 'name' => __( "Landscape", 'editorial_project' ) ),
         array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
         )
-      )
-    );
+    ) );
     $hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'editorial_project' ), 'checkbox', false );
     $hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '' );
 
@@ -146,8 +145,7 @@ class PR_Editorial_Project
         array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),
         array( 'value' => 'three-cards', 'name' => __( "Three cards", 'editorial_project' ) )
         )
-      )
-    );
+    ) );
     $hpub->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
     $hpub->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
     $hpub->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
@@ -186,9 +184,9 @@ class PR_Editorial_Project
     do_action_ref_array( 'pr_add_eproject_tab', array( &$metaboxes, $term_id ) );
 
     $this->_metaboxes = array(
-    $hpub,
-    $sub_meta,
-    $push_meta,
+      $hpub,
+      $sub_meta,
+      $push_meta,
     );
 
     $this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );
@@ -249,6 +247,7 @@ class PR_Editorial_Project
   */
   public function edit_form_meta_fields( $term ) {
 
+    $this->get_custom_metabox( $term->term_id );
     foreach ( $this->_metaboxes as $key => $metabox ) {
       echo $metabox->fields_to_html( true, $metabox->id );
     }
@@ -335,31 +334,31 @@ class PR_Editorial_Project
    */
   public function customize_form() {
   ?>
-  <script type="text/javascript">
-  jQuery(function(){
-    jQuery('#tag-description, #description, #parent').closest('.form-field').remove();
-    var tr = jQuery('<tr><td id="moved-tab" colspan="2"></td></tr>');
-    tr.insertAfter(jQuery('#slug').closest('.form-field'));
-    jQuery('#pressroom_metabox').appendTo('#moved-tab');
-    jQuery('.submit').appendTo('.press-header-right');
-    jQuery('input[name="pr_push_service"]').change(function(){
-      var $this = jQuery(this);
-      if ( $this.is(':checked') ) {
-        if ( $this.val() == 'urbanairship' ) {
-          jQuery('label[for="pr_push_api_app_id"]').html('App Key');
-          jQuery('label[for="pr_push_api_key"]').html('App Master Secret');
-          jQuery('#pr_push_api_app_id').next('.description').html('Urban Airship generated string identifying the app setup. Used in the application bundle.');
-          jQuery('#pr_push_api_key').next('.description').html('Urban Airship generated string used for server to server API access. This should never be shared or placed in an application bundle.');
-        } else if ( $this.val() == 'parse' ) {
-          jQuery('label[for="pr_push_api_app_id"]').html('Application ID');
-          jQuery('label[for="pr_push_api_key"]').html('REST API Key');
-          jQuery('#pr_push_api_app_id').next('.description').html('This is the main identifier that uniquely specifies your application. This is paired with a key to provide your clients access to your application\'s data.');
-          jQuery('#pr_push_api_key').next('.description').html('This key should be used when making requests to the REST API. It also adheres to object level permissions.');
-        }
-      }
-    }).change();
-  });
-  </script>
+    <script type="text/javascript">
+      jQuery(function(){
+        jQuery('#tag-description, #description, #parent').closest('.form-field').remove();
+        var tr = jQuery('<tr><td id="moved-tab" colspan="2"></td></tr>');
+        tr.insertAfter(jQuery('#slug').closest('.form-field'));
+        jQuery('#pressroom_metabox').appendTo('#moved-tab');
+        jQuery('.submit').appendTo('.press-header-right');
+        jQuery('input[name="pr_push_service"]').change(function(){
+          var $this = jQuery(this);
+          if ( $this.is(':checked') ) {
+            if ( $this.val() == 'urbanairship' ) {
+              jQuery('label[for="pr_push_api_app_id"]').html('App Key');
+              jQuery('label[for="pr_push_api_key"]').html('App Master Secret');
+              jQuery('#pr_push_api_app_id').next('.description').html('Urban Airship generated string identifying the app setup. Used in the application bundle.');
+              jQuery('#pr_push_api_key').next('.description').html('Urban Airship generated string used for server to server API access. This should never be shared or placed in an application bundle.');
+            } else if ( $this.val() == 'parse' ) {
+              jQuery('label[for="pr_push_api_app_id"]').html('Application ID');
+              jQuery('label[for="pr_push_api_key"]').html('REST API Key');
+              jQuery('#pr_push_api_app_id').next('.description').html('This is the main identifier that uniquely specifies your application. This is paired with a key to provide your clients access to your application\'s data.');
+              jQuery('#pr_push_api_key').next('.description').html('This key should be used when making requests to the REST API. It also adheres to object level permissions.');
+            }
+          }
+        }).change();
+      });
+    </script>
   <?php
   }
 

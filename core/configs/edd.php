@@ -94,7 +94,6 @@ if (!class_exists('PR_EDD_License')) {
   	 * @return  void
   	 */
 	  public function activate_license( $old_value, $new_value  ) {
-
       if ( isset( $new_value['pr_license_key'] ) && strlen( $new_value['pr_license_key'] ) &&
         ( !isset( $this->options['pr_license_is_valid'] ) || $this->options['pr_license_is_valid'] != 'valid' ) ) {
 

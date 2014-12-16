@@ -70,8 +70,16 @@ class PR_Metabox
           if ( isset( $_POST[$field_id] ) ) {
             $new_value = $_POST[$field_id];
           }
+          else {
+            $new_value = $field['default'];
+          }
           break;
 
+        case 'checkbox':
+          if ( isset( $_POST[$field_id] ) ) {
+            $new_value = $_POST[$field_id];
+          }
+          break;
         case 'file':
           if ( !empty( $_FILES[$field_id]['name'] ) ) {
             $supported_types = get_allowed_mime_types();
@@ -150,6 +158,12 @@ class PR_Metabox
         default:
           $term_meta[$field_id] = isset( $_POST[$field_id] ) ? $_POST[$field_id] : $default;
           break;
+
+        case 'double_text':
+          $term_meta[$field_id][0] = isset( $_POST[$field_id][0] ) ? $_POST[$field_id][0] : $default;
+          $term_meta[$field_id][1] = isset( $_POST[$field_id][1] ) ? $_POST[$field_id][1] : $default;
+          break;
+
         case 'repeater':
           $term_meta[$field_id] = array_filter( $_POST[$field_id] );
           break;
@@ -237,12 +251,21 @@ class PR_Metabox
       }
 
       $html.= '<tr ' . ( $class ? 'class="tabbed ' . $class.'"' : "") . '>
-      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . ' style="width:20%"><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
+      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . '><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
       <td>';
       switch ( $field['type'] ) {
 
         case 'text':
           $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
+          break;
+
+        case 'password':
+          $html.= '<input type="password" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
+          break;
+
+        case 'double_text':
+          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '[0]" id="' . $field['id'] . '_0" value="' . ( $meta_value ? $meta_value[0] : $field['default'] ) . '" size="20" style="width:94%" />';
+          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '[1]" id="' . $field['id'] . '_1" value="' . ( $meta_value ? $meta_value[1] : $field['default'] ) . '" size="20" style="width:5%" /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'text_autocompleted':
@@ -258,7 +281,7 @@ class PR_Metabox
           foreach ( $field['options'] as $option ) {
             $html.= '<option value="'. $option['value'] .'" '. ( $meta_value == $option['value'] ? 'selected="selected"' : '' ) . '>'. $option['text'] . '</option>';
           }
-          $html.= '</select>';
+          $html.= '</select><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'select_multiple':
@@ -337,6 +360,10 @@ class PR_Metabox
             $html.= $field['desc'];
           break;
 
+        case 'custom_html':
+          $html.= $field['desc'];
+          break;
+
         case 'repeater':
           $i = 0;
           $values = array('');
@@ -413,8 +440,7 @@ class PR_Metabox
   public function add_custom_script() {
 
     wp_enqueue_style( 'wp-color-picker' );
-    wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
-    //wp_register_script( 'editorial_project', PR_ASSETS_URI . '/js/pr.metabox.min.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
-    wp_enqueue_script( 'editorial_project' );
+    wp_register_script( 'metabox', PR_ASSETS_URI . '/js/pr.metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
+    wp_enqueue_script( 'metabox' );
   }
 }

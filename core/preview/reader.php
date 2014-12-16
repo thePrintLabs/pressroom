@@ -20,7 +20,12 @@ if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
   wp_die( __( "<b>Error getting required params. Please check your url address.</b>", 'pressroom' ) );
 }
 
+if( !isset($_GET['package_type'])) {
+  wp_die( __( "<b>Error: missing package type </b>", 'pressroom' ) );
+}
+
 $edition_id = (int)$_GET['edition_id'];
+$package_type = $_GET['package_type'];
 
 if ( !isset( $_GET['post_id'] ) || !strlen( $_GET['post_id'] ) ) {
   $linked_posts = PR_Preview::init( $edition_id );
@@ -143,6 +148,7 @@ $index_height = 150;
       <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
       <div class="swiper-pages swiper-container" id="reader"
         data-edition="<?php echo $edition_id; ?>"
+        data-package-type="<?php echo $package_type; ?>"
         data-conpages="<?php echo $concurrent_slides; ?>"
         data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
         <div class="swiper-wrapper">

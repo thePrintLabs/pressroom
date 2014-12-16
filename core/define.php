@@ -11,6 +11,11 @@ define( "PR_CORE_PATH", PR_PLUGIN_PATH . 'core/' );
 define( "PR_PAGES_PATH", PR_CORE_PATH . 'pages/' );
 define( "PR_CONFIGS_PATH", PR_CORE_PATH . 'configs/' );
 
+/* PACKAGER */
+define( "PR_PACKAGER_PATH", PR_CORE_PATH . 'packager/' );
+define( "PR_PACKAGER_CONNECTORS_PATH", PR_PACKAGER_PATH . 'connectors/' );
+define( "PR_PACKAGER_EXPORTERS_PATH", PR_PACKAGER_PATH . 'exporters/' );
+
 /* SERVER */
 define( "PR_SERVER_PATH", PR_PLUGIN_PATH . 'server/' );
 define( "PR_CONNECTORS_PATH", PR_SERVER_PATH . 'connectors/' );
@@ -18,6 +23,7 @@ define( "PR_CONNECTORS_PATH", PR_SERVER_PATH . 'connectors/' );
 /* API */
 define( "PR_API_PATH", PR_PLUGIN_PATH . 'api/' );
 define( "PR_HPUB_PATH", PR_API_PATH . 'hpub/' );
+define( "PR_WEB_PATH", PR_API_PATH . 'web/' );
 define( "PR_TMP_PATH", PR_API_PATH . 'tmp/' );
 define( "PR_PREVIEW_TMP_PATH", PR_TMP_PATH . 'preview/' );
 define( "PR_SHELF_PATH", PR_API_PATH . 'shelf/' );
@@ -27,6 +33,7 @@ define( "PR_CORE_URI", PR_PLUGIN_URI . 'core/' );
 define( "PR_SHELF_URI", PR_PLUGIN_URI . 'api/shelf/' );
 define( "PR_ASSETS_URI", PR_PLUGIN_URI. 'assets/' );
 define( "PR_HPUB_URI", PR_PLUGIN_URI . 'api/hpub/' );
+define( "PR_WEB_URI", PR_PLUGIN_URI . 'api/web/' );
 define( "PR_THEME_URI", PR_PLUGIN_URI . 'themes/' );
 define( "PR_PREVIEW_URI", PR_PLUGIN_URI . 'api/tmp/preview/' );
 

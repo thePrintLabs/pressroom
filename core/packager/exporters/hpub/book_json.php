@@ -51,7 +51,7 @@ final class PR_Packager_Book_JSON
     foreach ( $linked_query->posts as $post ) {
       $page_name = PR_Utils::sanitize_string( $post->post_title );
       $page_path = $edition_dir . DIRECTORY_SEPARATOR . $page_name . '.html';
-
+      
       $press_options['sharing_urls'][] = pr_get_sharing_url( $post->ID );
       $press_options['titles'][] = $post->post_title;
 
@@ -73,8 +73,9 @@ final class PR_Packager_Book_JSON
       $press_options['sharing_urls'] = array_values( $press_options['sharing_urls'] );
     }
 
-    return PR_Packager::save_json_file( $press_options, 'book.json', $edition_dir );
+    return PR_Packager_HPUB_Package::save_json_file( $press_options, 'book.json', $edition_dir );
   }
+
 
    /**
     * Get pressroom edition configuration options
@@ -94,7 +95,18 @@ final class PR_Packager_Book_JSON
          'url'    => $hpub_url
       );
 
-      $configs = get_option( 'taxonomy_term_' . $term_id );
+      $override = get_post_meta( $edition_post->ID, '_pr_hpub_override_eproject', true );
+
+      if( !$override ) {
+        $configs = get_option( 'taxonomy_term_' . $term_id );
+      }
+      else {
+        $custom_configs = get_post_meta( $edition_post->ID );
+        $configs = array();
+        foreach( $custom_configs as $key => $custom_config ) {
+          $configs[$key] = $custom_config[0];
+        }
+      }
 
       if ( !$configs ) {
         return $options;
@@ -167,7 +179,7 @@ final class PR_Packager_Book_JSON
                   if ( isset( $meta_value[0] ) && !empty( $meta_value[0] ) ) {
                      $authors = explode( ',', $meta_value[0] );
                      foreach ( $authors as $author ) {
-                        $options[$baker_option][] = $author;
+                        $options[$baker_option] = $author;
                      }
                   }
                   break;

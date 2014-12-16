@@ -173,6 +173,30 @@
 #pressroom_metabox .wp-list-table tr:hover {cursor: move}
 .number_element_input {margin-right: 5px;}
 
+=======
+/****************************/
+/*        FTP_SFTP          */
+/****************************/
+
+.connection-result {
+  padding: 1px 12px;
+  background-color: #fff;
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  display: none;
+  height: 26px;
+  line-height: 27px;
+  margin-top: 20px;
+}
+
+.connection-result-success {
+  border-left: 4px solid #7ad03a;
+}
+
+.connection-result-failure {
+  border-left: 4px solid #f02a20;
+}
+
 /****************************/
 /* PUSH NOTIFICATION PAGE  */
 /****************************/

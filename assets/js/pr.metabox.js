@@ -67,10 +67,11 @@ jQuery(function(){
     jQuery(this).parent().remove();
   });
 
-
   jQuery('#pressroom_metabox').removeClass('postbox');
   jQuery('.tabbed').css('display','none');
   jQuery('.hpub_metabox').css('display','table-row');
+  jQuery('.basic_metabox').css('display','table-row');
+
   jQuery('.flatplan').css('display','table-row');
 
 
@@ -116,4 +117,72 @@ jQuery(function(){
 
   });
 
+  jQuery('#test-connection').click(function(e) {
+    e.preventDefault();
+    jQuery('#connection-result').html('<div class="spinner"></div>');
+    jQuery('#connection-result').css('display','block');
+    jQuery("#connection-result .spinner").css('display','inline-block').css('float','none');
+
+    var server    = jQuery('input[name="_pr_ftp_server[0]"]').val();
+    var port      = jQuery('input[name="_pr_ftp_server[1]"]').val();
+    var base      = jQuery('input[name="_pr_ftp_destination_path"]').val();
+    var user      = jQuery('input[name="_pr_ftp_user"]').val();
+    var password  = jQuery('input[name="_pr_ftp_password"]').val();
+    var protocol  = jQuery('input[name="_pr_ftp_protocol"]:checked').val();
+
+    var data = {
+      'server'      : server,
+      'port'        : port,
+      'base'        : base,
+      'user'        : user,
+      'password'    : password,
+      'protocol'    : protocol,
+      'action'      : 'test_ftp_connection'
+    };
+
+    jQuery.post(ajaxurl, data, function(response) {
+      if( response ) {
+        jQuery('#connection-result').html(response.data.message);
+        jQuery('#connection-result').removeClass( 'connection-result-success connection-result-failure' );
+        jQuery('#connection-result').addClass('connection-result connection-result-'+response.data.class);
+      }
+    })
+  });
+
+
+  var override_web = jQuery('#_pr_web_override_eproject');
+  var override_hpub = jQuery('#_pr_hpub_override_eproject');
+
+  override_web.click(function(e) {
+    checkOverride(jQuery(this), 'web_metabox');
+  });
+
+  override_hpub.click(function(e) {
+    checkOverride(jQuery(this), 'hpub');
+  });
+
+  if(override_web.length) {
+    checkOverride(override_web, 'web_metabox');
+  }
+
+  if(override_hpub.length) {
+    checkOverride(override_hpub, 'hpub');
+  }
+
 });
+
+function checkOverride(element, metabox) {
+
+  if(element.is(':checked')) {
+    jQuery( '.'+metabox + ' input').removeAttr('disabled');
+    jQuery( '.'+metabox + ' select').removeAttr('disabled');
+    jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#222');
+  }
+  else {
+    jQuery( '.'+metabox+' input').attr('disabled','disabled');
+    jQuery( '.'+metabox+' select').attr('disabled','disabled');
+    jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
+    element.removeAttr('disabled');
+    element.parent().parent().find('label').css('color','#222');
+  }
+}

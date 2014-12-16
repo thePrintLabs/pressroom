@@ -2,10 +2,12 @@
 
 class PR_Preview {
 
+  public static $package_type;
   public function __construct() {
 
     add_action( 'add_meta_boxes', array( $this, 'add_preview_metabox' ), 10 );
     add_action( 'wp_ajax_preview_draw_page', array( $this, 'draw_page' ), 10 );
+
   }
 
 
@@ -19,6 +21,10 @@ class PR_Preview {
     $edition = get_post( $edition_id );
     if ( !$edition ) {
       return;
+    }
+
+    if( $_GET['package_type'] ) {
+      self::$package_type = $_GET['package_type'];
     }
 
     delete_transient( 'pr_preview_linked_query_' . $edition_id );
@@ -65,6 +71,8 @@ class PR_Preview {
       return;
     }
 
+    self::$package_type = isset( $_GET['package_type'] ) ? $_GET['package_type'] : '';
+
     $page_url = '';
     if ( has_action( 'pr_preview_' . $post->post_type ) ) {
       do_action_ref_array( 'pr_preview_' . $post->post_type, array( &$page_url, $edition, $post ) );
@@ -89,6 +97,7 @@ class PR_Preview {
 
   /**
    * Draw toc html file
+   *
    * @param object $edition
    * @param array $linked_posts
    * @return string or boolean false
@@ -102,6 +111,7 @@ class PR_Preview {
 
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
+    $pr_package_type = self::$package_type;
     $posts = $linked_posts;
     self::add_functions_file( $edition->ID );
     require_once( $toc );
@@ -117,6 +127,7 @@ class PR_Preview {
 
   /**
    * Parsing html
+   *
    * @param object $edition
    * @param object $connected_post
    * @return string  html string
@@ -135,6 +146,7 @@ class PR_Preview {
 
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
+    $pr_package_type = self::$package_type;
     global $post;
     $post = $connected_post;
     setup_postdata( $post );
@@ -148,6 +160,7 @@ class PR_Preview {
 
   /**
    * Rewrite html url for preview
+   *
    * @param object $edition
    * @param  string $html
    * @return string $html
@@ -226,11 +239,13 @@ class PR_Preview {
   public static function rewrite_toc_url( $html, $edition_id ) {
     if ( $html ) {
       $links = PR_Utils::extract_urls( $html );
+
       foreach ( $links as $link ) {
 
         $post_id = url_to_postid( $link );
+
         if ( $post_id ) {
-          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
+          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '&package_type='. self::$package_type .'#toc-' . $post_id, $html );
           $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
         }
       }

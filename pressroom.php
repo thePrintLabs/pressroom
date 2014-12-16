@@ -15,7 +15,7 @@
  *  | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
  *  |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
  *
- *  Copyright © 2014 - thePrintLabs Ltd. 
+ *  Copyright © 2014 - thePrintLabs Ltd.
  */
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly

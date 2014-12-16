@@ -205,7 +205,7 @@ class PR_options_page {
   public function pr_save_options( $new_value, $old_value ) {
 
     if( isset( $new_value['pr_custom_post_type'] ) ) {
-      $post_type = is_array( $new_value['pr_custom_post_type'] ) ? explode( ',', $new_value['pr_custom_post_type'] ) : $new_value['pr_custom_post_type'];
+      $post_type = is_array( $new_value['pr_custom_post_type'] ) ? $new_value['pr_custom_post_type'] : explode( ',', $new_value['pr_custom_post_type'] );
       $new_value['pr_custom_post_type'] = $post_type;
     }
 

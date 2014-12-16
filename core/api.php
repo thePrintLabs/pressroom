@@ -45,7 +45,7 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
     else {
       $post_types = array( 'post', 'page', $custom_post_types );
     }
-
+    
     $edition_query = new WP_Query( array(
       'post_type'           => $post_types,
       'post_status'         => 'any',

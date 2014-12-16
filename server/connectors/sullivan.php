@@ -161,7 +161,7 @@ final class PR_Connector_Sullivan extends PR_Server_API {
     }
     else {
 
-      $max_expiry_time = 3600 * 3; // @TODO: Inserire controllo data scadenza abbonamento
+      $max_expiry_time = 3600 * 24 * 7; // @TODO: Inserire controllo data scadenza abbonamento
 
       $access_token = bin2hex(openssl_random_pseudo_bytes(16));
       $this->delete_auth_tokens();

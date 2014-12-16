@@ -5,10 +5,12 @@ $wp_load_path = file_get_contents( '.pr_path' );
 if ( !$wp_load_path ) {
   die( 'wp-load.php path not found in .pr_path. Please define it manually' );
 }
-require_once( $wp_load_path );
+
 if ( !defined( 'WP_ADMIN' ) ) {
   define( 'WP_ADMIN', true );
 }
+
+require_once( $wp_load_path );
 
 if ( !is_admin() || !is_user_logged_in() ) {
   wp_redirect( home_url('/login') );

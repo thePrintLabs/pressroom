@@ -80,8 +80,10 @@ class PR_themes_page {
     <br>
     <div class="theme-browser rendered">
     <div class="themes">';
-    foreach ( $themes as $theme ) {
-      echo $this->_render_theme( $theme );
+    if( $themes ) {
+      foreach ( $themes as $theme ) {
+        echo $this->_render_theme( $theme );
+      }
     }
     echo '<div class="theme add-new-theme">
     <form method="post" id="pr-theme-form" enctype="multipart/form-data">
@@ -95,8 +97,6 @@ class PR_themes_page {
     </div>
     <br class="clear">
     </div>
-    <div class="theme-overlay"></div>
-    <p class="no-themes">' . __('Nessun tema trovato.', 'pressroom-themes') . '</p>
     </div>';
   }
 

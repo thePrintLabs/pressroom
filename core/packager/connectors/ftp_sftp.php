@@ -15,7 +15,7 @@ class PR_Ftp_Sftp
     $this->errors = new WP_Error();
 
     if( !defined( 'FS_CHMOD_DIR' ) ) {
-      define('FS_CHMOD_DIR', 755);
+      define('FS_CHMOD_DIR', 644);
     }
   }
 
@@ -47,6 +47,7 @@ class PR_Ftp_Sftp
       case 'local':
         return true;
         break;
+
       case 'ftp':
         if( !extension_loaded( 'sockets' ) || !function_exists( 'fsockopen' ) ) {
           $this->errors->add( 'connect', __( 'No sockets extension founds.' ) );
@@ -117,7 +118,7 @@ class PR_Ftp_Sftp
 
         $info = pathinfo( $file );
         if ( !in_array( $info['basename'], PR_Utils::$excluded_files ) ) {
-          $file = str_replace('\\', '/', realpath( $file ));
+          $file = str_replace('\\', '/', realpath( $file ) );
           if ( is_dir( $file ) ) {
             if( $this->connection->mkdir( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR,  $file ) ) ) {
               PR_Packager::print_line( sprintf( __( 'Folder %s  transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
@@ -154,6 +155,7 @@ class PR_Ftp_Sftp
   /**
    * add ftp fields in called metabox
    *
+   * @param object $metabox
    * @void
    */
   public function pr_add_field( $metabox ) {

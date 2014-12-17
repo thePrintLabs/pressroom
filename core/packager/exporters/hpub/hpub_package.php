@@ -79,7 +79,7 @@ final class PR_Packager_HPUB_Package
     $packager->set_package_date();
     $packager->set_progress( 90, __( 'Generating selected package type', 'edition' ) );
 
-    if ( PR_Packager_Book_JSON::generate_book( $packager->edition_post, $packager->linked_query, $packager->edition_dir, $packager->edition_cover_image, $editorial_project->term_id ) ) {
+    if ( PR_Packager_Book_JSON::generate_book( $packager, $editorial_project->term_id ) ) {
       PR_Packager::print_line( __( 'Generated book.json', 'edition' ), 'success' );
     }
     else {
@@ -88,7 +88,7 @@ final class PR_Packager_HPUB_Package
       return;
     }
 
-    $hpub_package = self::build( $packager->edition_post->ID, $editorial_project, $packager->edition_dir );
+    $hpub_package = self::build( $packager, $editorial_project );
     if ( $hpub_package ) {
       PR_Packager::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
     } else {
@@ -110,22 +110,21 @@ final class PR_Packager_HPUB_Package
   /**
    * Create zip file
    *
-   * @param  int $edition_post_id
+   * @param  object $packager
    * @param  object $editorial_project
-   * @param  string $source_dir
    * @return string or boolean false
    */
-  public static function build( $edition_post_id, $editorial_project, $source_dir ) {
+  public static function build( $packager, $editorial_project ) {
 
-    $filename = PR_HPUB_PATH . PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $edition_post_id . '.hpub';
-    if ( PR_Utils::create_zip_file( $source_dir, $filename, '' ) ) {
+    $filename = PR_HPUB_PATH . PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID . '.hpub';
+    if ( PR_Utils::create_zip_file( $packager->edition_dir, $filename, '' ) ) {
 
       $meta_key = '_pr_edition_hpub_' . $editorial_project->term_id;
-      if ( get_post_meta( $edition_post_id, $meta_key, true ) ) {
-        update_post_meta( $edition_post_id, $meta_key, $filename );
+      if ( get_post_meta( $packager->edition_post->ID, $meta_key, true ) ) {
+        update_post_meta( $packager->edition_post->ID, $meta_key, $filename );
       }
       else {
-        add_post_meta( $edition_post_id, $meta_key, $filename, true );
+        add_post_meta( $packager->edition_post->ID, $meta_key, $filename, true );
       }
       return $filename;
     }

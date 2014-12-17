@@ -39,19 +39,17 @@ final class PR_Packager_Book_JSON
   /**
    * Get all options and html files and save them in the book.json
    *
-   * @param object $edition_post
-   * @param object $linked_query
-   * @param string $edition_dir
-   * @param string $edition_cover_image
+   * @param object $packager
+   * @param int $term_id
    * @void
    */
-  public static function generate_book( $edition_post, $linked_query, $edition_dir, $edition_cover_image, $term_id ) {
+  public static function generate_book( $packager, $term_id ) {
 
-    $press_options = self::_get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id );
-    foreach ( $linked_query->posts as $post ) {
+    $press_options = self::_get_pressroom_options( $packager, $term_id );
+    foreach ( $packager->linked_query->posts as $post ) {
       $page_name = PR_Utils::sanitize_string( $post->post_title );
-      $page_path = $edition_dir . DIRECTORY_SEPARATOR . $page_name . '.html';
-      
+      $page_path = $packager->edition_dir . DIRECTORY_SEPARATOR . $page_name . '.html';
+
       $press_options['sharing_urls'][] = pr_get_sharing_url( $post->ID );
       $press_options['titles'][] = $post->post_title;
 
@@ -62,7 +60,7 @@ final class PR_Packager_Book_JSON
          PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $page_path ), 'error' );
       }
 
-      do_action_ref_array( 'pr_packager_generate_book', array( &$press_options, $post, $edition_dir ) );
+      do_action_ref_array( 'pr_packager_generate_book', array( &$press_options, $post, $packager->edition_dir ) );
     }
 
     if ( !empty( $press_options['contents'] ) ) {
@@ -73,7 +71,7 @@ final class PR_Packager_Book_JSON
       $press_options['sharing_urls'] = array_values( $press_options['sharing_urls'] );
     }
 
-    return PR_Packager_HPUB_Package::save_json_file( $press_options, 'book.json', $edition_dir );
+    return PR_Packager_HPUB_Package::save_json_file( $press_options, 'book.json', $packager->edition_dir );
   }
 
 
@@ -83,25 +81,25 @@ final class PR_Packager_Book_JSON
     * @param  boolean $shelf
     * @return array
     */
-   protected static function _get_pressroom_options( $edition_post, $edition_dir, $edition_cover_image, $term_id ) {
+   protected static function _get_pressroom_options( $packager, $term_id ) {
 
       global $tpl_pressroom;
 
       $book_url = str_replace( array( 'http://', 'https://' ), 'book://', PR_HPUB_URI );
-      $hpub_url = str_replace( PR_HPUB_PATH, $book_url, get_post_meta( $edition_post->ID, '_pr_edition_hpub_' . $term_id, true ) );
+      $hpub_url = str_replace( PR_HPUB_PATH, $book_url, get_post_meta( $packager->edition_post->ID, '_pr_edition_hpub_' . $term_id, true ) );
 
       $options = array(
          'hpub'   => true,
          'url'    => $hpub_url
       );
 
-      $override = get_post_meta( $edition_post->ID, '_pr_hpub_override_eproject', true );
+      $override = get_post_meta( $packager->edition_post->ID, '_pr_hpub_override_eproject', true );
 
       if( !$override ) {
         $configs = get_option( 'taxonomy_term_' . $term_id );
       }
       else {
-        $custom_configs = get_post_meta( $edition_post->ID );
+        $custom_configs = get_post_meta( $packager->edition_post->ID );
         $configs = array();
         foreach( $custom_configs as $key => $custom_config ) {
           $configs[$key] = $custom_config[0];
@@ -144,7 +142,7 @@ final class PR_Packager_Book_JSON
               if ( $media ) {
                 $media_info = pathinfo( $media );
                 $path = $media_info['basename'];
-                copy( $media, $edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $path );
+                copy( $media, $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $path );
                 $options[$baker_option] = PR_EDITION_MEDIA . $path;
               }
               else {
@@ -157,7 +155,7 @@ final class PR_Packager_Book_JSON
           }
       }
 
-      foreach ( $edition_post as $key => $value ) {
+      foreach ( $packager->edition_post as $key => $value ) {
 
          if ( array_key_exists( $key, self::$_press_to_baker ) ) {
             $baker_option = self::$_press_to_baker[$key];
@@ -165,14 +163,14 @@ final class PR_Packager_Book_JSON
          }
       }
 
-      $edition_meta = get_post_custom( $edition_post->ID );
+      $edition_meta = get_post_custom( $packager->edition_post->ID );
       foreach ( $edition_meta as $meta_key => $meta_value ) {
 
          if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
             $baker_option = self::$_press_to_baker[$meta_key];
             switch ( $meta_key ) {
                case '_pr_cover':
-                  $options[$baker_option] = PR_EDITION_MEDIA . $edition_cover_image;
+                  $options[$baker_option] = PR_EDITION_MEDIA . $packager->edition_cover_image;
                   break;
                case '_pr_author':
                case '_pr_creator':

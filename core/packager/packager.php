@@ -364,7 +364,7 @@ class PR_Packager
 	public function exit_on_error() {
 
 		$this->_clean_temp_dir();
-		$this->set_progress( 100, __( 'Errore creating package', 'edition' ) );
+		$this->set_progress( 100, __( 'Error creating package', 'edition' ) );
 		ob_end_flush();
 	}
 

@@ -119,8 +119,8 @@ class PR_Edition
 				array( 'value' => 'portrait', 'name' => __( "Portrait", 'edition' ) ),
 				array( 'value' => 'landscape', 'name' => __( "Landscape", 'edition' ) ),
 				array( 'value' => 'both', 'name' => __( "Both", 'edition' ) )
-				)
-				) );
+			)
+		) );
 		$hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'edition' ), 'checkbox', false );
 		$hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '#fff' );
 
@@ -136,8 +136,8 @@ class PR_Edition
 			'options' => array(
 				array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'edition' ) ),
 				array( 'value' => 'three-cards', 'name' => __( "Three cards", 'edition' ) )
-				)
-				) );
+			)
+		) );
 		$hpub->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
 		$hpub->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
 		$hpub->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
@@ -171,6 +171,8 @@ class PR_Edition
 	/**
 	 * Add one or more custom metabox to edition custom fields
 	 *
+	 * @param string $post_type
+	 * @param object $post
 	 * @void
 	 */
 	public function add_custom_metaboxes( $post_type, $post ) {
@@ -183,6 +185,7 @@ class PR_Edition
 	/**
 	 * Custom metabox callback print html input field
 	 *
+	 * @param object $post
 	 * @echo
 	 */
 	public function add_custom_metabox_callback( $post ) {
@@ -306,6 +309,12 @@ class PR_Edition
 		}
 	}
 
+	/**
+	 * Assign the first template to post if empty
+	 *
+	 * @param  object $edition
+	 * @void
+	 */
 	public function sanitize_linked_posts( $edition ) {
 
 		$linked_posts = self::get_linked_posts( $edition );
@@ -334,6 +343,11 @@ class PR_Edition
 		}
 	}
 
+	/**
+	 * Render the packager console
+	 *
+	 * @void
+	 */
 	public function publishing_render_console() {
 
 		$packager = new PR_Packager();
@@ -425,6 +439,7 @@ class PR_Edition
 	 * Get linked posts
 	 *
 	 * @param object or int $edition
+	 * @param array $post_meta
 	 * @return array of objects
 	 */
 	public static function get_linked_posts( $edition, $post_meta = array() ) {
@@ -451,6 +466,7 @@ class PR_Edition
 	 * Get linked editions
 	 *
 	 * @param object or int $post
+	 * @param array $post_meta
 	 * @return array of objects
 	 */
 	public static function get_linked_editions( $post, $post_meta = array() ) {
@@ -476,6 +492,7 @@ class PR_Edition
 	/**
 	 * Get subscription types terms
 	 *
+	 * @param object $post
 	 * @return array
 	 */
 	protected function _get_subscription_types( $post ) {
@@ -544,6 +561,7 @@ class PR_Edition
 
 	/**
 	 * Get an edition by slug
+	 *
 	 * @param string $slug
 	 * @return object
 	 */
@@ -565,6 +583,7 @@ class PR_Edition
 
 	/**
 	 * Get the bundle id of an edition into an editorial project
+	 *
 	 * @param int $edition_id
 	 * @param int $editorial_project_id
 	 * @return string or boolean false

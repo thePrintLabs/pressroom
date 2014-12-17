@@ -280,8 +280,8 @@ final class PR_Packager_Web_Package
 
         $params = array(
           "hostname"  => isset( $this->pstgs['_pr_ftp_server'][0] ) ? $this->pstgs['_pr_ftp_server'][0] : '',
-          "base"      => isset( $this->pstgs['_pr_ftp_destination_path'] ) ? $this->pstgs['_pr_ftp_destination_path'] : '',
           "port"      => isset( $this->pstgs['_pr_ftp_server'][1] ) ? (int) $this->pstgs['_pr_ftp_server'][1] : '',
+          "base"      => isset( $this->pstgs['_pr_ftp_destination_path'] ) ? $this->pstgs['_pr_ftp_destination_path'] : '',
           "username"  => isset( $this->pstgs['_pr_ftp_user'] ) ? $this->pstgs['_pr_ftp_user'] : '',
           "password"  => isset( $this->pstgs['_pr_ftp_password'] ) ? $this->pstgs['_pr_ftp_password'] : '',
           "protocol"  => isset( $this->pstgs['_pr_ftp_protocol'] ) ? $this->pstgs['_pr_ftp_protocol'] : '',

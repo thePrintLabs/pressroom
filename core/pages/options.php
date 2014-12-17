@@ -56,18 +56,10 @@ class PR_options_page {
   	register_setting( 'pressroom', 'pr_settings' );
 
   	add_settings_section(
-  		'tpl_pressroom_section',
-  		__( 'General settings', 'pressroom' ),
+  		'pr_pressroom_section',
+  		'',
   		array( $this, 'pr_settings_section_callback' ),
   		'pressroom'
-  	);
-
-  	add_settings_field(
-  		'pr_maxnumber',
-  		__( 'Max edition number', 'pressroom' ),
-  		array( $this, 'pr_maxnumber' ),
-  		'pressroom',
-  		'tpl_pressroom_section'
   	);
 
     add_settings_field(
@@ -75,14 +67,7 @@ class PR_options_page {
       __( 'Sharing Domain', 'pressroom' ),
       array( $this, 'pr_sharing_domain' ),
       'pressroom',
-      'tpl_pressroom_section'
-    );
-
-    add_settings_section(
-      'pr_plugin_pro',
-      __( 'Pro settings', 'pressroom' ),
-      array( $this, 'pr_settings_section_pro_callback' ),
-      'pressroom'
+      'pr_pressroom_section'
     );
 
     add_settings_field(
@@ -90,7 +75,7 @@ class PR_options_page {
       __( 'Connected custom post types', 'pressroom' ),
       array( $this, 'pr_custom_post_type' ),
       'pressroom',
-      'pr_plugin_pro'
+      'pr_pressroom_section'
     );
 
     add_settings_field(
@@ -98,21 +83,8 @@ class PR_options_page {
       __( 'License key', 'pressroom' ),
       array( $this, 'pr_license_key' ),
       'pressroom',
-      'pr_plugin_pro'
+      'pr_pressroom_section'
     );
-  }
-
-  /**
-   * Render max number field
-   *
-   * @void
-   */
-  public function pr_maxnumber() {
-
-  	$options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_maxnumber'] ) ? $options['pr_maxnumber'] : '';
-  	$html = '<input type="number" name="pr_settings[pr_maxnumber]" value="'. $value . '">';
-  	echo $html;
   }
 
   public function pr_sharing_domain() {
@@ -145,11 +117,14 @@ class PR_options_page {
 
     $options = get_option( 'pr_settings' );
     $value = isset( $options['pr_license_key'] ) ? $options['pr_license_key'] : '';
-    $is_valid = isset( $options['pr_license_is_valid'] ) && $options['pr_license_is_valid'] == 'valid';
+    $valid = get_option( 'pr_valid_license');
 
     $html = '<input type="text" id="pr_license_key" name="pr_settings[pr_license_key]" value="' . $value . '"/>';
-    if ( $is_valid ) {
+    if ( $valid == "valid" ) {
       $html .= '<input type="submit" class="button-secondary" name="pr_license_key_deactivate" value="' . __( 'Deactivate License',  'pr-settings' ) . '"/>';
+    }
+    else {
+      $html .= '<input type="submit" class="button-secondary" name="pr_license_key_activate" value="' . __( 'Activate License',  'pr-settings' ) . '"/>';
     }
     echo $html;
 
@@ -162,18 +137,7 @@ class PR_options_page {
    */
   public function pr_settings_section_callback() {
 
-  	echo __( 'Basic option for pressroom<hr/>', 'pressroom' );
-
-  }
-
-  /**
-   * render setting pro section
-   *
-   * @echo
-   */
-  public function pr_settings_section_pro_callback() {
-
-    echo __( 'Pro setting option<hr/>', 'pressroom' );
+  	echo __( '<hr/>', 'pressroom' );
 
   }
 

@@ -25,7 +25,7 @@ class PR_Packager
 		$this->_get_linked_posts();
 		$this->pb = new ProgressBar();
 
-		if( !isset($_GET['packager_type'])) {
+		if( !isset( $_GET['packager_type'] ) ) {
 			self::print_line( __( 'No package type selected. ', 'edition' ), 'error' );
 			exit;
 		}

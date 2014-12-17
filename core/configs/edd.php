@@ -1,5 +1,5 @@
 <?php
-if (!class_exists('PR_EDD_License')) {
+if ( !class_exists('PR_EDD_License') ) {
 
   class PR_EDD_License {
 
@@ -61,9 +61,9 @@ if (!class_exists('PR_EDD_License')) {
 	  private function _hooks() {
 
       // Activate license key on settings save
-		  add_action( 'update_option_pr_settings', array( $this, 'activate_license' ), 20, 2 );
+		  add_action( 'init', array( $this, 'activate_license' ), 20, 2 );
 		  // Deactivate license key
-      add_action( 'update_option_pr_settings', array( $this, 'deactivate_license' ), 10, 2 );
+      add_action( 'init', array( $this, 'deactivate_license' ), 10, 2 );
     }
 
     /**
@@ -93,11 +93,14 @@ if (!class_exists('PR_EDD_License')) {
   	 * @access  public
   	 * @return  void
   	 */
-	  public function activate_license( $old_value, $new_value  ) {
-      if ( isset( $new_value['pr_license_key'] ) && strlen( $new_value['pr_license_key'] ) &&
-        ( !isset( $this->options['pr_license_is_valid'] ) || $this->options['pr_license_is_valid'] != 'valid' ) ) {
+	  public function activate_license() {
 
-        $license = sanitize_text_field( $new_value['pr_license_key'] );
+      if ( isset( $_POST['pr_license_key_activate'], $_POST['pr_settings']['pr_license_key'] ) && strlen( $_POST['pr_settings']['pr_license_key'] ) ) {
+
+        $license = sanitize_text_field( $_POST['pr_settings']['pr_license_key'] );
+
+        $settings = get_option( 'pr_settings' );
+
         $api_params = array(
     			'edd_action' => 'activate_license',
     			'license'    => $license,
@@ -114,8 +117,9 @@ if (!class_exists('PR_EDD_License')) {
   		  );
 
         if ( is_wp_error( $response ) ) {
-          $new_value['pr_license_key'] = $new_value['pr_license_is_valid'] = '';
-          update_option( 'pr_settings', $new_value );
+          $settings['pr_license_key'] = '';
+          update_option( 'pr_settings', $settings );
+          delete_option( 'pr_valid_license' );
           $param = urlencode( $response->get_error_message() );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
           exit;
@@ -123,16 +127,17 @@ if (!class_exists('PR_EDD_License')) {
 
         $license_data = json_decode( wp_remote_retrieve_body( $response ) );
         if ( !isset( $license_data->license ) || $license_data->license != 'valid' ) {
-          $new_value['pr_license_key'] = $new_value['pr_license_is_valid'] = '';
-          update_option( 'pr_settings', $new_value );
+          $settings['pr_license_key'] = '';
+          update_option( 'pr_settings', $settings );
+          delete_option( 'pr_valid_license' );
           $param = urlencode( __( "The license key is invalid", 'pressroom-license' ) );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
           exit;
         }
 
-        $new_value['pr_license_key'] = trim( $license );
-        $new_value['pr_license_is_valid'] = $license_data->license;
-        update_option( 'pr_settings', $new_value );
+        $settings['pr_license_key'] = trim( $license );
+        update_option( 'pr_settings', $settings );
+        update_option( 'pr_valid_license', $license_data->license );
         $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );
         wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_activated_license&pmparam=' . $param ) );
         exit;
@@ -145,10 +150,11 @@ if (!class_exists('PR_EDD_License')) {
   	 * @access  public
   	 * @return  void
   	 */
-	  public function deactivate_license( $old_value, $new_value ) {
+	  public function deactivate_license() {
 
       if ( isset( $_POST['pr_license_key_deactivate'] ) ) {
 
+        $settings = get_option( 'pr_settings' );
   			$api_params = array(
   				'edd_action' => 'deactivate_license',
   				'license'    => $this->license,
@@ -171,8 +177,9 @@ if (!class_exists('PR_EDD_License')) {
 
   			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
   			if ( $license_data->license == 'deactivated' ) {
-          $new_value['pr_license_key'] = $new_value['pr_license_is_valid'] = '';
-          update_option( 'pr_settings', $new_value );
+          $settings['pr_license_key'] = '';
+          delete_option( 'pr_valid_license' );
+          update_option( 'pr_settings', $settings );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
           exit;
         }

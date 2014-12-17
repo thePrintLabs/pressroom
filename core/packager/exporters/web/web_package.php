@@ -78,7 +78,7 @@ final class PR_Packager_Web_Package
       $packager->edition_dir = $packager->edition_dir . DIRECTORY_SEPARATOR . 'contents';
     }
 
-    $packager->make_toc( $editorial_project, $this->root_folder );
+    $packager->make_toc( $editorial_project, $packager->edition_dir );
   }
 
   /**
@@ -331,7 +331,7 @@ final class PR_Packager_Web_Package
           if ( $post_id ) {
             foreach( $linked_query->posts as $post ) {
               if ( $post->ID == $post_id ) {
-                $html = str_replace( $url, 'index.html#toc-' . $post_id, $html );
+                $html = str_replace( $url, '../index.html#toc-' . $post_id, $html );
                 $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
               }
             }

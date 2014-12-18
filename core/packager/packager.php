@@ -83,7 +83,7 @@ class PR_Packager
 
 		do_action( "pr_packager_{$this->package_type}_start", $this, $editorial_project );
 
-		$this->set_progress( 5, __( 'Downloading assets', 'edition' ) );
+		$this->set_progress( 30, __( 'Downloading assets', 'edition' ) );
 
 		// Download all assets
 		$downloaded_assets = $this->_download_assets( $theme_dir . 'assets' );
@@ -267,12 +267,12 @@ class PR_Packager
 			$html = $this->rewrite_url( $html );
 		}
 
-		$this->set_progress( 28, __( 'Saving toc file', 'edition' ) );
+		$this->set_progress( 10, __( 'Saving toc file', 'edition' ) );
 
 		// Save cover html file
 		if ( $this->save_html_file( $html, 'toc', $dir ) ) {
 			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
-			$this->set_progress( 30, __( 'Saving edition posts', 'edition' ) );
+			$this->set_progress( 20, __( 'Saving edition posts', 'edition' ) );
 		}
 		else {
 			self::print_line( __( 'Failed to save toc file', 'edition' ), 'error' );

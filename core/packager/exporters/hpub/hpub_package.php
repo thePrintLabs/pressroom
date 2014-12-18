@@ -47,7 +47,7 @@ final class PR_Packager_HPUB_Package
     do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
 
     if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( __( 'Failed to save post file: ', 'packager' ) . $post->post_title, 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $post->post_title ), 'error' );
       continue;
     }
   }
@@ -64,7 +64,7 @@ final class PR_Packager_HPUB_Package
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
-      PR_Packager::print_line( __( 'Failed to create folder ', 'edition' ) . $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA, 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
@@ -90,7 +90,7 @@ final class PR_Packager_HPUB_Package
 
     $hpub_package = self::build( $packager, $editorial_project );
     if ( $hpub_package ) {
-      PR_Packager::print_line( __( 'Generated hpub ', 'edition' ) . $hpub_package, 'success' );
+      PR_Packager::print_line( sprintf( __( 'Generated hpub ', 'edition' ), $hpub_package ), 'success' );
     } else {
       PR_Packager::print_line( __( 'Failed to create hpub package ', 'edition' ), 'error' );
       $packager->exit_on_error();
@@ -98,7 +98,7 @@ final class PR_Packager_HPUB_Package
     }
 
     if ( PR_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
-      PR_Packager::print_line( __( 'Generated shelf.json for editorial project: ', 'edition' ) . $editorial_project->name, 'success' );
+      PR_Packager::print_line( sprintf( __( 'Generated shelf.json for editorial project: ', 'edition' ), $editorial_project->name ), 'success' );
     }
     else {
       PR_Packager::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );

@@ -302,7 +302,7 @@ class Pressroom_List_Table extends WP_List_Table
          return;
       }
 
-      $items_to_display = array( 5, 10, 30, 45, 90 );
+      $items_to_display = array( 10, 30, 45, 90 );
       $total_items = $this->_pagination_args['total_items'];
       $total_pages = $this->_pagination_args['total_pages'];
 
@@ -346,11 +346,11 @@ class Pressroom_List_Table extends WP_List_Table
 				$current,
 				strlen( $total_pages )
 			);
-      }
+    }
 
-      $html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+    $html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
 		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
-      $page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+    $page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'next-page' . $disable_last,
 			esc_attr__( 'Go to the next page' ),
 			esc_url( add_query_arg( 'paged', min( $total_pages, $current + 1 ), $current_url ) ),
@@ -370,12 +370,12 @@ class Pressroom_List_Table extends WP_List_Table
       }
 		$output .= "\n<span class=\"$pagination_links_class\">" . join( "\n", $page_links ) . "</span>";
 
-      if ( $total_pages ) {
+    if ( $total_pages ) {
 			$page_class = $total_pages < 2 ? ' one-page' : '';
-      }
+    }
 		else {
 			$page_class = ' no-pages';
-      }
+    }
 
       $this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
 

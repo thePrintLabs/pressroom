@@ -103,7 +103,7 @@ final class PR_Packager_Web_Package
     do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir );
 
     if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( __( 'Failed to save post file: ', 'packager' ) . $post->post_title, 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s ', 'packager' ), $post->post_title ), 'error' );
       continue;
     }
   }
@@ -123,7 +123,7 @@ final class PR_Packager_Web_Package
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
-      PR_Packager::print_line( __( 'Failed to create folder ', 'web_package' ) . $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA, 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder ', 'web_package' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
@@ -299,7 +299,7 @@ final class PR_Packager_Web_Package
         }
         else {
           $error = $ftp->errors->get_error_message('connect');
-          PR_Packager::print_line( __( 'Failed to connect. More details: ', 'web_package' ) . ( is_array( $error) ? $error[0] : $error ) , 'error' );
+          PR_Packager::print_line( sprintf( __( 'Failed to connect. More details: %s ', 'web_package' ) ,( is_array( $error) ? $error[0] : $error ) ) , 'error' );
           $packager->exit_on_error();
           exit;
 

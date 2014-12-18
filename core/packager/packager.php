@@ -64,13 +64,13 @@ class PR_Packager
 		$edition_name = $editorial_project->slug . '_' . time();
 		$this->edition_dir = PR_Utils::make_dir( PR_TMP_PATH, $edition_name );
 		if ( !$this->edition_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . PR_TMP_PATH . $edition_name, 'error' );
+			self::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), PR_TMP_PATH . $edition_name ), 'error' );
 			$this->set_progress( 100 );
 			ob_end_flush();
 			return;
 		}
 
-		self::print_line( __( 'Create folder ', 'edition' ) . $this->edition_dir, 'success' );
+		self::print_line( sprintf( __( 'Create folder %s ', 'edition' ), $this->edition_dir ), 'success' );
 		$this->set_progress( 2, __( 'Loading edition theme', 'edition' ) );
 
 		// Get associated theme
@@ -105,7 +105,7 @@ class PR_Packager
 
 			do_action( "pr_packager_{$this->package_type}", $this, $post, $editorial_project, $parsed_post );
 
-			self::print_line(__('Adding ', 'edition') . $post->post_title);
+			self::print_line( sprintf( __('Adding %s ', 'edition'), $post->post_title ) );
 			$this->set_progress( $total_progress + $k * $progress_step );
 		}
 
@@ -346,10 +346,10 @@ class PR_Packager
 			foreach ( $attachments as $filename => $url ) {
 
 				if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
-					PR_Packager::print_line( __( 'Copied ', 'edition' ) . $url, 'success' );
+					PR_Packager::print_line( sprintf( __( 'Copied %s ', 'edition' ), $url ), 'success' );
 				}
 				else {
-					PR_Packager::print_line(__('Failed to copy ', 'edition') . $url, 'error' );
+					PR_Packager::print_line( sprintf( __('Failed to copy %s ', 'edition'), $url ), 'error' );
 				}
 			}
 		}
@@ -402,14 +402,14 @@ class PR_Packager
 
 		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, 'assets' );
 		if ( !$edition_assets_dir ) {
-			self::print_line( __( 'Failed to create folder ', 'edition' ) . PR_TMP_PATH . DIRECTORY_SEPARATOR . 'assets', 'error');
+			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DIRECTORY_SEPARATOR . 'assets' ), 'error');
 			return false;
 		}
 
-		self::print_line( __( 'Created folder ', 'edition' ) . $edition_assets_dir, 'success' );
+		self::print_line( sprintf( __( 'Created folder ', 'edition' ), $edition_assets_dir ), 'success' );
 
 		if ( !is_dir( $theme_assets_dir ) ) {
-			self::print_line( __( 'Error: Can\'t read assets folder ', 'edition' ) . $theme_assets_dir, 'error' );
+			self::print_line( sprintf( __( 'Error: Can\'t read assets folder %s', 'edition' ), $theme_assets_dir ), 'error' );
 			return false;
 		}
 

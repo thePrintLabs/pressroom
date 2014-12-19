@@ -107,7 +107,7 @@ class PR_Setup
         PRIMARY KEY(app_id, user_id, product_id)
       ) $charset_collate; ";
 
-      $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_auth_tokens (
+      $sql_auth_tokens = "CREATE TABLE IF NOT EXISTS $table_auth_tokens (
         app_id VARCHAR(255),
         user_id VARCHAR(255),
         access_token VARCHAR(255),
@@ -128,6 +128,7 @@ class PR_Setup
       dbDelta( $sql_receipts );
       dbDelta( $sql_receipt_transactions );
       dbDelta( $sql_purchased_issues );
+      dbDelta( $sql_auth_tokens );
       dbDelta( $sql_stats );
 
       return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts

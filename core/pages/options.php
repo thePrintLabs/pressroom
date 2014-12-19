@@ -63,28 +63,12 @@ class PR_options_page {
   	);
 
     add_settings_field(
-      'pr_sharing_domain',
-      __( 'Sharing Domain', 'pressroom' ),
-      array( $this, 'pr_sharing_domain' ),
-      'pressroom',
-      'pr_pressroom_section'
-    );
-
-    add_settings_field(
       'custom_post_type',
       __( 'Connected custom post types', 'pressroom' ),
       array( $this, 'pr_custom_post_type' ),
       'pressroom',
       'pr_pressroom_section'
     );
-  }
-
-  public function pr_sharing_domain() {
-
-    $options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '';
-    $html = '<input type="text" placeholder="' . get_site_url() . '" name="pr_settings[pr_sharing_domain]" value="' . $value . '">';
-    echo $html;
   }
 
   /**

@@ -5,7 +5,6 @@
  */
 class PR_Setup
 {
-  const VERSION_PRO = true; // @TODO: PRO
 
   public function __construct() {}
 
@@ -27,6 +26,7 @@ class PR_Setup
     if ( !empty( $errors ) ) {
        return $errors;
     }
+
     return false;
   }
 
@@ -38,7 +38,7 @@ class PR_Setup
   private static function _check_php_libs() {
 
     $errors = array();
-    $extensions = array( 'zlib', 'zip', 'libxml' );
+  $extensions = array( 'zlib', 'zip', 'libxml' );
     foreach ( $extensions as $extension ) {
 
        if( !extension_loaded( $extension ) ) {
@@ -51,7 +51,6 @@ class PR_Setup
 
     return false;
   }
-
 
 
   /**
@@ -67,10 +66,38 @@ class PR_Setup
     }
 
     $api_dir = PR_Utils::make_dir( PR_API_PATH, 'hpub' );
+    $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'web' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'tmp' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'shelf' );
     $api_dir = $api_dir && PR_Utils::make_dir( PR_TMP_PATH, 'preview' );
 
+    if ( false !== ( $wp_load_path = self::_search_wp_load() ) ) {
+      file_put_contents( PR_CORE_PATH . 'preview' . DIRECTORY_SEPARATOR . '.pr_path', $wp_load_path );
+    }
+
     return !$api_dir ? false : true;
+  }
+
+  /**
+   * Search wp-load file in wordpress directory
+   * @return string or boolean false
+   */
+  private static function _search_wp_load() {
+
+    $home_path = get_home_path();
+    // Check in standard WordPress position
+    if ( file_exists( $home_path . 'wp-load.php' ) ) {
+      return $home_path . 'wp-load.php';
+    }
+    else {
+      $dir = new RecursiveDirectoryIterator( $home_path );
+      $it = new RecursiveIteratorIterator( $dir );
+      $regex = new RegexIterator( $it, '/wp-load.php$/i', RecursiveRegexIterator::GET_MATCH );
+      $files = iterator_to_array( $regex );
+      if ( !empty( $files ) ) {
+        return key( $files );
+      }
+    }
+    return false;
   }
 }

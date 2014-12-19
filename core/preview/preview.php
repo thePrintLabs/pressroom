@@ -2,11 +2,14 @@
 
 class PR_Preview {
 
+  public static $package_type;
   public function __construct() {
 
     add_action( 'add_meta_boxes', array( $this, 'add_preview_metabox' ), 10 );
     add_action( 'wp_ajax_preview_draw_page', array( $this, 'draw_page' ), 10 );
+
   }
+
 
   /**
    * Init preview slider
@@ -20,7 +23,14 @@ class PR_Preview {
       return;
     }
 
-    $linked_query = pr_get_edition_posts( $edition, true );
+    if( $_GET['package_type'] ) {
+      self::$package_type = $_GET['package_type'];
+    }
+
+    delete_transient( 'pr_preview_linked_query_' . $edition_id );
+
+    $linked_query = self::_get_linked_query( $edition );
+
     if ( empty( $linked_query ) ) {
       return;
     }
@@ -61,6 +71,8 @@ class PR_Preview {
       return;
     }
 
+    self::$package_type = isset( $_GET['package_type'] ) ? $_GET['package_type'] : '';
+
     $page_url = '';
     if ( has_action( 'pr_preview_' . $post->post_type ) ) {
       do_action_ref_array( 'pr_preview_' . $post->post_type, array( &$page_url, $edition, $post ) );
@@ -71,6 +83,7 @@ class PR_Preview {
 
       $html = self::parse_html( $edition, $post );
       $html = self::rewrite_html_url( $edition, $html );
+      $html = self::rewrite_post_url( $edition, $html );
 
       if ( PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_dir ) ) {
         file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
@@ -84,19 +97,21 @@ class PR_Preview {
 
   /**
    * Draw toc html file
+   *
    * @param object $edition
    * @param array $linked_posts
    * @return string or boolean false
    */
   public static function draw_toc( $edition, $linked_posts ) {
 
-    $toc = PR_Theme::get_theme_toc( $edition->ID );
+    $toc = PR_Theme::get_theme_layout( $edition->ID, 'toc' );
     if ( !$toc || !file_exists( $toc ) ) {
       return false;
     }
 
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
+    $pr_package_type = self::$package_type;
     $posts = $linked_posts;
     self::add_functions_file( $edition->ID );
     require_once( $toc );
@@ -112,6 +127,7 @@ class PR_Preview {
 
   /**
    * Parsing html
+   *
    * @param object $edition
    * @param object $connected_post
    * @return string  html string
@@ -130,6 +146,7 @@ class PR_Preview {
 
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
+    $pr_package_type = self::$package_type;
     global $post;
     $post = $connected_post;
     setup_postdata( $post );
@@ -143,6 +160,7 @@ class PR_Preview {
 
   /**
    * Rewrite html url for preview
+   *
    * @param object $edition
    * @param  string $html
    * @return string $html
@@ -176,6 +194,43 @@ class PR_Preview {
   }
 
   /**
+  * Get all url from the html string and replace with internal url of the package
+  *
+  * @param  object $edition
+  * @param  string $html
+  * @param  string $ext  = 'html' extension file output
+  * @return string or false
+  */
+  public static function rewrite_post_url( $edition, $html, $extension = 'html' ) {
+
+    if ( $html ) {
+
+      $linked_query = self::_get_linked_query( $edition );
+      $post_rewrite_urls = array();
+      $urls = PR_Utils::extract_urls( $html );
+
+      foreach ( $urls as $url ) {
+
+        if ( strpos( $url, site_url() ) !== false ) {
+          $post_id = url_to_postid( $url );
+          if ( $post_id ) {
+            foreach( $linked_query->posts as $post ) {
+
+              if ( $post->ID == $post_id ) {
+                $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
+                $html = str_replace( $url, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition->ID . '#toc-' . $post_id, $html );
+                $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
+              }
+            }
+          }
+        }
+      }
+
+      return $html;
+    }
+  }
+
+  /**
    * Rewrite toc url for preview with hashtag
    * @param  string $html
    * @param  int $edition_id
@@ -184,11 +239,13 @@ class PR_Preview {
   public static function rewrite_toc_url( $html, $edition_id ) {
     if ( $html ) {
       $links = PR_Utils::extract_urls( $html );
+
       foreach ( $links as $link ) {
 
         $post_id = url_to_postid( $link );
+
         if ( $post_id ) {
-          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '#toc-' . $post_id, $html );
+          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '&package_type='. self::$package_type .'#toc-' . $post_id, $html );
           $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
         }
       }
@@ -256,5 +313,22 @@ class PR_Preview {
         }
       }
     }
+  }
+
+  /**
+   * Get edition posts array
+   *
+   * @param object $edition
+   * @void
+   */
+  protected static function _get_linked_query( $edition ) {
+
+    if ( false === ( $linked_query = get_transient( 'pr_preview_linked_query_' . $edition->ID ) ) ) {
+
+      $linked_query = pr_get_edition_posts( $edition, true );
+      set_transient( 'pr_preview_linked_query_' . $edition->ID, $linked_query, 6 * HOUR_IN_SECONDS);
+    }
+
+    return $linked_query;
   }
 }

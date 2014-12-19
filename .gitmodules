@@ -1,0 +1,3 @@
+[submodule "themes/starterr"]
+	path = themes/starterr
+	url = https://github.com/thePrintLabs/starterr.git

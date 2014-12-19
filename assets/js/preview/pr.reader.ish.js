@@ -54,6 +54,13 @@
 			fixPagesHeight();
 		});
 
+		// Reset size
+		$('#open').on("click", function(e){
+			e.preventDefault();
+			$iframe = $( '.swiper-slide-active' ).children('iframe');
+			window.open( $iframe.attr('src') );
+		});
+
 		$('#resize-submit').on("click", function(e){
 			e.preventDefault();
 			var $w = $('#sg-size-width').val(), $h = $('#sg-size-height').val();
@@ -74,7 +81,7 @@
 			});
 			sizeiframe($w, true, $h);
 		});
-		
+
 		$('.tdevice a').on("click", function(e){
 			e.preventDefault();
 			fullMode = false;

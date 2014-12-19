@@ -1,9 +1,16 @@
 <?php
 const CONCURRENT_PAGES = 3;
-require_once( '../../../../../wp-load.php' );
+
+$wp_load_path = file_get_contents( '.pr_path' );
+if ( !$wp_load_path ) {
+  die( 'wp-load.php path not found in .pr_path. Please define it manually' );
+}
+
 if ( !defined( 'WP_ADMIN' ) ) {
   define( 'WP_ADMIN', true );
 }
+
+require_once( $wp_load_path );
 
 if ( !is_admin() || !is_user_logged_in() ) {
   wp_redirect( home_url('/login') );
@@ -13,7 +20,12 @@ if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
   wp_die( __( "<b>Error getting required params. Please check your url address.</b>", 'pressroom' ) );
 }
 
+if( !isset($_GET['package_type'])) {
+  wp_die( __( "<b>Error: missing package type </b>", 'pressroom' ) );
+}
+
 $edition_id = (int)$_GET['edition_id'];
+$package_type = $_GET['package_type'];
 
 if ( !isset( $_GET['post_id'] ) || !strlen( $_GET['post_id'] ) ) {
   $linked_posts = PR_Preview::init( $edition_id );
@@ -104,8 +116,11 @@ $index_height = 150;
           </li>
         </ol>
       </li>
-      <li id="desktop" >
-        <a id="reset" class="sg-acc-handle group-device" data-agent="desktop" title="Desktop">Reset</a>
+      <li id="desktop">
+        <a id="reset" class="sg-acc-handle group-device" data-agent="desktop" title="Reset">Reset</a>
+      </li>
+      <li>
+        <a id="open" title="Open">Open</a>
       </li>
     <ol>
     <div class="sg-controls" id="sg-controls">
@@ -133,6 +148,7 @@ $index_height = 150;
       <div class="circle circle--right"><a class="arrow-right" href="#"></a></div>
       <div class="swiper-pages swiper-container" id="reader"
         data-edition="<?php echo $edition_id; ?>"
+        data-package-type="<?php echo $package_type; ?>"
         data-conpages="<?php echo $concurrent_slides; ?>"
         data-url="<?php echo admin_url( 'admin-ajax.php'); ?>">
         <div class="swiper-wrapper">

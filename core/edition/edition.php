@@ -22,19 +22,20 @@ class PR_Edition
 		add_action( 'init', array( 'PR_Theme', 'search_themes' ), 20 );
 
 		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
+
 		add_action( 'save_post_' . PR_EDITION, array( $this, 'save_edition'), 40 );
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
-
-		add_action( 'admin_enqueue_scripts', array( $this,'register_edition_script' ) );
+		add_action( 'wp_ajax_render_console', array( $this, 'publishing_render_console' ) );
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
 
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
-	}
+		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
 
+	}
 
 	/**
 	 * Add custom post type edition to worpress
@@ -97,22 +98,52 @@ class PR_Edition
 		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
 		$e_meta->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
-		$e_meta->add_field( '_pr_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
-			'options' => array(
-				array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
-				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
-			)
-		));
-		$e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
-			'options' => $this->_get_subscription_types()
-		));
+		
 		foreach ( $editorial_terms as $term) {
 			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
 		}
 
+		$hpub = new PR_Metabox( 'hpub', __( 'hpub', 'edition' ), 'normal', 'high', $post->ID );
+		$hpub->add_field( '_pr_hpub_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
+		$hpub->add_field( '_pr_default', '<h3>Visualization properties</h3><hr>', '', 'textnode', '' );
+		$hpub->add_field( '_pr_orientation', __( 'Orientation', 'edition' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
+			'options' => array(
+				array( 'value' => 'portrait', 'name' => __( "Portrait", 'edition' ) ),
+				array( 'value' => 'landscape', 'name' => __( "Landscape", 'edition' ) ),
+				array( 'value' => 'both', 'name' => __( "Both", 'edition' ) )
+			)
+		) );
+		$hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'edition' ), 'checkbox', false );
+		$hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '#fff' );
+
+		$hpub->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in portrait mode.', 'editorial_project' ), 'file', '' );
+		$hpub->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in landscape mode.', 'editorial_project' ), 'file', '' );
+		$hpub->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Color for page numbers to be shown before pages are loaded.', 'editorial_project' ), 'color', '#ffffff' );
+		$hpub->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Opacity for page numbers to be shown before pages are loaded. (min 0 => max 1)', 'editorial_project' ), 'decimal', 0.3 );
+		$hpub->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
+		$hpub->add_field( '_pr_default', '<h3>Behaviour properties</h3><hr>', '', 'textnode', '' );
+
+		$hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
+		$hpub->add_field( '_pr_rendering', __( 'Rendering type', 'edition' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
+			'options' => array(
+				array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'edition' ) ),
+				array( 'value' => 'three-cards', 'name' => __( "Three cards", 'edition' ) )
+			)
+		) );
+		$hpub->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
+		$hpub->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
+		$hpub->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
+		$hpub->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
+		$hpub->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Swipe on the page to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
+
+		$hpub->add_field( '_pr_default', '<h3>Toc properties</h3><hr>', '', 'textnode', '' );
+		$hpub->add_field( '_pr_index_height', __( 'TOC height', 'edition' ), __( 'Height (in pixels) for the toc bar.', 'editorial_project' ), 'number', 150 );
+		$hpub->add_field( '_pr_index_width', __( 'TOC width', 'edition' ), __( 'Width (in pixels) for the toc bar. When empty, the width is automatically set to the width of the page.', 'editorial_project' ), 'number', '' );
+		$hpub->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
 
 		$metaboxes = array();
-		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID ) );
+
+		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID, true ) );
 
 		$flatplan = array(
 			'id' 		=> 'flatplan',
@@ -121,57 +152,32 @@ class PR_Edition
 		$this->_metaboxes = array(
 			(object) $flatplan,
 			$e_meta,
+			$hpub,
 		);
+
 
 		$this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );
 
 	}
 
 	/**
-	* Add one or more custom metabox to edition custom fields
-	*
-	* @void
-	*/
+	 * Add one or more custom metabox to edition custom fields
+	 *
+	 * @param string $post_type
+	 * @param object $post
+	 * @void
+	 */
 	public function add_custom_metaboxes( $post_type, $post ) {
 
-		add_meta_box( 'pressroom_metabox', __( 'Pressroom', 'edition' ), array($this, 'add_custom_metabox_callback'), PR_EDITION, 'advanced', 'high');
+			add_meta_box( 'pressroom_metabox', __( 'Pressroom', 'edition' ), array($this, 'add_custom_metabox_callback'), PR_EDITION, 'advanced', 'high');
 
 	}
 
-
-	/**
-	* Add side metabox for publication step
-	*
-	* @return void
-	*/
-	public function add_publication_metabox() {
-
-		if ( TPL_Pressroom::is_edit_page() ) {
-
-			add_meta_box( 'edition_metabox_side', __( 'Publication', 'edition' ), array( $this, 'add_publication_metabox_callback' ), PR_EDITION, 'side', 'low' );
-		}
-	}
-
-	/**
-	* Add tabs menu to edit form
-	*
-	* @param object $term
-	* @echo
-	*/
-	public function add_tabs_to_form( $post ) {
-
-
-		$this->get_custom_metaboxes( $post );
-		echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
-		foreach ( $this->_metaboxes as $key => $metabox ) {
-			echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
-		}
-		echo '</h2>';
-	}
 
 	/**
 	 * Custom metabox callback print html input field
 	 *
+	 * @param object $post
 	 * @echo
 	 */
 	public function add_custom_metabox_callback( $post ) {
@@ -203,6 +209,23 @@ class PR_Edition
 	}
 
 	/**
+	* Add tabs menu to edit form
+	*
+	* @param object $term
+	* @echo
+	*/
+	public function add_tabs_to_form( $post ) {
+
+
+		$this->get_custom_metaboxes( $post );
+		echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
+		foreach ( $this->_metaboxes as $key => $metabox ) {
+			echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
+		}
+		echo '</h2>';
+	}
+
+	/**
 	* Pressroom metabox callback
 	*
 	* @return void
@@ -214,6 +237,7 @@ class PR_Edition
 		$pr_table->display();
 	}
 
+
 	/**
 	* Publication metabox callback
 	*
@@ -221,8 +245,10 @@ class PR_Edition
 	*/
 	public function add_publication_action() {
 
-		echo '<a id="preview_edition" target="_blank" href="' . PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<a id="publish_edition" target="_blank" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
+		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
+		echo '<select id="pr_packager_type"><option value="web">web</option><option value="hpub">hpub</option></select>';
+		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
+		echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
 	}
 
 	/**
@@ -254,8 +280,8 @@ class PR_Edition
 		}
 
 		$this->get_custom_metaboxes( $post );
-		foreach ( $this->_metaboxes as $metabox ) {
 
+		foreach ( $this->_metaboxes as $metabox ) {
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
 			}
@@ -275,11 +301,15 @@ class PR_Edition
 		}
 	}
 
+	/**
+	 * Assign the first template to post if empty
+	 *
+	 * @param  object $edition
+	 * @void
+	 */
 	public function sanitize_linked_posts( $edition ) {
 
 		$linked_posts = self::get_linked_posts( $edition );
-
-
 
 		$old_order = 1;
 		foreach ( $linked_posts->posts as $i => $post ) {
@@ -298,7 +328,7 @@ class PR_Edition
 
 				if ( $current_theme ) {
 					$themes = PR_Theme::get_themes();
-					$default_template = $themes[$current_theme][0]['filename'];
+					$default_template = $current_theme . DIRECTORY_SEPARATOR . $themes[$current_theme]['layouts'][0]['path'];
 					p2p_update_meta( $post->p2p_id, 'template', $default_template);
 				}
 			}
@@ -306,11 +336,11 @@ class PR_Edition
 	}
 
 	/**
-	 * Ajax publishing callback function
+	 * Render the packager console
 	 *
-	 * @echo
+	 * @void
 	 */
-	public function ajax_publishing_callback() {
+	public function publishing_render_console() {
 
 		$packager = new PR_Packager();
 		echo '<style type="text/css">
@@ -323,6 +353,7 @@ class PR_Edition
 		#publishing_popup h1 {margin:0 0 10px; color:#333;font-weight:300}
 		#publishing_console { padding:10px; margin: 0 auto; font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }
 		</style>';
+
 		echo '<div id="publishing_popup">
 		<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
 		$packager->pb->render();
@@ -342,14 +373,48 @@ class PR_Edition
 	}
 
 	/**
+	 * Ajax publishing callback function
+	 *
+	 * @echo
+	 */
+	public function ajax_publishing_callback() {
+
+		$post = get_post( $_POST['edition_id'] );
+
+		if ( !$post || $post->post_type != PR_EDITION ) {
+			return;
+		}
+
+		$this->get_custom_metaboxes( $post );
+
+		foreach ( $this->_metaboxes as $metabox ) {
+			if( $metabox->id != 'flatplan') {
+				$metabox->save_values();
+			}
+		}
+
+		wp_send_json_success();
+
+	}
+
+	/**
 	 * Add jQuery datepicker script and css styles
 	 * @void
 	 */
-	public function register_edition_script() {
+	public function register_edition_scripts() {
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-		wp_enqueue_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.min.css' );
+		wp_enqueue_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.css' );
+
+		wp_register_script( 'edition', PR_ASSETS_URI . '/js/pr.edition.js', array( 'jquery' ), '1.0', true );
+		wp_enqueue_script( 'edition' );
+
+		global $pagenow, $post_type;
+		if ( $pagenow == 'post.php' && $post_type == PR_EDITION ) {
+			Pressroom_List_Table::add_presslist_scripts();
+		}
+
 	}
 
 	/**
@@ -362,11 +427,11 @@ class PR_Edition
 		echo ' enctype="multipart/form-data"';
 	}
 
-
 	/**
 	 * Get linked posts
 	 *
 	 * @param object or int $edition
+	 * @param array $post_meta
 	 * @return array of objects
 	 */
 	public static function get_linked_posts( $edition, $post_meta = array() ) {
@@ -390,41 +455,10 @@ class PR_Edition
 	}
 
 	/**
-	* Get subscription types terms
-	*
-	* @return array
-	*/
-	protected function _get_subscription_types() {
-
-		global $post;
-		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-		$types = array();
-		if ( !empty( $terms ) ) {
-			foreach ( $terms as $term ) {
-
-				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
-				if ( $term_meta ) {
-					$term_types = $term_meta['_pr_subscription_types'];
-					if( $term_types ) {
-						foreach ( $term_types as $type ) {
-
-							$types[$term->name][] = array(
-								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-								'text'  => $type,
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $types;
-	}
-
-	/**
 	 * Get linked editions
 	 *
 	 * @param object or int $post
+	 * @param array $post_meta
 	 * @return array of objects
 	 */
 	public static function get_linked_editions( $post, $post_meta = array() ) {
@@ -448,6 +482,38 @@ class PR_Edition
 	}
 
 	/**
+	 * Get subscription types terms
+	 *
+	 * @param object $post
+	 * @return array
+	 */
+	protected function _get_subscription_types( $post ) {
+
+		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
+		$types = array();
+		if ( !empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+
+				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
+				if ( $term_meta ) {
+					$term_types = isset( $term_meta['_pr_subscription_types'] ) ? $term_meta['_pr_subscription_types'] : '';
+					if( $term_types ) {
+						foreach ( $term_types as $type ) {
+
+							$types[$term->name][] = array(
+								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
+								'text'  => $type,
+							);
+						}
+					}
+				}
+			}
+		}
+
+		return $types;
+	}
+
+	/**
 	 * Add custom columns
 	 *
 	 * @param  array $columns
@@ -457,7 +523,6 @@ class PR_Edition
 
 		$columns["cover"] = "Cover";
 		$columns["paid_free"] = "Paid/Free";
-		$columns["action"] = "Action";
 
 		return $columns;
 	}
@@ -477,15 +542,6 @@ class PR_Edition
 				echo get_the_post_thumbnail( $id, 'thumbnail' );
 				break;
 
-      case 'paid_free' :
-      	echo get_post_meta( $id, '_pr_edition_free', true ) ? 'Free' : 'Paid';
-      	break;
-
-			case 'action':
-				echo '<a target="_blank" href="'. PR_CORE_URI . 'preview/reader.php?edition_id=' . get_the_id() . '" >Preview</a><br/>';
-				echo '<a target="_blank" id="publish_edition" href="' . admin_url('admin-ajax.php') . '?action=publishing&edition_id=' . get_the_id() . '&pr_no_theme=true">' . __( "Packaging", "edition" ) . '</a> ';
-				break;
-
 			default:
 				break;
 		}
@@ -493,6 +549,7 @@ class PR_Edition
 
 	/**
 	 * Get an edition by slug
+	 *
 	 * @param string $slug
 	 * @return object
 	 */
@@ -514,6 +571,7 @@ class PR_Edition
 
 	/**
 	 * Get the bundle id of an edition into an editorial project
+	 *
 	 * @param int $edition_id
 	 * @param int $editorial_project_id
 	 * @return string or boolean false

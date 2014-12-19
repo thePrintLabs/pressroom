@@ -21,11 +21,13 @@
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
 require_once( __DIR__ . '/core/define.php' );
+require_once( __DIR__ . '/core/settings.php' );
 require_once( PR_LIBS_PR_PATH . 'utils.php' );
 
 require_once( PR_CORE_PATH . 'setup.php' );
 require_once( PR_CORE_PATH . 'edition/edition.php' );
 require_once( PR_CORE_PATH . 'edition/editorial_project.php' );
+require_once( PR_CORE_PATH . 'posts.php' );
 require_once( PR_CORE_PATH . 'theme.php' );
 require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );
@@ -62,6 +64,8 @@ class TPL_Pressroom
 		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
 		add_action( 'admin_notices', array( $this, 'check_pressroom_notice' ), 20 );
 		add_action( 'p2p_init', array( $this, 'register_post_connection' ) );
+		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
+		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
 		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
 	}
@@ -93,6 +97,7 @@ class TPL_Pressroom
 	 */
 	public function plugin_deactivation() {
 
+		// delete_option('rewrite_rules');
 		flush_rewrite_rules();
 
 	}
@@ -163,11 +168,36 @@ class TPL_Pressroom
 				$pages = $themes[$theme_code];
 				foreach ( $pages as $page ) {
 					if ( $page['rule'] == 'post' ) {
-						p2p_add_meta( $p2p_id, 'template', $page['filename'] );
+						p2p_add_meta( $p2p_id, 'template', $page['path'] );
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Custom featured image title
+	 * @void
+	 */
+	public function change_featured_image_box() {
+
+		remove_meta_box( 'postimagediv', PR_EDITION, 'side' );
+		add_meta_box('postimagediv', __('Cover Image'), 'post_thumbnail_meta_box', PR_EDITION, 'side', 'high');
+	}
+
+	/**
+	 * Custom featured image labels
+	 * @param  string $content
+	 * @return string
+	 */
+	public function change_featured_image_html( $content ) {
+
+		global $post;
+		if ( $post->post_type == PR_EDITION ) {
+			$content = str_replace( __( 'Remove featured image' ), __( 'Remove cover image' ), $content);
+			$content = str_replace( __( 'Set featured image' ), __( 'Set cover image' ), $content);
+		}
+		return $content;
 	}
 
 	/**
@@ -195,13 +225,16 @@ class TPL_Pressroom
 					echo _e( sprintf('<b>Error during activation:</b> %s', $msg_param ) );
 					break;
 				case 'success_activated_license':
-					echo _e( sprintf('<b>Activation successful:</b> %s', $msg_param ) );
+					echo _e( sprintf('<b>Activation successfully:</b> %s', $msg_param ) );
 					break;
 				case 'failed_deactivated_license':
 					echo _e( sprintf('<b>Error during deactivation:</b> %s', $msg_param ) );
 					break;
 				case 'success_deactivated_license':
 					echo _e( '<b>License Deactivated.</b>' );
+					break;
+				case 'themes_cache_flushed':
+					echo _e( '<b>Themes cache flushed successfully</b>' );
 					break;
 			}
 			echo '</p></div>';
@@ -231,6 +264,8 @@ class TPL_Pressroom
 	public function get_allowed_post_types() {
 
 		$types = array( 'post', 'page' );
+		$custom_types = $this->_load_custom_post_types();
+		$types = array_merge( $types, $custom_types );
 
 		return $types;
 	}
@@ -297,6 +332,30 @@ class TPL_Pressroom
 				}
 			}
 		}
+	}
+
+	/**
+	 * Load custom post types configured in settings page
+	 *
+	 * @return array - custom post types
+	 */
+	protected function _load_custom_post_types() {
+
+		$types = array();
+		if ( !empty( $this->configs ) && isset( $this->configs['pr_custom_post_type'] ) ) {
+			$custom_types = $this->configs['pr_custom_post_type'];
+			if ( is_array( $custom_types ) ) {
+				foreach ( $custom_types as $post_type ) {
+					if ( strlen( $post_type ) ) {
+						array_push( $types, $post_type );
+					}
+				}
+			}
+			elseif ( is_string( $custom_types ) && strlen( $custom_types ) ) {
+				array_push( $types, $custom_types );
+			}
+		}
+		return $types;
 	}
 
 	/**

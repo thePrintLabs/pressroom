@@ -38,7 +38,6 @@ class Pressroom_List_Table extends WP_List_Table
     add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
     add_action( 'wp_ajax_bulk_presslist', array( $this, 'ajax_bulk_callback' ) );
     add_action( 'wp_ajax_update-custom-post-order', array( $this, 'ajax_update_post_order' ) );
-    add_action( 'admin_enqueue_scripts', array( $this, 'add_presslist_scripts' ) );
   }
 
   /**
@@ -203,20 +202,32 @@ class Pressroom_List_Table extends WP_List_Table
 		$themes = PR_Theme::get_themes();
     $current_theme = get_post_meta( $this->_edition_id, '_pr_theme_select', true );
 
-    $html = '<select class="presslist-template">';
-		if ( $current_theme ) {
-         $pages = $themes[$current_theme];
-        foreach ( $pages as $page ) {
-          if ( $page['name'] ) {
-            $html.= '<option ' . ( $template == $page['filename'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page['filename'] . '" >' . $page['name'] . '</option>';
+    if ( $current_theme ) {
+      if ( array_key_exists( $current_theme, $themes ) ) {
+        if ( $themes[$current_theme]['active'] ) {
+          $html = '<select class="presslist-template">';
+          $pages = $themes[$current_theme]['layouts'];
+          foreach ( $pages as $page ) {
+            if ( $page['rule'] == 'content' || $page['rule'] == 'cover' ) {
+              $page_path = $themes[$current_theme]['path'] . DIRECTORY_SEPARATOR . $page['path'];
+              $html.= '<option ' . ( $template == $page['path'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page_path . '" >' . $page['name'] . '</option>';
+            }
           }
+          $html .= '</select>';
         }
-      } else {
-         $html.= '<option value="">' . __('Please assign a theme edition', 'edition') . '</option>';
+        else {
+          $html = '<i>' . __('Theme is disabled. Activate it or change to another theme.', 'edition') . '</i>';
+        }
       }
-      $html .= '</select>';
+      else {
+        $html = '<i>' . __('The theme was not found. Update the edition to fix.', 'edition') . '</i>';
+      }
+    }
+    else {
+      $html = '<i>' . __('Please assign a theme.', 'edition') . '</i>';
+    }
 
-      return $html;
+    return $html;
    }
 
    /**
@@ -291,7 +302,7 @@ class Pressroom_List_Table extends WP_List_Table
          return;
       }
 
-      $items_to_display = array( 5, 10, 30, 45, 90 );
+      $items_to_display = array( 10, 30, 45, 90 );
       $total_items = $this->_pagination_args['total_items'];
       $total_pages = $this->_pagination_args['total_pages'];
 
@@ -335,11 +346,11 @@ class Pressroom_List_Table extends WP_List_Table
 				$current,
 				strlen( $total_pages )
 			);
-      }
+    }
 
-      $html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+    $html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
 		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
-      $page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+    $page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'next-page' . $disable_last,
 			esc_attr__( 'Go to the next page' ),
 			esc_url( add_query_arg( 'paged', min( $total_pages, $current + 1 ), $current_url ) ),
@@ -359,12 +370,12 @@ class Pressroom_List_Table extends WP_List_Table
       }
 		$output .= "\n<span class=\"$pagination_links_class\">" . join( "\n", $page_links ) . "</span>";
 
-      if ( $total_pages ) {
+    if ( $total_pages ) {
 			$page_class = $total_pages < 2 ? ' one-page' : '';
-      }
+    }
 		else {
 			$page_class = ' no-pages';
-      }
+    }
 
       $this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
 
@@ -485,15 +496,15 @@ class Pressroom_List_Table extends WP_List_Table
     *
     * @void
     */
-   public function add_presslist_scripts() {
+  public static function add_presslist_scripts() {
 
-      wp_register_script( 'presslist-ajax', PR_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
-      wp_register_script( 'presslist-drag-drop', PR_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
-      wp_enqueue_script('jquery-ui-core');
-      wp_enqueue_script('jquery-ui-sortable');
-      wp_enqueue_script( 'presslist-ajax' );
-      wp_enqueue_script( 'presslist-drag-drop' );
-   }
+    wp_register_script( 'presslist-ajax', PR_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
+    wp_register_script( 'presslist-drag-drop', PR_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script('jquery-ui-core');
+    wp_enqueue_script('jquery-ui-sortable');
+    wp_enqueue_script( 'presslist-ajax' );
+    wp_enqueue_script( 'presslist-drag-drop' );
+  }
 
    /**
     * Manage posts via ajax

@@ -133,7 +133,7 @@ final class PR_Packager_Book_JSON
               break;
             case '_pr_index_height':
             case '_pr_index_width':
-              $options[$baker_option] = is_numeric( $option ) ? $option : null;
+              $options[$baker_option] = is_numeric( $option ) ? (int)$option : null;
               break;
             case '_pr_start_at_page':
             case '_pr_page_numbers_alpha':
@@ -179,7 +179,6 @@ final class PR_Packager_Book_JSON
             $options[$baker_option] = $value;
          }
       }
-
       return $options;
    }
 }

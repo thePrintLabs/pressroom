@@ -176,11 +176,13 @@ function checkOverride(element, metabox) {
   if(element.is(':checked')) {
     jQuery( '.'+metabox + ' input').removeAttr('disabled');
     jQuery( '.'+metabox + ' select').removeAttr('disabled');
+    jQuery( '.'+metabox + ' button').removeAttr('disabled');
     jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#222');
   }
   else {
     jQuery( '.'+metabox+' input').attr('disabled','disabled');
     jQuery( '.'+metabox+' select').attr('disabled','disabled');
+    jQuery( '.'+metabox + ' button').attr('disabled','disabled');
     jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
     element.removeAttr('disabled');
     element.parent().parent().find('label').css('color','#222');

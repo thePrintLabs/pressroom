@@ -89,8 +89,10 @@ $(function() {
 
       if ( s.activeIndex == s.slides.length - 1 ) {
         bRight.hide();
+        bLeft.show();
       } else if ( s.activeIndex == 0 ) {
         bLeft.hide();
+        bRight.show();
       } else {
         bRight.show();
         bLeft.show();

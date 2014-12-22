@@ -117,32 +117,32 @@ final class PR_Packager_Book_JSON
 
       switch ( $key ) {
         case '_pr_cover':
-        $options[$baker_option] = PR_EDITION_MEDIA . $packager->edition_cover_image;
-        break;
+          $options[$baker_option] = PR_EDITION_MEDIA . $packager->edition_cover_image;
+          break;
         case '_pr_author':
         case '_pr_creator':
-        if( !$override ) {
-          $option = get_post_meta( $packager->edition_post->ID, $key, true );
-        }
-        if ( isset( $option ) && !empty( $option ) ) {
-          $authors = explode( ',', $option );
-          foreach ( $authors as $author ) {
-            $options[$baker_option][] = $author;
+          if( !$override ) {
+            $option = get_post_meta( $packager->edition_post->ID, $key, true );
           }
-        }
-        break;
+          if ( isset( $option ) && !empty( $option ) ) {
+            $authors = explode( ',', $option );
+            foreach ( $authors as $author ) {
+              $options[$baker_option][] = $author;
+            }
+          }
+          break;
         case '_pr_index_height':
         case '_pr_index_width':
-        $options[$baker_option] = is_numeric( $option ) ? $option : null;
-        break;
+          $options[$baker_option] = is_numeric( $option ) ? (int)$option : null;
+          break;
         case '_pr_start_at_page':
         case '_pr_page_numbers_alpha':
-        $options[$baker_option] = (int)$option;
-        break;
+          $options[$baker_option] = (int)$option;
+          break;
         case '_pr_orientation':
         case '_pr_rendering':
-        $options[$baker_option] = strtolower($option);
-        break;
+          $options[$baker_option] = strtolower($option);
+          break;
         case '_pr_zoomable':
         case '_pr_vertical_bounce':
         case '_pr_vertical_pagination':
@@ -150,24 +150,24 @@ final class PR_Packager_Book_JSON
         case '_pr_media_autoplay':
         case '_pr_page_turn_tap':
         case '_pr_page_turn_swipe':
-        $options[$baker_option] = $option == 'on';
-        break;
+          $options[$baker_option] = $option == 'on';
+          break;
         case '_pr_background_image_portrait':
         case '_pr_background_image_landscape':
-        $media = get_attached_file( $option );
-        if ( $media ) {
-          $media_info = pathinfo( $media );
-          $path = $media_info['basename'];
-          copy( $media, $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $path );
-          $options[$baker_option] = PR_EDITION_MEDIA . $path;
-        }
-        else {
-          $options[$baker_option] = '';
-        }
-        break;
+          $media = get_attached_file( $option );
+          if ( $media ) {
+            $media_info = pathinfo( $media );
+            $path = $media_info['basename'];
+            copy( $media, $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $path );
+            $options[$baker_option] = PR_EDITION_MEDIA . $path;
+          }
+          else {
+            $options[$baker_option] = '';
+          }
+          break;
         default:
-        $options[$baker_option] = ( $option == '0' || $option == '1' ? (int)$option : $option );
-        break;
+          $options[$baker_option] = ( $option == '0' || $option == '1' ? (int)$option : $option );
+          break;
       }
     }
 

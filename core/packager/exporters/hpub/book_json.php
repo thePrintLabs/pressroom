@@ -50,7 +50,6 @@ final class PR_Packager_Book_JSON
       $page_name = PR_Utils::sanitize_string( $post->post_title );
       $page_path = $packager->edition_dir . DIRECTORY_SEPARATOR . $page_name . '.html';
 
-      $press_options['sharing_urls'][] = pr_get_sharing_url( $post->ID );
       $press_options['titles'][] = $post->post_title;
 
       if ( is_file( $page_path ) ) {

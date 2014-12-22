@@ -13,10 +13,6 @@ class PR_Ftp_Sftp
 
     add_action( 'pr_add_web_field', array( $this, 'pr_add_field' ), 10, 1 );
     $this->errors = new WP_Error();
-
-    if( !defined( 'FS_CHMOD_DIR' ) ) {
-      define('FS_CHMOD_DIR', 644);
-    }
   }
 
   /**
@@ -26,6 +22,10 @@ class PR_Ftp_Sftp
    * @return boolean
    */
   public function connect( $params ) {
+
+    if( !defined( 'FS_CHMOD_DIR' ) ) {
+      define('FS_CHMOD_DIR', 644);
+    }
 
     if ( !defined( 'FS_CONNECT_TIMEOUT' ) ) {
       define( 'FS_CONNECT_TIMEOUT', 30 );

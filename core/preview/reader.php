@@ -1,8 +1,8 @@
 <?php
 const CONCURRENT_PAGES = 3;
-
-$wp_load_path = file_get_contents( '.pr_path' );
-if ( !$wp_load_path ) {
+if ( file_exists( dirname( __FILE__ ) . '/.pr_path' ) ) {
+  $wp_load_path = file_get_contents( '.pr_path' );
+} else {
   die( 'wp-load.php path not found in .pr_path. Please define it manually' );
 }
 

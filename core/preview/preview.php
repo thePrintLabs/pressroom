@@ -282,16 +282,21 @@ class PR_Preview {
       echo '<option value="' . $edition->ID . '">' . $edition->post_title . '</option>';
     }
     echo '</select>
+    <select id="package_type">
+    <option value="web">web</option>
+    <option value="hpub">hpub</option>
+    </select>
     </div>
     <hr/>
     <button type="button" id="preview_post" target="_blank" class="button button-primary button-large">' . __( "Preview", "pressroom" ) . '</button>
     <script type="text/javascript">
     window.addEventListener("load", function() {
+    var package_type = document.getElementById("package_type");
     document.getElementById("preview_post").onclick = function(e){
     var e = document.getElementById("pr_prw_edition_id"),
     edition = e.options[e.selectedIndex].value,
     post = ' . $post->ID . ';
-    window.open("' . PR_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post, "_blank").focus();return false;};
+    window.open("' . PR_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post + "&package_type="+ package_type.options[package_type.selectedIndex].value, "_blank").focus();return false;};
     }, false);
     </script>';
   }

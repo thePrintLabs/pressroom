@@ -93,14 +93,14 @@ final class PR_Packager_Book_JSON
          'url'    => $hpub_url
       );
 
+      // check if use edition or editorial project hpub attributes
+      $configs = get_option( 'taxonomy_term_' . $term_id );
       $override = get_post_meta( $packager->edition_post->ID, '_pr_hpub_override_eproject', true );
 
-      if( !$override ) {
-        $configs = get_option( 'taxonomy_term_' . $term_id );
-      }
-      else {
-        $custom_configs = get_post_meta( $packager->edition_post->ID );
+
+      if( $override ) {
         $configs = array();
+        $custom_configs = get_post_meta( $packager->edition_post->ID );
         foreach( $custom_configs as $key => $custom_config ) {
           $configs[$key] = $custom_config[0];
         }
@@ -110,11 +110,27 @@ final class PR_Packager_Book_JSON
         return $options;
       }
 
+      // custom edition attributes
       foreach ( self::$_press_to_baker as $key => $baker_option ) {
 
           $option = isset( $configs[$key] ) ? $configs[$key] : '';
 
           switch ( $key ) {
+            case '_pr_cover':
+              $options[$baker_option] = PR_EDITION_MEDIA . $packager->edition_cover_image;
+              break;
+            case '_pr_author':
+            case '_pr_creator':
+              if( !$override ) {
+                $option = get_post_meta( $packager->edition_post->ID, $key, true );
+              }
+              if ( isset( $option ) && !empty( $option ) ) {
+                $authors = explode( ',', $option );
+                foreach ( $authors as $author ) {
+                  $options[$baker_option][] = $author;
+                }
+              }
+              break;
             case '_pr_index_height':
             case '_pr_index_width':
               $options[$baker_option] = is_numeric( $option ) ? $option : null;
@@ -155,6 +171,7 @@ final class PR_Packager_Book_JSON
           }
       }
 
+      // core edition attributes
       foreach ( $packager->edition_post as $key => $value ) {
 
          if ( array_key_exists( $key, self::$_press_to_baker ) ) {
@@ -163,32 +180,6 @@ final class PR_Packager_Book_JSON
          }
       }
 
-      $edition_meta = get_post_custom( $packager->edition_post->ID );
-      foreach ( $edition_meta as $meta_key => $meta_value ) {
-
-         if ( array_key_exists( $meta_key, self::$_press_to_baker ) ) {
-            $baker_option = self::$_press_to_baker[$meta_key];
-            switch ( $meta_key ) {
-               case '_pr_cover':
-                  $options[$baker_option] = PR_EDITION_MEDIA . $packager->edition_cover_image;
-                  break;
-               case '_pr_author':
-               case '_pr_creator':
-                  if ( isset( $meta_value[0] ) && !empty( $meta_value[0] ) ) {
-                     $authors = explode( ',', $meta_value[0] );
-                     foreach ( $authors as $author ) {
-                        $options[$baker_option] = $author;
-                     }
-                  }
-                  break;
-               default:
-                  if ( isset( $meta_value[0] ) ) {
-                     $options[$baker_option] = $meta_value[0];
-                  }
-                  break;
-            }
-         }
-      }
       return $options;
    }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Pressroom
- * Plugin URI:
+ * Plugin URI: http://press-room.io/
  * Description: PressRoom turns Wordpress into a multi channel publishing environment.
  * Version: 1.0
  * Author: ThePrintLabs

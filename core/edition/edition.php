@@ -116,9 +116,9 @@ class PR_Edition
 		$hpub->add_field( '_pr_default', '<h3>Visualization properties</h3><hr>', '', 'textnode', '' );
 		$hpub->add_field( '_pr_orientation', __( 'Orientation', 'edition' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
 			'options' => array(
+				array( 'value' => 'both', 'name' => __( "Both", 'edition' ) ),
 				array( 'value' => 'portrait', 'name' => __( "Portrait", 'edition' ) ),
 				array( 'value' => 'landscape', 'name' => __( "Landscape", 'edition' ) ),
-				array( 'value' => 'both', 'name' => __( "Both", 'edition' ) )
 			)
 		) );
 		$hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'edition' ), 'checkbox', false );
@@ -195,7 +195,7 @@ class PR_Edition
 		echo '<div class="press-container">';
 		echo '<i class="press-pr-logo-gray-wp"></i>';
 		echo '<div class="press-header-right">';
-		$this->add_publication_action();
+		$this->add_publication_action( $post->ID );
 		echo '</div>';
 		echo '</div>';
 		echo '<hr/>';
@@ -251,10 +251,11 @@ class PR_Edition
 	*
 	* @echo
 	*/
-	public function add_publication_action() {
+	public function add_publication_action( $post_id ) {
 
+		$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
 		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<select id="pr_packager_type"><option value="web">web</option><option value="hpub">hpub</option></select>';
+		echo '<select id="pr_packager_type" name="pr_packager_type"><option '. ( $packager_type == "web" ? 'selected="selected"' : '' ) .' value="web">web</option><option '. ( $packager_type == "hpub" ? 'selected="selected"' : '' ) .' value="hpub">hpub</option></select>';
 		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
 		echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
 	}
@@ -293,6 +294,11 @@ class PR_Edition
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
 			}
+		}
+
+		$pr_packager_type = isset( $_POST['pr_packager_type'] ) ? $_POST['pr_packager_type'] : false;
+		if( $pr_packager_type ) {
+			update_post_meta($post_id, 'pr_packager_type', $pr_packager_type );
 		}
 
 		$this->sanitize_linked_posts( $post );
@@ -399,6 +405,12 @@ class PR_Edition
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
 			}
+		}
+
+		// saving packager type
+		$pr_packager_type = isset( $_POST['pr_packager_type'] ) ? $_POST['pr_packager_type'] : false;
+		if( $pr_packager_type ) {
+			update_post_meta( $post->ID, 'pr_packager_type', $pr_packager_type );
 		}
 
 		wp_send_json_success();

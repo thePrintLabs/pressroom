@@ -124,9 +124,9 @@ class PR_Editorial_Project
     $hpub->add_field( '_pr_default', '<h3>Visualization properties</h3><hr>', '', 'textnode', '' );
     $hpub->add_field( '_pr_orientation', __( 'Orientation', 'editorial_project' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
       'options' => array(
+        array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) ),
         array( 'value' => 'portrait', 'name' => __( "Portrait", 'editorial_project' ) ),
-        array( 'value' => 'landscape', 'name' => __( "Landscape", 'editorial_project' ) ),
-        array( 'value' => 'both', 'name' => __( "Both", 'editorial_project' ) )
+        array( 'value' => 'landscape', 'name' => __( "Landscape", 'editorial_project' ) )
         )
     ) );
     $hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'editorial_project' ), 'checkbox', false );

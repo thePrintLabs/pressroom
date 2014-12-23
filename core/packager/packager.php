@@ -44,7 +44,7 @@ class PR_Packager
 		ob_start();
 		if ( !PR_EDD_License::check_license() ) {
 			self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
-			exit;
+			//exit;
 		}
 
 		if ( is_null( $this->edition_post ) ) {
@@ -425,33 +425,6 @@ class PR_Packager
 		}
 
 		return true;
-	}
-
-	/**
-	* Parse cover file
-	*
-	* @return string or boolean false
-	*/
-	protected function _cover_parse( $editorial_project ) {
-
-		$cover = PR_Theme::get_theme_cover( $this->edition_post->ID );
-		if ( !$cover ) {
-			return false;
-		}
-
-		ob_start();
-		$edition = $this->edition_post;
-		$editorial_project_id = $editorial_project->term_id;
-		$pr_package_type = $this->package_type;
-		$pr_theme_url = PR_THEME::get_theme_uri( $this->edition_post->ID );
-
-		$posts = $this->linked_query;
-		$this->add_functions_file();
-		require( $cover );
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		return $output;
 	}
 
 	/**

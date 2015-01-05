@@ -24,6 +24,7 @@ class PR_ADBundle
 		// Packager hooks
 		add_action( 'pr_packager_run_hpub_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_web_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_shortcode_web_pr_ad_bundle', array( $this, 'adb_web_shortcode' ), 10, 2 );
 		add_action( 'pr_packager_generate_book', array( $this, 'adb_packager_book' ), 10, 3 );
 
 		// Preview hooks
@@ -198,6 +199,15 @@ class PR_ADBundle
 			else {
 				PR_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $adb_attached_file, 'error' );
 			}
+		}
+	}
+
+	public function adb_web_shortcode( $post, &$src ) {
+
+		if($post->post_type=="pr_ad_bundle") {
+			$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
+			$adb_dir = PR_Utils::sanitize_string( $post->post_title );
+			$src = 'contents' . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		}
 	}
 

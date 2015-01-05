@@ -37,7 +37,8 @@ final class PR_Packager_Web_Package
       '_pr_ftp_server',
       '_pr_ftp_user',
       '_pr_ftp_password',
-      '_pr_ftp_destination_path'
+      '_pr_ftp_destination_path',
+      '_pr_index_height'
     );
 
     if( !$settings ) {
@@ -231,12 +232,22 @@ final class PR_Packager_Web_Package
 
     $replace = "";
     foreach( $packager->linked_query->posts as $post ) {
+
+
+      $src = 'contents/'. PR_Utils::sanitize_string( $post->post_title ) .'.html';
+
+      if( has_action( "pr_packager_shortcode_{$packager->package_type}_{$post->post_type}" ) ) {
+        do_action_ref_array( "pr_packager_shortcode_{$packager->package_type}_{$post->post_type}", array( $post, &$src ) );
+      }
+
       $replace.= '<div class="swiper-slide" data-hash="item-'. $post->ID .'">
-      <iframe height="100%" width="100%" frameborder="0" src="contents/'. PR_Utils::sanitize_string( $post->post_title ) .'.html"></iframe>
+      <iframe height="100%" width="100%" frameborder="0" src="' . $src . '"></iframe>
       </div>';
     }
 
     $html = str_replace( '[EDITION_POSTS]', $replace, $html );
+
+    $html = str_replace( '[TOC_HEIGHT]', $this->pstgs['_pr_index_height'], $html );
     file_put_contents( $packager->edition_dir . DIRECTORY_SEPARATOR . '../' . 'index.html' , $html );
   }
 
@@ -326,7 +337,7 @@ final class PR_Packager_Web_Package
       $urls = PR_Utils::extract_urls( $html );
 
       foreach ( $urls as $url ) {
-        if ( strpos( $url, site_url() ) !== false ) {
+        if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
           $post_id = url_to_postid( $url );
           if ( $post_id ) {
             foreach( $linked_query->posts as $post ) {

@@ -184,7 +184,7 @@ function pr_next( $post_id, $edition_id ) {
 function pr_get_sharing_placeholder( $post_id ) {
 
   $permalink = get_permalink( $post_id );
-  $domain = get_site_url();
+  $domain = get_home_url();
 
   $options = get_option('pr_settings');
   $sharing_domain = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '' ;

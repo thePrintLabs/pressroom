@@ -219,7 +219,7 @@ class PR_Packager
 	*
 	* @return string or boolean false
 	*/
-	public function toc_parse( $editorial_project) {
+	public function toc_parse( $editorial_project ) {
 
     $toc = PR_Theme::get_theme_layout( $this->edition_post->ID, 'toc' );
     if ( !$toc ) {
@@ -297,7 +297,7 @@ class PR_Packager
 
 			foreach ( $urls as $url ) {
 
-				if ( strpos( $url, site_url() ) !== false ) {
+				if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
 					$post_id = url_to_postid( $url );
 					if ( $post_id ) {
 

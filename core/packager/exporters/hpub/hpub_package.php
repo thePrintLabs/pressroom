@@ -41,15 +41,19 @@ final class PR_Packager_HPUB_Package
    */
   public function hpub_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
-    // Rewrite post url
-    $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+    if( $parsed_html_post ) {
+      // Rewrite post url
+      $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
 
-    do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
-
-    if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $post->post_title ), 'error' );
-      continue;
+      if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
+        PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $post->post_title ), 'error' );
+        continue;
+      }
     }
+    else {
+      do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
+    }
+
   }
 
   /**

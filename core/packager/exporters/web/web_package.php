@@ -93,19 +93,22 @@ final class PR_Packager_Web_Package
    */
   public function web_packager_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
-    // Rewrite post url
-    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
-      self::rewrite_url( $packager, $parsed_html_post );
+    if( $parsed_html_post ) {
+      // Rewrite post url
+      if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
+        self::rewrite_url( $packager, $parsed_html_post );
+      }
+      else {
+        $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+      }
+
+      if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
+        PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s ', 'packager' ), $post->post_title ), 'error' );
+        continue;
+      }
     }
     else {
-      $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
-    }
-
-    do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir );
-
-    if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s ', 'packager' ), $post->post_title ), 'error' );
-      continue;
+      do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir );
     }
   }
 

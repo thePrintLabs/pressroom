@@ -97,10 +97,16 @@ class PR_Packager
 
 		foreach ( $this->linked_query->posts as $k => $post ) {
 
-			$parsed_post = $this->_post_parse( $post, $editorial_project );
-			if ( !$parsed_post ) {
-				self::print_line( sprintf( __( 'You have to select a template for %s', 'edition' ), $post->post_title ), 'error' );
-				continue;
+			if( has_action( "pr_packager_parse_{$post->post_type}" ) ) {
+				do_action_ref_array( "pr_packager_parse_{$post->post_type}", array( $this, $post ) );
+				$parsed_post = false;
+			}
+			else {
+				$parsed_post = $this->_post_parse( $post, $editorial_project );
+				if ( !$parsed_post ) {
+					self::print_line( sprintf( __( 'You have to select a template for %s', 'edition' ), $post->post_title ), 'error' );
+					continue;
+				}
 			}
 
 			do_action( "pr_packager_{$this->package_type}", $this, $post, $editorial_project, $parsed_post );

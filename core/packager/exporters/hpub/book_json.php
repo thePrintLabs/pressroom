@@ -56,9 +56,6 @@ final class PR_Packager_Book_JSON
       if ( is_file( $page_path ) ) {
         $press_options['contents'][] = $page_name . '.html';
       }
-      else {
-         PR_Packager::print_line( sprintf( __( 'Can\'t find file %s. It won\'t add to book.json ', 'edition' ), $page_path ), 'error' );
-      }
 
       do_action_ref_array( 'pr_packager_generate_book', array( &$press_options, $post, $packager->edition_dir ) );
     }

@@ -214,6 +214,11 @@ class Pressroom_List_Table extends WP_List_Table
             }
           }
           $html .= '</select>';
+
+          if( has_action( "pr_presslist_{$item->post_type}" ) ) {
+            do_action_ref_array( "pr_presslist_{$item->post_type}", array( $item, &$html ) );
+          }
+
         }
         else {
           $html = '<i>' . __('Theme is disabled. Activate it or change to another theme.', 'edition') . '</i>';

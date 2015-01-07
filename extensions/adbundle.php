@@ -26,9 +26,13 @@ class PR_ADBundle
 		add_action( 'pr_packager_run_web_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_shortcode_web_pr_ad_bundle', array( $this, 'adb_web_shortcode' ), 10, 2 );
 		add_action( 'pr_packager_generate_book', array( $this, 'adb_packager_book' ), 10, 3 );
+		add_action( 'pr_packager_parse_pr_ad_bundle', array( $this, 'adb_packager_post_parse' ), 10, 2 );
 
 		// Preview hooks
 		add_action( 'pr_preview_pr_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
+
+		//Presslist hook
+		add_action( 'pr_presslist_pr_ad_bundle', array( $this, 'adbundle_presslist' ), 10, 3 );
 
 	}
 
@@ -230,17 +234,6 @@ class PR_ADBundle
 		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
 
-		$contents = $press_options['contents'];
-		$sharing_urls = $press_options['sharing_urls'];
-
-		end( $contents );
-		end( $sharing_urls );
-
-		$contents_key = key( $contents );
-		$sharing_urls_key = key( $sharing_urls );
-
-		unset( $press_options['sharing_urls'][$sharing_urls_key], $press_options['contents'][$contents_key]);
-
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
 		if ( is_file( $file_index ) ) {
 			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
@@ -287,6 +280,14 @@ class PR_ADBundle
 				$zip->close();
 			}
 		}
+	}
+
+	public function adb_packager_post_parse( $packager, $post) {
+
+	}
+
+	public function adbundle_presslist( $post, &$html ) {
+		$html = '';
 	}
 
 	/**

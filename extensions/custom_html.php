@@ -26,9 +26,13 @@ class PR_Custom_Html
 		add_action( 'pr_packager_run_web_pr_custom_html', array( $this, 'chtml_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_shortcode_web_pr_custom_html', array( $this, 'chtml_web_shortcode' ), 10, 2 );
 		add_action( 'pr_packager_generate_book', array( $this, 'chtml_packager_book' ), 10, 3 );
+		add_action( 'pr_packager_parse_pr_custom_html', array( $this, 'chtml_packager_post_parse' ), 10, 2 );
 
 		// Preview hooks
 		add_action( 'pr_preview_pr_custom_html', array( $this, 'chtml_preview' ), 10, 3 );
+
+		//Presslist hook
+		add_action( 'pr_presslist_pr_custom_html', array( $this, 'chtml_presslist' ), 10, 3 );
 
 	}
 
@@ -230,17 +234,6 @@ class PR_Custom_Html
 		$index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$dir = PR_Utils::sanitize_string( $post->post_title );
 
-		$contents = $press_options['contents'];
-		$sharing_urls = $press_options['sharing_urls'];
-
-		end( $contents );
-		end( $sharing_urls );
-
-		$contents_key = key( $contents );
-		$sharing_urls_key = key( $sharing_urls );
-
-		unset( $press_options['sharing_urls'][$sharing_urls_key], $press_options['contents'][$contents_key]);
-
 		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_custom_html' . DIRECTORY_SEPARATOR. $dir . DIRECTORY_SEPARATOR . $index;
 		if ( is_file( $file_index ) ) {
 			$press_options['contents'][] = 'pr_custom_html' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $index;
@@ -287,6 +280,13 @@ class PR_Custom_Html
 				$zip->close();
 			}
 		}
+	}
+	public function chtml_packager_post_parse() {
+		
+	}
+
+	public function chtml_presslist( $post, &$html ) {
+		$html = '';
 	}
 
 	/**

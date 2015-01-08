@@ -79,7 +79,7 @@ final class PR_Packager_Web_Package
       $packager->edition_dir = $packager->edition_dir . DIRECTORY_SEPARATOR . 'contents';
     }
 
-    $packager->make_toc( $editorial_project, $packager->edition_dir );
+    $packager->make_toc( $editorial_project, $packager->edition_dir, "toc" );
   }
 
   /**
@@ -102,13 +102,20 @@ final class PR_Packager_Web_Package
         $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
       }
 
-      if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
+      if( $packager->linked_query->posts[0]->post_title == $post->post_title ) {
+        $post_title = "index";
+      }
+      else {
+        $post_title = $post->post_title;
+      }
+
+      if ( !$packager->save_html_file( $parsed_html_post, $post_title, $packager->edition_dir ) ) {
         PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s ', 'packager' ), $post->post_title ), 'error' );
         continue;
       }
     }
     else {
-      do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir );
+      do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir, $packager );
     }
   }
 
@@ -275,17 +282,8 @@ final class PR_Packager_Web_Package
 
         $filename = PR_WEB_PATH . $package_name . '.zip';
 
-        if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
-          $cover = "index.html";
-        }
-        else {
-          $cover_post = $packager->linked_query->posts[0];
-          $cover = PR_Utils::sanitize_string($cover_post->post_title) . '.html';
-        }
-
-
         if ( PR_Utils::create_zip_file( $this->root_folder, $filename, '' ) ) {
-          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR . $cover .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
+          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR .'index.html">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
         }
         break;
       case 'ftp':

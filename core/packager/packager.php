@@ -254,7 +254,7 @@ class PR_Packager
 	 * @param  string $dir
 	 * @void
 	 */
-	public function make_toc( $editorial_project, $dir ) {
+	public function make_toc( $editorial_project, $dir, $filename = "index" ) {
 
 		// Parse html of toc index.php file
 		$html = $this->toc_parse( $editorial_project );
@@ -276,7 +276,7 @@ class PR_Packager
 		$this->set_progress( 10, __( 'Saving toc file', 'edition' ) );
 
 		// Save cover html file
-		if ( $this->save_html_file( $html, 'index', $dir ) ) {
+		if ( $this->save_html_file( $html, $filename, $dir ) ) {
 			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
 			$this->set_progress( 20, __( 'Saving edition posts', 'edition' ) );
 		}

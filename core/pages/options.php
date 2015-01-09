@@ -106,6 +106,15 @@ class PR_options_page {
     $value = isset( $options['pr_custom_post_type'] ) ? ( is_array( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type'] ) : $options['pr_custom_post_type'] ) : '';
   	$html = '<input id="pr_custom_post_type" type="text" name="pr_settings[pr_custom_post_type]" value="' . $value . '">';
   	echo $html;
+    echo '<p><b>Possible values:</b><ul>';
+    $post_types = get_post_types();
+    $excluded = array('post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
+    foreach( $post_types as $post_type ) {
+      if( !in_array( $post_type, $excluded ) ) {
+        echo '<li>' . $post_type . '</li>';
+      }
+    }
+    echo '</ul></p>';
   }
 
   /**

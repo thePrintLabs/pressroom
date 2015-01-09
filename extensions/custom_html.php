@@ -281,10 +281,25 @@ class PR_Custom_Html
 			}
 		}
 	}
+
+	/**
+	* Custom post parsing. Custom html does not require to create html file.
+	*
+	* @param  object $packager
+	* @param  object $post
+	* @void
+	*/
 	public function chtml_packager_post_parse() {
-		
+
 	}
 
+	/**
+	* Customization for custom html presslist
+	*
+	* @param  object $post
+	* @param  string $html
+	* @void
+	*/
 	public function chtml_presslist( $post, &$html ) {
 		$html = '';
 	}

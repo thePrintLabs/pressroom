@@ -282,10 +282,24 @@ class PR_ADBundle
 		}
 	}
 
+	/**
+	 * Custom post parsing. Adbundle does not require to create html file.
+	 *
+	 * @param  object $packager
+	 * @param  object $post
+	 * @void
+	 */
 	public function adb_packager_post_parse( $packager, $post) {
 
 	}
 
+	/**
+	 * Customization for adbundle presslist
+	 *
+	 * @param  object $post
+	 * @param  string $html
+	 * @void
+	 */
 	public function adbundle_presslist( $post, &$html ) {
 		$html = '';
 	}

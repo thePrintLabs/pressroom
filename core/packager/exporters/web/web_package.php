@@ -104,6 +104,7 @@ final class PR_Packager_Web_Package
         $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
       }
 
+      // Create index.html file for no-container web package
       if( $packager->linked_query->posts[0]->post_title == $post->post_title && !$container ) {
         $post_title = "index";
       }

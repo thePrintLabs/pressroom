@@ -169,22 +169,46 @@ jQuery(function(){
       checkOverride(override_hpub, 'hpub');
     }
 
+    function checkOverride(element, metabox) {
+
+      if(element.is(':checked')) {
+        jQuery( '.'+metabox + ' input').removeAttr('disabled');
+        jQuery( '.'+metabox + ' select').removeAttr('disabled');
+        jQuery( '.'+metabox + ' button').removeAttr('disabled');
+        jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#222');
+      }
+      else {
+        jQuery( '.'+metabox+' input').attr('disabled','disabled');
+        jQuery( '.'+metabox+' select').attr('disabled','disabled');
+        jQuery( '.'+metabox + ' button').attr('disabled','disabled');
+        jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
+        element.removeAttr('disabled');
+        element.parent().parent().find('label').css('color','#222');
+      }
+    }
+
+    console.log(jQuery('input[name="_pr_ftp_protocol"]:checked'));
+    checkTrasferProtocol( jQuery('input[name="_pr_ftp_protocol"]:checked') ); //on document ready
+
+    jQuery('input[name="_pr_ftp_protocol"]').live("change",function(e) {
+      checkTrasferProtocol(jQuery(this));
+    });
+
+    function checkTrasferProtocol(element) {
+      var value = element.val();
+      console.log(value);
+      switch( value ) {
+        case 'ftp':
+        case 'sftp':
+          jQuery('.web_metabox input[type="text"], .web_metabox input[type="password"]').removeAttr('disabled');
+          jQuery('.web_metabox input[name="_pr_local_path"]').attr('disabled','disabled');
+          jQuery('#test-connection').removeAttr('disabled');
+          break;
+        case 'local':
+          jQuery('.web_metabox input[type="text"], .web_metabox input[type="password"]').attr('disabled','disabled');
+          jQuery('.web_metabox input[name="_pr_local_path"]').removeAttr('disabled');
+          jQuery('#test-connection').attr('disabled','disabled');
+          break;
+      }
+    }
   });
-
-  function checkOverride(element, metabox) {
-
-    if(element.is(':checked')) {
-      jQuery( '.'+metabox + ' input').removeAttr('disabled');
-      jQuery( '.'+metabox + ' select').removeAttr('disabled');
-      jQuery( '.'+metabox + ' button').removeAttr('disabled');
-      jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#222');
-    }
-    else {
-      jQuery( '.'+metabox+' input').attr('disabled','disabled');
-      jQuery( '.'+metabox+' select').attr('disabled','disabled');
-      jQuery( '.'+metabox + ' button').attr('disabled','disabled');
-      jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
-      element.removeAttr('disabled');
-      element.parent().parent().find('label').css('color','#222');
-    }
-  }

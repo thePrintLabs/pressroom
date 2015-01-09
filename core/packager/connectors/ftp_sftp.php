@@ -168,6 +168,7 @@ class PR_Ftp_Sftp
       )
     ));
 
+    $metabox->add_field( '_pr_local_path', __( 'Local path', 'web_package' ), __( 'The path where the files will be created', 'web_package' ), 'text', PR_WEB_PATH );
     $metabox->add_field( '_pr_ftp_server', __( 'FTP Server / IP port', 'web_package' ), __( 'Server ip address and connection port', 'web_package' ), 'double_text', '' );
     $metabox->add_field( '_pr_ftp_user', __( 'FTP User Login', 'web_package' ), __( 'User for ftp connection', 'web_package' ), 'text', '' );
     $metabox->add_field( '_pr_ftp_password', __( 'FTP Password', 'web_package' ), __( 'Password for ftp connection', 'web_package' ), 'password', '' );

@@ -34,6 +34,7 @@ final class PR_Packager_Web_Package
     $settings = array(
       '_pr_container_theme',
       '_pr_ftp_protocol',
+      '_pr_local_path',
       '_pr_ftp_server',
       '_pr_ftp_user',
       '_pr_ftp_password',
@@ -95,14 +96,15 @@ final class PR_Packager_Web_Package
 
     if( $parsed_html_post ) {
       // Rewrite post url
-      if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
+      $container = isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ? true : false;
+      if( $container ) {
         self::rewrite_url( $packager, $parsed_html_post );
       }
       else {
         $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
       }
 
-      if( $packager->linked_query->posts[0]->post_title == $post->post_title ) {
+      if( $packager->linked_query->posts[0]->post_title == $post->post_title && !$container ) {
         $post_title = "index";
       }
       else {
@@ -278,12 +280,28 @@ final class PR_Packager_Web_Package
     switch( $this->pstgs['_pr_ftp_protocol'] ) {
       case 'local':
         $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
-        PR_Utils::recursive_copy( $this->root_folder, PR_WEB_PATH . $package_name );
+        $destination = isset( $this->pstgs['_pr_local_path'] ) ? $this->pstgs['_pr_local_path']  : PR_WEB_PATH ;
+        if( file_exists( $destination ) ) {
+          PR_Utils::recursive_copy( $this->root_folder, $destination . DIRECTORY_SEPARATOR . $package_name );
+        }
+        else {
+          PR_Packager::print_line( sprintf( __( 'Local path <i>%s</i> does not exist. Can\'t create package.', 'web_package' ), $destination ), 'error' );
+          return false;
+        }
 
         $filename = PR_WEB_PATH . $package_name . '.zip';
 
         if ( PR_Utils::create_zip_file( $this->root_folder, $filename, '' ) ) {
-          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR .'index.html">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
+          $index_path = PR_WEB_PATH . $package_name . DIRECTORY_SEPARATOR .'index.html';
+          $index_uri = PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR .'index.html';
+
+          if( file_exists( $index_path ) ) {
+            PR_Packager::print_line( __( 'Package created. You can see it <a href="'. $index_uri .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
+          }
+          else {
+            PR_Packager::print_line( __( 'Package created. You can download it <a href="'. PR_WEB_URI . $package_name . '.zip">there</a>', 'web_package' ), 'success' );
+          }
+
         }
         break;
       case 'ftp':

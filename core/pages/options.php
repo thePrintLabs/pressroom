@@ -103,15 +103,13 @@ class PR_options_page {
   public function pr_custom_post_type() {
 
   	$options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_custom_post_type'] ) ? ( is_array( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type'] ) : $options['pr_custom_post_type'] ) : '';
-  	$html = '<input id="pr_custom_post_type" type="text" name="pr_settings[pr_custom_post_type]" value="' . $value . '">';
-  	echo $html;
-    echo '<p><b>Possible values:</b><ul>';
+    $value = isset( $options['pr_custom_post_type'] ) ? $options['pr_custom_post_type'] : '';
     $post_types = get_post_types();
     $excluded = array('post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
+    echo '<ul>';
     foreach( $post_types as $post_type ) {
       if( !in_array( $post_type, $excluded ) ) {
-        echo '<li>' . $post_type . '</li>';
+        echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="'.$post_type.'" '.( is_array( $value ) ? ( in_array( $post_type, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type ? 'checked="checked"' : "" ) ) . ' />' . $post_type . '</li>';
       }
     }
     echo '</ul></p>';
@@ -211,9 +209,6 @@ class PR_options_page {
       wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
       wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
       wp_enqueue_script( 'chosen' );
-      wp_enqueue_style( 'tagsinput', PR_ASSETS_URI . 'css/jquery.tagsinput.css' );
-      wp_register_script( 'tagsinput', PR_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
-      wp_enqueue_script( 'tagsinput' );
     }
   }
 }

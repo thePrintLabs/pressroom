@@ -16,6 +16,7 @@ final class PR_Packager_Web_Package
     add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 3 );
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );
 
+    // packager hooks
     add_action( 'pr_packager_web_start', array( $this, 'web_packager_start' ), 10, 2 );
     add_action( 'pr_packager_web', array( $this, 'web_packager_run' ), 10, 4 );
     add_action( 'pr_packager_web_end', array( $this, 'web_packager_end' ), 10, 2 );
@@ -46,6 +47,7 @@ final class PR_Packager_Web_Package
       return false;
     }
 
+    // check whether using edition settings or editorial project settings
     $override = get_post_meta( $edition_id, '_pr_web_override_eproject', true );
 
     foreach( $settings as $setting ) {
@@ -63,7 +65,7 @@ final class PR_Packager_Web_Package
   }
 
   /**
-   * Create toc and load settings.
+   * Load settings and create toc.
    *
    * @param  object $packager
    * @param  object $editorial_project
@@ -95,6 +97,7 @@ final class PR_Packager_Web_Package
   public function web_packager_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
     if( $parsed_html_post ) {
+
       // Rewrite post url
       $container = isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ? true : false;
       if( $container ) {
@@ -118,12 +121,15 @@ final class PR_Packager_Web_Package
       }
     }
     else {
+      // custom behaviour for extensions
       do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir, $packager );
     }
   }
 
   /**
-   * Save attachments, set package date and close the package.
+   * Replace reader shortcode with parsed post,
+   * save attachments,
+   * set package date and close the package.
    *
    * @param  object $packager
    * @param  object $editorial_project
@@ -136,11 +142,13 @@ final class PR_Packager_Web_Package
     }
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
+
     if ( !$media_dir ) {
       PR_Packager::print_line( sprintf( __( 'Failed to create folder ', 'web_package' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
+
     $packager->set_progress( 70, __( 'Saving edition attachments files', 'web_package' ) );
 
     $packager->save_posts_attachments( $media_dir );
@@ -163,6 +171,7 @@ final class PR_Packager_Web_Package
    *
    * @param object &$metaboxes
    * @param int $item_id (it can be editorial project id or edition id);
+   * @void
    */
   public function pr_add_option( &$metaboxes, $item_id, $edition = false ) {
 
@@ -186,7 +195,7 @@ final class PR_Packager_Web_Package
   }
 
   /**
-   * test ftp connection
+   * Test ftp connection
    *
    * @void
    */
@@ -372,4 +381,5 @@ final class PR_Packager_Web_Package
     }
   }
 }
+
 $pr_packager_web_package = new PR_Packager_Web_Package;

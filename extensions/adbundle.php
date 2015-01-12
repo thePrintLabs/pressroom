@@ -290,7 +290,7 @@ class PR_ADBundle
 	 * @void
 	 */
 	public function adb_packager_post_parse( $packager, $post) {
-
+		return;
 	}
 
 	/**

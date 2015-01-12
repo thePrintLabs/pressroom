@@ -104,12 +104,12 @@ class PR_options_page {
 
   	$options = get_option( 'pr_settings' );
     $value = isset( $options['pr_custom_post_type'] ) ? $options['pr_custom_post_type'] : '';
-    $post_types = get_post_types();
+    $post_types = get_post_types( '', 'objects');
     $excluded = array('post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
     echo '<ul>';
     foreach( $post_types as $post_type ) {
-      if( !in_array( $post_type, $excluded ) ) {
-        echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="'.$post_type.'" '.( is_array( $value ) ? ( in_array( $post_type, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type ? 'checked="checked"' : "" ) ) . ' />' . $post_type . '</li>';
+      if( !in_array( $post_type->name, $excluded ) ) {
+        echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="' .$post_type->name .'" '.( is_array( $value ) ? ( in_array( $post_type->name, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type->name ? 'checked="checked"' : "" ) ) . ' />' . $post_type->labels->name . '</li>';
       }
     }
     echo '</ul></p>';

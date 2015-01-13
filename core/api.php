@@ -61,6 +61,24 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 }
 
 /**
+ * get ids of editions connected to $post
+ * 
+ * @param  object $post
+ * @return array
+ */
+function pr_get_connected_edition_ids( $post ) {
+
+  global $wpdb;
+  $q= "SELECT ID FROM $wpdb->posts AS posts
+  LEFT JOIN $wpdb->p2p AS p2p ON p2p.p2p_to = posts . ID
+  WHERE post_status <> %s AND p2p_type = %s AND p2p_from = %u;" ;
+
+  $linked_posts = $wpdb->get_col( $wpdb->prepare( $q, 'trash', P2P_EDITION_CONNECTION, $post->ID ) );
+
+  return $linked_posts;
+}
+
+/**
  * Get single option from pressroom option array
  *
  * @param  string $option

@@ -34,7 +34,7 @@ require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );
 
 require_once( PR_CONFIGS_PATH . 'edd.php' );
-require_once( PR_CONFIGS_PATH . 'tgm.php' );
+require_once( PR_CONFIGS_PATH . 'p2p.php' );
 
 require_once( PR_SERVER_PATH . 'server.php' );
 
@@ -168,7 +168,7 @@ class TPL_Pressroom
 			if ( $theme_code && $themes ) {
 				$pages = $themes[$theme_code];
 				foreach ( $pages as $page ) {
-					if ( $page['rule'] == 'post' ) {
+					if ( isset($page['rule']) && $page['rule'] == 'post' ) {
 						p2p_add_meta( $p2p_id, 'template', $page['path'] );
 					}
 				}

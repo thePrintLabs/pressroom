@@ -34,7 +34,8 @@ require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );
 
 require_once( PR_CONFIGS_PATH . 'edd.php' );
-require_once( PR_CONFIGS_PATH . 'p2p.php' );
+//require_once( PR_CONFIGS_PATH . 'p2p.php' );
+require_once( PR_LIBS_PATH . 'posts-to-posts/posts-to-posts.php' );
 
 require_once( PR_SERVER_PATH . 'server.php' );
 

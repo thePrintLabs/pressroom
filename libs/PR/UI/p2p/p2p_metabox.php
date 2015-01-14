@@ -33,9 +33,23 @@ class PR_P2P_Metabox
  */
   public function add_custom_metabox_callback( $post ) {
 
-    $args = array( 'posts_per_page' => -1, 'post_type' => PR_EDITION );
+
+    $per_page = 1;
+    $current_page = isset( $_POST['page'] ) ? $_POST['page'] : 1;
+
+    $args = array(
+      'posts_per_page' => $per_page,
+      'paged' => $current_page,
+      'post_type' => PR_EDITION
+    );
+
+
 
     $editions = get_posts( $args );
+
+    $total_items = count( $editions );
+
+    $editions = array_slice( $editions, ($current_page - 1) * $per_page , $per_page );
 
     echo '<div id="editions-all" class="tabs-panel">';
     echo '<ul class="categorychecklist form-no-clear">';

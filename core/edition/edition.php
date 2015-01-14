@@ -257,9 +257,12 @@ class PR_Edition
 		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
 		echo '<select id="pr_packager_type" name="pr_packager_type">';
 		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-		
+
+		$options = get_option( 'pr_settings' );
 		foreach( $exporters as $exporter ) {
-			echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+			if( in_array( $exporter, $options['pr_enabled_exporters'] ) ) {
+				echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+			}
 		}
 
 		echo '</select>';

@@ -79,6 +79,14 @@ class PR_options_page {
     );
 
     add_settings_field(
+    'enabled_exporters',
+    __( 'Enabled Exporters', 'pressroom' ),
+    array( $this, 'pr_enabled_exporters' ),
+    'pressroom',
+    'pr_pressroom_section'
+  );
+
+    add_settings_field(
       'pr_license',
       __( 'License key', 'pressroom' ),
       array( $this, 'pr_license_key' ),
@@ -112,7 +120,20 @@ class PR_options_page {
         echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="' .$post_type->name .'" '.( is_array( $value ) ? ( in_array( $post_type->name, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type->name ? 'checked="checked"' : "" ) ) . ' />' . $post_type->labels->name . '</li>';
       }
     }
-    echo '</ul></p>';
+    echo '</ul>';
+  }
+
+  public function pr_enabled_exporters() {
+
+    $options = get_option( 'pr_settings' );
+    $value = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : '';
+    $exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+    echo '<ul>';
+    foreach( $exporters as $exporter ) {
+        echo '<li><input type="checkbox" name="pr_settings[pr_enabled_exporters][]" value="' .$exporter .'" '.( is_array( $value ) ? ( in_array( $exporter, $value )  ? 'checked="checked"' : "" ) : ( $value == $exporter ? 'checked="checked"' : "" ) ) . ' />' . $exporter . '</li>';
+    }
+    echo '</ul>';
+
   }
 
   /**
@@ -178,6 +199,11 @@ class PR_options_page {
     if( isset( $new_value['pr_custom_post_type'] ) ) {
       $post_type = is_array( $new_value['pr_custom_post_type'] ) ? $new_value['pr_custom_post_type'] : explode( ',', $new_value['pr_custom_post_type'] );
       $new_value['pr_custom_post_type'] = $post_type;
+    }
+
+    if( isset( $new_value['pr_enabled_exporters'] ) ) {
+      $post_type = is_array( $new_value['pr_enabled_exporters'] ) ? $new_value['pr_enabled_exporters'] : explode( ',', $new_value['pr_enabled_exporters'] );
+      $new_value['pr_enabled_exporters'] = $post_type;
     }
 
     return $new_value;

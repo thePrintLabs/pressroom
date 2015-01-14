@@ -94,6 +94,36 @@ class PR_Utils
 	}
 
 	/**
+	* Search subdir in a directory
+	*
+	* @param string $directory
+	* @param array &$out
+	* @return array
+	*/
+	public static function search_dir( $directory, $recursive = false, &$out = array() ) {
+
+		try {
+			$files = scandir( $directory );
+			$files = array_diff( $files, self::$excluded_files );
+			foreach ( $files as $file ) {
+
+				if( is_dir( $directory . DIRECTORY_SEPARATOR . $file ) ) {
+					array_push( $out, $file );
+
+					if( $recursive ) {
+						self::search_dir( $directory . DIRECTORY_SEPARATOR . $file, true, $out );
+					}
+				}
+			}
+		}
+		catch(Exception $e) {
+			error_log( 'Pressroom error: ' . $e->getMessage() );
+		}
+
+		return $out;
+	}
+
+	/**
 	 * Create a new folder
 	 *
 	 * @param  string $basepath - parent folder

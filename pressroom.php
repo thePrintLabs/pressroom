@@ -135,7 +135,7 @@ class TPL_Pressroom
 				),
 				'fields' => array(
 					'status' => array(
-						'title'		=> __( 'Included', 'pressroom' ),
+						'title'		=> __( 'Visible', 'pressroom' ),
 						'type'		=> 'checkbox',
 						'default'	=> 1,
 					),

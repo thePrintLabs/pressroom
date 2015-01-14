@@ -5,8 +5,6 @@
  *
  */
 
-require_once( PR_PACKAGER_EXPORTERS_PATH . '/hpub/hpub_package.php' );
-require_once( PR_PACKAGER_EXPORTERS_PATH . '/web/web_package.php' );
 require_once( PR_PACKAGER_PATH . '/progressbar.php' );
 
 class PR_Packager
@@ -24,13 +22,6 @@ class PR_Packager
 
 		$this->_get_linked_posts();
 		$this->pb = new ProgressBar();
-
-		if( !isset( $_GET['packager_type'] ) ) {
-			self::print_line( __( 'No package type selected. ', 'edition' ), 'error' );
-			exit;
-		}
-
-		$this->package_type = $_GET['packager_type'];
 	}
 
 	/**
@@ -42,6 +33,16 @@ class PR_Packager
 	public function run( $editorial_project ) {
 
 		ob_start();
+
+		$this->_load_exporters();
+
+		if( !isset( $_GET['packager_type'] ) ) {
+			self::print_line( __( 'No package type selected. ', 'edition' ), 'error' );
+			exit;
+		}
+
+		$this->package_type = $_GET['packager_type'];
+
 		if ( !PR_EDD_License::check_license() ) {
 			self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
 			exit;
@@ -492,5 +493,28 @@ class PR_Packager
 
 		self::print_line(__('Cleaning temporary files ', 'edition') );
 		PR_Utils::remove_dir( $this->edition_dir );
+	}
+
+	/**
+	 * Get all exporters from relative dir
+	 *
+	 * @void
+	 */
+	protected function _load_exporters() {
+
+		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+
+		foreach( $exporters as $exporter ) {
+			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
+			if( is_file( $file ) ) {
+				require_once( $file );
+			}
+			else {
+				self::print_line( sprintf( __('Failed to load exporters <i>%s</i>', 'edition'), $file ), 'error' );
+				exit;
+			}
+		}
+
+		return true;
 	}
 }

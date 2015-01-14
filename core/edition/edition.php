@@ -255,7 +255,14 @@ class PR_Edition
 
 		$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
 		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<select id="pr_packager_type" name="pr_packager_type"><option '. ( $packager_type == "web" ? 'selected="selected"' : '' ) .' value="web">web</option><option '. ( $packager_type == "hpub" ? 'selected="selected"' : '' ) .' value="hpub">hpub</option></select>';
+		echo '<select id="pr_packager_type" name="pr_packager_type">';
+		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+		
+		foreach( $exporters as $exporter ) {
+			echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+		}
+
+		echo '</select>';
 		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
 		echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
 	}

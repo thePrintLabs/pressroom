@@ -2,6 +2,9 @@
 
 class PR_Edition
 {
+	public $pr_option;
+	public $exportes;
+	public $ck_exporters;
 	protected $_metaboxes = array();
 
 	/**
@@ -13,6 +16,10 @@ class PR_Edition
 
 		if ( !is_admin() ) {
 			return;
+		}
+
+		if( !$this->check_exporters() ) {
+			add_action( 'admin_notices', array( $this, 'exporters_notice' ) );
 		}
 
 		add_theme_support( 'post-thumbnails', array( PR_EDITION ) );
@@ -253,21 +260,22 @@ class PR_Edition
 	*/
 	public function add_publication_action( $post_id ) {
 
-		$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
-		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<select id="pr_packager_type" name="pr_packager_type">';
-		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+		if( $this->ck_exporters ) {
 
-		$options = get_option( 'pr_settings' );
-		foreach( $exporters as $exporter ) {
-			if( in_array( $exporter, $options['pr_enabled_exporters'] ) ) {
-				echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+			$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
+			echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
+			echo '<select id="pr_packager_type" name="pr_packager_type">';
+
+			foreach( $this->exporters as $exporter ) {
+				if( in_array( $exporter, $this->pr_options['pr_enabled_exporters'] ) ) {
+					echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+				}
 			}
-		}
 
-		echo '</select>';
-		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
-		echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
+			echo '</select>';
+			echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
+			echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
+		}
 	}
 
 	/**
@@ -512,38 +520,6 @@ class PR_Edition
 	}
 
 	/**
-	 * Get subscription types terms
-	 *
-	 * @param object $post
-	 * @return array
-	 */
-	protected function _get_subscription_types( $post ) {
-
-		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-		$types = array();
-		if ( !empty( $terms ) ) {
-			foreach ( $terms as $term ) {
-
-				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
-				if ( $term_meta ) {
-					$term_types = isset( $term_meta['_pr_subscription_types'] ) ? $term_meta['_pr_subscription_types'] : '';
-					if( $term_types ) {
-						foreach ( $term_types as $type ) {
-
-							$types[$term->name][] = array(
-								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-								'text'  => $type,
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $types;
-	}
-
-	/**
 	 * Add custom columns
 	 *
 	 * @param  array $columns
@@ -619,5 +595,65 @@ class PR_Edition
 			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
 		}
 		return $edition_bundle_id;
+	}
+
+	/**
+	* Get subscription types terms
+	*
+	* @param object $post
+	* @return array
+	*/
+	protected function _get_subscription_types( $post ) {
+
+		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
+		$types = array();
+		if ( !empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+
+				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
+				if ( $term_meta ) {
+					$term_types = isset( $term_meta['_pr_subscription_types'] ) ? $term_meta['_pr_subscription_types'] : '';
+					if( $term_types ) {
+						foreach ( $term_types as $type ) {
+
+							$types[$term->name][] = array(
+								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
+								'text'  => $type,
+							);
+						}
+					}
+				}
+			}
+		}
+
+		return $types;
+	}
+
+	public function exporters_notice() {
+
+		$setting_page_url = admin_url() . 'admin.php?page=pressroom';
+		?>
+		<div class="error">
+			<p><?php _e( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ); ?></p>
+		</div>
+		<?php
+	}
+
+	public function check_exporters() {
+
+		$this->pr_options = get_option( 'pr_settings' );
+		$this->exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+		$this->ck_exporters = false;
+
+		if( isset( $this->pr_options['pr_enabled_exporters'] ) ) {
+			foreach( $this->exporters as $exporter ) {
+				if( in_array( $exporter, $this->pr_options['pr_enabled_exporters'] ) ) {
+					$this->ck_exporters = true;
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

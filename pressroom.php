@@ -195,7 +195,7 @@ class TPL_Pressroom
 	public function change_featured_image_html( $content ) {
 
 		global $post;
-		if ( $post->post_type == PR_EDITION ) {
+		if ( $post && $post->post_type == PR_EDITION ) {
 			$content = str_replace( __( 'Remove featured image' ), __( 'Remove cover image' ), $content);
 			$content = str_replace( __( 'Set featured image' ), __( 'Set cover image' ), $content);
 		}

@@ -42,7 +42,7 @@ class PR_Packager
 		}
 
 		$options = get_option( 'pr_settings' );
-		if( !in_array( $_GET['packager_type'], $options['pr_enabled_exporters'] ) ) {
+		if( !isset( $options['pr_enabled_exporters'] ) || !in_array( $_GET['packager_type'], $options['pr_enabled_exporters'] ) ) {
 			$setting_page_url = admin_url() . 'admin.php?page=pressroom';
 			self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom settings page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
 			exit;

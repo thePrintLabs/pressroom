@@ -358,7 +358,7 @@ class PR_Packager
 		if ( !empty( $this->_posts_attachments ) ) {
 			$attachments = array_unique( $this->_posts_attachments );
 			foreach ( $attachments as $filename => $url ) {
-				if ( is_file( $url ) && copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
+				if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
 					PR_Packager::print_line( sprintf( __( 'Copied %s ', 'edition' ), $url ), 'success' );
 				}
 				else {

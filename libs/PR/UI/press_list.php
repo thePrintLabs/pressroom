@@ -225,7 +225,7 @@ class Pressroom_List_Table extends WP_List_Table
         }
       }
       else {
-        $html = '<i>' . __('The theme was not found. Update the edition to fix.', 'edition') . '</i>';
+        $html = '<i>' . __('The theme was not found. Update the issue to fix.', 'edition') . '</i>';
       }
     }
     else {

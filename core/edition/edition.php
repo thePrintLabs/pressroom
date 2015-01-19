@@ -52,24 +52,24 @@ class PR_Edition
 	public function add_edition_post_type() {
 
 		$labels = array(
-			'name'                => _x( 'Editions', 'Post Type General Name', 'edition' ),
-			'singular_name'       => _x( 'Edition', 'Post Type Singular Name', 'edition' ),
-			'menu_name'           => __( 'Editions', 'edition' ),
-			'parent_item_colon'   => __( 'Parent edition:', 'edition' ),
-			'all_items'           => __( 'All editions', 'edition' ),
-			'view_item'           => __( 'View edition', 'edition' ),
-			'add_new_item'        => __( 'Add New Edition', 'edition' ),
+			'name'                => _x( 'Issues', 'Post Type General Name', 'edition' ),
+			'singular_name'       => _x( 'Issue', 'Post Type Singular Name', 'edition' ),
+			'menu_name'           => __( 'Issues', 'edition' ),
+			'parent_item_colon'   => __( 'Parent issue:', 'edition' ),
+			'all_items'           => __( 'All issues', 'edition' ),
+			'view_item'           => __( 'View issue', 'edition' ),
+			'add_new_item'        => __( 'Add New Issue', 'edition' ),
 			'add_new'             => __( 'Add New', 'edition' ),
-			'edit_item'           => __( 'Edit edition', 'edition' ),
-			'update_item'         => __( 'Update edition', 'edition' ),
-			'search_items'        => __( 'Search edition', 'edition' ),
+			'edit_item'           => __( 'Edit issue', 'edition' ),
+			'update_item'         => __( 'Update issue', 'edition' ),
+			'search_items'        => __( 'Search issue', 'edition' ),
 			'not_found'           => __( 'Not found', 'edition' ),
 			'not_found_in_trash'  => __( 'Not found in Trash', 'edition' ),
 		);
 
 		$args = array(
 			'label'                => __( 'edition_type', 'edition' ),
-			'description'          => __( 'Press room edition', 'edition' ),
+			'description'          => __( 'Pressroom issue', 'edition' ),
 			'labels'               => $labels,
 			'supports'             => array( 'title', 'excerpt', 'author', 'thumbnail', 'custom-fields' ),
 			'hierarchical'         => false,
@@ -99,7 +99,7 @@ class PR_Edition
 	public function get_custom_metaboxes( $post ) {
 
 		$editorial_terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-		$e_meta = new PR_Metabox( 'edition_metabox', __( 'Edition Meta', 'edition' ), 'normal', 'high', $post->ID );
+		$e_meta = new PR_Metabox( 'edition_metabox', __( 'Issue Meta', 'edition' ), 'normal', 'high', $post->ID );
 		$e_meta->add_field( '_pr_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', '' );
 		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
@@ -138,7 +138,7 @@ class PR_Edition
 		$hpub->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
 		$hpub->add_field( '_pr_default', '<h3>Behaviour properties</h3><hr>', '', 'textnode', '' );
 
-		$hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
+		$hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time issue is opened )', 'editorial_project' ), 'number', 1 );
 		$hpub->add_field( '_pr_rendering', __( 'Rendering type', 'edition' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
 			'options' => array(
 				array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'edition' ) ),

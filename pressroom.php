@@ -120,13 +120,13 @@ class TPL_Pressroom
 				'to' 			=> PR_EDITION,
 				'sortable' 	=> false,
 				'title' => array(
-    				'from'	=> __( 'Included into edition', 'pressroom' )
+    				'from'	=> __( 'Included into issue', 'pressroom' )
     			),
 				'to_labels' => array(
-      			'singular_name'	=> __( 'Edition', 'pressroom' ),
-      			'search_items' 	=> __( 'Search edition', 'pressroom' ),
-      			'not_found'			=> __( 'No editions found.', 'pressroom' ),
-      			'create'				=> __( 'Select an edition', 'pressroom' ),
+      			'singular_name'	=> __( 'Issue', 'pressroom' ),
+      			'search_items' 	=> __( 'Search issue', 'pressroom' ),
+      			'not_found'			=> __( 'No issue found.', 'pressroom' ),
+      			'create'				=> __( 'Select an issue', 'pressroom' ),
   				),
 				'admin_box' => array(
 					'show' 		=> 'from',
@@ -218,7 +218,7 @@ class TPL_Pressroom
 			echo '<div class="' . $msg_type . '"><p>';
 			switch ( $msg_code ) {
 				case 'theme':
-					echo _e( '<b>Error:</b> You must specify a theme for edition!', 'pressroom_notice' );
+					echo _e( '<b>Error:</b> You must specify a theme for issue!', 'pressroom_notice' );
 					break;
 				case 'duplicate_entry':
 					echo _e( sprintf('<b>Error:</b> Duplicate entry for <b>%s</b>. It must be unique', $msg_param ) );

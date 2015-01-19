@@ -81,7 +81,7 @@ class PR_Editorial_Project
        'cb'           => '<input type="checkbox" />',
        'name'         => __( 'Name' ),
        'slug'         => __( 'Slug' ),
-       'posts'        => __( 'Posts' ),
+       'posts'        => __( 'Issues' ),
        'actions'  => __( 'Actions', 'editorial_project'),
     );
 
@@ -139,7 +139,7 @@ class PR_Editorial_Project
     $hpub->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
     $hpub->add_field( '_pr_default', '<h3>Behaviour properties</h3><hr>', '', 'textnode', '' );
 
-    $hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
+    $hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time issue is opened )', 'editorial_project' ), 'number', 1 );
     $hpub->add_field( '_pr_rendering', __( 'Rendering type', 'editorial_project' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
       'options' => array(
         array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'editorial_project' ) ),

@@ -37,13 +37,13 @@ else {
 }
 
 if ( empty( $linked_posts ) ) {
-  wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
-  <li>Check if the edition with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
+  wp_die( __( "<b>There was an error while trying to build the issue preview.</b><p>Suggestions:</p><ul>
+  <li>Check if the issue with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
 }
 
 $terms = wp_get_post_terms( $_GET['edition_id'], PR_EDITORIAL_PROJECT );
 if ( empty( $terms ) ) {
-  wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
+  wp_die( __( "<b>There was an error while trying to build the issue preview.</b><p>Suggestions:</p><ul>
   <li>Ensure that there is least one editorial project linked to this edition</li></ul>", 'pressroom' ) );
 }
 

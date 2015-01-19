@@ -275,7 +275,7 @@ class PR_Preview {
   public function add_preview_metabox_callback( $post ) {
 
     $editions = PR_Edition::get_linked_editions( $post );
-    echo '<label for="post_status">' . __("Choose an edition:", 'pressroom') . '</label>
+    echo '<label for="post_status">' . __("Choose an issue:", 'pressroom') . '</label>
     <div id="post-preview-select">
     <select name="pr_prw_edition_id" id="pr_prw_edition_id">';
     foreach ( $editions->posts as $edition ) {

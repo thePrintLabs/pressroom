@@ -90,7 +90,7 @@ class PR_Custom_Html
 	public function get_custom_metaboxes( $post_type, $post ) {
 
 		$chtml_meta = new PR_Metabox( 'chtml_metabox', __( 'Custom Html metabox', 'pr_custom_html' ), 'normal', 'high', $post->ID );
-		$chtml_meta->add_field( '_pr_html_file', __( 'Html file', 'pr_custom_html' ), __( 'The HTML file from within the ZIP that will be used in the edition.', 'pr_custom_html' ), 'text', 'index.html' );
+		$chtml_meta->add_field( '_pr_html_file', __( 'Html file', 'pr_custom_html' ), __( 'The HTML file from within the ZIP that will be used in the issue.', 'pr_custom_html' ), 'text', 'index.html' );
 		$chtml_meta->add_field( '_pr_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 
 		// Add metabox to metaboxes array

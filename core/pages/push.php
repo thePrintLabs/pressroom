@@ -146,7 +146,7 @@ class PR_push_notification_page {
             <label for="prp-type-1" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-1" value="download"> <?php echo __('Background download push', 'pressroom-push'); ?></label>
             <div id="pr-edition-d">
               <br>
-              <b><?php echo __('Edition to download', 'pressroom-push'); ?></b>
+              <b><?php echo __('Issue to download', 'pressroom-push'); ?></b>
               <label for="prp-edition-0" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-0" value="latest" checked="checked"> <?php echo __('Latest published edition', 'pressroom-push'); ?></label>
               <label for="prp-edition-1" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-1" value="specific"> <?php echo __('Specific edition', 'pressroom-push'); ?></label>
               <select name="pr_push[edition-slug]" class="combobox" disabled="disabled" id="prp-edition-s"></select>

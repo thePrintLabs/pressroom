@@ -122,17 +122,17 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
   /**
    * Save receipt transactions into the db.
-   * @param int $receipt_record_id
+   * @param int $receipt_unique_id
    * @param object $receipt
    * @param string $purchase_type
    * @return mixed
    */
-  public function save_receipt_transactions( $receipt_record_id, $receipt, $purchase_type ) {
+  public function save_receipt_transactions( $receipt_unique_id, $receipt, $purchase_type ) {
 
     global $wpdb;
     $sql = "INSERT IGNORE INTO " . $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS . " SET ";
     $sql.= "receipt_id = %d, transaction_id = %s, product_id = %s, type = %s";
-    return $wpdb->query( $wpdb->prepare( $sql, $receipt_record_id, $receipt->transaction_id, $receipt->product_id, $purchase_type ) );
+    return $wpdb->query( $wpdb->prepare( $sql, $receipt_unique_id, $receipt->transaction_id, $receipt->product_id, $purchase_type ) );
   }
 
   /*
@@ -423,7 +423,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       foreach ( $receipt->in_app as $k => $single_receipt ) {
 
         if ( $product_id && $product_id == $single_receipt->product_id ) {
-          $this->save_receipt_transactions( $receipt_record_id, $single_receipt, $purchase_type );
+          $this->save_receipt_transactions( $receipt_unique_id, $single_receipt, $purchase_type );
           // Record purchase
           PR_Stats::increment_counter( 'purchase_' . $purchase_type );
         }
@@ -431,7 +431,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     }
     else {
       $receipt_unique_id = $this->save_receipt( $receipt->transaction_id );
-      $this->save_receipt_transactions( $receipt_record_id, $receipt, $purchase_type );
+      $this->save_receipt_transactions( $receipt_unique_id, $receipt, $purchase_type );
       // Record purchase
       PR_Stats::increment_counter( 'purchase_' . $purchase_type );
     }

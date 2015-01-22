@@ -158,6 +158,7 @@ class PR_Edition
 
 		$metaboxes = array();
 
+		// Hook to add tab to edition metabox
 		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID, true ) );
 
 		$flatplan = array(
@@ -170,9 +171,7 @@ class PR_Edition
 			$hpub,
 		);
 
-
 		$this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );
-
 	}
 
 	/**
@@ -212,6 +211,7 @@ class PR_Edition
 
 
 		foreach ( $this->_metaboxes as $metabox ) {
+			// render html fields except for flatplan
 			if( $metabox->id != 'flatplan' ) {
 				echo $metabox->fields_to_html( false, $metabox->id );
 			}
@@ -219,6 +219,7 @@ class PR_Edition
 
 		echo '</table>';
 		echo '<div class="tabbed flatplan">';
+		// render Wp list table for flatplan
 		$this->add_presslist();
 		echo '</div>';
 	}
@@ -231,7 +232,6 @@ class PR_Edition
 	*/
 	public function add_tabs_to_form( $post ) {
 
-
 		$this->get_custom_metaboxes( $post );
 		echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
 		foreach ( $this->_metaboxes as $key => $metabox ) {
@@ -242,6 +242,7 @@ class PR_Edition
 
 	/**
 	* Pressroom metabox callback
+	* Render Wp list table
 	*
 	* @return void
 	*/
@@ -255,6 +256,7 @@ class PR_Edition
 
 	/**
 	* Publication metabox callback
+	* Render publication buttons
 	*
 	* @echo
 	*/
@@ -309,6 +311,7 @@ class PR_Edition
 		$this->get_custom_metaboxes( $post );
 
 		foreach ( $this->_metaboxes as $metabox ) {
+			// flat plan does not have fields to save
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
 			}
@@ -432,7 +435,6 @@ class PR_Edition
 		}
 
 		wp_send_json_success();
-
 	}
 
 	/**
@@ -452,7 +454,6 @@ class PR_Edition
 		if ( $pagenow == 'post.php' && $post_type == PR_EDITION ) {
 			Pressroom_List_Table::add_presslist_scripts();
 		}
-
 	}
 
 	/**
@@ -629,16 +630,25 @@ class PR_Edition
 		return $types;
 	}
 
+	/**
+	 * Render admin notice for exporters
+	 *
+	 * @void
+	 */
 	public function exporters_notice() {
 
 		$setting_page_url = admin_url() . 'admin.php?page=pressroom';
-		?>
+		echo '
 		<div class="error">
-			<p><?php _e( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ); ?></p>
-		</div>
-		<?php
+			<p>' . _e( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ). '</p>
+		</div>';
 	}
 
+	/**
+	 * Enabled exporters check
+	 *
+	 * @return bool
+	 */
 	public function check_exporters() {
 
 		$this->pr_options = get_option( 'pr_settings' );

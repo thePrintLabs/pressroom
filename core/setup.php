@@ -5,7 +5,6 @@
  */
 class PR_Setup
 {
-  const VERSION_PRO = true; // @TODO: PRO
 
   public function __construct() {}
 
@@ -63,80 +62,77 @@ class PR_Setup
    */
   private static function _setup_db_tables() {
 
-    if ( self::VERSION_PRO ) {
+    global $wpdb;
+    $table_receipts = $wpdb->prefix . PR_TABLE_RECEIPTS;
+    $table_receipt_transactions = $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS;
+    $table_purchased_issues = $wpdb->prefix . PR_TABLE_PURCHASED_ISSUES;
+    $table_auth_tokens = $wpdb->prefix . PR_TABLE_AUTH_TOKENS;
+    $table_stats = $wpdb->prefix . PR_TABLE_STATS;
 
-      global $wpdb;
-      $table_receipts = $wpdb->prefix . PR_TABLE_RECEIPTS;
-      $table_receipt_transactions = $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS;
-      $table_purchased_issues = $wpdb->prefix . PR_TABLE_PURCHASED_ISSUES;
-      $table_auth_tokens = $wpdb->prefix . PR_TABLE_AUTH_TOKENS;
-      $table_stats = $wpdb->prefix . PR_TABLE_STATS;
+  	$charset_collate = '';
+    if ( !empty( $wpdb->charset ) ) {
+       $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+  	}
 
-    	$charset_collate = '';
-      if ( !empty( $wpdb->charset ) ) {
-         $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
-    	}
+    if ( ! empty( $wpdb->collate ) ) {
+       $charset_collate .= " COLLATE {$wpdb->collate}";
+  	}
 
-      if ( ! empty( $wpdb->collate ) ) {
-         $charset_collate .= " COLLATE {$wpdb->collate}";
-    	}
+  	$sql_receipts = "CREATE TABLE IF NOT EXISTS $table_receipts (
+      receipt_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+      app_bundle_id VARCHAR(128),
+      device_id VARCHAR(256),
+      transaction_id VARCHAR(32),
+      base64_receipt TEXT CHARACTER SET ascii COLLATE ascii_bin,
+      PRIMARY KEY (receipt_id),
+      INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
+    ) $charset_collate; ";
 
-    	$sql_receipts = "CREATE TABLE IF NOT EXISTS $table_receipts (
-        receipt_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	      app_bundle_id VARCHAR(128),
-	      device_id VARCHAR(256),
-        transaction_id VARCHAR(32),
-	      base64_receipt TEXT CHARACTER SET ascii COLLATE ascii_bin,
-        PRIMARY KEY (receipt_id),
-        INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
-      ) $charset_collate; ";
+    $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
+      transaction_id VARCHAR(32),
+      receipt_id bigint(20) UNSIGNED NOT NULL,
+      product_id VARCHAR(256),
+      type VARCHAR(32),
+      PRIMARY KEY(transaction_id),
+      INDEX receipt USING BTREE (receipt_id) COMMENT ''
+    ) $charset_collate; ";
 
-      $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
-        transaction_id VARCHAR(32),
-        receipt_id bigint(20) UNSIGNED NOT NULL,
-        product_id VARCHAR(256),
-        type VARCHAR(32),
-        PRIMARY KEY(transaction_id),
-        INDEX receipt USING BTREE (receipt_id) COMMENT ''
-      ) $charset_collate; ";
+    $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_purchased_issues (
+      app_id VARCHAR(255),
+      user_id VARCHAR(255),
+      product_id VARCHAR(255),
+      PRIMARY KEY(app_id, user_id, product_id)
+    ) $charset_collate; ";
 
-      $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_purchased_issues (
-        app_id VARCHAR(255),
-        user_id VARCHAR(255),
-        product_id VARCHAR(255),
-        PRIMARY KEY(app_id, user_id, product_id)
-      ) $charset_collate; ";
+    $sql_auth_tokens = "CREATE TABLE IF NOT EXISTS $table_auth_tokens (
+      app_id VARCHAR(255),
+      user_id VARCHAR(255),
+      access_token VARCHAR(255),
+      created_time int(10) UNSIGNED NOT NULL,
+      expires_in int(10) UNSIGNED NOT NULL,
+      PRIMARY KEY(app_id, user_id, access_token)
+    ) $charset_collate; ";
 
-      $sql_auth_tokens = "CREATE TABLE IF NOT EXISTS $table_auth_tokens (
-        app_id VARCHAR(255),
-        user_id VARCHAR(255),
-        access_token VARCHAR(255),
-        created_time int(10) UNSIGNED NOT NULL,
-        expires_in int(10) UNSIGNED NOT NULL,
-        PRIMARY KEY(app_id, user_id, access_token)
-      ) $charset_collate; ";
+    $sql_stats = "CREATE TABLE IF NOT EXISTS $table_stats (
+      scenario VARCHAR(128),
+      object_id INT(10) UNSIGNED NOT NULL,
+      stat_date INT(10) UNSIGNED NOT NULL,
+      counter INT(10) UNSIGNED NOT NULL,
+      PRIMARY KEY(scenario, stat_date, object_id)
+    ) $charset_collate; ";
 
-      $sql_stats = "CREATE TABLE IF NOT EXISTS $table_stats (
-        scenario VARCHAR(128),
-        object_id INT(10) UNSIGNED NOT NULL,
-        stat_date INT(10) UNSIGNED NOT NULL,
-        counter INT(10) UNSIGNED NOT NULL,
-        PRIMARY KEY(scenario, stat_date, object_id)
-      ) $charset_collate; ";
+    require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql_receipts );
+    dbDelta( $sql_receipt_transactions );
+    dbDelta( $sql_purchased_issues );
+    dbDelta( $sql_auth_tokens );
+    dbDelta( $sql_stats );
 
-      require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
-      dbDelta( $sql_receipts );
-      dbDelta( $sql_receipt_transactions );
-      dbDelta( $sql_purchased_issues );
-      dbDelta( $sql_auth_tokens );
-      dbDelta( $sql_stats );
-
-      return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts
-         && $wpdb->get_var("SHOW TABLES LIKE '$table_receipt_transactions'") == $table_receipt_transactions
-         && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues
-         && $wpdb->get_var("SHOW TABLES LIKE '$table_auth_tokens'") == $table_auth_tokens
-         && $wpdb->get_var("SHOW TABLES LIKE '$table_stats'") == $table_stats );
-    }
+    return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts
+       && $wpdb->get_var("SHOW TABLES LIKE '$table_receipt_transactions'") == $table_receipt_transactions
+       && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues
+       && $wpdb->get_var("SHOW TABLES LIKE '$table_auth_tokens'") == $table_auth_tokens
+       && $wpdb->get_var("SHOW TABLES LIKE '$table_stats'") == $table_stats );
 
     return true;
   }

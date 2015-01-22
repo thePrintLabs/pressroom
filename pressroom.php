@@ -215,7 +215,7 @@ class TPL_Pressroom
 			$msg_code = $_GET['pmcode'];
 			$msg_param = isset( $_GET['pmparam'] ) ? urldecode( $_GET['pmparam'] ) : '';
 
-			echo '<div class="' . $msg_type . '"><p>';
+			echo '<div class="pr-alert ' . $msg_type . '"><p>';
 			switch ( $msg_code ) {
 				case 'theme':
 					echo _e( '<b>Error:</b> You must specify a theme for issue!', 'pressroom_notice' );

@@ -187,7 +187,6 @@ jQuery(function(){
       }
     }
 
-    console.log(jQuery('input[name="_pr_ftp_protocol"]:checked'));
     checkTrasferProtocol( jQuery('input[name="_pr_ftp_protocol"]:checked') ); //on document ready
 
     jQuery('input[name="_pr_ftp_protocol"]').live("change",function(e) {
@@ -196,7 +195,6 @@ jQuery(function(){
 
     function checkTrasferProtocol(element) {
       var value = element.val();
-      console.log(value);
       switch( value ) {
         case 'ftp':
         case 'sftp':

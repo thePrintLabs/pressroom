@@ -46,6 +46,10 @@
   content: "\e600";
 }
 
+.pr-alert {
+  margin: 10px 15px 2px 0px !important;
+}
+
 .toplevel_page_pressroom > a > .wp-menu-image:before {
   font-family: pressroom;
   content: "\e600";

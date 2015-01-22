@@ -362,6 +362,12 @@ class PR_Editorial_Project
   <?php
   }
 
+  /**
+   * Remove tag support for editoril project
+   * @param  $return
+   * @param  array $args
+   * @return bool or void
+   */
   public function remove_tag_cloud ( $return, $args ) {
     if ( $args['taxonomy'] == PR_EDITORIAL_PROJECT ) {
       return false;
@@ -394,6 +400,7 @@ class PR_Editorial_Project
 
   /**
    * Load a config for single editorial project
+   *
    * @param int $term_id
    * @param string $meta_name
    * @return mixed
@@ -404,6 +411,13 @@ class PR_Editorial_Project
     return isset( $options[$meta_name] ) ? $options[$meta_name] : false;
   }
 
+/**
+ * Get subscription method for editorial project
+ *
+ * @param  int $term_id
+ * @param  string $product_id
+ * @return array or bool
+ */
   public static function get_subscription_method( $term_id, $product_id ) {
 
     $options = self::get_configs( $term_id );
@@ -423,6 +437,7 @@ class PR_Editorial_Project
 
   /**
    * Get all editions in a range of dates
+   *
    * linked to an editiorial project
    * @param  object $eproject
    * @param  string $start_date
@@ -455,6 +470,7 @@ class PR_Editorial_Project
       )
     ));
     $editions = $editions_query->posts;
+
     return $editions;
   }
 
@@ -482,6 +498,7 @@ class PR_Editorial_Project
       )
     ));
     $editions = $editions_query->posts;
+
     return $editions;
   }
 
@@ -513,11 +530,13 @@ class PR_Editorial_Project
     if ( !empty( $editions ) ) {
       return $editions[0];
     }
+
     return false;
   }
 
   /**
    * Get the bundle id of an editorial project
+   *
    * @param int $editorial_project_id
    * @return string or boolean false
    */
@@ -525,9 +544,11 @@ class PR_Editorial_Project
 
     $eproject_bundle_id = false;
     $eproject_options = PR_Editorial_Project::get_configs( $editorial_project_id );
+
     if ( $eproject_options ) {
       $eproject_bundle_id = isset( $eproject_options['_pr_prefix_bundle_id'] ) ? $eproject_options['_pr_prefix_bundle_id'] : '';
     }
+
     return $eproject_bundle_id;
   }
 
@@ -547,6 +568,7 @@ class PR_Editorial_Project
       wp_delete_attachment( $attach_id );
       echo "removed";
     }
+    
     exit;
   }
 

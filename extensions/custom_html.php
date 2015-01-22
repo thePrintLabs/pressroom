@@ -192,7 +192,7 @@ class PR_Custom_Html
 			if ( $zip->open( $attached_file ) ) {
 
 				$title = PR_Utils::sanitize_string( $post->post_title );
-				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . 'pr_custom_html' . DIRECTORY_SEPARATOR . $title ) ) {
+				if ( $zip->extractTo( $edition_dir . DS . 'pr_custom_html' . DS . $title ) ) {
 					PR_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $attached_file, 'success' );
 				} else {
 					PR_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $attached_file, 'error' );
@@ -211,7 +211,7 @@ class PR_Custom_Html
 		if($post->post_type=="pr_custom_html") {
 			$index = get_post_meta( $post->ID, '_pr_html_file', true );
 			$dir = PR_Utils::sanitize_string( $post->post_title );
-			$src = 'contents' . DIRECTORY_SEPARATOR . 'pr_custom_html' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $index;
+			$src = 'contents' . DS . 'pr_custom_html' . DS . $dir . DS . $index;
 		}
 	}
 
@@ -234,9 +234,9 @@ class PR_Custom_Html
 		$index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$dir = PR_Utils::sanitize_string( $post->post_title );
 
-		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_custom_html' . DIRECTORY_SEPARATOR. $dir . DIRECTORY_SEPARATOR . $index;
+		$file_index = $edition_dir . DS . 'pr_custom_html' . DS. $dir . DS . $index;
 		if ( is_file( $file_index ) ) {
-			$press_options['contents'][] = 'pr_custom_html' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $index;
+			$press_options['contents'][] = 'pr_custom_html' . DS . $dir . DS . $index;
 			PR_Packager::print_line( sprintf( __( "Adding Chtml %s", 'edition' ), $file_index ) );
 		}
 		else {
@@ -273,7 +273,7 @@ class PR_Custom_Html
 				if ( $zip->extractTo( $dir ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
-					if ( $index_file && file_exists( $dir . DIRECTORY_SEPARATOR . $index_file ) ) {
+					if ( $index_file && file_exists( $dir . DS . $index_file ) ) {
 						$page_url = PR_PREVIEW_URI . $edition_name . '/' . $name . '/' . $index_file;
 					}
 				}

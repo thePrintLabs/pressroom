@@ -79,7 +79,7 @@ final class PR_Packager_Web_Package
 
     if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
       $this->_get_container( $packager->edition_dir );
-      $packager->edition_dir = $packager->edition_dir . DIRECTORY_SEPARATOR . 'contents';
+      $packager->edition_dir = $packager->edition_dir . DS . 'contents';
     }
 
     $packager->make_toc( $editorial_project, $packager->edition_dir, "toc" );
@@ -144,7 +144,7 @@ final class PR_Packager_Web_Package
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
 
     if ( !$media_dir ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to create folder ', 'web_package' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder ', 'web_package' ), $packager->edition_dir . DS . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
@@ -239,7 +239,7 @@ final class PR_Packager_Web_Package
    */
   protected function _get_container( $dir ) {
 
-    PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DIRECTORY_SEPARATOR . 'reader', $dir);
+    PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DS . 'reader', $dir);
   }
 
   /**
@@ -250,7 +250,7 @@ final class PR_Packager_Web_Package
    */
   protected function _shortcode_replace( $packager ) {
 
-    $html = file_get_contents( $packager->edition_dir  . DIRECTORY_SEPARATOR . '../' . 'index.html');
+    $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index.html');
 
     $replace = "";
     foreach( $packager->linked_query->posts as $post ) {
@@ -267,10 +267,11 @@ final class PR_Packager_Web_Package
       </div>';
     }
 
+
     $html = str_replace( '[EDITION_POSTS]', $replace, $html );
 
     $html = str_replace( '[TOC_HEIGHT]', $this->pstgs['_pr_index_height'], $html );
-    file_put_contents( $packager->edition_dir . DIRECTORY_SEPARATOR . '../' . 'index.html' , $html );
+    file_put_contents( $packager->edition_dir . DS . '../' . 'index.html' , $html );
   }
 
   /**
@@ -292,7 +293,7 @@ final class PR_Packager_Web_Package
         $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
         $destination = isset( $this->pstgs['_pr_local_path'] ) ? $this->pstgs['_pr_local_path']  : PR_WEB_PATH ;
         if( file_exists( $destination ) ) {
-          PR_Utils::recursive_copy( $this->root_folder, $destination . DIRECTORY_SEPARATOR . $package_name );
+          PR_Utils::recursive_copy( $this->root_folder, $destination . DS . $package_name );
         }
         else {
           PR_Packager::print_line( sprintf( __( 'Local path <i>%s</i> does not exist. Can\'t create package.', 'web_package' ), $destination ), 'error' );
@@ -302,8 +303,8 @@ final class PR_Packager_Web_Package
         $filename = PR_WEB_PATH . $package_name . '.zip';
 
         if ( PR_Utils::create_zip_file( $this->root_folder, $filename, '' ) ) {
-          $index_path = PR_WEB_PATH . $package_name . DIRECTORY_SEPARATOR .'index.html';
-          $index_uri = PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR .'index.html';
+          $index_path = PR_WEB_PATH . $package_name . DS .'index.html';
+          $index_uri = PR_WEB_URI . $package_name . DS .'index.html';
 
           if( file_exists( $index_path ) ) {
             PR_Packager::print_line( __( 'Package created. You can see it <a href="'. $index_uri .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
@@ -344,7 +345,6 @@ final class PR_Packager_Web_Package
           exit;
 
         }
-
         break;
     }
   }

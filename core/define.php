@@ -2,6 +2,7 @@
 define( "PR_VERSION", "1.0" );
 define( "PR_PRODUCT_NAME", "PressRoom PRO" );
 
+define( "DS", DIRECTORY_SEPARATOR );
 define( "PR_PLUGIN_PATH", realpath( __DIR__ . '/../' ) . '/' );
 define( "PR_LIBS_PATH", PR_PLUGIN_PATH . 'libs/' );
 define( "PR_LIBS_PR_PATH", PR_LIBS_PATH . 'PR/' );

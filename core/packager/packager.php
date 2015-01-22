@@ -173,10 +173,10 @@ class PR_Packager
 
 			$upload_dir = wp_upload_dir();
 			$edition_cover_metadata = wp_get_attachment_metadata( $edition_cover_id );
-			$edition_cover_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $edition_cover_metadata['file'];
+			$edition_cover_path = $upload_dir['basedir'] . DS . $edition_cover_metadata['file'];
 			$info = pathinfo( $edition_cover_path );
 
-			if ( copy( $edition_cover_path, $this->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $info['basename'] ) ) {
+			if ( copy( $edition_cover_path, $this->edition_dir . DS . PR_EDITION_MEDIA . $info['basename'] ) ) {
 				$this->edition_cover_image = $info['basename'];
 				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $edition_cover_path ), 'success' );
 			}
@@ -225,7 +225,7 @@ class PR_Packager
 	*/
 	public function save_html_file( $post, $filename, $dir ) {
 
-		return file_put_contents( $dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
+		return file_put_contents( $dir . DS . PR_Utils::sanitize_string( $filename ) . '.html', $post);
 	}
 
 	/**
@@ -358,7 +358,7 @@ class PR_Packager
 		if ( !empty( $this->_posts_attachments ) ) {
 			$attachments = array_unique( $this->_posts_attachments );
 			foreach ( $attachments as $filename => $url ) {
-				if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
+				if ( copy( $url, $media_dir . DS . $filename ) ) {
 					PR_Packager::print_line( sprintf( __( 'Copied %s ', 'edition' ), $url ), 'success' );
 				}
 				else {
@@ -415,7 +415,7 @@ class PR_Packager
 
 		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, 'assets' );
 		if ( !$edition_assets_dir ) {
-			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DIRECTORY_SEPARATOR . 'assets' ), 'error');
+			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . 'assets' ), 'error');
 			return false;
 		}
 

@@ -48,7 +48,7 @@ final class PR_Packager_Book_JSON
     $press_options = self::_get_pressroom_options( $packager, $term_id );
     foreach ( $packager->linked_query->posts as $post ) {
       $page_name = PR_Utils::sanitize_string( $post->post_title );
-      $page_path = $packager->edition_dir . DIRECTORY_SEPARATOR . $page_name . '.html';
+      $page_path = $packager->edition_dir . DS . $page_name . '.html';
 
       $press_options['sharing_urls'][] = pr_get_sharing_url( $post->ID );
       $press_options['titles'][] = $post->post_title;
@@ -155,7 +155,7 @@ final class PR_Packager_Book_JSON
               if ( $media ) {
                 $media_info = pathinfo( $media );
                 $path = $media_info['basename'];
-                copy( $media, $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $path );
+                copy( $media, $packager->edition_dir . DS . PR_EDITION_MEDIA . $path );
                 $options[$baker_option] = PR_EDITION_MEDIA . $path;
               }
               else {

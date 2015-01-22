@@ -93,7 +93,7 @@ class PR_Ftp_Sftp
       }
     }
     else if( is_a( $this->connection, 'WP_Filesystem_SSH2' ) ) {
-      $this->connection->mkdir( $remote_path . DIRECTORY_SEPARATOR . basename( $source ) );
+      $this->connection->mkdir( $remote_path . DS . basename( $source ) );
       if( $this->ssh2_copy( $source, $remote_path ) ) {
         return true;
       }
@@ -121,7 +121,7 @@ class PR_Ftp_Sftp
         if ( !in_array( $info['basename'], PR_Utils::$excluded_files ) ) {
           $file = str_replace('\\', '/', realpath( $file ) );
           if ( is_dir( $file ) ) {
-            if( $this->connection->mkdir( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR,  $file ) ) ) {
+            if( $this->connection->mkdir( str_replace( realpath( PR_TMP_PATH ), $remote_path . DS,  $file ) ) ) {
               PR_Packager::print_line( sprintf( __( 'Folder %s  transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
             }
             else {
@@ -130,7 +130,7 @@ class PR_Ftp_Sftp
 
           }
           elseif ( is_file( $file ) ) {
-            if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR, $file ), file_get_contents( $file ), true ) ) {
+            if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DS, $file ), file_get_contents( $file ), true ) ) {
               PR_Packager::print_line( sprintf( __( 'File %s transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
             }
             else {
@@ -142,7 +142,7 @@ class PR_Ftp_Sftp
     }
     elseif ( is_file( $source ) ) {
       $info = pathinfo( $source );
-      if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR, $file ), file_get_contents( $source ), true ) ) {
+      if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DS, $file ), file_get_contents( $source ), true ) ) {
         PR_Packager::print_line( sprintf( __( 'File %s transfered', 'web_package' ), $info['basename'] ) , 'success' );
       }
       else {

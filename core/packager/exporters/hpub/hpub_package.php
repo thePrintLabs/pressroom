@@ -68,7 +68,7 @@ final class PR_Packager_HPUB_Package
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $packager->edition_dir . DS . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
@@ -145,7 +145,7 @@ final class PR_Packager_HPUB_Package
   public static function save_json_file( $content, $filename, $path ) {
 
     $encoded = json_encode( $content );
-    $json_file = $path . DIRECTORY_SEPARATOR . $filename;
+    $json_file = $path . DS . $filename;
     if ( file_put_contents( $json_file, $encoded ) ) {
       return true;
     }

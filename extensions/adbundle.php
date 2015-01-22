@@ -192,7 +192,7 @@ class PR_ADBundle
 			if ( $zip->open( $adb_attached_file ) ) {
 
 				$adb_title = PR_Utils::sanitize_string( $post->post_title );
-				if ( $zip->extractTo( $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_title ) ) {
+				if ( $zip->extractTo( $edition_dir . DS . 'pr_ad_bundle' . DS . $adb_title ) ) {
 					PR_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $adb_attached_file, 'success' );
 				} else {
 					PR_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $adb_attached_file, 'error' );
@@ -211,7 +211,7 @@ class PR_ADBundle
 		if($post->post_type=="pr_ad_bundle") {
 			$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 			$adb_dir = PR_Utils::sanitize_string( $post->post_title );
-			$src = 'contents' . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+			$src = 'contents' . DS . 'pr_ad_bundle' . DS . $adb_dir . DS . $adb_index;
 		}
 	}
 
@@ -234,9 +234,9 @@ class PR_ADBundle
 		$adb_index = get_post_meta( $post->ID, '_pr_html_file', true );
 		$adb_dir = PR_Utils::sanitize_string( $post->post_title );
 
-		$file_index = $edition_dir . DIRECTORY_SEPARATOR . 'pr_ad_bundle' . DIRECTORY_SEPARATOR. $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+		$file_index = $edition_dir . DS . 'pr_ad_bundle' . DS. $adb_dir . DS . $adb_index;
 		if ( is_file( $file_index ) ) {
-			$press_options['contents'][] = 'pr_ad_bundle' . DIRECTORY_SEPARATOR . $adb_dir . DIRECTORY_SEPARATOR . $adb_index;
+			$press_options['contents'][] = 'pr_ad_bundle' . DS . $adb_dir . DS . $adb_index;
 			PR_Packager::print_line( sprintf( __( "Adding ADBundle %s", 'edition' ), $file_index ) );
 		}
 		else {
@@ -273,7 +273,7 @@ class PR_ADBundle
 				if ( $zip->extractTo( $adb_dir ) ) {
 
 					$index_file = get_post_meta( $post->ID, '_pr_html_file', true );
-					if ( $index_file && file_exists( $adb_dir . DIRECTORY_SEPARATOR . $index_file ) ) {
+					if ( $index_file && file_exists( $adb_dir . DS . $index_file ) ) {
 						$page_url = PR_PREVIEW_URI . $edition_name . '/' . $adb_name . '/' . $index_file;
 					}
 				}

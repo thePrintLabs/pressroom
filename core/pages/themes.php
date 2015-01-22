@@ -33,7 +33,7 @@ class PR_themes_page {
 
     $html = '<div class="theme ' . ( $theme['active'] ? 'active' : '' ) . '" data-name="' . $theme['uniqueid'] . '" tabindex="0">
     <div class="theme-screenshot pr-theme-screenshot">
-    <img src="' . PR_THEME_URI . $theme['path'] . DIRECTORY_SEPARATOR . $theme['thumbnail'] . '" alt="">
+    <img src="' . PR_THEME_URI . $theme['path'] . DS . $theme['thumbnail'] . '" alt="">
     </div>
     <p class="pr-theme-description">' . $theme['description'] . '</p>
     <p class="pr-theme-description">

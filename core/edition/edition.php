@@ -363,7 +363,7 @@ class PR_Edition
 
 				if ( $current_theme ) {
 					$themes = PR_Theme::get_themes();
-					$default_template = $current_theme . DIRECTORY_SEPARATOR . $themes[$current_theme]['layouts'][0]['path'];
+					$default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
 					p2p_update_meta( $post->p2p_id, 'template', $default_template);
 				}
 			}

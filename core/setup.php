@@ -156,7 +156,7 @@ class PR_Setup
     $api_dir = $api_dir && PR_Utils::make_dir( PR_TMP_PATH, 'preview' );
 
     if ( false !== ( $wp_load_path = self::_search_wp_load() ) ) {
-      file_put_contents( PR_CORE_PATH . 'preview' . DIRECTORY_SEPARATOR . '.pr_path', $wp_load_path );
+      file_put_contents( PR_CORE_PATH . 'preview' . DS . '.pr_path', $wp_load_path );
     }
 
     return !$api_dir ? false : true;

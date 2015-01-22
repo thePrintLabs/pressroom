@@ -48,7 +48,7 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
     if ( !$eproject_slug ) {
       $this->send_response( 400, 'Bad request. Please specify an editorial project.' );
     }
-    $shelf_path = PR_SHELF_PATH . DIRECTORY_SEPARATOR . $eproject_slug . '_shelf.json';
+    $shelf_path = PR_SHELF_PATH . DS . $eproject_slug . '_shelf.json';
     if( file_exists( $shelf_path ) ) {
       $shelf_json = file_get_contents( $shelf_path );
       if ( $shelf_json ) {

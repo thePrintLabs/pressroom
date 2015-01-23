@@ -50,7 +50,7 @@ if ( empty( $terms ) ) {
 $edition = get_post( $edition_id );
 $edition_name = PR_Utils::sanitize_string( $edition->post_title );
 $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
-var_dump($index_height);
+
 ?>
 <!DOCTYPE html>
 <head>

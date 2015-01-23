@@ -57,6 +57,7 @@ class TPL_Pressroom
 		$this->_load_configs();
 		$this->_load_pages();
 		$this->_load_extensions();
+		$this->_load_exporters();
 
 		$this->_create_edition();
 		$this->_create_preview();
@@ -317,6 +318,29 @@ class TPL_Pressroom
 				}
 			}
 		}
+	}
+
+	/**
+	* Get all exporters from relative dir
+	*
+	* @void
+	*/
+	protected function _load_exporters() {
+
+		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+
+		foreach( $exporters as $exporter ) {
+			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
+			if( is_file( $file ) ) {
+				require_once( $file );
+			}
+			else {
+				self::print_line( sprintf( __('Failed to load exporters <i>%s</i>', 'edition'), $file ), 'error' );
+				exit;
+			}
+		}
+
+		return true;
 	}
 
 	/**

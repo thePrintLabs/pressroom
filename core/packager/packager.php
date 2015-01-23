@@ -34,8 +34,6 @@ class PR_Packager
 
 		ob_start();
 
-		$this->_load_exporters();
-
 		if( !isset( $_GET['packager_type'] ) ) {
 			self::print_line( __( 'No package type selected. ', 'edition' ), 'error' );
 			exit;
@@ -499,28 +497,5 @@ class PR_Packager
 
 		self::print_line(__('Cleaning temporary files ', 'edition') );
 		PR_Utils::remove_dir( $this->edition_dir );
-	}
-
-	/**
-	 * Get all exporters from relative dir
-	 *
-	 * @void
-	 */
-	protected function _load_exporters() {
-
-		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-
-		foreach( $exporters as $exporter ) {
-			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
-			if( is_file( $file ) ) {
-				require_once( $file );
-			}
-			else {
-				self::print_line( sprintf( __('Failed to load exporters <i>%s</i>', 'edition'), $file ), 'error' );
-				exit;
-			}
-		}
-
-		return true;
 	}
 }

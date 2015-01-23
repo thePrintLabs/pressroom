@@ -23,20 +23,26 @@ define( "PR_CONNECTORS_PATH", PR_SERVER_PATH . 'connectors/' );
 
 /* API */
 define( "PR_API_PATH", PR_PLUGIN_PATH . 'api/' );
-define( "PR_HPUB_PATH", PR_API_PATH . 'hpub/' );
-define( "PR_WEB_PATH", PR_API_PATH . 'web/' );
 define( "PR_TMP_PATH", PR_API_PATH . 'tmp/' );
 define( "PR_PREVIEW_TMP_PATH", PR_TMP_PATH . 'preview/' );
-define( "PR_SHELF_PATH", PR_API_PATH . 'shelf/' );
 
-define( "PR_PLUGIN_URI", plugin_dir_url(PR_LIBS_PATH) );
+define( "PR_PLUGIN_URI", plugin_dir_url( PR_LIBS_PATH ) );
 define( "PR_CORE_URI", PR_PLUGIN_URI . 'core/' );
-define( "PR_SHELF_URI", PR_PLUGIN_URI . 'api/shelf/' );
 define( "PR_ASSETS_URI", PR_PLUGIN_URI. 'assets/' );
-define( "PR_HPUB_URI", PR_PLUGIN_URI . 'api/hpub/' );
-define( "PR_WEB_URI", PR_PLUGIN_URI . 'api/web/' );
 define( "PR_THEME_URI", PR_PLUGIN_URI . 'themes/' );
 define( "PR_PREVIEW_URI", PR_PLUGIN_URI . 'api/tmp/preview/' );
+
+/* UPLOADS */
+$upload_dir = wp_upload_dir();
+define( "PR_UPLOAD_PATH", $upload_dir['basedir'] . '/pressroom/' );
+define( "PR_HPUB_PATH", PR_UPLOAD_PATH . 'hpub/' );
+define( "PR_WEB_PATH", PR_UPLOAD_PATH . 'web/' );
+define( "PR_SHELF_PATH", PR_UPLOAD_PATH . 'shelf/' );
+
+define( "PR_UPLOAD_URI", $upload_dir['baseurl'] . '/pressroom/' );
+define( "PR_HPUB_URI", PR_UPLOAD_URI . 'hpub/' );
+define( "PR_WEB_URI", PR_UPLOAD_URI . 'web/' );
+define( "PR_SHELF_URI", PR_UPLOAD_URI . 'shelf/' );
 
 define( "PR_API_URL", 'http://account.press-room.io/' );
 /* Packager */

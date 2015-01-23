@@ -267,10 +267,9 @@ final class PR_Packager_Web_Package
       </div>';
     }
 
-
     $html = str_replace( '[EDITION_POSTS]', $replace, $html );
-
     $html = str_replace( '[TOC_HEIGHT]', $this->pstgs['_pr_index_height'], $html );
+
     file_put_contents( $packager->edition_dir . DS . '../' . 'index.html' , $html );
   }
 
@@ -352,15 +351,14 @@ final class PR_Packager_Web_Package
   /**
   * Get all url from the html string and replace with internal url of the package
   *
-  * @param  object $edition
+  * @param  object $packager
   * @param  string $html
-  * @param  string $ext  = 'html' extension file output
+  * @param  string $extension extension file output
   * @return string or false
   */
   public static function rewrite_url( $packager, &$html, $extension = 'html' ) {
 
     if ( $html ) {
-
       $linked_query = $packager->linked_query;
       $post_rewrite_urls = array();
       $urls = PR_Utils::extract_urls( $html );

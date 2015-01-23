@@ -20,7 +20,7 @@ if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
   wp_die( __( "<b>Error getting required params. Please check your url address.</b>", 'pressroom' ) );
 }
 
-if( !isset($_GET['package_type'])) {
+if( !isset( $_GET['package_type']) ) {
   wp_die( __( "<b>Error: missing package type </b>", 'pressroom' ) );
 }
 
@@ -49,7 +49,8 @@ if ( empty( $terms ) ) {
 
 $edition = get_post( $edition_id );
 $edition_name = PR_Utils::sanitize_string( $edition->post_title );
-$index_height = 150;
+$index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
+var_dump($index_height);
 ?>
 <!DOCTYPE html>
 <head>
@@ -74,7 +75,7 @@ $index_height = 150;
         <a class="logo" title="PressRoom">PressRoom</a>
       </li>
       <li>
-        <a id="fire-toc" href="#" title="Open toc bar">Toc</a>
+        <a id="fire-toc" href="#" title="Open toc bar" onclick="openToc()">Toc</a>
       </li>
       <li id="phone" >
         <a class="sg-acc-handle group-device o-menu" title="iPhone">Devices</a>
@@ -173,6 +174,7 @@ $index_height = 150;
 <script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
 <script src="../../assets/js/preview/pr.reader.min.js"></script>
+<script src="../../assets/js/preview/pr.toc.js"></script>
 <script src="../../assets/js/preview/pr.reader.ish.min.js"></script>
 </body>
 </html>

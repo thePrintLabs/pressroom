@@ -96,7 +96,7 @@ class PR_Editorial_Project
        'name'         => __( 'Name' ),
        'slug'         => __( 'Slug' ),
        'posts'        => __( 'Issues' ),
-       'actions'  => __( 'Actions', 'editorial_project'),
+       'actions'      => __( 'Actions', 'editorial_project'),
     );
 
     return $new_columns;

@@ -117,6 +117,9 @@
 .taxonomy-pr_editorial_project .form-table td {
   padding: 15px 0px;
 }
+.taxonomy-pr_editorial_project .fixed .column-posts {
+  width: 75px;
+}
 
 /****************************/
 /*         EDITION          */

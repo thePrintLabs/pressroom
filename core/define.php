@@ -6,7 +6,6 @@ define( "DS", DIRECTORY_SEPARATOR );
 define( "PR_PLUGIN_PATH", realpath( __DIR__ . '/../' ) . '/' );
 define( "PR_LIBS_PATH", PR_PLUGIN_PATH . 'libs/' );
 define( "PR_LIBS_PR_PATH", PR_LIBS_PATH . 'PR/' );
-define( "PR_THEMES_PATH", PR_PLUGIN_PATH . 'themes/' );
 define( "PR_EXTENSIONS_PATH", PR_PLUGIN_PATH . 'extensions/' );
 define( "PR_CORE_PATH", PR_PLUGIN_PATH . 'core/' );
 define( "PR_PAGES_PATH", PR_CORE_PATH . 'pages/' );
@@ -29,7 +28,6 @@ define( "PR_PREVIEW_TMP_PATH", PR_TMP_PATH . 'preview/' );
 define( "PR_PLUGIN_URI", plugin_dir_url( PR_LIBS_PATH ) );
 define( "PR_CORE_URI", PR_PLUGIN_URI . 'core/' );
 define( "PR_ASSETS_URI", PR_PLUGIN_URI. 'assets/' );
-define( "PR_THEME_URI", PR_PLUGIN_URI . 'themes/' );
 define( "PR_PREVIEW_URI", PR_PLUGIN_URI . 'api/tmp/preview/' );
 
 /* UPLOADS */
@@ -43,6 +41,10 @@ define( "PR_UPLOAD_URI", $upload_dir['baseurl'] . '/pressroom/' );
 define( "PR_HPUB_URI", PR_UPLOAD_URI . 'hpub/' );
 define( "PR_WEB_URI", PR_UPLOAD_URI . 'web/' );
 define( "PR_SHELF_URI", PR_UPLOAD_URI . 'shelf/' );
+
+/* THEMES*/
+define( "PR_THEMES_PATH", PR_UPLOAD_PATH . 'themes/' );
+define( "PR_THEME_URI", PR_UPLOAD_URI . 'themes/' );
 
 define( "PR_API_URL", 'http://account.press-room.io/' );
 /* Packager */

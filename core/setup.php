@@ -147,10 +147,10 @@ class PR_Setup
       $wp_upload_dir = wp_upload_dir();
       $api_dir = PR_Utils::make_dir( PR_PLUGIN_PATH, 'api' );
       $upload_dir = PR_Utils::make_dir( $wp_upload_dir['basedir'], 'pressroom' );
-      if ( !$api_dir ) {
+
+      if ( !$api_dir || !$upload_dir ) {
         return false;
       }
-
 
       $api_dir = $api_dir && PR_Utils::make_dir( PR_API_PATH, 'tmp' );
       $api_dir = $api_dir && PR_Utils::make_dir( PR_TMP_PATH, 'preview' );
@@ -158,6 +158,7 @@ class PR_Setup
       $upload_dir = PR_Utils::make_dir( PR_UPLOAD_PATH, 'hpub' );
       $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'web' );
       $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'shelf' );
+      $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'themes' );
 
       if ( false !== ( $wp_load_path = self::_search_wp_load() ) ) {
         file_put_contents( PR_CORE_PATH . 'preview' . DS . '.pr_path', $wp_load_path );

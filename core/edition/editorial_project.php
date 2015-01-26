@@ -5,6 +5,7 @@
  */
 class PR_Editorial_Project
 {
+  public $tax_obj;
   protected $_metaboxes;
 
   public function __construct() {
@@ -13,6 +14,9 @@ class PR_Editorial_Project
     add_action( 'init', array( $this, 'add_editorial_project_taxonomy' ), 0 );
 
     if ( is_admin() ) {
+
+      include_once( PR_LIBS_PR_PATH . 'UI/eproject_walker.php' );
+
       add_filter( 'manage_edit-' . PR_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
       add_filter( 'manage_' . PR_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
       add_filter( 'wp_tag_cloud', array( $this, 'remove_tag_cloud' ), 10, 2 );
@@ -28,6 +32,15 @@ class PR_Editorial_Project
       add_action( 'wp_ajax_reset_editorial_project', array( $this, 'reset_editorial_project' ) );
 
       add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
+
+      /* Issue to Editorial project relation one to one */
+      add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
+      add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
+      add_filter( 'wp_terms_checklist_args', array( $this, 'filter_terms_checklist_args' ) );
+      remove_action( 'wp_ajax_add-' . PR_EDITORIAL_PROJECT, '_wp_ajax_add_hierarchical_term' );
+      add_action( 'wp_ajax_add-' . PR_EDITORIAL_PROJECT, array( $this, 'add_non_hierarchical_term' ) );
+      add_action( 'save_post', array( $this, 'save_single_term' ) );
+      add_action( 'edit_attachment', array( $this, 'save_single_term' ) );
     }
   }
 
@@ -57,7 +70,7 @@ class PR_Editorial_Project
     );
 
     $args = array(
-      'hierarchical'          => true,
+      'hierarchical'          => false,
       'labels'                => $labels,
       'show_ui'               => true,
       'show_admin_column'     => true,
@@ -66,6 +79,7 @@ class PR_Editorial_Project
     );
 
     register_taxonomy( PR_EDITORIAL_PROJECT, PR_EDITION, $args );
+    $this->tax_obj = get_taxonomy( PR_EDITORIAL_PROJECT );
   }
 
 
@@ -568,7 +582,7 @@ class PR_Editorial_Project
       wp_delete_attachment( $attach_id );
       echo "removed";
     }
-    
+
     exit;
   }
 
@@ -584,6 +598,244 @@ class PR_Editorial_Project
       wp_register_script( 'eproject', PR_ASSETS_URI . '/js/pr.eproject.min.js', array( 'jquery' ), '1.0', true );
       wp_enqueue_script( 'eproject' );
     }
+  }
+
+  /**
+  * Remove the default metabox
+  *
+  * @return  void
+  */
+  public function remove_meta_box() {
+
+    if( !is_wp_error( $this->tax_obj ) && isset( $this->tax_obj->object_type ) ) {
+      foreach ( $this->tax_obj->object_type as $post_type ) {
+        $id = !is_taxonomy_hierarchical( PR_EDITORIAL_PROJECT ) ? 'tagsdiv-'. PR_EDITORIAL_PROJECT : PR_EDITORIAL_PROJECT .'div' ;
+        remove_meta_box( $id, $post_type, 'side' );
+      }
+    }
+  }
+
+  /**
+  * Add our new customized metabox
+  *
+  * @access public
+  * @return  void
+  * @since 1.0.0
+  */
+  public function add_meta_box() {
+
+    if( ! is_wp_error( $this->tax_obj ) && isset( $this->tax_obj->object_type ) ) {
+      foreach ( $this->tax_obj->object_type as $post_type ) {
+        $label = $this->tax_obj->labels->name;
+        $id = !is_taxonomy_hierarchical( PR_EDITORIAL_PROJECT ) ? 'radio-tagsdiv-' . PR_EDITORIAL_PROJECT : 'radio-' . PR_EDITORIAL_PROJECT . 'div' ;
+        add_meta_box( $id, $label ,array( $this,'metabox' ), $post_type , 'side', 'core', array( 'taxonomy'=> PR_EDITORIAL_PROJECT ) );
+      }
+    }
+  }
+
+  /**
+  * Callback to set up the metabox
+  * Mimims the traditional hierarchical term metabox, but modified with our nonces
+  *
+  * @param  object $post
+  * @param  array $args
+  * @return  print HTML
+  */
+  public function metabox( $post, $box ) {
+
+    $defaults = array('taxonomy' => 'category');
+    if ( !isset( $box['args']) || !is_array( $box['args'] ) ) {
+      $args = array();
+    }
+    else {
+      $args = $box['args'];
+    }
+    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
+    //get current terms
+    $checked_terms = $post->ID ? get_the_terms( $post->ID, $taxonomy ) : array();
+
+    //get first term object
+    $single_term = ! empty( $checked_terms ) && ! is_wp_error( $checked_terms ) ? array_pop( $checked_terms ) : false;
+    $single_term_id = $single_term ? (int) $single_term->term_id : 0;
+
+    ?>
+    <div id="taxonomy-<?php echo $taxonomy; ?>" class="radio-buttons-for-taxonomies categorydiv form-no-clear">
+      <ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
+        <li class="tabs"><a href="#<?php echo $taxonomy; ?>-all" tabindex="3"><?php echo $this->tax_obj->labels->all_items; ?></a></li>
+      </ul>
+
+      <?php wp_nonce_field( 'radio_nonce-' . $taxonomy, '_radio_nonce-' . $taxonomy ); ?>
+
+      <div id="<?php echo $taxonomy; ?>-pop" class="tabs-panel" style="display: none;">
+        <ul id="<?php echo $taxonomy; ?>checklist-pop" class="categorychecklist form-no-clear" >
+          <?php $popular = get_terms( $taxonomy, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
+
+          if ( ! current_user_can( $this->tax_obj->cap->assign_terms ) )
+          $disabled = 'disabled="disabled"';
+          else
+          $disabled = '';
+
+          $popular_ids = array(); ?>
+
+          <?php foreach( $popular as $term ){
+
+            $popular_ids[] = $term->term_id;
+
+            $value = is_taxonomy_hierarchical( $taxonomy ) ? $term->term_id : $term->slug;
+            $id = 'popular-'.$taxonomy.'-'.$term->term_id;
+
+            echo "<li id='$id'><label class='selectit'>";
+              echo "<input type='radio' id='in-{$id}'" . checked( $single_term_id, $term->term_id, false ) . " value='{$value}' {$disabled} />&nbsp;{$term->name}<br />";
+
+              echo "</label></li>";
+            } ?>
+          </ul>
+        </div>
+
+        <div id="<?php echo $taxonomy; ?>-all" class="tabs-panel">
+          <ul id="<?php echo $taxonomy; ?>checklist" data-wp-lists="list:<?php echo $taxonomy?>" class="categorychecklist form-no-clear">
+            <?php wp_terms_checklist( $post->ID, array( 'taxonomy' => $taxonomy, 'popular_cats' => $popular_ids ) ) ?>
+          </ul>
+        </div>
+        <?php if ( current_user_can( $this->tax_obj->cap->edit_terms ) ) : ?>
+          <div id="<?php echo $taxonomy; ?>-adder" class="wp-hidden-children">
+            <h4>
+              <a id="<?php echo $taxonomy; ?>-add-toggle" href="#<?php echo $taxonomy; ?>-add" class="hide-if-no-js">
+                <?php
+                /* translators: %s: add new taxonomy label */
+                printf( __( '+ %s' , 'radio-buttons-for-taxonomies' ), $this->tax_obj->labels->add_new_item );
+                ?>
+              </a>
+            </h4>
+            <p id="<?php echo $taxonomy; ?>-add" class="category-add wp-hidden-child">
+              <label class="screen-reader-text" for="new<?php echo $taxonomy; ?>"><?php echo $this->tax_obj->labels->add_new_item; ?></label>
+              <input type="text" name="new<?php echo $taxonomy; ?>" id="new<?php echo $taxonomy; ?>" class="form-required" value="<?php echo esc_attr( $this->tax_obj->labels->new_item_name ); ?>" aria-required="true"/>
+              <label class="screen-reader-text" for="new<?php echo $taxonomy; ?>_parent">
+                <?php echo $this->tax_obj->labels->parent_item_colon; ?>
+              </label>
+              <?php if( is_taxonomy_hierarchical( $taxonomy ) ) {
+                wp_dropdown_categories( array( 'taxonomy' => $taxonomy, 'hide_empty' => 0, 'name' => 'new'.$taxonomy.'_parent', 'orderby' => 'name', 'hierarchical' => 1, 'show_option_none' => '&mdash; ' . $this->tax_obj->labels->parent_item . ' &mdash;' ) );
+              } ?>
+              <input type="button" id="<?php echo $taxonomy; ?>-add-submit" data-wp-lists="add:<?php echo $taxonomy ?>checklist:<?php echo $taxonomy ?>-add" class="button category-add-submit" value="<?php echo esc_attr( $this->tax_obj->labels->add_new_item ); ?>" tabindex="3" />
+              <?php wp_nonce_field( 'add-'.$taxonomy, '_ajax_nonce-add-'.$taxonomy ); ?>
+              <span id="<?php echo $taxonomy; ?>-ajax-response"></span>
+            </p>
+          </div>
+        <?php endif; ?>
+      </div>
+      <?php
+    }
+  /**
+  * Tell checklist function to use our new Walker
+  *
+  * @access public
+  * @param  array $args
+  * @return array
+  * @since 1.1.0
+  */
+  public function filter_terms_checklist_args( $args ) {
+
+    // define our custom Walker
+    if( isset( $args['taxonomy']) && PR_EDITORIAL_PROJECT == $args['taxonomy'] ) {
+
+      // add a filter to get_terms() but only for radio lists
+      //$this->switch_terms_filter(1);
+      //add_filter( 'get_terms', array( $this, 'get_terms' ), 10, 3 );
+
+      $args['walker'] = new Walker_Eproject_Radio;
+      $args['checked_ontop'] = false;
+    }
+    return $args;
+  }
+
+  /**
+  * Add new term from metabox
+  * Mimics _wp_ajax_add_hierarchical_term() but modified for non-hierarchical terms
+  *
+  * @return data for WP_Lists script
+  * @since 1.7.0
+  */
+  public function add_non_hierarchical_term(){
+    $action = $_POST['action'];
+    $taxonomy = get_taxonomy( substr( $action, 4 ) );
+    check_ajax_referer( $action, '_ajax_nonce-add-' . $taxonomy->name );
+    if ( !current_user_can( $taxonomy->cap->edit_terms ) )
+    wp_die( -1 );
+    $names = explode(',', $_POST['new'.$taxonomy->name]);
+
+    foreach ( $names as $cat_name ) {
+      $cat_name = trim( $cat_name );
+      $category_nicename = sanitize_title( $cat_name );
+      if ( '' === $category_nicename ) {
+        continue;
+      }
+
+      if ( ! $cat_id = term_exists( $cat_name, $taxonomy->name ) ) {
+        $cat_id = wp_insert_term( $cat_name, $taxonomy->name );
+      }
+
+      if ( is_wp_error( $cat_id ) ) {
+        continue;
+      }
+      else if ( is_array( $cat_id ) ) {
+        $cat_id = $cat_id['term_id'];
+      }
+
+      $data = sprintf( '<li id="%1$s-%2$s"><label class="selectit"><input id="in-%1$s-%2$s" type="radio" name="radio_tax_input[%1$s][]" value="%2$s" checked="checked"> %3$s</label></li>', $taxonomy->name, $cat_id, $cat_name );
+
+      $add = array(
+        'what' => $taxonomy->name,
+        'id' => $cat_id,
+        'data' => str_replace( array("\n", "\t"), '', $data ),
+        'position' => -1
+      );
+    }
+
+    $x = new WP_Ajax_Response( $add );
+    $x->send();
+  }
+
+  /**
+  * Only ever save a single term
+  *
+  * @param  int $post_id
+  * @return int $post_id
+  */
+  function save_single_term( $post_id ) {
+
+    // verify if this is an auto save routine. If it is our form has not been submitted, so we dont want to do anything
+    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+    return $post_id;
+
+    // prevent weirdness with multisite
+    if( function_exists( 'ms_is_switched' ) && ms_is_switched() )
+    return $post_id;
+
+    // make sure we're on a supported post type
+    if ( is_array( PR_EDITION ) && isset( $_REQUEST['post_type'] ) && ! in_array ( $_REQUEST['post_type'], PR_EDITION ) )
+    return $post_id;
+
+    // verify nonce
+    if ( isset( $_POST["_radio_nonce-{PR_EDITORIAL_PROJECT}"]) && ! wp_verify_nonce( $_REQUEST["_radio_nonce-{PR_EDITORIAL_PROJECT}"], "radio_nonce-{PR_EDITORIAL_PROJECT}" ) )
+    return $post_id;
+
+    // OK, we must be authenticated by now: we need to find and save the data
+
+    if ( isset( $_REQUEST["radio_tax_input"][PR_EDITORIAL_PROJECT] ) ){
+
+      $terms = (array) $_REQUEST["radio_tax_input"][PR_EDITORIAL_PROJECT];
+
+      // make sure we're only saving 1 term
+      $single_term = intval( array_shift( $terms ) );
+
+      // set the single terms
+      if ( current_user_can( $this->tax_obj->cap->assign_terms ) ) {
+        wp_set_object_terms( $post_id, $single_term, PR_EDITORIAL_PROJECT );
+      }
+    }
+
+    return $post_id;
   }
 }
 

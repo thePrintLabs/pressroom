@@ -173,7 +173,7 @@ class PR_Setup
     */
     private static function _search_wp_load() {
 
-      $home_path = get_home_path();
+      $home_path = ABSPATH;
       // Check in standard WordPress position
       if ( file_exists( $home_path . 'wp-load.php' ) ) {
         return $home_path . 'wp-load.php';

@@ -99,15 +99,23 @@ class PR_Theme
 	/**
 	 * Get current theme path
 	 * @param  int $edition_id
+	 * @param bool $absolute
+	 * 
 	 * @return string or boolean false
 	 */
-	public static function get_theme_path( $edition_id ) {
+	public static function get_theme_path( $edition_id, $absolute = true ) {
 
 		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
 		if ( $theme_id ) {
 			$themes = self::get_themes();
 			$options = $themes[$theme_id];
-			return PR_THEMES_PATH . $options['path'] . DS;
+			if( $absolute) {
+				return PR_THEMES_PATH . $options['path'] . DS;
+			}
+			else {
+				return $options['path'];
+			}
+
 		}
 
 		return false;

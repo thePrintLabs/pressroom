@@ -70,7 +70,11 @@ class TPL_Pressroom
 		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
 		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
+
+		/* Override default wordpress theme path */
 		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
+		add_filter( 'template', array( $this, 'set_template_name'), 10 );
+		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
 	}
 
 	/**
@@ -248,16 +252,32 @@ class TPL_Pressroom
    * Unset theme root to exclude custom filter override
    *
    * @param string $path
-   * return string;
+   * return string
    */
   public function set_theme_root( $path ) {
 
     if ( isset( $_GET['pr_no_theme'] ) ) {
-      return PR_THEMES_PATH;
+      return realpath( PR_THEMES_PATH );
     }
 
     return $path;
   }
+
+	/**
+	 * Override default wordpress theme
+	 *
+	 * @param string $name
+	 * return string
+	 */
+	public function set_template_name( $name ) {
+
+
+		if ( isset( $_GET['pr_no_theme'], $_GET['edition_id'] ) ) {
+			$name = PR_Theme::get_theme_path( $_GET['edition_id'], false );
+		}
+
+		return $name;
+	}
 
 	/*
 	 * Get all allowed post types

@@ -81,7 +81,7 @@ class PR_Preview {
       $filename =  PR_Utils::sanitize_string( $post->post_title ) . '.html';
       $edition_dir = PR_Utils::sanitize_string( $edition->post_title );
 
-      $html = self::parse_html( $edition, $post );
+      $html = self::parse_html( $edition, $_GET['post_id'] );
       $html = self::rewrite_html_url( $edition, $html );
       $html = self::rewrite_post_url( $edition, $html );
 
@@ -99,10 +99,10 @@ class PR_Preview {
    * Draw toc html file
    *
    * @param object $edition
-   * @param array $linked_posts
+   * @param int $post_id
    * @return string or boolean false
    */
-  public static function draw_toc( $edition, $linked_posts ) {
+  public static function draw_toc( $edition, $post_id ) {
 
     $toc = PR_Theme::get_theme_layout( $edition->ID, 'toc' );
     if ( !$toc || !file_exists( $toc ) ) {
@@ -129,12 +129,20 @@ class PR_Preview {
    * Parsing html
    *
    * @param object $edition
-   * @param object $connected_post
+   * @param int $post_id
    * @return string  html string
    */
-  public static function parse_html( $edition, $connected_post ) {
+  public static function parse_html( $edition, $post_id ) {
 
-    $p2p_id = p2p_type( P2P_EDITION_CONNECTION )->get_p2p_id( $connected_post, $edition );
+    global $wp_query, $post;
+    $wp_query = new WP_Query( array(
+      'p' => $post_id,
+      'post_type' => 'any',
+      'numberposts' => 1
+    ));
+    $post = $wp_query->posts[0];
+
+    $p2p_id = p2p_type( P2P_EDITION_CONNECTION )->get_p2p_id( $post, $edition );
     if ( !$p2p_id ) {
       return false;
     }
@@ -147,13 +155,12 @@ class PR_Preview {
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
     $pr_package_type = self::$package_type;
-    global $post;
-    $post = $connected_post;
     setup_postdata( $post );
     self::add_functions_file( $edition->ID );
     require( $template );
     $output = ob_get_contents();
     wp_reset_postdata();
+    wp_reset_query();
     ob_end_clean();
     return $output;
   }

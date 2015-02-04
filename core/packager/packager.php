@@ -110,7 +110,7 @@ class PR_Packager
 			else {
 				$parsed_post = $this->_post_parse( $post, $editorial_project );
 				if ( !$parsed_post ) {
-					self::print_line( sprintf( __( 'You have to select a template for %s', 'edition' ), $post->post_title ), 'error' );
+					self::print_line( sprintf( __( 'You have to select a layout for %s', 'edition' ), $post->post_title ), 'error' );
 					continue;
 				}
 			}

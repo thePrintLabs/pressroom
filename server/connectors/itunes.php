@@ -243,13 +243,13 @@ final class PR_Connector_iTunes extends PR_Server_API {
       if ( is_array( $receipt_data->latest_receipt_info ) ) {
         foreach ( $receipt_data->latest_receipt_info as $receipt_info ) {
           if ( $receipt_info->transaction_id == $transaction_id ) {
-            $to_date = date( 'Y-m-d', (int)$receipt_info->expires_date_ms / 1000 );
+            $to_date = date( 'Y-m-d', (int)( ( isset( $receipt_info->expires_date_ms ) ? $receipt_info->expires_date_ms : $receipt_info->expires_date ) / 1000 ) );
             break;
           }
         }
       }
       else {
-        $to_date = date( 'Y-m-d', (int)$receipt_data->latest_receipt_info->expires_date_ms / 1000 );
+        $to_date = date( 'Y-m-d', (int)( ( isset( $receipt_data->latest_receipt_info->expires_date_ms ) ? $receipt_data->latest_receipt_info->expires_date_ms : $receipt_data->latest_receipt_info->expires_date ) / 1000 ) );
       }
     }
     elseif ( $receipt_data->status == 21006 ) {
@@ -257,13 +257,13 @@ final class PR_Connector_iTunes extends PR_Server_API {
         foreach ( $receipt_data->latest_expired_receipt_info as $expired_receipt_info ) {
 
           if ( $expired_receipt_info->transaction_id == $transaction_id ) {
-            $to_date = date( 'Y-m-d', (int)$expired_receipt_info->expires_date_ms / 1000 );
+            $to_date = date( 'Y-m-d', (int)( ( isset( $expired_receipt_info->expires_date_ms ) ? $expired_receipt_info->expires_date_ms : $expired_receipt_info->expires_date ) / 1000 ) );
             break;
           }
         }
       }
       else {
-        $to_date = date( 'Y-m-d', (int)$receipt_data->latest_expired_receipt_info->expires_date_ms / 1000 );
+        $to_date = date( 'Y-m-d', (int)( ( isset( $receipt_data->latest_expired_receipt_info->expires_date_ms ) ? $receipt_data->latest_expired_receipt_info->expires_date_ms : $receipt_data->latest_expired_receipt_info->expires_date ) / 1000 ) );
       }
     }
 

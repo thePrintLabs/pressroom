@@ -347,12 +347,12 @@ class PR_Metabox
           break;
 
         case 'number':
-          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( !is_null( $meta_value ) ? $meta_value : $field['default'] ) . '" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'decimal':
-          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( !is_null( $meta_value ) ? $meta_value : $field['default'] ) . '" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
 

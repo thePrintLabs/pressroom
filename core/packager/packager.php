@@ -305,8 +305,8 @@ class PR_Packager
 		if ( $html ) {
 
 			$post_rewrite_urls = array();
+			$external_urls = array();
 			$urls = PR_Utils::extract_urls( $html );
-
 			foreach ( $urls as $url ) {
 
 				if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
@@ -322,7 +322,6 @@ class PR_Packager
 						}
 					}
 					else {
-
 						$attachment_id = $this->_get_attachment_from_url( $url );
 						if ( $attachment_id ) {
 							$info = pathinfo( $url );
@@ -334,13 +333,21 @@ class PR_Packager
 						}
 					}
 				}
+				else { //external url
+					array_push( $external_urls, $url);
+				}
 			}
 
 			if ( !empty( $post_rewrite_urls ) ) {
 				$html = str_replace( array_keys( $post_rewrite_urls ), $post_rewrite_urls, $html );
 			}
-		}
 
+			if ( !empty( $external_urls ) ) {
+				foreach( $external_urls as $exturl ) {
+					$html = str_replace( $exturl, $exturl . "?referrer=Baker", $html );
+				}
+			}
+		}
 		return $html;
 	}
 

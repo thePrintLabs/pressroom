@@ -639,8 +639,8 @@ class PR_Edition
 
 		$setting_page_url = admin_url() . 'admin.php?page=pressroom';
 		echo '
-		<div class="error">
-			<p>' . _e( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ). '</p>
+		<div class="error pr-alert">
+			<p>' . __( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ). '</p>
 		</div>';
 	}
 

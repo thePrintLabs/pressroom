@@ -319,6 +319,9 @@ class PR_Packager
 								$path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
 								$post_rewrite_urls[$url] = $path;
 							}
+							else {
+								array_push( $external_urls, $url);
+							}
 						}
 					}
 					else {

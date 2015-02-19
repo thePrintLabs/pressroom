@@ -110,15 +110,20 @@ class PR_options_page {
    */
   public function pr_custom_post_type() {
 
-  	$options = get_option( 'pr_settings' );
+    $options = get_option( 'pr_settings' );
     $value = isset( $options['pr_custom_post_type'] ) ? $options['pr_custom_post_type'] : '';
     $post_types = get_post_types( '', 'objects');
     $excluded = array('post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
     echo '<ul>';
+    $atleastone = false;
     foreach( $post_types as $post_type ) {
       if( !in_array( $post_type->name, $excluded ) ) {
         echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="' .$post_type->name .'" '.( is_array( $value ) ? ( in_array( $post_type->name, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type->name ? 'checked="checked"' : "" ) ) . ' />' . $post_type->labels->name . '</li>';
+        $atleastone = true;
       }
+    }
+    if( !$atleastone ) {
+      echo "No custom post types founds";
     }
     echo '</ul>';
   }

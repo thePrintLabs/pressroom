@@ -268,7 +268,7 @@ final class PR_Packager_Web_Package
     }
 
     $html = str_replace( '[EDITION_POSTS]', $replace, $html );
-    $html = str_replace( '[TOC_HEIGHT]', $this->pstgs['_pr_index_height'], $html );
+    $html = str_replace( '[TOC_HEIGHT]', isset( $this->pstgs['_pr_index_height'] ) ? $this->pstgs['_pr_index_height'] : '', $html );
 
     file_put_contents( $packager->edition_dir . DS . '../' . 'index.html' , $html );
   }

@@ -102,7 +102,7 @@ class PR_Preview {
    * @param int $post_id
    * @return string or boolean false
    */
-  public static function draw_toc( $edition, $post_id ) {
+  public static function draw_toc( $edition, $linked_query ) {
 
     $toc = PR_Theme::get_theme_layout( $edition->ID, 'toc' );
     if ( !$toc || !file_exists( $toc ) ) {
@@ -112,7 +112,8 @@ class PR_Preview {
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
     $pr_package_type = self::$package_type;
-    $posts = $linked_posts;
+
+    $posts = $linked_query;
     self::add_functions_file( $edition->ID );
     require_once( $toc );
     $output = ob_get_contents();

@@ -3,7 +3,7 @@
  * Plugin Name: Pressroom
  * Plugin URI: http://press-room.io/
  * Description: PressRoom turns Wordpress into a multi channel publishing environment.
- * Version: 1.0
+ * Version: 1.1
  * Author: ThePrintLabs
  * Author URI: http://www.theprintlabs.com
  * License: GPLv2
@@ -33,7 +33,7 @@ require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );
 
-require_once( PR_CONFIGS_PATH . 'tgm.php' );
+require_once( PR_LIBS_PATH . 'posts-to-posts/posts-to-posts.php' );
 
 require_once( PR_SERVER_PATH . 'server.php' );
 
@@ -55,6 +55,7 @@ class TPL_Pressroom
 		$this->_load_configs();
 		$this->_load_pages();
 		$this->_load_extensions();
+		$this->_load_exporters();
 
 		$this->_create_edition();
 		$this->_create_preview();
@@ -67,7 +68,11 @@ class TPL_Pressroom
 		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
 		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
+
+		/* Override default wordpress theme path */
 		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
+		add_filter( 'template', array( $this, 'set_template_name'), 10 );
+		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
 	}
 
 	/**
@@ -118,13 +123,13 @@ class TPL_Pressroom
 				'to' 			=> PR_EDITION,
 				'sortable' 	=> false,
 				'title' => array(
-    				'from'	=> __( 'Included into edition', 'pressroom' )
+    				'from'	=> __( 'Included into issue', 'pressroom' )
     			),
 				'to_labels' => array(
-      			'singular_name'	=> __( 'Edition', 'pressroom' ),
-      			'search_items' 	=> __( 'Search edition', 'pressroom' ),
-      			'not_found'			=> __( 'No editions found.', 'pressroom' ),
-      			'create'				=> __( 'Select an edition', 'pressroom' ),
+      			'singular_name'	=> __( 'Issue', 'pressroom' ),
+      			'search_items' 	=> __( 'Search issue', 'pressroom' ),
+      			'not_found'			=> __( 'No issue found.', 'pressroom' ),
+      			'create'				=> __( 'Select an issue', 'pressroom' ),
   				),
 				'admin_box' => array(
 					'show' 		=> 'from',
@@ -133,7 +138,7 @@ class TPL_Pressroom
 				),
 				'fields' => array(
 					'status' => array(
-						'title'		=> __( 'Included', 'pressroom' ),
+						'title'		=> __( 'Visible', 'pressroom' ),
 						'type'		=> 'checkbox',
 						'default'	=> 1,
 					),
@@ -167,7 +172,7 @@ class TPL_Pressroom
 			if ( $theme_code && $themes ) {
 				$pages = $themes[$theme_code];
 				foreach ( $pages as $page ) {
-					if ( $page['rule'] == 'post' ) {
+					if ( isset($page['rule']) && $page['rule'] == 'post' ) {
 						p2p_add_meta( $p2p_id, 'template', $page['path'] );
 					}
 				}
@@ -193,7 +198,7 @@ class TPL_Pressroom
 	public function change_featured_image_html( $content ) {
 
 		global $post;
-		if ( $post->post_type == PR_EDITION ) {
+		if ( $post && $post->post_type == PR_EDITION ) {
 			$content = str_replace( __( 'Remove featured image' ), __( 'Remove cover image' ), $content);
 			$content = str_replace( __( 'Set featured image' ), __( 'Set cover image' ), $content);
 		}
@@ -213,10 +218,10 @@ class TPL_Pressroom
 			$msg_code = $_GET['pmcode'];
 			$msg_param = isset( $_GET['pmparam'] ) ? urldecode( $_GET['pmparam'] ) : '';
 
-			echo '<div class="' . $msg_type . '"><p>';
+			echo '<div class="pr-alert ' . $msg_type . '"><p>';
 			switch ( $msg_code ) {
 				case 'theme':
-					echo _e( '<b>Error:</b> You must specify a theme for edition!', 'pressroom_notice' );
+					echo _e( '<b>Error:</b> You must specify a theme for issue!', 'pressroom_notice' );
 					break;
 				case 'duplicate_entry':
 					echo _e( sprintf('<b>Error:</b> Duplicate entry for <b>%s</b>. It must be unique', $msg_param ) );
@@ -245,16 +250,32 @@ class TPL_Pressroom
    * Unset theme root to exclude custom filter override
    *
    * @param string $path
-   * return string;
+   * return string
    */
   public function set_theme_root( $path ) {
 
     if ( isset( $_GET['pr_no_theme'] ) ) {
-      return PR_THEMES_PATH;
+      return realpath( PR_THEMES_PATH );
     }
 
     return $path;
   }
+
+	/**
+	 * Override default wordpress theme
+	 *
+	 * @param string $name
+	 * return string
+	 */
+	public function set_template_name( $name ) {
+
+
+		if ( isset( $_GET['pr_no_theme'], $_GET['edition_id'] ) ) {
+			$name = PR_Theme::get_theme_path( $_GET['edition_id'], false );
+		}
+
+		return $name;
+	}
 
 	/*
 	 * Get all allowed post types
@@ -315,6 +336,29 @@ class TPL_Pressroom
 				}
 			}
 		}
+	}
+
+	/**
+	* Get all exporters from relative dir
+	*
+	* @void
+	*/
+	protected function _load_exporters() {
+
+		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+
+		foreach( $exporters as $exporter ) {
+			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
+			if( is_file( $file ) ) {
+				require_once( $file );
+			}
+			else {
+				self::print_line( sprintf( __('Failed to load exporters <i>%s</i>', 'edition'), $file ), 'error' );
+				exit;
+			}
+		}
+
+		return true;
 	}
 
 	/**

@@ -209,18 +209,23 @@ class Pressroom_List_Table extends WP_List_Table
           $pages = $themes[$current_theme]['layouts'];
           foreach ( $pages as $page ) {
             if ( $page['rule'] == 'content' || $page['rule'] == 'cover' ) {
-              $page_path = $themes[$current_theme]['path'] . DIRECTORY_SEPARATOR . $page['path'];
+              $page_path = $themes[$current_theme]['path'] . DS . $page['path'];
               $html.= '<option ' . ( $template == $page['path'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page_path . '" >' . $page['name'] . '</option>';
             }
           }
           $html .= '</select>';
+
+          if( has_action( "pr_presslist_{$item->post_type}" ) ) {
+            do_action_ref_array( "pr_presslist_{$item->post_type}", array( $item, &$html ) );
+          }
+
         }
         else {
           $html = '<i>' . __('Theme is disabled. Activate it or change to another theme.', 'edition') . '</i>';
         }
       }
       else {
-        $html = '<i>' . __('The theme was not found. Update the edition to fix.', 'edition') . '</i>';
+        $html = '<i>' . __('The theme was not found. Update the issue to fix.', 'edition') . '</i>';
       }
     }
     else {

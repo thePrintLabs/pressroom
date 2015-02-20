@@ -26,6 +26,8 @@ class PR_posts
 
     if( in_array( $post_type, $tpl_pressroom->get_allowed_post_types() ) ) {
 
+      $this->get_custom_metaboxes( $post );
+
       foreach ( $this->_metaboxes as $metabox ) {
 
         add_meta_box($metabox->id, $metabox->title, array($this, 'add_custom_metabox_callback'), $post_type, $metabox->context, $metabox->priority);
@@ -49,6 +51,21 @@ class PR_posts
     }
 
     echo '</table>';
+  }
+
+  /**
+   * Get custom metaboxes configuration
+   *
+   * @param object $post
+   * @void
+   */
+  public function get_custom_metaboxes( $post ) {
+
+    $placeholder = pr_get_sharing_placeholder( $post->ID );
+    $e_meta = new PR_Metabox( 'sharing_metabox', __( 'Sharing', 'edition' ), 'normal', 'high', $post->ID );
+		$e_meta->add_field( '_pr_sharing_url', __( 'Sharing Link', 'edition' ), __( 'Sharing link inside application. Leave it blank, for default value. ', 'pressroom' ), 'text', '', array( 'placeholder' => $placeholder ) );
+
+    array_push( $this->_metaboxes, $e_meta );
   }
 
   /**
@@ -84,6 +101,7 @@ class PR_posts
     }
 
     $post = get_post( $post_id );
+    $this->get_custom_metaboxes( $post );
     foreach ( $this->_metaboxes as $metabox ) {
 
       $metabox->save_values();

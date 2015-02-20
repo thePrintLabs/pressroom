@@ -63,12 +63,36 @@ class PR_options_page {
   	);
 
     add_settings_field(
+      'pr_sharing_domain',
+      __( 'Sharing Domain', 'pressroom' ),
+      array( $this, 'pr_sharing_domain' ),
+      'pressroom',
+      'pr_pressroom_section'
+    );
+
+    add_settings_field(
       'custom_post_type',
       __( 'Connected custom post types', 'pressroom' ),
       array( $this, 'pr_custom_post_type' ),
       'pressroom',
       'pr_pressroom_section'
     );
+
+    add_settings_field(
+      'enabled_exporters',
+      __( 'Enabled Exporters', 'pressroom' ),
+      array( $this, 'pr_enabled_exporters' ),
+      'pressroom',
+      'pr_pressroom_section'
+    );
+  }
+
+  public function pr_sharing_domain() {
+
+    $options = get_option( 'pr_settings' );
+    $value = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '';
+    $html = '<input size="38" type="text" placeholder="' . get_site_url() . '" name="pr_settings[pr_sharing_domain]" value="' . $value . '">';
+    echo $html;
   }
 
   /**
@@ -79,9 +103,34 @@ class PR_options_page {
   public function pr_custom_post_type() {
 
   	$options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_custom_post_type'] ) ? ( is_array( $options['pr_custom_post_type'] ) ? implode( ',', $options['pr_custom_post_type'] ) : $options['pr_custom_post_type'] ) : '';
-  	$html = '<input id="pr_custom_post_type" type="text" name="pr_settings[pr_custom_post_type]" value="' . $value . '">';
-  	echo $html;
+    $value = isset( $options['pr_custom_post_type'] ) ? $options['pr_custom_post_type'] : '';
+    $post_types = get_post_types( '', 'objects');
+    $excluded = array('post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
+    echo '<ul>';
+    $atleastone = false;
+    foreach( $post_types as $post_type ) {
+      if( !in_array( $post_type->name, $excluded ) ) {
+        echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="' .$post_type->name .'" '.( is_array( $value ) ? ( in_array( $post_type->name, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type->name ? 'checked="checked"' : "" ) ) . ' />' . $post_type->labels->name . '</li>';
+        $atleastone = true;
+      }
+    }
+    if( !$atleastone ) {
+      echo "No custom post types founds";
+    }
+    echo '</ul>';
+  }
+
+  public function pr_enabled_exporters() {
+
+    $options = get_option( 'pr_settings' );
+    $value = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : '';
+    $exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+    echo '<ul>';
+    foreach( $exporters as $exporter ) {
+        echo '<li><input type="checkbox" name="pr_settings[pr_enabled_exporters][]" value="' .$exporter .'" '.( is_array( $value ) ? ( in_array( $exporter, $value )  ? 'checked="checked"' : "" ) : ( $value == $exporter ? 'checked="checked"' : "" ) ) . ' />' . $exporter . '</li>';
+    }
+    echo '</ul>';
+
   }
 
   /**
@@ -127,6 +176,11 @@ class PR_options_page {
       $new_value['pr_custom_post_type'] = $post_type;
     }
 
+    if( isset( $new_value['pr_enabled_exporters'] ) ) {
+      $post_type = is_array( $new_value['pr_enabled_exporters'] ) ? $new_value['pr_enabled_exporters'] : explode( ',', $new_value['pr_enabled_exporters'] );
+      $new_value['pr_enabled_exporters'] = $post_type;
+    }
+
     return $new_value;
   }
 
@@ -156,9 +210,6 @@ class PR_options_page {
       wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
       wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
       wp_enqueue_script( 'chosen' );
-      wp_enqueue_style( 'tagsinput', PR_ASSETS_URI . 'css/jquery.tagsinput.css' );
-      wp_register_script( 'tagsinput', PR_ASSETS_URI . '/js/jquery.tagsinput.min.js', array( 'jquery'), '1.0', true );
-      wp_enqueue_script( 'tagsinput' );
     }
   }
 }

@@ -61,6 +61,24 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 }
 
 /**
+ * get ids of editions connected to $post
+ * 
+ * @param  object $post
+ * @return array
+ */
+function pr_get_connected_edition_ids( $post ) {
+
+  global $wpdb;
+  $q= "SELECT ID FROM $wpdb->posts AS posts
+  LEFT JOIN $wpdb->p2p AS p2p ON p2p.p2p_to = posts . ID
+  WHERE post_status <> %s AND p2p_type = %s AND p2p_from = %u;" ;
+
+  $linked_posts = $wpdb->get_col( $wpdb->prepare( $q, 'trash', P2P_EDITION_CONNECTION, $post->ID ) );
+
+  return $linked_posts;
+}
+
+/**
  * Get single option from pressroom option array
  *
  * @param  string $option
@@ -173,4 +191,42 @@ function pr_prev( $post_id, $edition_id ) {
 function pr_next( $post_id, $edition_id ) {
 
   return pr_get_edition_post( $post_id, $edition_id, 'next' );
+}
+
+/**
+ * Rewrite post url with sharing domain
+ *
+ * @param  object $post
+ * @return string $permalink
+ */
+function pr_get_sharing_placeholder( $post_id ) {
+
+  $permalink = get_permalink( $post_id );
+  $domain = get_home_url();
+
+  $options = get_option('pr_settings');
+  $sharing_domain = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '' ;
+
+  if( $sharing_domain ) {
+    $permalink = str_replace( $domain, $sharing_domain, $permalink );
+  }
+
+  return $permalink;
+}
+
+/**
+ * Get sharing link
+ *
+ * @param  object $post
+ * @return string $sharing_url
+ */
+function pr_get_sharing_url( $post_id ) {
+
+  $sharing_url = get_post_meta( $post_id, '_pr_sharing_url', true );
+
+  if( $sharing_url ) {
+      return $sharing_url;
+  }
+
+  return pr_get_sharing_placeholder( $post_id );
 }

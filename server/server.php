@@ -6,8 +6,7 @@ class PR_Server
 
     require_once( PR_SERVER_PATH . 'api.php' );
     require_once( PR_SERVER_PATH . 'shelf.php' );
-    require_once( PR_SERVER_PATH . 'apns_token.php' );
-
+    require_once( PR_SERVER_PATH . 'push.php' );
     $this->_load_connectors();
   }
 

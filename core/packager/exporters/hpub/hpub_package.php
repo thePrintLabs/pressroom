@@ -41,15 +41,19 @@ final class PR_Packager_HPUB_Package
    */
   public function hpub_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
-    // Rewrite post url
-    $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+    if( $parsed_html_post ) {
+      // Rewrite post url
+      $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
 
-    do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
-
-    if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $post->post_title ), 'error' );
-      continue;
+      if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
+        PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $post->post_title ), 'error' );
+        continue;
+      }
     }
+    else {
+      do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
+    }
+
   }
 
   /**
@@ -64,7 +68,7 @@ final class PR_Packager_HPUB_Package
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
     if ( !$media_dir ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $packager->edition_dir . DS . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
@@ -141,7 +145,7 @@ final class PR_Packager_HPUB_Package
   public static function save_json_file( $content, $filename, $path ) {
 
     $encoded = json_encode( $content );
-    $json_file = $path . DIRECTORY_SEPARATOR . $filename;
+    $json_file = $path . DS . $filename;
     if ( file_put_contents( $json_file, $encoded ) ) {
       return true;
     }

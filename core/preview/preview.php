@@ -36,13 +36,13 @@ class PR_Preview {
     }
 
     $edition_dir = PR_Utils::sanitize_string( $edition->post_title );
-    $edition_path = PR_PREVIEW_TMP_PATH . DIRECTORY_SEPARATOR . $edition_dir;
+    $edition_path = PR_PREVIEW_TMP_PATH . DS . $edition_dir;
     PR_Utils::remove_dir( $edition_path );
 
     if ( PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_dir ) ) {
-      $font_path = PR_Theme::get_theme_path( $edition->ID ) . 'assets' . DIRECTORY_SEPARATOR . 'fonts';
+      $font_path = PR_Theme::get_theme_path( $edition->ID ) . 'assets' . DS . 'fonts';
       if( file_exists( $font_path ) ) {
-        PR_Utils::recursive_copy( $font_path, $edition_path . DIRECTORY_SEPARATOR . 'fonts');
+        PR_Utils::recursive_copy( $font_path, $edition_path . DS . 'fonts');
       }
       self::draw_toc( $edition, $linked_query );
     }
@@ -81,13 +81,13 @@ class PR_Preview {
       $filename =  PR_Utils::sanitize_string( $post->post_title ) . '.html';
       $edition_dir = PR_Utils::sanitize_string( $edition->post_title );
 
-      $html = self::parse_html( $edition, $post );
+      $html = self::parse_html( $edition, $_GET['post_id'] );
       $html = self::rewrite_html_url( $edition, $html );
       $html = self::rewrite_post_url( $edition, $html );
 
       if ( PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_dir ) ) {
-        file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . $filename, $html );
-        $page_url = PR_PREVIEW_URI . $edition_dir . DIRECTORY_SEPARATOR . $filename;
+        file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DS . $filename, $html );
+        $page_url = PR_PREVIEW_URI . $edition_dir . DS . $filename;
       }
     }
 
@@ -99,10 +99,10 @@ class PR_Preview {
    * Draw toc html file
    *
    * @param object $edition
-   * @param array $linked_posts
+   * @param int $post_id
    * @return string or boolean false
    */
-  public static function draw_toc( $edition, $linked_posts ) {
+  public static function draw_toc( $edition, $post_id ) {
 
     $toc = PR_Theme::get_theme_layout( $edition->ID, 'toc' );
     if ( !$toc || !file_exists( $toc ) ) {
@@ -122,19 +122,27 @@ class PR_Preview {
     $output = self::rewrite_toc_url( $output, $edition->ID );
 
     $edition_dir = PR_Utils::sanitize_string( $edition->post_title );
-    file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DIRECTORY_SEPARATOR . 'index.html', $output );
+    file_put_contents( PR_PREVIEW_TMP_PATH . $edition_dir . DS . 'index.html', $output );
   }
 
   /**
    * Parsing html
    *
    * @param object $edition
-   * @param object $connected_post
+   * @param int $post_id
    * @return string  html string
    */
-  public static function parse_html( $edition, $connected_post ) {
+  public static function parse_html( $edition, $post_id ) {
 
-    $p2p_id = p2p_type( P2P_EDITION_CONNECTION )->get_p2p_id( $connected_post, $edition );
+    global $wp_query, $post;
+    $wp_query = new WP_Query( array(
+      'p' => $post_id,
+      'post_type' => 'any',
+      'numberposts' => 1
+    ));
+    $post = $wp_query->posts[0];
+
+    $p2p_id = p2p_type( P2P_EDITION_CONNECTION )->get_p2p_id( $post, $edition );
     if ( !$p2p_id ) {
       return false;
     }
@@ -147,13 +155,12 @@ class PR_Preview {
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
     $pr_package_type = self::$package_type;
-    global $post;
-    $post = $connected_post;
     setup_postdata( $post );
     self::add_functions_file( $edition->ID );
     require( $template );
     $output = ob_get_contents();
     wp_reset_postdata();
+    wp_reset_query();
     ob_end_clean();
     return $output;
   }
@@ -211,7 +218,7 @@ class PR_Preview {
 
       foreach ( $urls as $url ) {
 
-        if ( strpos( $url, site_url() ) !== false ) {
+        if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
           $post_id = url_to_postid( $url );
           if ( $post_id ) {
             foreach( $linked_query->posts as $post ) {
@@ -275,7 +282,7 @@ class PR_Preview {
   public function add_preview_metabox_callback( $post ) {
 
     $editions = PR_Edition::get_linked_editions( $post );
-    echo '<label for="post_status">' . __("Choose an edition:", 'pressroom') . '</label>
+    echo '<label for="post_status">' . __("Choose an issue:", 'pressroom') . '</label>
     <div id="post-preview-select">
     <select name="pr_prw_edition_id" id="pr_prw_edition_id">';
     foreach ( $editions->posts as $edition ) {
@@ -291,14 +298,14 @@ class PR_Preview {
     <button type="button" id="preview_post" target="_blank" class="button button-primary button-large">' . __( "Preview", "pressroom" ) . '</button>
     <script type="text/javascript">
     window.addEventListener("load", function() {
-      var package_type = document.getElementById("package_type");
-      document.getElementById("preview_post").onclick = function(e){
-        var e = document.getElementById("pr_prw_edition_id"),
-        edition = e.options[e.selectedIndex].value,
-        post = ' . $post->ID . ';
-        window.open("' . PR_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post + "&package_type="+ package_type.options[package_type.selectedIndex].value, "_blank").focus();return false;};
-      }, false);
-      </script>';
+    var package_type = document.getElementById("package_type");
+    document.getElementById("preview_post").onclick = function(e){
+    var e = document.getElementById("pr_prw_edition_id"),
+    edition = e.options[e.selectedIndex].value,
+    post = ' . $post->ID . ';
+    window.open("' . PR_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post + "&package_type="+ package_type.options[package_type.selectedIndex].value, "_blank").focus();return false;};
+    }, false);
+    </script>';
   }
 
   /**

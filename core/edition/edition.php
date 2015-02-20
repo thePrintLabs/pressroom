@@ -2,6 +2,9 @@
 
 class PR_Edition
 {
+	public $pr_option;
+	public $exportes;
+	public $ck_exporters;
 	protected $_metaboxes = array();
 
 	/**
@@ -13,6 +16,10 @@ class PR_Edition
 
 		if ( !is_admin() ) {
 			return;
+		}
+
+		if( !$this->check_exporters() ) {
+			add_action( 'admin_notices', array( $this, 'exporters_notice' ) );
 		}
 
 		add_theme_support( 'post-thumbnails', array( PR_EDITION ) );
@@ -45,24 +52,24 @@ class PR_Edition
 	public function add_edition_post_type() {
 
 		$labels = array(
-			'name'                => _x( 'Editions', 'Post Type General Name', 'edition' ),
-			'singular_name'       => _x( 'Edition', 'Post Type Singular Name', 'edition' ),
-			'menu_name'           => __( 'Editions', 'edition' ),
-			'parent_item_colon'   => __( 'Parent edition:', 'edition' ),
-			'all_items'           => __( 'All editions', 'edition' ),
-			'view_item'           => __( 'View edition', 'edition' ),
-			'add_new_item'        => __( 'Add New Edition', 'edition' ),
+			'name'                => _x( 'Issues', 'Post Type General Name', 'edition' ),
+			'singular_name'       => _x( 'Issue', 'Post Type Singular Name', 'edition' ),
+			'menu_name'           => __( 'Issues', 'edition' ),
+			'parent_item_colon'   => __( 'Parent issue:', 'edition' ),
+			'all_items'           => __( 'All issues', 'edition' ),
+			'view_item'           => __( 'View issue', 'edition' ),
+			'add_new_item'        => __( 'Add New Issue', 'edition' ),
 			'add_new'             => __( 'Add New', 'edition' ),
-			'edit_item'           => __( 'Edit edition', 'edition' ),
-			'update_item'         => __( 'Update edition', 'edition' ),
-			'search_items'        => __( 'Search edition', 'edition' ),
+			'edit_item'           => __( 'Edit issue', 'edition' ),
+			'update_item'         => __( 'Update issue', 'edition' ),
+			'search_items'        => __( 'Search issue', 'edition' ),
 			'not_found'           => __( 'Not found', 'edition' ),
 			'not_found_in_trash'  => __( 'Not found in Trash', 'edition' ),
 		);
 
 		$args = array(
 			'label'                => __( 'edition_type', 'edition' ),
-			'description'          => __( 'Press room edition', 'edition' ),
+			'description'          => __( 'Pressroom issue', 'edition' ),
 			'labels'               => $labels,
 			'supports'             => array( 'title', 'excerpt', 'author', 'thumbnail', 'custom-fields' ),
 			'hierarchical'         => false,
@@ -92,16 +99,17 @@ class PR_Edition
 	public function get_custom_metaboxes( $post ) {
 
 		$editorial_terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-		$e_meta = new PR_Metabox( 'edition_metabox', __( 'Edition Meta', 'edition' ), 'normal', 'high', $post->ID );
-		$e_meta->add_field( '_pr_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', '' );
-		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', '' );
+		$e_meta = new PR_Metabox( 'edition_metabox', __( 'Issue Meta', 'edition' ), 'normal', 'high', $post->ID );
+		$e_meta->add_field( '_pr_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
+		$e_meta->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
+		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
 		$e_meta->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
 		$e_meta->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
-
-		foreach ( $editorial_terms as $term) {
-			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
-		}
+		$e_meta->add_field( '_pr_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
+			'options' => array(
+				array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
+			)
+		) );
 
 		$hpub = new PR_Metabox( 'hpub', __( 'hpub', 'edition' ), 'normal', 'high', $post->ID );
 		$hpub->add_field( '_pr_hpub_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
@@ -110,7 +118,7 @@ class PR_Edition
 			'options' => array(
 				array( 'value' => 'both', 'name' => __( "Both", 'edition' ) ),
 				array( 'value' => 'portrait', 'name' => __( "Portrait", 'edition' ) ),
-				array( 'value' => 'landscape', 'name' => __( "Landscape", 'edition' ) )
+				array( 'value' => 'landscape', 'name' => __( "Landscape", 'edition' ) ),
 			)
 		) );
 		$hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'edition' ), 'checkbox', false );
@@ -123,7 +131,7 @@ class PR_Edition
 		$hpub->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
 		$hpub->add_field( '_pr_default', '<h3>Behaviour properties</h3><hr>', '', 'textnode', '' );
 
-		$hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time edition is opened )', 'editorial_project' ), 'number', 1 );
+		$hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time issue is opened )', 'editorial_project' ), 'number', 1 );
 		$hpub->add_field( '_pr_rendering', __( 'Rendering type', 'edition' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
 			'options' => array(
 				array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'edition' ) ),
@@ -143,6 +151,7 @@ class PR_Edition
 
 		$metaboxes = array();
 
+		// Hook to add tab to edition metabox
 		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID, true ) );
 
 		$flatplan = array(
@@ -155,9 +164,7 @@ class PR_Edition
 			$hpub,
 		);
 
-
 		$this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );
-
 	}
 
 	/**
@@ -197,6 +204,7 @@ class PR_Edition
 
 
 		foreach ( $this->_metaboxes as $metabox ) {
+			// render html fields except for flatplan
 			if( $metabox->id != 'flatplan' ) {
 				echo $metabox->fields_to_html( false, $metabox->id );
 			}
@@ -204,6 +212,7 @@ class PR_Edition
 
 		echo '</table>';
 		echo '<div class="tabbed flatplan">';
+		// render Wp list table for flatplan
 		$this->add_presslist();
 		echo '</div>';
 	}
@@ -216,7 +225,6 @@ class PR_Edition
 	*/
 	public function add_tabs_to_form( $post ) {
 
-
 		$this->get_custom_metaboxes( $post );
 		echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
 		foreach ( $this->_metaboxes as $key => $metabox ) {
@@ -227,6 +235,7 @@ class PR_Edition
 
 	/**
 	* Pressroom metabox callback
+	* Render Wp list table
 	*
 	* @return void
 	*/
@@ -240,16 +249,28 @@ class PR_Edition
 
 	/**
 	* Publication metabox callback
+	* Render publication buttons
 	*
 	* @echo
 	*/
 	public function add_publication_action( $post_id ) {
 
-		$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
-		echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-		echo '<select id="pr_packager_type" name="pr_packager_type"><option '. ( $packager_type == "web" ? 'selected="selected"' : '' ) .' value="web">web</option><option '. ( $packager_type == "hpub" ? 'selected="selected"' : '' ) .' value="hpub">hpub</option></select>';
-		echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
-		echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
+		if( $this->ck_exporters ) {
+
+			$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
+			echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
+			echo '<select id="pr_packager_type" name="pr_packager_type">';
+
+			foreach( $this->exporters as $exporter ) {
+				if( in_array( $exporter, $this->pr_options['pr_enabled_exporters'] ) ) {
+					echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+				}
+			}
+
+			echo '</select>';
+			echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
+			echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
+		}
 	}
 
 	/**
@@ -283,6 +304,7 @@ class PR_Edition
 		$this->get_custom_metaboxes( $post );
 
 		foreach ( $this->_metaboxes as $metabox ) {
+			// flat plan does not have fields to save
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
 			}
@@ -334,7 +356,7 @@ class PR_Edition
 
 				if ( $current_theme ) {
 					$themes = PR_Theme::get_themes();
-					$default_template = $current_theme . DIRECTORY_SEPARATOR . $themes[$current_theme]['layouts'][0]['path'];
+					$default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
 					p2p_update_meta( $post->p2p_id, 'template', $default_template);
 				}
 			}
@@ -406,7 +428,6 @@ class PR_Edition
 		}
 
 		wp_send_json_success();
-
 	}
 
 	/**
@@ -426,7 +447,6 @@ class PR_Edition
 		if ( $pagenow == 'post.php' && $post_type == PR_EDITION ) {
 			Pressroom_List_Table::add_presslist_scripts();
 		}
-
 	}
 
 	/**
@@ -491,38 +511,6 @@ class PR_Edition
 
 		$linked_query = new WP_Query( $args );
 		return $linked_query;
-	}
-
-	/**
-	 * Get subscription types terms
-	 *
-	 * @param object $post
-	 * @return array
-	 */
-	protected function _get_subscription_types( $post ) {
-
-		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-		$types = array();
-		if ( !empty( $terms ) ) {
-			foreach ( $terms as $term ) {
-
-				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
-				if ( $term_meta ) {
-					$term_types = isset( $term_meta['_pr_subscription_types'] ) ? $term_meta['_pr_subscription_types'] : '';
-					if( $term_types ) {
-						foreach ( $term_types as $type ) {
-
-							$types[$term->name][] = array(
-								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-								'text'  => $type,
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $types;
 	}
 
 	/**
@@ -596,5 +584,42 @@ class PR_Edition
 			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
 		}
 		return $edition_bundle_id;
+	}
+
+	/**
+	 * Render admin notice for exporters
+	 *
+	 * @void
+	 */
+	public function exporters_notice() {
+
+		$setting_page_url = admin_url() . 'admin.php?page=pressroom';
+		echo '
+		<div class="error pr-alert">
+			<p>' . __( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ). '</p>
+		</div>';
+	}
+
+	/**
+	 * Enabled exporters check
+	 *
+	 * @return bool
+	 */
+	public function check_exporters() {
+
+		$this->pr_options = get_option( 'pr_settings' );
+		$this->exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+		$this->ck_exporters = false;
+
+		if( isset( $this->pr_options['pr_enabled_exporters'] ) ) {
+			foreach( $this->exporters as $exporter ) {
+				if( in_array( $exporter, $this->pr_options['pr_enabled_exporters'] ) ) {
+					$this->ck_exporters = true;
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

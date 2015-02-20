@@ -256,7 +256,7 @@ class PR_Metabox
       switch ( $field['type'] ) {
 
         case 'text':
-          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
+          $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" '.( isset( $field['required'] ) ? 'required="'.$field["required"].'"' : '') .' /><p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'password':
@@ -347,12 +347,12 @@ class PR_Metabox
           break;
 
         case 'number':
-          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( !is_null( $meta_value ) ? $meta_value : $field['default'] ) . '" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
 
         case 'decimal':
-          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" />
+          $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( !is_null( $meta_value ) ? $meta_value : $field['default'] ) . '" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
 

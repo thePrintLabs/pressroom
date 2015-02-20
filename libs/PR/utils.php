@@ -19,12 +19,12 @@ class PR_Utils
 	public static function get_press_ignore( $dir ) {
 
 		$entries = array();
-		if ( substr( $dir, -1 ) === DIRECTORY_SEPARATOR ) {
+		if ( substr( $dir, -1 ) === DS ) {
 			$dir = substr( $dir, 0, -1 );
 		}
 
-		if ( file_exists( $dir . DIRECTORY_SEPARATOR . '.pressignore' ) ) {
-			$entries = file( $dir . DIRECTORY_SEPARATOR . '.pressignore' );
+		if ( file_exists( $dir . DS . '.pressignore' ) ) {
+			$entries = file( $dir . DS . '.pressignore' );
 		}
 
 		return $entries;
@@ -70,19 +70,49 @@ class PR_Utils
 			$files = array_diff( $files, self::$excluded_files );
 			foreach ( $files as $file ) {
 
-				if ( is_file( $directory . DIRECTORY_SEPARATOR . $file ) ) {
+				if ( is_file( $directory . DS . $file ) ) {
 					if ( strlen( $extension ) && $extension != '*' ) {
-						$info = pathinfo( $directory . DIRECTORY_SEPARATOR . $file );
+						$info = pathinfo( $directory . DS . $file );
 						if ( isset( $info['extension'] ) && strtolower( $info['extension'] ) == strtolower( $extension ) ) {
-							array_push( $out, $directory . DIRECTORY_SEPARATOR . $file );
+							array_push( $out, $directory . DS . $file );
 						}
 					}
 					else {
-						array_push( $out, $directory . DIRECTORY_SEPARATOR . $file );
+						array_push( $out, $directory . DS . $file );
 					}
 				}
-				else if( is_dir( $directory . DIRECTORY_SEPARATOR . $file ) && $recursive ) {
-					self::search_files( $directory . DIRECTORY_SEPARATOR . $file, $extension, true, $out );
+				else if( is_dir( $directory . DS . $file ) && $recursive ) {
+					self::search_files( $directory . DS . $file, $extension, true, $out );
+				}
+			}
+		}
+		catch(Exception $e) {
+			error_log( 'Pressroom error: ' . $e->getMessage() );
+		}
+
+		return $out;
+	}
+
+	/**
+	* Search subdir in a directory
+	*
+	* @param string $directory
+	* @param array &$out
+	* @return array
+	*/
+	public static function search_dir( $directory, $recursive = false, &$out = array() ) {
+
+		try {
+			$files = scandir( $directory );
+			$files = array_diff( $files, self::$excluded_files );
+			foreach ( $files as $file ) {
+
+				if( is_dir( $directory . DS . $file ) ) {
+					array_push( $out, $file );
+
+					if( $recursive ) {
+						self::search_dir( $directory . DS . $file, true, $out );
+					}
 				}
 			}
 		}
@@ -102,11 +132,11 @@ class PR_Utils
 	 */
 	public static function make_dir( $basepath, $dir ) {
 
-		if ( substr( $basepath, -1 ) === DIRECTORY_SEPARATOR ) {
+		if ( substr( $basepath, -1 ) === DS ) {
 			$basepath = substr( $basepath, 0, -1 );
 		}
 
-		$path = $basepath . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $dir );
+		$path = $basepath . DS . PR_Utils::sanitize_string( $dir );
 		if ( is_dir( $path ) ) {
 			return $path;
 		}
@@ -136,11 +166,11 @@ class PR_Utils
 
 				if ( $object != "." && $object != ".." ) {
 
-					if ( filetype( $dir . DIRECTORY_SEPARATOR . $object ) == "dir" ) {
-						PR_Utils::remove_dir( $dir . DIRECTORY_SEPARATOR . $object );
+					if ( filetype( $dir . DS . $object ) == "dir" ) {
+						PR_Utils::remove_dir( $dir . DS . $object );
 					}
 					else {
-						unlink( $dir . DIRECTORY_SEPARATOR . $object );
+						unlink( $dir . DS . $object );
 					}
 				}
 			}
@@ -176,8 +206,8 @@ class PR_Utils
 						continue;
 					}
 
-					$dir_src = $source_dir . DIRECTORY_SEPARATOR . $file;
-					$dir_dst = $destination_dir . DIRECTORY_SEPARATOR . $file;
+					$dir_src = $source_dir . DS . $file;
+					$dir_dst = $destination_dir . DS . $file;
 
 					if ( is_dir( $dir_src ) ) {
 						self::recursive_copy( $dir_src, $dir_dst, $count, $not_copied );

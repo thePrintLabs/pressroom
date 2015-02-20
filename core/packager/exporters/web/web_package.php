@@ -16,6 +16,7 @@ final class PR_Packager_Web_Package
     add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 3 );
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );
 
+    // packager hooks
     add_action( 'pr_packager_web_start', array( $this, 'web_packager_start' ), 10, 2 );
     add_action( 'pr_packager_web', array( $this, 'web_packager_run' ), 10, 4 );
     add_action( 'pr_packager_web_end', array( $this, 'web_packager_end' ), 10, 2 );
@@ -34,16 +35,19 @@ final class PR_Packager_Web_Package
     $settings = array(
       '_pr_container_theme',
       '_pr_ftp_protocol',
+      '_pr_local_path',
       '_pr_ftp_server',
       '_pr_ftp_user',
       '_pr_ftp_password',
-      '_pr_ftp_destination_path'
+      '_pr_ftp_destination_path',
+      '_pr_index_height'
     );
 
     if( !$settings ) {
       return false;
     }
 
+    // check whether using edition settings or editorial project settings
     $override = get_post_meta( $edition_id, '_pr_web_override_eproject', true );
 
     foreach( $settings as $setting ) {
@@ -61,7 +65,7 @@ final class PR_Packager_Web_Package
   }
 
   /**
-   * Create toc and load settings.
+   * Load settings and create toc.
    *
    * @param  object $packager
    * @param  object $editorial_project
@@ -75,10 +79,10 @@ final class PR_Packager_Web_Package
 
     if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
       $this->_get_container( $packager->edition_dir );
-      $packager->edition_dir = $packager->edition_dir . DIRECTORY_SEPARATOR . 'contents';
+      $packager->edition_dir = $packager->edition_dir . DS . 'contents';
     }
 
-    $packager->make_toc( $editorial_project, $packager->edition_dir );
+    $packager->make_toc( $editorial_project, $packager->edition_dir, "toc" );
   }
 
   /**
@@ -92,24 +96,40 @@ final class PR_Packager_Web_Package
    */
   public function web_packager_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
-    // Rewrite post url
-    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
-      self::rewrite_url( $packager, $parsed_html_post );
+    if( $parsed_html_post ) {
+
+      // Rewrite post url
+      $container = isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ? true : false;
+      if( $container ) {
+        self::rewrite_url( $packager, $parsed_html_post );
+      }
+      else {
+        $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+      }
+
+      // Create index.html file for no-container web package
+      if( $packager->linked_query->posts[0]->post_title == $post->post_title && !$container ) {
+        $post_title = "index";
+      }
+      else {
+        $post_title = $post->post_title;
+      }
+
+      if ( !$packager->save_html_file( $parsed_html_post, $post_title, $packager->edition_dir ) ) {
+        PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s ', 'packager' ), $post->post_title ), 'error' );
+        continue;
+      }
     }
     else {
-      $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
-    }
-
-    do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir );
-
-    if ( !$packager->save_html_file( $parsed_html_post, $post->post_title, $packager->edition_dir ) ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s ', 'packager' ), $post->post_title ), 'error' );
-      continue;
+      // custom behaviour for extensions
+      do_action( 'pr_packager_run_web_' . $post->post_type, $post, $packager->edition_dir, $packager );
     }
   }
 
   /**
-   * Save attachments, set package date and close the package.
+   * Replace reader shortcode with parsed post,
+   * save attachments,
+   * set package date and close the package.
    *
    * @param  object $packager
    * @param  object $editorial_project
@@ -122,11 +142,13 @@ final class PR_Packager_Web_Package
     }
 
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
+
     if ( !$media_dir ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to create folder ', 'web_package' ), $packager->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA ), 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder ', 'web_package' ), $packager->edition_dir . DS . PR_EDITION_MEDIA ), 'error' );
       $packager->exit_on_error();
       return;
     }
+
     $packager->set_progress( 70, __( 'Saving edition attachments files', 'web_package' ) );
 
     $packager->save_posts_attachments( $media_dir );
@@ -149,6 +171,7 @@ final class PR_Packager_Web_Package
    *
    * @param object &$metaboxes
    * @param int $item_id (it can be editorial project id or edition id);
+   * @void
    */
   public function pr_add_option( &$metaboxes, $item_id, $edition = false ) {
 
@@ -172,7 +195,7 @@ final class PR_Packager_Web_Package
   }
 
   /**
-   * test ftp connection
+   * Test ftp connection
    *
    * @void
    */
@@ -216,7 +239,7 @@ final class PR_Packager_Web_Package
    */
   protected function _get_container( $dir ) {
 
-    PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DIRECTORY_SEPARATOR . 'reader', $dir);
+    PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DS . 'reader', $dir);
   }
 
   /**
@@ -227,17 +250,27 @@ final class PR_Packager_Web_Package
    */
   protected function _shortcode_replace( $packager ) {
 
-    $html = file_get_contents( $packager->edition_dir  . DIRECTORY_SEPARATOR . '../' . 'index.html');
+    $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index.html');
 
     $replace = "";
     foreach( $packager->linked_query->posts as $post ) {
+
+
+      $src = 'contents/'. PR_Utils::sanitize_string( $post->post_title ) .'.html';
+
+      if( has_action( "pr_packager_shortcode_{$packager->package_type}_{$post->post_type}" ) ) {
+        do_action_ref_array( "pr_packager_shortcode_{$packager->package_type}_{$post->post_type}", array( $post, &$src ) );
+      }
+
       $replace.= '<div class="swiper-slide" data-hash="item-'. $post->ID .'">
-      <iframe height="100%" width="100%" frameborder="0" src="contents/'. PR_Utils::sanitize_string( $post->post_title ) .'.html"></iframe>
+      <iframe height="100%" width="100%" frameborder="0" src="' . $src . '"></iframe>
       </div>';
     }
 
     $html = str_replace( '[EDITION_POSTS]', $replace, $html );
-    file_put_contents( $packager->edition_dir . DIRECTORY_SEPARATOR . '../' . 'index.html' , $html );
+    $html = str_replace( '[TOC_HEIGHT]', isset( $this->pstgs['_pr_index_height'] ) ? $this->pstgs['_pr_index_height'] : '', $html );
+
+    file_put_contents( $packager->edition_dir . DS . '../' . 'index.html' , $html );
   }
 
   /**
@@ -257,21 +290,28 @@ final class PR_Packager_Web_Package
     switch( $this->pstgs['_pr_ftp_protocol'] ) {
       case 'local':
         $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
-        PR_Utils::recursive_copy( $this->root_folder, PR_WEB_PATH . $package_name );
+        $destination = isset( $this->pstgs['_pr_local_path'] ) ? $this->pstgs['_pr_local_path']  : PR_WEB_PATH ;
+        if( file_exists( $destination ) ) {
+          PR_Utils::recursive_copy( $this->root_folder, $destination . DS . $package_name );
+        }
+        else {
+          PR_Packager::print_line( sprintf( __( 'Local path <i>%s</i> does not exist. Can\'t create package.', 'web_package' ), $destination ), 'error' );
+          return false;
+        }
 
         $filename = PR_WEB_PATH . $package_name . '.zip';
 
-        if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
-          $cover = "index.html";
-        }
-        else {
-          $cover_post = $packager->linked_query->posts[0];
-          $cover = PR_Utils::sanitize_string($cover_post->post_title) . '.html';
-        }
-
-
         if ( PR_Utils::create_zip_file( $this->root_folder, $filename, '' ) ) {
-          PR_Packager::print_line( __( 'Package created. You can see it <a href="'. PR_WEB_URI . $package_name . DIRECTORY_SEPARATOR . $cover .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
+          $index_path = PR_WEB_PATH . $package_name . DS .'index.html';
+          $index_uri = PR_WEB_URI . $package_name . DS .'index.html';
+
+          if( file_exists( $index_path ) ) {
+            PR_Packager::print_line( __( 'Package created. You can see it <a href="'. $index_uri .'">there</a> or <a href="'. PR_WEB_URI . $package_name . '.zip">download</a>', 'web_package' ), 'success' );
+          }
+          else {
+            PR_Packager::print_line( __( 'Package created. You can download it <a href="'. PR_WEB_URI . $package_name . '.zip">there</a>', 'web_package' ), 'success' );
+          }
+
         }
         break;
       case 'ftp':
@@ -304,7 +344,6 @@ final class PR_Packager_Web_Package
           exit;
 
         }
-
         break;
     }
   }
@@ -312,21 +351,20 @@ final class PR_Packager_Web_Package
   /**
   * Get all url from the html string and replace with internal url of the package
   *
-  * @param  object $edition
+  * @param  object $packager
   * @param  string $html
-  * @param  string $ext  = 'html' extension file output
+  * @param  string $extension extension file output
   * @return string or false
   */
   public static function rewrite_url( $packager, &$html, $extension = 'html' ) {
 
     if ( $html ) {
-
       $linked_query = $packager->linked_query;
       $post_rewrite_urls = array();
       $urls = PR_Utils::extract_urls( $html );
 
       foreach ( $urls as $url ) {
-        if ( strpos( $url, site_url() ) !== false ) {
+        if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
           $post_id = url_to_postid( $url );
           if ( $post_id ) {
             foreach( $linked_query->posts as $post ) {
@@ -341,4 +379,5 @@ final class PR_Packager_Web_Package
     }
   }
 }
+
 $pr_packager_web_package = new PR_Packager_Web_Package;

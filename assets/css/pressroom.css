@@ -46,6 +46,10 @@
   content: "\e600";
 }
 
+.pr-alert {
+  margin: 10px 15px 2px 0px !important;
+}
+
 .toplevel_page_pressroom > a > .wp-menu-image:before {
   font-family: pressroom;
   content: "\e600";
@@ -112,6 +116,9 @@
 
 .taxonomy-pr_editorial_project .form-table td {
   padding: 15px 0px;
+}
+.taxonomy-pr_editorial_project .fixed .column-posts {
+  width: 75px;
 }
 
 /****************************/

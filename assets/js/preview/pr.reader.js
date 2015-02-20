@@ -21,7 +21,7 @@ function getNotLoadedSlide(item, d, i, m) {
 
 $(function() {
   var reader = $( "#reader" ), conPages = reader.data( "conpages" ),
-  bLeft = $(".circle--left").hide(), bRight = $(".circle--right").hide(), bToc = $("#fire-toc");
+  bLeft = $(".circle--left").hide(), bRight = $(".circle--right").hide();
 
   $.fn.lazyLoad = function(i, m, d) {
     var $item = $(this), st = $item.data("status");
@@ -130,11 +130,6 @@ $(function() {
   bRight.on("click", function(e){
     e.preventDefault();
     prSwiper.swipeNext();
-  });
-
-  bToc.on("click", function(e){
-    e.preventDefault();
-    $( "#toc" ).slideToggle('slow', function(){ $("#toc").is(":hidden") ? $('#fire-toc').removeClass('active') : $('#fire-toc').addClass('active') });
   });
 
   $(window).on('hashchange', function(e){

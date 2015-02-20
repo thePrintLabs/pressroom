@@ -99,15 +99,23 @@ class PR_Theme
 	/**
 	 * Get current theme path
 	 * @param  int $edition_id
+	 * @param bool $absolute
+	 * 
 	 * @return string or boolean false
 	 */
-	public static function get_theme_path( $edition_id ) {
+	public static function get_theme_path( $edition_id, $absolute = true ) {
 
 		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
 		if ( $theme_id ) {
 			$themes = self::get_themes();
 			$options = $themes[$theme_id];
-			return PR_THEMES_PATH . $options['path'] . DIRECTORY_SEPARATOR;
+			if( $absolute) {
+				return PR_THEMES_PATH . $options['path'] . DS;
+			}
+			else {
+				return $options['path'];
+			}
+
 		}
 
 		return false;
@@ -124,7 +132,7 @@ class PR_Theme
 		if ( $theme_id ) {
 			$themes = self::get_themes();
 			$options = $themes[$theme_id];
-			return PR_THEME_URI . $options['path'] . DIRECTORY_SEPARATOR;
+			return PR_THEME_URI . $options['path'] . DS;
 		}
 
 		return false;
@@ -144,7 +152,7 @@ class PR_Theme
 			$options = $themes[$theme_id];
 			foreach ( $options['layouts'] as $layout ) {
 				if ( $layout['rule'] == $rule) {
-					return PR_THEMES_PATH . $options['path'] . DIRECTORY_SEPARATOR . $layout['path'];
+					return PR_THEMES_PATH . $options['path'] . DS . $layout['path'];
 				}
 			}
 		}
@@ -183,7 +191,7 @@ class PR_Theme
 		$themes = self::get_themes();
 		if ( isset( $themes[$theme_id] ) ) {
 			$theme_data = $themes[$theme_id];
-			$theme_path = PR_THEMES_PATH . $theme_data['path'] . DIRECTORY_SEPARATOR;
+			$theme_path = PR_THEMES_PATH . $theme_data['path'] . DS;
 			if ( file_exists( $theme_path ) ) {
 				return $wp_filesystem->rmdir( $theme_path, true );
 			}
@@ -303,7 +311,7 @@ class PR_Theme
 		}
 
 		foreach ( $themes as $k => $theme ) {
-			$config_file = PR_THEMES_PATH . $theme['path'] . DIRECTORY_SEPARATOR . PR_THEME_CONFIG_FILE;
+			$config_file = PR_THEMES_PATH . $theme['path'] . DS . PR_THEME_CONFIG_FILE;
 			$theme_meta = self::_parse_theme_config( $config_file );
 			if ( !$theme_meta ) {
 				array_push( self::$_errors, self::_theme_error_notice( 'Error: <b>malformed xml config file ' . $config_file .'</b>' ) );

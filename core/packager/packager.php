@@ -5,8 +5,6 @@
  *
  */
 
-require_once( PR_PACKAGER_EXPORTERS_PATH . '/hpub/hpub_package.php' );
-require_once( PR_PACKAGER_EXPORTERS_PATH . '/web/web_package.php' );
 require_once( PR_PACKAGER_PATH . '/progressbar.php' );
 
 class PR_Packager
@@ -24,13 +22,6 @@ class PR_Packager
 
 		$this->_get_linked_posts();
 		$this->pb = new ProgressBar();
-
-		if( !isset( $_GET['packager_type'] ) ) {
-			self::print_line( __( 'No package type selected. ', 'edition' ), 'error' );
-			exit;
-		}
-
-		$this->package_type = $_GET['packager_type'];
 	}
 
 	/**
@@ -42,6 +33,20 @@ class PR_Packager
 	public function run( $editorial_project ) {
 
 		ob_start();
+
+		if( !isset( $_GET['packager_type'] ) ) {
+			self::print_line( __( 'No package type selected. ', 'edition' ), 'error' );
+			exit;
+		}
+
+		$options = get_option( 'pr_settings' );
+		if( !isset( $options['pr_enabled_exporters'] ) || !in_array( $_GET['packager_type'], $options['pr_enabled_exporters'] ) ) {
+			$setting_page_url = admin_url() . 'admin.php?page=pressroom';
+			self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom settings page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
+			exit;
+		}
+
+		$this->package_type = $_GET['packager_type'];
 
 		if ( is_null( $this->edition_post ) ) {
 			ob_end_flush();
@@ -93,10 +98,16 @@ class PR_Packager
 
 		foreach ( $this->linked_query->posts as $k => $post ) {
 
-			$parsed_post = $this->_post_parse( $post, $editorial_project );
-			if ( !$parsed_post ) {
-				self::print_line( sprintf( __( 'You have to select a template for %s', 'edition' ), $post->post_title ), 'error' );
-				continue;
+			if( has_action( "pr_packager_parse_{$post->post_type}" ) ) {
+				do_action_ref_array( "pr_packager_parse_{$post->post_type}", array( $this, $post ) );
+				$parsed_post = false;
+			}
+			else {
+				$parsed_post = $this->_post_parse( $post, $editorial_project );
+				if ( !$parsed_post ) {
+					self::print_line( sprintf( __( 'You have to select a layout for %s', 'edition' ), $post->post_title ), 'error' );
+					continue;
+				}
 			}
 
 			do_action( "pr_packager_{$this->package_type}", $this, $post, $editorial_project, $parsed_post );
@@ -155,10 +166,10 @@ class PR_Packager
 
 			$upload_dir = wp_upload_dir();
 			$edition_cover_metadata = wp_get_attachment_metadata( $edition_cover_id );
-			$edition_cover_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . $edition_cover_metadata['file'];
+			$edition_cover_path = $upload_dir['basedir'] . DS . $edition_cover_metadata['file'];
 			$info = pathinfo( $edition_cover_path );
 
-			if ( copy( $edition_cover_path, $this->edition_dir . DIRECTORY_SEPARATOR . PR_EDITION_MEDIA . $info['basename'] ) ) {
+			if ( copy( $edition_cover_path, $this->edition_dir . DS . PR_EDITION_MEDIA . $info['basename'] ) ) {
 				$this->edition_cover_image = $info['basename'];
 				self::print_line( sprintf( __( 'Copied cover image %s ', 'edition' ), $edition_cover_path ), 'success' );
 			}
@@ -207,7 +218,7 @@ class PR_Packager
 	*/
 	public function save_html_file( $post, $filename, $dir ) {
 
-		return file_put_contents( $dir . DIRECTORY_SEPARATOR . PR_Utils::sanitize_string( $filename ) . '.html', $post);
+		return file_put_contents( $dir . DS . PR_Utils::sanitize_string( $filename ) . '.html', $post);
 	}
 
 	/**
@@ -215,7 +226,7 @@ class PR_Packager
 	*
 	* @return string or boolean false
 	*/
-	public function toc_parse( $editorial_project) {
+	public function toc_parse( $editorial_project ) {
 
     $toc = PR_Theme::get_theme_layout( $this->edition_post->ID, 'toc' );
     if ( !$toc ) {
@@ -244,7 +255,7 @@ class PR_Packager
 	 * @param  string $dir
 	 * @void
 	 */
-	public function make_toc( $editorial_project, $dir ) {
+	public function make_toc( $editorial_project, $dir, $filename = "index" ) {
 
 		// Parse html of toc index.php file
 		$html = $this->toc_parse( $editorial_project );
@@ -265,8 +276,8 @@ class PR_Packager
 
 		$this->set_progress( 10, __( 'Saving toc file', 'edition' ) );
 
-		// Save toc html file
-		if ( $this->save_html_file( $html, 'index', $dir ) ) {
+		// Save cover html file
+		if ( $this->save_html_file( $html, $filename, $dir ) ) {
 			self::print_line( __( 'Toc file correctly generated', 'edition' ), 'success' );
 			$this->set_progress( 20, __( 'Saving edition posts', 'edition' ) );
 		}
@@ -289,11 +300,11 @@ class PR_Packager
 		if ( $html ) {
 
 			$post_rewrite_urls = array();
+			$external_urls = array();
 			$urls = PR_Utils::extract_urls( $html );
-
 			foreach ( $urls as $url ) {
 
-				if ( strpos( $url, site_url() ) !== false ) {
+				if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
 					$post_id = url_to_postid( $url );
 					if ( $post_id ) {
 
@@ -306,7 +317,6 @@ class PR_Packager
 						}
 					}
 					else {
-
 						$attachment_id = $this->_get_attachment_from_url( $url );
 						if ( $attachment_id ) {
 							$info = pathinfo( $url );
@@ -318,13 +328,21 @@ class PR_Packager
 						}
 					}
 				}
+				else { //external url
+					array_push( $external_urls, $url);
+				}
 			}
 
 			if ( !empty( $post_rewrite_urls ) ) {
 				$html = str_replace( array_keys( $post_rewrite_urls ), $post_rewrite_urls, $html );
 			}
-		}
 
+			if ( !empty( $external_urls ) ) {
+				foreach( $external_urls as $exturl ) {
+					$html = str_replace( $exturl, $exturl . "?referrer=Baker", $html );
+				}
+			}
+		}
 		return $html;
 	}
 
@@ -340,8 +358,7 @@ class PR_Packager
 		if ( !empty( $this->_posts_attachments ) ) {
 			$attachments = array_unique( $this->_posts_attachments );
 			foreach ( $attachments as $filename => $url ) {
-
-				if ( copy( $url, $media_dir . DIRECTORY_SEPARATOR . $filename ) ) {
+				if ( copy( $url, $media_dir . DS . $filename ) ) {
 					PR_Packager::print_line( sprintf( __( 'Copied %s ', 'edition' ), $url ), 'success' );
 				}
 				else {
@@ -398,7 +415,7 @@ class PR_Packager
 
 		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, 'assets' );
 		if ( !$edition_assets_dir ) {
-			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DIRECTORY_SEPARATOR . 'assets' ), 'error');
+			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . 'assets' ), 'error');
 			return false;
 		}
 

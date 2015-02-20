@@ -1,8 +1,8 @@
 <?php
 const CONCURRENT_PAGES = 3;
-if ( file_exists( dirname( __FILE__ ) . '/.pr_path' ) ) {
-  $wp_load_path = file_get_contents( '.pr_path' );
-} else {
+
+$wp_load_path = file_get_contents( '.pr_path' );
+if ( !$wp_load_path ) {
   die( 'wp-load.php path not found in .pr_path. Please define it manually' );
 }
 
@@ -20,7 +20,7 @@ if ( !isset( $_GET['edition_id']) || !strlen( $_GET['edition_id'] ) ) {
   wp_die( __( "<b>Error getting required params. Please check your url address.</b>", 'pressroom' ) );
 }
 
-if( !isset($_GET['package_type'])) {
+if( !isset( $_GET['package_type']) ) {
   wp_die( __( "<b>Error: missing package type </b>", 'pressroom' ) );
 }
 
@@ -37,19 +37,20 @@ else {
 }
 
 if ( empty( $linked_posts ) ) {
-  wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
-  <li>Check if the edition with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
+  wp_die( __( "<b>There was an error while trying to build the issue preview.</b><p>Suggestions:</p><ul>
+  <li>Check if the issue with id <b>$edition_id</b> exist</li><li>Ensure that there is least one post visible</li></ul>", 'pressroom' ) );
 }
 
 $terms = wp_get_post_terms( $_GET['edition_id'], PR_EDITORIAL_PROJECT );
 if ( empty( $terms ) ) {
-  wp_die( __( "<b>There was an error while trying to build the edition preview.</b><p>Suggestions:</p><ul>
+  wp_die( __( "<b>There was an error while trying to build the issue preview.</b><p>Suggestions:</p><ul>
   <li>Ensure that there is least one editorial project linked to this edition</li></ul>", 'pressroom' ) );
 }
 
 $edition = get_post( $edition_id );
 $edition_name = PR_Utils::sanitize_string( $edition->post_title );
-$index_height = 150;
+$index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
+
 ?>
 <!DOCTYPE html>
 <head>
@@ -74,7 +75,7 @@ $index_height = 150;
         <a class="logo" title="PressRoom">PressRoom</a>
       </li>
       <li>
-        <a id="fire-toc" href="#" title="Open toc bar">Toc</a>
+        <a id="fire-toc" href="#" title="Open toc bar" onclick="openToc()">Toc</a>
       </li>
       <li id="phone" >
         <a class="sg-acc-handle group-device o-menu" title="iPhone">Devices</a>
@@ -165,7 +166,7 @@ $index_height = 150;
       </div>
     </div>
     <div id="toc" style="height:<?php echo $index_height ?>px;display:none">
-      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DIRECTORY_SEPARATOR . "index.html"  ?>"></iframe>
+      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DS . "index.html"  ?>"></iframe>
     </div>
   </div>
 </div>
@@ -173,6 +174,7 @@ $index_height = 150;
 <script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
 <script src="../../assets/js/preview/pr.reader.min.js"></script>
+<script src="../../assets/js/preview/pr.toc.js"></script>
 <script src="../../assets/js/preview/pr.reader.ish.min.js"></script>
 </body>
 </html>

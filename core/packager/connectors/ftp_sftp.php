@@ -13,6 +13,7 @@ class PR_Ftp_Sftp
 
     add_action( 'pr_add_web_field', array( $this, 'pr_add_field' ), 10, 1 );
     $this->errors = new WP_Error();
+
   }
 
   /**
@@ -92,7 +93,7 @@ class PR_Ftp_Sftp
       }
     }
     else if( is_a( $this->connection, 'WP_Filesystem_SSH2' ) ) {
-      $this->connection->mkdir( $remote_path . DIRECTORY_SEPARATOR . basename( $source ) );
+      $this->connection->mkdir( $remote_path . DS . basename( $source ) );
       if( $this->ssh2_copy( $source, $remote_path ) ) {
         return true;
       }
@@ -120,7 +121,7 @@ class PR_Ftp_Sftp
         if ( !in_array( $info['basename'], PR_Utils::$excluded_files ) ) {
           $file = str_replace('\\', '/', realpath( $file ) );
           if ( is_dir( $file ) ) {
-            if( $this->connection->mkdir( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR,  $file ) ) ) {
+            if( $this->connection->mkdir( str_replace( realpath( PR_TMP_PATH ), $remote_path . DS,  $file ) ) ) {
               PR_Packager::print_line( sprintf( __( 'Folder %s  transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
             }
             else {
@@ -129,7 +130,7 @@ class PR_Ftp_Sftp
 
           }
           elseif ( is_file( $file ) ) {
-            if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR, $file ), file_get_contents( $file ), true ) ) {
+            if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DS, $file ), file_get_contents( $file ), true ) ) {
               PR_Packager::print_line( sprintf( __( 'File %s transfered  ', 'web_package' ), $info['basename'] ) , 'success' );
             }
             else {
@@ -141,7 +142,7 @@ class PR_Ftp_Sftp
     }
     elseif ( is_file( $source ) ) {
       $info = pathinfo( $source );
-      if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DIRECTORY_SEPARATOR, $file ), file_get_contents( $source ), true ) ) {
+      if( $this->connection->put_contents( str_replace( realpath( PR_TMP_PATH ), $remote_path . DS, $file ), file_get_contents( $source ), true ) ) {
         PR_Packager::print_line( sprintf( __( 'File %s transfered', 'web_package' ), $info['basename'] ) , 'success' );
       }
       else {
@@ -167,6 +168,7 @@ class PR_Ftp_Sftp
       )
     ));
 
+    $metabox->add_field( '_pr_local_path', __( 'Local path', 'web_package' ), __( 'The path where the files will be created', 'web_package' ), 'text', PR_WEB_PATH );
     $metabox->add_field( '_pr_ftp_server', __( 'FTP Server / IP port', 'web_package' ), __( 'Server ip address and connection port', 'web_package' ), 'double_text', '' );
     $metabox->add_field( '_pr_ftp_user', __( 'FTP User Login', 'web_package' ), __( 'User for ftp connection', 'web_package' ), 'text', '' );
     $metabox->add_field( '_pr_ftp_password', __( 'FTP Password', 'web_package' ), __( 'Password for ftp connection', 'web_package' ), 'password', '' );

@@ -1,0 +1,29 @@
+.overlay {
+  overflow: hidden;
+}
+
+#toc {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0s 0.5s;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgb(255,255,255);
+  z-index: 5000;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+#toc iframe {
+  height: 100%;
+}
+
+.overlay #toc {
+  opacity : 1;
+  visibility: visible;
+  transition: opacity 0.5s;
+}

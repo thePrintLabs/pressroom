@@ -2,17 +2,16 @@
 
 final class PR_Connector_Sullivan extends PR_Server_API {
 
-  const SANDBOX_URL     = "https://dev.ilmanifesto.info/api_account_login";
-  const PRODUCTION_URL  = "https://dev.ilmanifesto.info/api_account_login";//"https://ilmanifesto.info/api_account_logout";
-
   public $account_password;
   public $account_username;
   public $app_id;
   public $user_id;
   public $eproject;
-  public $environment = 'production';
 
   protected $_error_msg;
+
+  const SULLIVAN_SANDBOX_STATUS = 1;
+  const SULLIVAN_PRODUCTION_STATUS = 2;
 
   /**
    * Sullivan connector
@@ -26,6 +25,7 @@ final class PR_Connector_Sullivan extends PR_Server_API {
     add_action( 'init', array( $this, 'add_endpoint' ), 10 );
     add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
     add_action( 'pr_issue_download', array( $this, 'validate_token_on_download' ), 20, 6 );
+    add_action( 'pr_add_extra_options', array( $this, 'add_sullivan_options' ), 10 );
   }
 
   /**
@@ -122,6 +122,72 @@ final class PR_Connector_Sullivan extends PR_Server_API {
     }
   }
 
+  public function add_sullivan_options() {
+
+    add_settings_section(
+      'pr_sullivan_section',
+      '',
+      array( $this, 'pr_add_sullivan_endpoint' ),
+      'pressroom'
+    );
+
+    add_settings_field(
+      'pr_sullivan_environment',
+      __( 'Sullivan environment', 'pressroom' ),
+      array( $this, 'pr_sullivan_environment' ),
+      'pressroom',
+      'pr_sullivan_section'
+    );
+
+    add_settings_field(
+      'pr_sullivan_sandbox_url',
+      __( 'Sandbox url', 'pressroom' ),
+      array( $this, 'pr_sandbox_url' ),
+      'pressroom',
+      'pr_sullivan_section'
+    );
+
+    add_settings_field(
+      'pr_sullivan_production_url',
+      __( 'Production endpoint url', 'pressroom' ),
+      array( $this, 'pr_production_url' ),
+      'pressroom',
+      'pr_sullivan_section'
+    );
+  }
+
+  public function pr_add_sullivan_endpoint() {
+
+    echo __( '<hr/><h2>Sullivan</h2>', 'pressroom' );
+  }
+
+  public function pr_sandbox_url() {
+
+    $options = get_option( 'pr_settings' );
+    $default = get_site_url() . DS . 'api_account_login';
+    $value = isset( $options['pr_sandbox_url'] ) ? $options['pr_sandbox_url'] : $default;
+    $html = '<input size="70" type="text" placeholder="' . get_site_url() . DS . 'api_account_login' . '" name="pr_settings[pr_sandbox_url]" value="' . $value . '">';
+    echo $html;
+  }
+
+  public function pr_production_url() {
+
+    $options = get_option( 'pr_settings' );
+    $default = get_site_url() . DS . 'api_account_login';
+    $value = isset( $options['pr_production_url'] ) ? $options['pr_production_url'] : $default;
+    $html = '<input size="70" type="text" placeholder="' . get_site_url() . DS . 'api_account_login' . '" name="pr_settings[pr_production_url]" value="' . $value . '">';
+    echo $html;
+  }
+
+  public function pr_sullivan_environment() {
+
+    $options = get_option( 'pr_settings' );
+    $value = isset( $options['pr_sullivan_environment'] ) ? $options['pr_sullivan_environment'] : "";
+    $html = '<input id="pr_sandbox" type="radio" value="1" name="pr_settings[pr_sullivan_environment]" '.( $value == self::SULLIVAN_SANDBOX_STATUS ? "checked" : "" ).'>' . '<label for="pr_sandbox">Sandbox</label> ';
+    $html .= '<input id="pr_production" type="radio" value="2" name="pr_settings[pr_sullivan_environment]" '.( $value == self::SULLIVAN_PRODUCTION_STATUS ? "checked" : "" ).'>' . '<label for="pr_production">Production</label>';
+    echo $html;
+  }
+
   /**
    * Client will call this API endpoint
    * to send the login credential to the remote server.
@@ -185,7 +251,8 @@ final class PR_Connector_Sullivan extends PR_Server_API {
    */
   protected function _sendRequest() {
 
-    $url = $this->environment == 'production' ? self::PRODUCTION_URL : self::SANDBOX_URL;
+    $options = get_option( 'pr_settings' );
+    $url = $options['pr_sullivan_environment'] == self::SULLIVAN_PRODUCTION_STATUS ? $options['pr_production_url'] : $options['pr_sandbox_url'];
     $params = json_encode( array(
       'username'  => $this->account_username,
       'password'  => $this->account_password

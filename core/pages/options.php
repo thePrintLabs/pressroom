@@ -93,13 +93,15 @@ class PR_options_page {
       'pressroom',
       'pr_pressroom_section'
     );
+
+    do_action( 'pr_add_extra_options' );
   }
 
   public function pr_sharing_domain() {
 
     $options = get_option( 'pr_settings' );
     $value = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '';
-    $html = '<input size="38" type="text" placeholder="' . get_site_url() . '" name="pr_settings[pr_sharing_domain]" value="' . $value . '">';
+    $html = '<input size="70" type="text" placeholder="' . get_site_url() . '" name="pr_settings[pr_sharing_domain]" value="' . $value . '">';
     echo $html;
   }
 

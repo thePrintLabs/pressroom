@@ -49,7 +49,16 @@ if ( empty( $terms ) ) {
 
 $edition = get_post( $edition_id );
 $edition_name = PR_Utils::sanitize_string( $edition->post_title );
-$index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
+
+$override = get_post_meta( $edition_id, '_pr_hpub_override_eproject', true );
+if( $override ) {
+  $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
+}
+else {
+  $index_height = PR_Editorial_Project::get_config( $terms[0]->term_id, "_pr_index_height");
+}
+
+$toc_full = !$index_height;
 
 ?>
 <!DOCTYPE html>
@@ -165,8 +174,8 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
         </div>
       </div>
     </div>
-    <div id="toc" style="height:<?php echo $index_height ?>px;display:none">
-      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DS . "index.html"  ?>"></iframe>
+    <div id="toc" <?php echo $toc_full ? '' : 'style="height:'.$index_height.'px;display:none"'?>>
+      <iframe <?php echo $toc_full ? 'id="toc-frame"' : ''?> width="100%" frameborder="0" src="<?php echo PR_PREVIEW_URI . $edition_name . DS . "index.html"  ?>"></iframe>
     </div>
   </div>
 </div>
@@ -174,7 +183,14 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
 <script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
 <script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
 <script src="../../assets/js/preview/pr.reader.min.js"></script>
-<script src="../../assets/js/preview/pr.toc.js"></script>
+<?php
+if( $toc_full) {
+  echo '<script src="../../assets/js/preview/pr.toc-full.js"></script>';
+}
+else {
+  echo '<script src="../../assets/js/preview/pr.toc.js"></script>';
+}
+?>
 <script src="../../assets/js/preview/pr.reader.ish.min.js"></script>
 </body>
 </html>

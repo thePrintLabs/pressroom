@@ -250,7 +250,14 @@ final class PR_Packager_Web_Package
    */
   protected function _shortcode_replace( $packager ) {
 
-    $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index.html');
+
+    $toc_full = isset( $this->pstgs['_pr_index_height'] ) ? false : true;
+    if( $toc_full ) {
+      $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index_full_toc.html');
+    }
+    else {
+      $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index.html');
+    }
 
     $replace = "";
     foreach( $packager->linked_query->posts as $post ) {

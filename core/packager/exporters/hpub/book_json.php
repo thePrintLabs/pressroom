@@ -9,6 +9,7 @@ final class PR_Packager_Book_JSON
     '_pr_orientation'                 => 'orientation',
     '_pr_zoomable'                    => 'zoomable',
     '_pr_body_bg_color'               => '-baker-background',
+    '_pr_bg_view'                     => '-baker-view-background',
     '_pr_background_image_portrait'   => '-baker-background-image-portrait',
     '_pr_background_image_landscape'  => '-baker-background-image-landscape',
     '_pr_page_numbers_color'          => '-baker-page-numbers-color',

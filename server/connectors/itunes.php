@@ -183,9 +183,15 @@ final class PR_Connector_iTunes extends PR_Server_API {
       case 21005:
         $data = (object)array( 'error' => 502, 'msg' => 'Invalid iTunes response (21005): The receipt server is not currently available.' );
       case 21007:
-        $data = (object)array( 'error' => 502, 'msg' => 'Invalid iTunes response (21007): This receipt is a sandbox receipt, but it was sent to the production server.' );
+        //$data = (object)array( 'error' => 502, 'msg' => 'Invalid iTunes response (21007): This receipt is a sandbox receipt, but it was sent to the production server.' );
+        $this->environment = 'debug';
+        $data = $this->validate_receipt();
+        break;
       case 21008:
-        $data = (object)array( 'error' => 502, 'msg' => 'Invalid iTunes response (21008): This receipt is a production receipt, but it was sent to the sandbox server.' );
+        //$data = (object)array( 'error' => 502, 'msg' => 'Invalid iTunes response (21008): This receipt is a production receipt, but it was sent to the sandbox server.' );
+        $this->environment = 'production';
+        $data = $this->validate_receipt();
+        break;
       default:
         break;
     }
@@ -238,18 +244,18 @@ final class PR_Connector_iTunes extends PR_Server_API {
     global $wpdb;
     $issues = array();
     $transaction_id = $receipt->transaction_id;
-    $from_date = date( 'Y-m-d', (int)$receipt->original_purchase_date_ms / 1000 );
+    $from_date = date( 'Y-m-d H:i', (int)$receipt->original_purchase_date_ms / 1000 );
     if ( $receipt_data->status == 0 ) {
       if ( is_array( $receipt_data->latest_receipt_info ) ) {
         foreach ( $receipt_data->latest_receipt_info as $receipt_info ) {
           if ( $receipt_info->transaction_id == $transaction_id ) {
-            $to_date = date( 'Y-m-d', (int)( ( isset( $receipt_info->expires_date_ms ) ? $receipt_info->expires_date_ms : $receipt_info->expires_date ) / 1000 ) );
+            $to_date = date( 'Y-m-d H:i', (int)( ( isset( $receipt_info->expires_date_ms ) ? $receipt_info->expires_date_ms : $receipt_info->expires_date ) / 1000 ) );
             break;
           }
         }
       }
       else {
-        $to_date = date( 'Y-m-d', (int)( ( isset( $receipt_data->latest_receipt_info->expires_date_ms ) ? $receipt_data->latest_receipt_info->expires_date_ms : $receipt_data->latest_receipt_info->expires_date ) / 1000 ) );
+        $to_date = date( 'Y-m-d H:i', (int)( ( isset( $receipt_data->latest_receipt_info->expires_date_ms ) ? $receipt_data->latest_receipt_info->expires_date_ms : $receipt_data->latest_receipt_info->expires_date ) / 1000 ) );
       }
     }
     elseif ( $receipt_data->status == 21006 ) {
@@ -257,13 +263,13 @@ final class PR_Connector_iTunes extends PR_Server_API {
         foreach ( $receipt_data->latest_expired_receipt_info as $expired_receipt_info ) {
 
           if ( $expired_receipt_info->transaction_id == $transaction_id ) {
-            $to_date = date( 'Y-m-d', (int)( ( isset( $expired_receipt_info->expires_date_ms ) ? $expired_receipt_info->expires_date_ms : $expired_receipt_info->expires_date ) / 1000 ) );
+            $to_date = date( 'Y-m-d H:i', (int)( ( isset( $expired_receipt_info->expires_date_ms ) ? $expired_receipt_info->expires_date_ms : $expired_receipt_info->expires_date ) / 1000 ) );
             break;
           }
         }
       }
       else {
-        $to_date = date( 'Y-m-d', (int)( ( isset( $receipt_data->latest_expired_receipt_info->expires_date_ms ) ? $receipt_data->latest_expired_receipt_info->expires_date_ms : $receipt_data->latest_expired_receipt_info->expires_date ) / 1000 ) );
+        $to_date = date( 'Y-m-d H:i', (int)( ( isset( $receipt_data->latest_expired_receipt_info->expires_date_ms ) ? $receipt_data->latest_expired_receipt_info->expires_date_ms : $receipt_data->latest_expired_receipt_info->expires_date ) / 1000 ) );
       }
     }
 
@@ -276,7 +282,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       $last_edition_date = get_post_meta( $last_edition, '_pr_date', true );
     }
 
-    $today = date('Y-m-d');
+    $today = date('Y-m-d H:i');
     $subscription_method = PR_Editorial_Project::get_subscription_method( $this->eproject->term_id, $receipt->product_id );
 
     // Enable all editions if the subscription method is not defined or is setted on all

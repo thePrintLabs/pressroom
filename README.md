@@ -4,18 +4,17 @@
 
 <a>![](PR-github.png?raw=true "PressRoom for Wordpress")</a>
 
-**Requires at least:** 3.8    
-**Tested up to:** 4.0    
-**Stable tag:** 0.9    
-**Dependecies:** [Posts 2 Posts](https://github.com/scribu/wp-posts-to-posts)    
-**License:** GPL v2   
+**Requires at least:** 3.8
+**Tested up to:** 4.1.1
+**Stable tag:** 1.0.0
+**License:** GPL v2
 
 ## What is PressRoom?
-PressRoom turns WordPress into a multiple channel publishing platform. It is being developed around a vision for digital publishing that we see growing and struggling with the available technologies. 
+PressRoom turns WordPress into a multiple channel publishing platform. It is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
 
-Everything in PressRoom is structured around the concept of **Editorial Projects**; they are containers for an unlimited number of **Editions**, which are containers for any kind of content that you can already add and manage in WordPress. 
+Everything in PressRoom is structured around the concept of **Editorial Projects**; they are containers for an unlimited number of **Editions**, which are containers for any kind of content that you can already add and manage in WordPress.
 
-An **Edition** can be exported at the same time to an iOS client based on the [Baker Framework ](https://github.com/bakerframework/baker) and to the web as a standalone microsite. 
+An **Edition** can be exported at the same time to an iOS client based on the [Baker Framework ](https://github.com/bakerframework/baker) and to the web as a standalone microsite.
 
 **PressRoom** is the perfect tool to embrace a sub-compact publishing model, but you’re not restricted to any kind of content structure, since everything is being built to be flexible and highly customizable. Suitable for books, magazines, newspapers or just to manage your static websites and release your blog to multiple channels.
 
@@ -35,7 +34,7 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 
 ##User Guide
 
-- [PressRoom settings](../../wiki/PressRoom-settings) 
+- [PressRoom settings](../../wiki/PressRoom-settings)
 - [Configuring an Editorial Project](../../wiki/Editorial-Project-settings)
 - [Configuring an Edition](../../wiki/Edition-settings)
 - [Connecting to Baker Framework Apps](../../wiki/Connecting-to-Baker-Framework-Apps)
@@ -44,21 +43,17 @@ An **Edition** can be exported at the same time to an iOS client based on the [B
 
 ##Dev Docs
 
-- [Theming](../../wiki/Theming) 
+- [Theming](../../wiki/Theming)
 - [Api](../../wiki/Api)
 - [Hooks](../../wiki/Hooks)
--  [Customizing the default theme](../../wiki/Customizing-the-default-theme)
+- [Customizing the default theme](../../wiki/Customizing-the-default-theme)
 
 ## How to get support
 Open an issue [here on GitHub](https://github.com/thePrintLabs/pressroom/issues) or head over [http://discourse.press-room.io](http://discourse.press-room.io) for general usage question.
 
 ##Roadmap to v.1.0
 
-- web static export via ftp, sftp, local filesystem *(very soon)*
-- remove external plugin dependecies
 - fix push notification UI (align with the overall seamless plugin' style)
-- move **starterr** theme in its own repo
-- add **starterr** as a submodule
 - more themes
 - extensive documentation
 
@@ -78,7 +73,6 @@ Have you got a project you would like to discuss? [Tell us more](https://theprin
 <a href="https://theprintlabs.typeform.com/to/QyHaBj" title="thePrintLabs" alt="thePrintLabs" target="_blank">![](logo-tpl.png?raw=true "thePrintlabs")</a>
 
 ##Licence
-PressRoom is open source, licensed under GPL v2.    
-**License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)    
+PressRoom is open source, licensed under GPL v2.
+**License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)
 © 2014 [thePrintLabs Ltd.](http://theprintlabs.com)
-

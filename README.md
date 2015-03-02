@@ -5,8 +5,11 @@
 <a>![](PR-github.png?raw=true "PressRoom for Wordpress")</a>
 
 **Requires at least:** 3.8
+
 **Tested up to:** 4.1.1
+
 **Stable tag:** 1.0.0
+
 **License:** GPL v2
 
 ## What is PressRoom?

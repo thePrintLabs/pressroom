@@ -62,7 +62,7 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
 /**
  * get ids of editions connected to $post
- * 
+ *
  * @param  object $post
  * @return array
  */

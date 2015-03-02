@@ -100,7 +100,7 @@ class PR_Theme
 	 * Get current theme path
 	 * @param  int $edition_id
 	 * @param bool $absolute
-	 * 
+	 *
 	 * @return string or boolean false
 	 */
 	public static function get_theme_path( $edition_id, $absolute = true ) {

@@ -34,6 +34,7 @@ final class PR_Packager_Book_JSON
     'post_excerpt'                    => 'info',
     'contents'                        => 'contents',
     'sharing_urls'                    => 'sharing_urls',
+    'media_galleries'                 => 'media_galleries',
     'titles'                          => 'titles'
   );
 
@@ -52,6 +53,7 @@ final class PR_Packager_Book_JSON
       $page_path = $packager->edition_dir . DS . $page_name . '.html';
 
       $press_options['sharing_urls'][] = pr_get_sharing_url( $post->ID );
+      $press_options['media_galleries'][] = pr_get_galleries( $post->ID );
       $press_options['titles'][] = $post->post_title;
 
       if ( is_file( $page_path ) ) {

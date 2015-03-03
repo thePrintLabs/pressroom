@@ -62,7 +62,7 @@ function pr_get_edition_posts( $edition, $only_enabled = true ) {
 
 /**
  * get ids of editions connected to $post
- * 
+ *
  * @param  object $post
  * @return array
  */
@@ -225,8 +225,38 @@ function pr_get_sharing_url( $post_id ) {
   $sharing_url = get_post_meta( $post_id, '_pr_sharing_url', true );
 
   if( $sharing_url ) {
-      return $sharing_url;
+    return $sharing_url;
   }
 
   return pr_get_sharing_placeholder( $post_id );
+}
+
+function pr_get_galleries( $post_id ) {
+
+  $post_content = get_post_field('post_content', $post_id);
+
+  preg_match_all('/\[gallery.*ids=.(.*).\]/', $post_content, $galleries);
+
+
+  $galleries = $galleries[1];
+  $upload_dir = wp_upload_dir();
+
+  if( $galleries ) {
+    $book_galleries = array();
+    foreach( $galleries as $gallery ) {
+      $attachments_id = explode( ",", $gallery );
+      $book_gallery = array();
+      foreach( $attachments_id as $k => $attachment_id ) {
+        $attachment = get_post( $attachment_id );
+        $attachment_path = $upload_dir['basedir'] . DS . $attachment->guid;
+        $info = pathinfo( $attachment_path );
+        $book_gallery[$k]['uri'] = PR_EDITION_MEDIA . $info['basename'];
+        $book_gallery[$k]['caption'] = $attachment->post_excerpt;
+      }
+      array_push( $book_galleries, $book_gallery );
+    }
+    return $book_galleries;
+  }
+
+  return array();
 }

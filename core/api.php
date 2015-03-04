@@ -235,15 +235,14 @@ function pr_get_galleries( $post_id ) {
 
   $post_content = get_post_field('post_content', $post_id);
 
-  preg_match_all('/\[gallery.*ids=.(.*).\]/', $post_content, $galleries);
-
-
-  $galleries = $galleries[1];
+  preg_match_all('/\[gallery.*name="(.*)".*ids=.(.*).\]/', $post_content, $matched_galleries);
+  
+  $galleries = $matched_galleries[2];
   $upload_dir = wp_upload_dir();
 
   if( $galleries ) {
     $book_galleries = array();
-    foreach( $galleries as $gallery ) {
+    foreach( $galleries as $key => $gallery ) {
       $attachments_id = explode( ",", $gallery );
       $book_gallery = array();
       foreach( $attachments_id as $k => $attachment_id ) {
@@ -253,7 +252,8 @@ function pr_get_galleries( $post_id ) {
         $book_gallery[$k]['uri'] = PR_EDITION_MEDIA . $info['basename'];
         $book_gallery[$k]['caption'] = $attachment->post_excerpt;
       }
-      array_push( $book_galleries, $book_gallery );
+      //echo $matched_galleries[1][$key];
+      $book_galleries[$matched_galleries[1][$key]] = $book_gallery;
     }
     return $book_galleries;
   }

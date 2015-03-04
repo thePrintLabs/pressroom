@@ -41,6 +41,7 @@ require_once( PR_SERVER_PATH . 'server.php' );
 
 require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
+require_once( PR_LIBS_PR_PATH . 'UI/gallery_name.php' );
 
 class TPL_Pressroom
 {

@@ -107,10 +107,6 @@ class PR_Packager
 				do_action_ref_array( "pr_packager_parse_{$post->post_type}", array( $this, $post ) );
 				$parsed_post = false;
 			}
-			else if( has_action( "pr_packager_parse_{$this->package_type}" ) ) {
-				$parsed_post = "";
-				do_action_ref_array( "pr_packager_parse_{$this->package_type}", array( $this, $post, &$parsed_post, $editorial_project ) );
-			}
 			else {
 				$parsed_post = $this->_post_parse( $post, $editorial_project );
 				if ( !$parsed_post ) {

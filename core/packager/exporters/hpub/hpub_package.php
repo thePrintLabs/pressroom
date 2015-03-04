@@ -13,7 +13,6 @@ final class PR_Packager_HPUB_Package
     add_action( 'pr_packager_hpub_start', array( $this, 'hpub_start' ), 10, 2 );
     add_action( 'pr_packager_hpub', array( $this, 'hpub_run' ), 10, 4 );
     add_action( 'pr_packager_hpub_end', array( $this, 'hpub_end' ), 10, 2 );
-    add_action( 'pr_packager_parse_hpub', array( $this, 'hpub_post_parse' ), 10, 4 );
   }
 
   /**
@@ -55,39 +54,6 @@ final class PR_Packager_HPUB_Package
       do_action( 'pr_packager_run_hpub_' . $post->post_type, $post, $packager->edition_dir );
     }
 
-  }
-
-  public function hpub_post_parse( $packager, $linked_post, &$parsed_post, $editorial_project ) {
-
-    $page = PR_Theme::get_theme_page( $packager->edition_post->ID, $linked_post->p2p_id );
-		if ( !$page || !file_exists( $page )  ) {
-			return false;
-		}
-
-		ob_start();
-		$edition = $packager->edition_post;
-		$editorial_project_id = $editorial_project->term_id;
-		$pr_package_type = $packager->package_type;
-		$pr_theme_url = PR_THEME::get_theme_uri( $packager->edition_post->ID );
-
-    preg_match_all('/\[gallery.*ids=.(.*).\]/', $linked_post->post_content, $galleries_match);
-    $galleries = $galleries_match[1];
-    $galleries_string = $galleries_match[0];
-    foreach( $galleries as $k => $gallery ) {
-      $attachments_id = explode( ",", $gallery );
-      $attachment = get_post( $attachments_id[0] );
-      $img = '<img src="'.$attachment->guid.'" data-gallery="'.$k.'"';
-      $linked_post->post_content = str_replace( $galleries_string[$k], $img, $linked_post->post_content );
-    }
-
-		global $post;
-		$post = $linked_post;
-		setup_postdata($post);
-		$packager->add_functions_file();
-		require( $page );
-    $parsed_post = ob_get_contents();
-		wp_reset_postdata();
-		ob_end_clean();
   }
 
   /**

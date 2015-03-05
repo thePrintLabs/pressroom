@@ -231,6 +231,12 @@ function pr_get_sharing_url( $post_id ) {
   return pr_get_sharing_placeholder( $post_id );
 }
 
+/**
+ * Get galleries array from shortcode
+ *
+ * @param  int $post_id
+ * @return array
+ */
 function pr_get_galleries( $post_id ) {
 
   $post_content = get_post_field('post_content', $post_id);
@@ -252,7 +258,12 @@ function pr_get_galleries( $post_id ) {
 
   return $matches;
 }
-
+/**
+ * Get shortcode matches array return an elaborated array
+ *
+ * @param  array $matches
+ * @return array
+ */
 function pr_cycle_matches( $matches ) {
 
   $galleries = $matches[2];

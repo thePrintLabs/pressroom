@@ -63,8 +63,6 @@ final class PR_Packager_Book_JSON
       do_action_ref_array( 'pr_packager_generate_book', array( &$press_options, $post, $packager->edition_dir ) );
     }
 
-    var_dump($press_options['media_galleries']);
-
     if ( !empty( $press_options['contents'] ) ) {
       $press_options['contents'] = array_values( $press_options['contents'] );
     }

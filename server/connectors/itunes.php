@@ -6,7 +6,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
   const PRODUCTION_URL  = "https://buy.itunes.apple.com/verifyReceipt";
 
   public $app_id;
-  public $user_id;
+  public $device_id;
   public $base64_receipt;
   public $eproject;
   public $environment = 'production';
@@ -81,8 +81,8 @@ final class PR_Connector_iTunes extends PR_Server_API {
     global $wpdb;
 
     $sql = "SELECT receipt_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS . " ";
-    $sql.= "WHERE app_bundle_id = %s AND transaction_id = %s";
-    $receipt_id = $wpdb->get_var( $wpdb->prepare( $sql, $this->app_id, $transaction_id ) );
+    $sql.= "WHERE app_bundle_id = %s AND transaction_id = %s AND device_id = %s";
+    $receipt_id = $wpdb->get_var( $wpdb->prepare( $sql, $this->app_id, $transaction_id, $this->device_id ) );
 
     if ( !$receipt_id ) {
 
@@ -92,7 +92,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       $out = $wpdb->query( $wpdb->prepare(
         $sql,
         $this->app_id,
-        $this->user_id,
+        $this->device_id,
         $this->base64_receipt,
         $transaction_id,
         $receipt->product_id,
@@ -181,7 +181,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     $sql = "SELECT DISTINCT base64_receipt, transaction_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS;
     $sql.= " WHERE app_bundle_id = %s AND device_id = %s AND type = 'auto-renewable-subscription'";
     $sql.= " ORDER BY transaction_id DESC LIMIT 0, 1";
-    $data = $wpdb->get_row( $wpdb->prepare( $sql, $this->app_id, $this->user_id ) );
+    $data = $wpdb->get_row( $wpdb->prepare( $sql, $this->app_id, $this->device_id ) );
     return $data;
 
   }
@@ -198,7 +198,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     $sql = "SELECT DISTINCT product_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS ;
     $sql.= " WHERE app_bundle_id = %s AND device_id = %s AND type = 'issue'";
     $sql.= " ORDER BY transaction_id DESC";
-    $data = $wpdb->get_results( $wpdb->prepare( $sql, $this->app_id, $this->user_id ) );
+    $data = $wpdb->get_results( $wpdb->prepare( $sql, $this->app_id, $this->device_id ) );
     return $data;
   }
 
@@ -301,16 +301,16 @@ final class PR_Connector_iTunes extends PR_Server_API {
    *
    * @param  boolean $allow_download
    * @param  string $app_id
-   * @param  string $user_id
+   * @param  string $device_id
    * @param  string $environment
    * @param  object $edition
    * @param  object $eproject
    * @void
    */
-  public function validate_purchases_on_download( &$allow_download, $app_id, $user_id, $environment, $edition, $eproject ) {
+  public function validate_purchases_on_download( &$allow_download, $app_id, $device_id, $environment, $edition, $eproject ) {
 
     $this->app_id = $app_id;
-    $this->user_id = $user_id;
+    $this->device_id = $device_id;
     $this->environment = $environment;
     $this->eproject = $eproject;
 
@@ -349,7 +349,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     $product_id = isset( $_POST['product_id'] ) ? $_POST['product_id'] : false;
 
     $this->app_id = $wp->query_vars['app_id'];
-    $this->user_id = $wp->query_vars['user_id'];
+    $this->device_id = $wp->query_vars['user_id'];
     $this->environment = isset( $_POST['environment'] ) ? $_POST['environment'] : 'production';
 
     // @note: the replacement ' ' => '+' is used to support
@@ -362,19 +362,16 @@ final class PR_Connector_iTunes extends PR_Server_API {
     }
 
     $receipt = $receipt_data->receipt;
-    // if transaction id == original transaction id is a new purchase else it's a restore
+    // if transaction id == original transaction id is a new purchase
+    // else it's a restore
     if ( $receipt->transaction_id == $receipt->original_transaction_id ) {
       if ( $this->save_receipt( $receipt, $receipt->transaction_id, $purchase_type ) ) {
         PR_Stats::increment_counter( 'purchase_' . $purchase_type );
         $this->send_response( 200 );
       }
     }
-    else {
-
-      if ( $this->save_receipt( $receipt, $receipt->original_transaction_id, $purchase_type ) ) {
-        PR_Stats::increment_counter( 'purchase_' . $purchase_type );
-        $this->send_response( 200 );
-      }
+    elseif ( $this->save_receipt( $receipt, $receipt->original_transaction_id, $purchase_type ) ) {
+      $this->send_response( 200 );
     }
 
     $this->send_response( 500 );
@@ -398,7 +395,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
     }
 
     $this->app_id = $wp->query_vars['app_id'];
-    $this->user_id = $wp->query_vars['user_id'];
+    $this->device_id = $wp->query_vars['user_id'];
     $this->environment = isset( $_GET['environment'] ) ? $_GET['environment'] : 'production';
 
     $purchases = $this->get_purchases();

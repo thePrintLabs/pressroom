@@ -151,7 +151,7 @@ $( ".wp-list-table tbody" ).delegate( ".presslist-status", "click", function(e) 
 $( ".wp-list-table tbody" ).delegate(".presslist-template",'change', function(e) {
 
     el = jQuery(this);
-    index = el.find('option').data('index');
+    index = el.find('option:selected').data('index');
     template = el.val();
 
     var data = {
@@ -161,7 +161,7 @@ $( ".wp-list-table tbody" ).delegate(".presslist-template",'change', function(e)
     };
 
     jQuery.post(ajaxurl, data, function(response) {
-        console.log('ok');
+        $('#'+ index).removeAttr('style');
     });
 
 });

@@ -207,10 +207,11 @@ class Pressroom_List_Table extends WP_List_Table
         if ( $themes[$current_theme]['active'] ) {
           $html = '<select class="presslist-template">';
           $pages = $themes[$current_theme]['layouts'];
+          $html .= '<option data-index="' . $item->p2p_id . '"> --- </option>';
           foreach ( $pages as $page ) {
             if ( $page['rule'] == 'content' || $page['rule'] == 'cover' ) {
               $page_path = $themes[$current_theme]['path'] . DS . $page['path'];
-              $html.= '<option ' . ( $template == $page['path'] ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page_path . '" >' . $page['name'] . '</option>';
+              $html.= '<option ' . ( strpos( $template, $page['path'] ) ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page_path . '" >' . $page['name'] . '</option>';
             }
           }
           $html .= '</select>';
@@ -490,8 +491,13 @@ class Pressroom_List_Table extends WP_List_Table
 
 	public function ajax_register_template_callback() {
 
-      if ( p2p_update_meta( $_POST['id'], 'template', ( $_POST['template'] ? $_POST['template'] : '' ) ) ) {
-         echo 'updated';
+      if ( isset( $_POST['template'] ) ) {
+        if ( p2p_update_meta( $_POST['id'], 'template', ( $_POST['template'] ? $_POST['template'] : '' ) ) ) {
+           echo 'updated';
+        }
+      }
+      else {
+        p2p_update_meta( $_POST['id'], 'template', null );
       }
 		exit;
    }

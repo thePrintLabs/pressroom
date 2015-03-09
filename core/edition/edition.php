@@ -337,7 +337,7 @@ class PR_Edition
 	}
 
 	/**
-	 * Assign the first template to post if empty
+	 * Sanitize posts order array
 	 *
 	 * @param  object $edition
 	 * @void
@@ -355,19 +355,51 @@ class PR_Edition
 
 			p2p_update_meta( $post->p2p_id, 'order', $current_order);
 
+			// @TODO Remove ( automatic template/post association )
+			// $template = p2p_get_meta( $post->p2p_id, 'template', true );
+			//
+			// if( !$template || !file_exists( PR_THEMES_PATH . $template ) ) {
+			//
+			// 	$current_theme = get_post_meta( $edition->ID, '_pr_theme_select', true );
+			//
+			// 	if ( $current_theme ) {
+			// 		$themes = PR_Theme::get_themes();
+			// 		$default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
+			// 		p2p_update_meta( $post->p2p_id, 'template', $default_template);
+			// 	}
+			// }
+		}
+	}
+
+	/**
+	 * Check if all posts have a template association
+	 *
+	 * @param  object $edition
+	 * @return array $out or boolean
+	 */
+	public function check_posts_templates( $edition ) {
+
+		$linked_posts = self::get_linked_posts( $edition );
+
+		$out = array();
+		foreach ( $linked_posts->posts as $i => $post ) {
+
+			if( has_action( "pr_presslist_{$post->post_type}" ) ) {
+				continue;
+			}
+
 			$template = p2p_get_meta( $post->p2p_id, 'template', true );
 
 			if( !$template || !file_exists( PR_THEMES_PATH . $template ) ) {
-
-				$current_theme = get_post_meta( $edition->ID, '_pr_theme_select', true );
-
-				if ( $current_theme ) {
-					$themes = PR_Theme::get_themes();
-					$default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
-					p2p_update_meta( $post->p2p_id, 'template', $default_template);
-				}
+				array_push( $out, $post->p2p_id );
 			}
 		}
+
+		if( !empty( $out ) ) {
+			return $out;
+		}
+
+		return true;
 	}
 
 	/**
@@ -427,6 +459,14 @@ class PR_Edition
 				$metabox->save_values();
 			}
 		}
+
+		$missing_templates = $this->check_posts_templates( $post );
+
+		if ( is_array( $missing_templates ) ) {
+			wp_send_json_error( array( 'missing'=> $missing_templates ) );
+		}
+
+		$this->sanitize_linked_posts( $post );
 
 		// saving packager type
 		$pr_packager_type = isset( $_POST['pr_packager_type'] ) ? $_POST['pr_packager_type'] : false;

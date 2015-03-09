@@ -63,6 +63,9 @@ class TPL_Pressroom
 		$this->_create_edition();
 		$this->_create_preview();
 
+		if( !$this->_check_permalink_structure() ) {
+			add_action( 'admin_notices', array( $this, 'permalink_notice' ) );
+		}
 
 		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
@@ -309,6 +312,38 @@ class TPL_Pressroom
 
 		return in_array( $pagenow, array( 'post.php' ) );
 	}
+
+	/**
+	* Render admin notice for permalink
+	*
+	* @void
+	*/
+	public function permalink_notice() {
+
+		$setting_page_url = admin_url() . 'options-permalink.php';
+		echo '
+		<div class="error pr-alert">
+			<p>' . __( sprintf( 'Pressroom: PressRoom require <i>Post Name</i> format for permalink. You can set it in <a href="%s">setting page</a>', $setting_page_url ), 'pressroom' ). '</p>
+		</div>';
+	}
+
+	/**
+	 * Check if permalink structure is set to Post Name
+	 * ( required for Editorial Project endpoint )
+	 *
+	 * @return boolean
+	 */
+	protected function _check_permalink_structure() {
+
+		$structure = get_option('permalink_structure');
+
+		if( $structure != "/%postname%/" ) {
+			return false;
+		}
+
+		return true;
+	}
+
 
 	/**
 	 * Load plugin configuration settings

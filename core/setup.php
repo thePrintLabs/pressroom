@@ -64,7 +64,6 @@ class PR_Setup
 
       global $wpdb;
       $table_receipts = $wpdb->prefix . PR_TABLE_RECEIPTS;
-      $table_receipt_transactions = $wpdb->prefix . PR_TABLE_RECEIPT_TRANSACTIONS;
       $table_purchased_issues = $wpdb->prefix . PR_TABLE_PURCHASED_ISSUES;
       $table_auth_tokens = $wpdb->prefix . PR_TABLE_AUTH_TOKENS;
       $table_stats = $wpdb->prefix . PR_TABLE_STATS;
@@ -84,17 +83,10 @@ class PR_Setup
       device_id VARCHAR(256),
       transaction_id VARCHAR(32),
       base64_receipt TEXT CHARACTER SET ascii COLLATE ascii_bin,
-      PRIMARY KEY (receipt_id),
-      INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
-      ) $charset_collate; ";
-
-      $sql_receipt_transactions = "CREATE TABLE IF NOT EXISTS $table_receipt_transactions (
-      transaction_id VARCHAR(32),
-      receipt_id bigint(20) UNSIGNED NOT NULL,
       product_id VARCHAR(256),
       type VARCHAR(32),
-      PRIMARY KEY(transaction_id),
-      INDEX receipt USING BTREE (receipt_id) COMMENT ''
+      PRIMARY KEY (receipt_id),
+      INDEX app_and_user USING BTREE (app_bundle_id, device_id) COMMENT ''
       ) $charset_collate; ";
 
       $sql_purchased_issues = "CREATE TABLE IF NOT EXISTS $table_purchased_issues (
@@ -123,13 +115,11 @@ class PR_Setup
 
       require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
       dbDelta( $sql_receipts );
-      dbDelta( $sql_receipt_transactions );
       dbDelta( $sql_purchased_issues );
       dbDelta( $sql_auth_tokens );
       dbDelta( $sql_stats );
 
       return ( $wpdb->get_var("SHOW TABLES LIKE '$table_receipts'") == $table_receipts
-      && $wpdb->get_var("SHOW TABLES LIKE '$table_receipt_transactions'") == $table_receipt_transactions
       && $wpdb->get_var("SHOW TABLES LIKE '$table_purchased_issues'") == $table_purchased_issues
       && $wpdb->get_var("SHOW TABLES LIKE '$table_auth_tokens'") == $table_auth_tokens
       && $wpdb->get_var("SHOW TABLES LIKE '$table_stats'") == $table_stats );

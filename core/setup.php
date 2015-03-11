@@ -23,6 +23,9 @@ class PR_Setup
       if ( !self::_setup_filesystem() ) {
         array_push( $errors, __( "Error creating required directory: <b>&quot;" . PR_PLUGIN_PATH . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
       }
+      if ( !self::_setup_starterr_theme() ) {
+        array_push( $errors, __( "Error creating starterr theme in directory: <b>&quot;" . PR_PLUGIN_PATH . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
+      }
       if ( !empty( $errors ) ) {
         return $errors;
       }
@@ -103,5 +106,40 @@ class PR_Setup
         }
       }
       return false;
+    }
+
+    /**
+     * Unzip starterr theme to Pressroom upload is_dir
+     *
+     * @return boolean
+     */
+    private static function _setup_starterr_theme() {
+
+      $file_path = PR_PLUGIN_PATH . PR_STARTERR_ZIP;
+
+      if ( file_exists( $file_path ) ) {
+        $zip = new ZipArchive;
+        if ( $zip->open( $file_path ) ) {
+
+          // if a starterr theme exist yet, NOT override
+          if( is_dir( PR_THEMES_PATH . PR_STARTERR_THEME ) ) {
+            unlink( $file_path );
+            return true;
+          }
+
+          //extract and delete the zip file
+          if ( $zip->extractTo( PR_THEMES_PATH ) ) {
+            delete_option( 'pressroom_themes' );
+            unlink( $file_path );
+            return true;
+          }
+          else {
+            return false;
+          }
+          $zip->close();
+        }
+      }
+
+      return true;
     }
   }

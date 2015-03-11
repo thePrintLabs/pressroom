@@ -43,8 +43,10 @@ define( "PR_WEB_URI", PR_UPLOAD_URI . 'web/' );
 define( "PR_SHELF_URI", PR_UPLOAD_URI . 'shelf/' );
 
 /* THEMES*/
-define( "PR_THEMES_PATH", PR_PLUGIN_PATH . 'themes/' );
-define( "PR_THEME_URI", PR_PLUGIN_URI . 'themes/' );
+define( "PR_THEMES_PATH", PR_UPLOAD_PATH . 'themes/' );
+define( "PR_THEME_URI", PR_UPLOAD_URI . 'themes/' );
+define( "PR_STARTERR_THEME", 'starterr' );
+define( "PR_STARTERR_ZIP", 'starterr.zip' );
 
 define( "PR_API_URL", 'http://account.press-room.io/' );
 /* Packager */

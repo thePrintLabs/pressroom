@@ -1,6 +1,6 @@
 <?php
 define( "PR_VERSION", "1.1" );
-define( "PR_PRODUCT_NAME", "PressRoom PRO" );
+define( "PR_PRODUCT_NAME", "PressRoom PRO monthly license" );
 
 define( "DS", DIRECTORY_SEPARATOR );
 define( "PR_PLUGIN_PATH", realpath( __DIR__ . '/../' ) . '/' );

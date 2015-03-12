@@ -48,7 +48,7 @@ define( "PR_THEME_URI", PR_UPLOAD_URI . 'themes/' );
 define( "PR_STARTERR_THEME", 'starterr' );
 define( "PR_STARTERR_ZIP", 'starterr.zip' );
 
-define( "PR_API_URL", 'http://account.press-room.io/' );
+define( "PR_API_URL", 'http://press-room.io/' );
 /* Packager */
 define( "PR_EDITION_MEDIA", 'gfx/' );
 

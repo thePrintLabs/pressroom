@@ -28,7 +28,6 @@ final class PR_Packager_Book_JSON
     '_pr_author'                      => 'author',
     '_pr_creator'                     => 'creator',
     '_pr_cover'                       => 'cover',
-    '_pr_newsstand_issue_cover'       => 'newsstand_issue_cover',
     '_pr_package_date'                => 'date',
     '_pr_package_updated_date'        => 'updated_date',
     'post_title'                      => 'title',
@@ -155,7 +154,6 @@ final class PR_Packager_Book_JSON
               break;
             case '_pr_background_image_portrait':
             case '_pr_background_image_landscape':
-            case '_pr_newsstand_issue_cover':
               $media = get_attached_file( $option );
               if ( $media ) {
                 $media_info = pathinfo( $media );

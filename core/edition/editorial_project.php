@@ -519,7 +519,7 @@ class PR_Editorial_Project
   /**
    * Get latest published edition
    * linked to an editiorial project
-   * @param  object $eproject
+   * @param  object/string $eproject
    * @return array
    */
   public static function get_latest_edition( $eproject ) {
@@ -536,7 +536,7 @@ class PR_Editorial_Project
         array(
           'taxonomy'  => PR_EDITORIAL_PROJECT,
           'field'     => 'slug',
-          'terms'     => $eproject->slug
+          'terms'     => is_string( $eproject ) ? $eproject : $eproject->slug
         )
       ),
     ));

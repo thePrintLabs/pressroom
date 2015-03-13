@@ -104,7 +104,7 @@ class PR_Edition
 		$e_meta->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
 		$e_meta->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
 		$e_meta->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
-		$e_meta->add_field( '_pr_newsstand_issue_cover', __( 'Image for itunes newstand cover', 'edition' ), __( 'This icon must be at least 1024px on the long side.', 'edition' ), 'file', '' );
+		$e_meta->add_field( '_pr_newsstand_issue_cover', __( ' iTunes Newsstand cover', 'edition' ), __( 'Cover art image should be .png file and have an aspect ratio between 1:2 and 2:1.<br/>This icon must be at least 1024px on the long side.', 'edition' ), 'file', '' );
 		$e_meta->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
 		$e_meta->add_field( '_pr_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
 			'options' => array(

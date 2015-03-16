@@ -9,6 +9,7 @@ class PR_Server
     require_once( PR_SERVER_PATH . 'shelf.php' );
     require_once( PR_SERVER_PATH . 'issue.php' );
     require_once( PR_SERVER_PATH . 'push.php' );
+    require_once( PR_SERVER_PATH . 'feed.php' );
     $this->_load_connectors();
   }
 

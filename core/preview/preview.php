@@ -225,7 +225,7 @@ class PR_Preview {
 
               if ( $post->ID == $post_id ) {
                 $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
-                $html = str_replace( $url, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition->ID . '#toc-' . $post_id, $html );
+                $html = str_replace( $url, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition->ID . '&pr_no_theme=true#toc-' . $post_id, $html );
                 $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
               }
             }
@@ -252,7 +252,7 @@ class PR_Preview {
         $post_id = url_to_postid( $link );
 
         if ( $post_id ) {
-          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '&package_type='. self::$package_type .'#toc-' . $post_id, $html );
+          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '&pr_no_theme=true&package_type='. self::$package_type .'#toc-' . $post_id, $html );
           $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
         }
       }

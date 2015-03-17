@@ -10,13 +10,16 @@ Text Domain: posts-to-posts
 Domain Path: /lang
 */
 
-define( 'P2P_PLUGIN_VERSION', '1.6.3' );
-
-define( 'P2P_TEXTDOMAIN', 'posts-to-posts' );
+if ( !defined( 'P2P_PLUGIN_VERSION' ) ) {
+	define( 'P2P_PLUGIN_VERSION', '1.6.3' );
+}
+if ( !defined( 'P2P_TEXTDOMAIN' ) ) {
+	define( 'P2P_TEXTDOMAIN', 'posts-to-posts' );
+}
 
 require_once dirname( __FILE__ ) . '/scb/load.php';
 
-function _p2p_load() {
+function _pr_p2p_load() {
 	load_plugin_textdomain( P2P_TEXTDOMAIN, '', basename( dirname( __FILE__ ) ) . '/lang' );
 
 	// Prevent activation issues if a bundled version of P2P core is already loaded.
@@ -29,11 +32,11 @@ function _p2p_load() {
 	register_uninstall_hook( __FILE__, array( 'P2P_Storage', 'uninstall' ) );
 
 	if ( is_admin() )
-		_p2p_load_admin();
+		_pr_p2p_load_admin();
 }
-scb_init( '_p2p_load' );
+scb_init( '_pr_p2p_load' );
 
-function _p2p_load_admin() {
+function _pr_p2p_load_admin() {
 	P2P_Autoload::register( 'P2P_', dirname( __FILE__ ) . '/admin' );
 
 	new P2P_Box_Factory;
@@ -43,8 +46,8 @@ function _p2p_load_admin() {
 	new P2P_Tools_Page;
 }
 
-function _p2p_init() {
+function _pr_p2p_init() {
 	// Safe hook for calling p2p_register_connection_type()
 	do_action( 'p2p_init' );
 }
-add_action( 'wp_loaded', '_p2p_init' );
+add_action( 'wp_loaded', '_pr_p2p_init' );

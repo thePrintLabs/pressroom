@@ -183,6 +183,12 @@ if ( !class_exists('PR_EDD_License') ) {
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
           exit;
         }
+        else if( $license_data->license == 'failed' ) {
+          $settings['pr_license_key'] = '';
+          delete_option( 'pr_valid_license' );
+          update_option( 'pr_settings', $settings );
+          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
+        }
   		}
 	  }
 

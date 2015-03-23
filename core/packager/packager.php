@@ -141,7 +141,6 @@ class PR_Packager
 	public function set_progress( $percentage, $text = '' ) {
 
 		$this->pb->setProgressBarProgress( $percentage, $text );
-		usleep(1000000*0.1);
 	}
 
 	/**

@@ -19,6 +19,7 @@ class ProgressBar {
   public function render() {
     echo $this->_getContent();
     $this->_flush();
+    sleep(1);
   }
 
   public function setProgressBarProgress( $percentDone, $text = '' ) {
@@ -163,6 +164,7 @@ class ProgressBar {
     echo str_pad('', intval(ini_get('output_buffering')))."\n";
     //ob_end_flush();
     flush();
+    usleep(1000000*0.1);
   }
 
 }

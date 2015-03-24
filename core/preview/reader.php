@@ -1,17 +1,6 @@
 <?php
 const CONCURRENT_PAGES = 3;
 
-$wp_load_path = file_get_contents( '.pr_path' );
-if ( !$wp_load_path ) {
-  die( 'wp-load.php path not found in .pr_path. Please define it manually' );
-}
-
-if ( !defined( 'WP_ADMIN' ) ) {
-  define( 'WP_ADMIN', true );
-}
-
-require_once( $wp_load_path );
-
 if ( !is_admin() || !is_user_logged_in() ) {
   wp_redirect( home_url('/login') );
 }
@@ -71,9 +60,9 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
   wp_head();
   ?>
 
-  <link rel="stylesheet" href="../../assets/css/preview/preview.ish.min.css">
-  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/preview.min.css" />
-  <link rel="stylesheet" type="text/css" href="../../assets/css/preview/idangerous.swiper.min.css" />
+  <link rel="stylesheet" href=<?php echo PR_ASSETS_URI ."/css/preview/preview.ish.min.css" ?>>
+  <link rel="stylesheet" type="text/css" href=<?php echo PR_ASSETS_URI ."/css/preview/preview.min.css" ?> />
+  <link rel="stylesheet" type="text/css" href=<?php echo PR_ASSETS_URI . "/css/preview/idangerous.swiper.min.css" ?> />
 </head>
 <body>
 <header class="sg-header" role="banner">
@@ -183,11 +172,10 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
   </div>
 </div>
 <script> $ = jQuery;</script>
-
-<script src="../../assets/js/preview/idangerous.swiper.min.js"></script>
-<script src="../../assets/js/preview/idangerous.swiper.hashnav.min.js"></script>
-<script src="../../assets/js/preview/pr.reader.min.js"></script>
-<script src="../../assets/js/preview/pr.toc.js"></script>
-<script src="../../assets/js/preview/pr.reader.ish.min.js"></script>
+<script src=<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.min.js"?>></script>
+<script src=<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.hashnav.min.js"?>></script>
+<script src=<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.min.js"?>></script>
+<script src=<?php echo PR_ASSETS_URI . "/js/preview/pr.toc.js"?>></script>
+<script src=<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.ish.min.js"?>></script>
 </body>
 </html>

@@ -153,34 +153,7 @@ class PR_Setup
       $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'shelf' );
       $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'themes' );
 
-      if ( false !== ( $wp_load_path = self::_search_wp_load() ) ) {
-        file_put_contents( PR_CORE_PATH . 'preview' . DS . '.pr_path', $wp_load_path );
-      }
-
       return !$api_dir && !$upload_dir ? false : true;
-    }
-
-    /**
-    * Search wp-load file in wordpress directory
-    * @return string or boolean false
-    */
-    private static function _search_wp_load() {
-
-      $home_path = ABSPATH;
-      // Check in standard WordPress position
-      if ( file_exists( $home_path . 'wp-load.php' ) ) {
-        return $home_path . 'wp-load.php';
-      }
-      else {
-        $dir = new RecursiveDirectoryIterator( $home_path );
-        $it = new RecursiveIteratorIterator( $dir );
-        $regex = new RegexIterator( $it, '/wp-load.php$/i', RecursiveRegexIterator::GET_MATCH );
-        $files = iterator_to_array( $regex );
-        if ( !empty( $files ) ) {
-          return key( $files );
-        }
-      }
-      return false;
     }
 
     /**

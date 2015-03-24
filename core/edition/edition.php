@@ -34,6 +34,7 @@ class PR_Edition
 
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
 		add_action( 'wp_ajax_render_console', array( $this, 'publishing_render_console' ) );
+		add_action( 'wp_ajax_pr_preview', array( $this, 'pr_preview' ) );
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
 
@@ -438,6 +439,16 @@ class PR_Edition
 		echo '</div>
 		</div>';
 		exit;
+	}
+
+	/**
+	* Get reader for preview
+	*
+	* @void
+	*/
+	public function pr_preview() {
+
+		require PR_CORE_PATH . "preview" . DS . "reader.php";
 	}
 
 	/**

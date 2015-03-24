@@ -225,7 +225,7 @@ class PR_Preview {
 
               if ( $post->ID == $post_id ) {
                 $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
-                $html = str_replace( $url, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition->ID . '&pr_no_theme=true#toc-' . $post_id, $html );
+                $html = str_replace( $link, admin_url() . 'admin-ajax.php?action=pr_preview&edition_id='.$edition->ID.'&pr_no_theme=true&package_type='.$_GET['package_type'].'#toc-' . $post_id, $html );
                 $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
               }
             }
@@ -252,7 +252,7 @@ class PR_Preview {
         $post_id = url_to_postid( $link );
 
         if ( $post_id ) {
-          $html = str_replace( $link, PR_CORE_URI . 'preview/reader.php?edition_id=' . $edition_id . '&pr_no_theme=true&package_type='. self::$package_type .'#toc-' . $post_id, $html );
+          $html = str_replace( $link, admin_url() . 'admin-ajax.php?action=pr_preview&edition_id='.$edition_id.'&pr_no_theme=true&package_type='.$_GET['package_type'].'#toc-' . $post_id, $html );
           $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
         }
       }
@@ -303,7 +303,7 @@ class PR_Preview {
     var e = document.getElementById("pr_prw_edition_id"),
     edition = e.options[e.selectedIndex].value,
     post = ' . $post->ID . ';
-    window.open("' . PR_CORE_URI . 'preview/reader.php?edition_id=" + edition + "&post_id=" + post + "&package_type="+ package_type.options[package_type.selectedIndex].value, "_blank").focus();return false;};
+    window.open("' . admin_url() . '/admin-ajax.php?action=pr_preview&pr_no_theme=true&edition_id=" + edition + "&post_id=" + post + "&package_type="+ package_type.options[package_type.selectedIndex].value, "_blank").focus();return false;};
     }, false);
     </script>';
   }

@@ -1,5 +1,5 @@
 <?php
-define( "PR_VERSION", "1.1" );
+define( "PR_VERSION", "1.0.1" );
 define( "PR_PRODUCT_NAME", "PressRoom PRO monthly license" );
 
 define( "DS", DIRECTORY_SEPARATOR );

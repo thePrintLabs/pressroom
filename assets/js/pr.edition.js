@@ -16,7 +16,8 @@
     var edition_id = $('#post_ID').val();
     var packager_type = $("#pr_packager_type option:selected").val();
     var pr_core_uri = $('#pr_core_uri').val();
-    var url = pr_core_uri + 'preview/reader.php?edition_id=' + edition_id + '&pr_no_theme=true'+'&package_type='+packager_type;
+    //var url = pr_core_uri + 'preview/reader.php?edition_id=' + edition_id + '&pr_no_theme=true'+'&package_type='+packager_type;
+    var url = ajaxurl + '?action=pr_preview&edition_id=' + edition_id + '&pr_no_theme=true'+'&package_type='+packager_type;
 
     validateTemplates(url, edition_id);
   });

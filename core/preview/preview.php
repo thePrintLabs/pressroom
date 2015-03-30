@@ -225,7 +225,7 @@ class PR_Preview {
 
               if ( $post->ID == $post_id ) {
                 $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
-                $html = str_replace( $link, admin_url() . 'admin-ajax.php?action=pr_preview&edition_id='.$edition->ID.'&pr_no_theme=true&package_type='.$_GET['package_type'].'#toc-' . $post_id, $html );
+                $html = str_replace( $url, admin_url() . 'admin-ajax.php?action=pr_preview&edition_id='.$edition->ID.'&pr_no_theme=true&package_type='.$_GET['package_type'].'#toc-' . $post_id, $html );
                 $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
               }
             }

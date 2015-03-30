@@ -299,7 +299,7 @@ final class PR_Packager_Web_Package
         $package_name = PR_Utils::sanitize_string ( $editorial_project->slug ) . '_' . $packager->edition_post->ID;
         $destination = isset( $this->pstgs['_pr_local_path'] ) ? $this->pstgs['_pr_local_path']  : PR_WEB_PATH ;
         if( file_exists( $destination ) ) {
-          PR_Utils::recursive_copy( $this->root_folder, $destination . DS . $package_name );
+          PR_Utils::recursive_copy( $this->root_folder, $destination );
         }
         else {
           PR_Packager::print_line( sprintf( __( 'Local path <i>%s</i> does not exist. Can\'t create package.', 'web_package' ), $destination ), 'error' );

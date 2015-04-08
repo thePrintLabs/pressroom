@@ -43,10 +43,6 @@ final class PR_Packager_Web_Package
       '_pr_index_height'
     );
 
-    if( !$settings ) {
-      return false;
-    }
-
     // check whether using edition settings or editorial project settings
     $override = get_post_meta( $edition_id, '_pr_web_override_eproject', true );
 
@@ -356,13 +352,13 @@ final class PR_Packager_Web_Package
   }
 
   /**
-  * Get all url from the html string and replace with internal url of the package
-  *
-  * @param  object $packager
-  * @param  string $html
-  * @param  string $extension extension file output
-  * @return string or false
-  */
+   * Get all url from the html string and replace with internal url of the package
+   *
+   * @param  object $packager
+   * @param  string $html
+   * @param  string $extension extension file output
+   * @return string or false
+   */
   public static function rewrite_url( $packager, &$html, $extension = 'html' ) {
 
     if ( $html ) {

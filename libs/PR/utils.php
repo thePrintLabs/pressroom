@@ -128,15 +128,16 @@ class PR_Utils
 	 *
 	 * @param  string $basepath - parent folder
 	 * @param  string $dir - new directory
+	 * @param string $sanitize
 	 * @return string or false - new directory path
 	 */
-	public static function make_dir( $basepath, $dir ) {
+	public static function make_dir( $basepath, $dir, $sanitize = true ) {
 
 		if ( substr( $basepath, -1 ) === DS ) {
 			$basepath = substr( $basepath, 0, -1 );
 		}
 
-		$path = $basepath . DS . PR_Utils::sanitize_string( $dir );
+		$path = $basepath . DS . ( $sanitize ? PR_Utils::sanitize_string( $dir ) : $dir );
 		if ( is_dir( $path ) ) {
 			return $path;
 		}

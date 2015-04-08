@@ -50,7 +50,7 @@ class PR_Packager
 
 		if ( !PR_EDD_License::check_license() ) {
 			self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
-			exit;
+			//exit;
 		}
 
 		if ( is_null( $this->edition_post ) ) {
@@ -299,7 +299,7 @@ class PR_Packager
 	* @param  string $ext  = 'html' extension file output
 	* @return string or false
 	*/
-	public function rewrite_url( $html, $extension = 'html' ) {
+	public function rewrite_url( $html, $extension = 'html', $media_folder = PR_EDITION_MEDIA ) {
 
 		if ( $html ) {
 
@@ -328,7 +328,7 @@ class PR_Packager
 						if ( $attachment_id ) {
 							$info = pathinfo( $url );
 							$filename = $info['basename'];
-							$post_rewrite_urls[$url] = PR_EDITION_MEDIA . $filename;
+							$post_rewrite_urls[$url] = $media_folder . $filename;
 
 							// Add attachments that will be downloaded
 							$this->_posts_attachments[$filename] = $url;

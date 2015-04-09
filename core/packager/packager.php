@@ -5,6 +5,8 @@
  *
  */
 
+define( "PR_THEME_ASSETS_DIR", 'assets' );
+
 require_once( PR_PACKAGER_PATH . '/progressbar.php' );
 
 class PR_Packager
@@ -92,7 +94,7 @@ class PR_Packager
 		$this->set_progress( 30, __( 'Downloading assets', 'edition' ) );
 
 		// Download all assets
-		$downloaded_assets = $this->_download_assets( $theme_dir . 'assets' );
+		$downloaded_assets = $this->_download_assets( $theme_dir . PR_THEME_ASSETS_DIR );
 		if ( !$downloaded_assets ) {
 			$this->exit_on_error();
 			return;
@@ -272,7 +274,6 @@ class PR_Packager
 		// Rewrite toc url
 		if ( has_action( "pr_{$this->package_type}_toc_rewrite_url" ) ) {
 			do_action_ref_array( "pr_{$this->package_type}_toc_rewrite_url", array( $this, &$html ) );
-
 		}
 		else {
 			$html = $this->rewrite_url( $html );
@@ -302,18 +303,14 @@ class PR_Packager
 	public function rewrite_url( $html, $extension = 'html', $media_folder = PR_EDITION_MEDIA ) {
 
 		if ( $html ) {
-
 			$post_rewrite_urls = array();
 			$external_urls = array();
 			$urls = PR_Utils::extract_urls( $html );
 			foreach ( $urls as $url ) {
-
 				if ( strpos( $url, site_url() ) !== false || strpos( $url, home_url() ) !== false ) {
 					$post_id = url_to_postid( $url );
 					if ( $post_id ) {
-
 						foreach( $this->linked_query->posts as $post ) {
-
 							if ( $post->ID == $post_id ) {
 								$path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
 								$post_rewrite_urls[$url] = $path;
@@ -329,7 +326,6 @@ class PR_Packager
 							$info = pathinfo( $url );
 							$filename = $info['basename'];
 							$post_rewrite_urls[$url] = $media_folder . $filename;
-
 							// Add attachments that will be downloaded
 							$this->_posts_attachments[$filename] = $url;
 						}
@@ -413,16 +409,16 @@ class PR_Packager
 	}
 
 	/**
-	* Download assets into package folder
-	*
-	* @param  stirng $theme_assets_dir
-	* @return boolean
-	*/
+	 * Download assets into package folder
+	 *
+	 * @param  stirng $theme_assets_dir
+	 * @return boolean
+	 */
 	protected function _download_assets( $theme_assets_dir ) {
 
-		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, 'assets' );
+		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, PR_THEME_ASSETS_DIR );
 		if ( !$edition_assets_dir ) {
-			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . 'assets' ), 'error');
+			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . PR_THEME_ASSETS_DIR ), 'error');
 			return false;
 		}
 

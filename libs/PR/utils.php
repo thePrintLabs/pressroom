@@ -363,4 +363,16 @@ class PR_Utils
 		}
 		return $range;
 	}
+
+	/**
+	 * Trim text
+	 * @param string $string
+	 * @param int $length
+	 * @return string
+	 */
+	public static function trim_str( $text, $length ) {
+		$str = substr( $text, 0, $length );
+		$str = trim( preg_replace( '/\s+/', ' ', $str ) );
+		return $str;
+	}
 }

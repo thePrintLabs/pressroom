@@ -24,6 +24,8 @@ class PR_ADBundle
 		// Packager hooks
 		add_action( 'pr_packager_run_hpub_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_web_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_run_adps_pr_ad_bundle', array( $this, 'adb_adps_packager_run' ), 10, 2 );
+
 		add_action( 'pr_packager_shortcode_web_pr_ad_bundle', array( $this, 'adb_web_shortcode' ), 10, 2 );
 		add_action( 'pr_packager_generate_book', array( $this, 'adb_packager_book' ), 10, 3 );
 		add_action( 'pr_packager_parse_pr_ad_bundle', array( $this, 'adb_packager_post_parse' ), 10, 2 );
@@ -173,14 +175,14 @@ class PR_ADBundle
 	}
 
 	/**
-	* Add Ad-bundle support to packager
-	* This function is called by a custom hook
-	* from the packager class
-	*
-	* @param  object $post
-	* @param  string $edition_dir
-	* @void
-	*/
+	 * Add Ad-bundle support to packager
+	 * This function is called by a custom hook
+	 * from the packager class
+	 *
+	 * @param  object $post
+	 * @param  string $edition_dir
+	 * @void
+	 */
 	public function adb_packager_run( $post, $edition_dir ) {
 
 		$attachment = self::get_adb_attachment( $post->ID );
@@ -199,6 +201,36 @@ class PR_ADBundle
 				}
 				$zip->close();
 
+			}
+			else {
+				PR_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $adb_attached_file, 'error' );
+			}
+		}
+	}
+
+	/**
+	 * Add Ad-bundle support to Adobe DPS packager
+	 * This function is called by a custom hook
+	 * from the packager class
+	 *
+	 * @param  object $post
+	 * @param  string $edition_dir
+	 * @void
+	 */
+	public function adb_adps_packager_run( $post, $edition_dir ) {
+
+		$attachment = self::get_adb_attachment( $post->ID );
+		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
+			$zip = new ZipArchive;
+			$adb_attached_file = get_attached_file( $attachment->ID );
+			if ( $zip->open( $adb_attached_file ) ) {
+				$adb_title = PR_Utils::sanitize_string( $post->post_title );
+				if ( $zip->extractTo( $edition_dir ) ) {
+					PR_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $adb_attached_file, 'success' );
+				} else {
+					PR_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $adb_attached_file, 'error' );
+				}
+				$zip->close();
 			}
 			else {
 				PR_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $adb_attached_file, 'error' );

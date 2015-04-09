@@ -1,35 +1,38 @@
 <?php
 /**
-* PressRoom packager: Adobe DPS package
-*/
+ * PressRoom packager: Adobe DPS package
+ */
 
-define( "PR_ADPS_PATH", PR_UPLOAD_PATH . 'adps/' );
-define( "PR_ADPS_MEDIA", 'Links/' );
-define( "PR_ADPS_ASSETS", 'assets/' );
+define( "PR_DPS_PATH", PR_UPLOAD_PATH . 'adps/' );
+define( "PR_DPS_MEDIA_DIR", 'Links/' );
+define( "PR_DPS_SHARED_ASSETS", "shared" );
+define( "PR_DPS_RESOURCES_FILENAME", "HTMLResources.zip" );
+define( "PR_DPS_SIDECAR_FILENAME", "sidecar.xml" );
 
 final class PR_Packager_ADPS_Package
 {
-  private $_sidecar_xml;
+  private $_xmlwriter;
   private $_folio_dir;
 
-  private $_settings = array(
-    '_pr_adps_import_from_sidecar',
+  private $_settings = [
+    '_pr_adps_download_path',
     '_pr_adps_is_flattened_stack',
     '_pr_adps_is_trusted_content',
     '_pr_adps_smooth_scrolling',
     '_pr_adps_article_access'
-  );
+  ];
 
   public function __construct() {
 
     add_action( 'pr_add_eproject_tab', [ $this, 'pr_add_option' ], 10, 2 );
     add_action( 'pr_add_edition_tab', [ $this, 'pr_add_option' ], 10, 3 );
+    add_action( 'wp_ajax_pr_dps_download_folio', array( $this, 'pr_download_folio' ), 10 );
 
     add_action( 'pr_packager_adps_start', [ $this, 'adps_start' ], 10, 2 );
     add_action( 'pr_packager_adps', [ $this, 'adps_run' ], 10, 4 );
     add_action( 'pr_packager_adps_end', [ $this, 'adps_end' ], 10, 2 );
 
-    if ( !file_exists( PR_ADPS_PATH ) ) {
+    if ( !file_exists( PR_DPS_PATH ) ) {
       PR_Utils::make_dir( PR_UPLOAD_PATH, 'adps' );
     }
   }
@@ -44,20 +47,23 @@ final class PR_Packager_ADPS_Package
    */
   public function adps_start( $packager, $editorial_project ) {
 
+    // Load all settings
     $this->_load_settings( $packager->edition_post->ID, $editorial_project->term_id );
 
-    $this->_folio_dir = PR_Utils::make_dir( PR_ADPS_PATH, $editorial_project->slug . '_' . $packager->edition_post->ID );
+    // Create folio directory
+    $this->_folio_dir = PR_Utils::make_dir( PR_DPS_PATH, $editorial_project->slug . '_' . $packager->edition_post->ID );
     if ( !$this->_folio_dir ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to create folder: %s', 'packager' ), PR_ADPS_PATH . $this->_folio_dir ), 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder: %s', 'packager' ), PR_DPS_PATH . $this->_folio_dir ), 'error' );
       $packager->exit_on_error();
       return;
     }
 
-    $this->_sidecar_xml = new XMLWriter();
-    $this->_sidecar_xml->openURI( $this->_folio_dir . DS . 'sidecar.xml' );
-    $this->_sidecar_xml->startDocument( '1.0', 'UTF-8', 'yes' );
-    $this->_sidecar_xml->setIndent(4);
-    $this->_sidecar_xml->startElement( 'sidecar' );
+    // Initialize xml document
+    $this->_xmlwriter = new XMLWriter();
+    $this->_xmlwriter->openURI( $this->_folio_dir . DS . PR_DPS_SIDECAR_FILENAME );
+    $this->_xmlwriter->startDocument( '1.0', 'UTF-8', 'yes' );
+    $this->_xmlwriter->setIndent(4);
+    $this->_xmlwriter->startElement( 'sidecar' );
   }
 
   /**
@@ -72,47 +78,29 @@ final class PR_Packager_ADPS_Package
    */
   public function adps_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
-    $article_dir = PR_Utils::make_dir( $this->_folio_dir, PR_Utils::sanitize_string( $post->post_title ) );
+    $article_filename = PR_Utils::sanitize_string( PR_Utils::trim_str( $post->post_title, 60 ) );
+    $article_dir = PR_Utils::make_dir( $this->_folio_dir, $article_filename );
     if ( !$article_dir ) {
-      PR_Packager::print_line( sprintf( __( 'Failed to create folder: %s', 'packager' ), PR_Utils::sanitize_string( $post->post_title ) ), 'error' );
+      PR_Packager::print_line( sprintf( __( 'Failed to create folder: %s', 'packager' ), $article_filename ), 'error' );
       $packager->exit_on_error();
       return;
     }
 
     if ( $parsed_html_post ) {
       // Rewrite post url
-      $parsed_html_post = $packager->rewrite_url( $parsed_html_post, 'html', PR_ADPS_MEDIA );
-      if ( $packager->save_html_file( $parsed_html_post, $post->post_title, $article_dir ) ) {
-
-        $media_dir = PR_Utils::make_dir( $article_dir, PR_ADPS_MEDIA, false );
+      $parsed_html_post = $packager->rewrite_url( $parsed_html_post, 'html', PR_DPS_MEDIA_DIR );
+      if ( $packager->save_html_file( $parsed_html_post, $article_filename, $article_dir ) ) {
+        // Save media attachments
+        $media_dir = PR_Utils::make_dir( $article_dir, PR_DPS_MEDIA_DIR, false );
         if ( !$media_dir ) {
-          PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $article_dir . DS . PR_ADPS_MEDIA ), 'error' );
+          PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $article_dir . DS . PR_DPS_MEDIA_DIR ), 'error' );
           $packager->exit_on_error();
           return;
         }
         $packager->save_posts_attachments( $media_dir );
-
-        $assets_dir = PR_Utils::make_dir( $article_dir, PR_ADPS_ASSETS, false );
-        if ( !$assets_dir ) {
-          PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $article_dir . DS . PR_ADPS_ASSETS ), 'error' );
-          $packager->exit_on_error();
-          return;
-        }
-
-        $edition_assets_dir = $packager->edition_dir . DS . 'assets';
-        $copied_files = PR_Utils::recursive_copy( $edition_assets_dir, $assets_dir );
-    		if ( is_array( $copied_files ) ) {
-    			foreach ( $copied_files as $file ) {
-            PR_Packager::print_line( sprintf( __( 'Error: Can\'t copy file %s ', 'edition' ), $file ), 'error' );
-    			}
-    			return false;
-    		}
-    		else {
-          PR_Packager::print_line( sprintf( __( 'Copy assets folder with %s files ', 'edition' ), $copied_files ), 'success' );
-    		}
       }
       else {
-        PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $post->post_title ), 'error' );
+        PR_Packager::print_line( sprintf( __( 'Failed to save post file: %s', 'packager' ), $article_filename ), 'error' );
         exit;
       }
     }
@@ -120,12 +108,12 @@ final class PR_Packager_ADPS_Package
       do_action( 'pr_packager_run_adps_' . $post->post_type, $post, $article_dir );
     }
 
-    $this->_add_sidecar_xml_entry( $post );
+    $this->_add_xmlwriter_entry( $post );
   }
 
   /**
-   * Adobe Dps package closure step
-   * Saving attachments, creating book.json, creating hpub
+   * Adobe DPS package closure step
+   * Finalizing sidecar.xml, creating HTMLResources.zip
    *
    * @param object $packager istance of packager class
    * @param object $editorial_project
@@ -133,53 +121,22 @@ final class PR_Packager_ADPS_Package
    */
   public function adps_end( $packager, $editorial_project ) {
 
-    $this->_sidecar_xml->endElement();  // sidecar tag
-    $this->_sidecar_xml->endDocument();
-    $this->_sidecar_xml->flush();
+    // Finalize sidecar xml file
+    $packager->set_progress( 70, __( 'Finalizing sidecar xml file', 'edition' ) );
+    $this->_xmlwriter->endElement();  // sidecar tag
+    $this->_xmlwriter->endDocument();
+    $this->_xmlwriter->flush();
 
-    // $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
-    // if ( !$media_dir ) {
-    //   PR_Packager::print_line( sprintf( __( 'Failed to create folder %s ', 'edition' ), $packager->edition_dir . DS . PR_EDITION_MEDIA ), 'error' );
-    //   $packager->exit_on_error();
-    //   return;
-    // }
-    // $packager->set_progress( 70, __( 'Saving edition attachments files', 'edition' ) );
-    //
-    // $packager->save_posts_attachments( $media_dir );
-    // $packager->set_progress( 78, __( 'Saving edition cover image', 'edition' ) );
-    //
-    // $packager->save_cover_image();
-    // $packager->set_progress( 80, __( 'Generating book json', 'edition' ) );
-    //
-    // $packager->set_package_date();
-    // $packager->set_progress( 90, __( 'Generating selected package type', 'edition' ) );
-    //
-    // if ( PR_Packager_Book_JSON::generate_book( $packager, $editorial_project->term_id ) ) {
-    //   PR_Packager::print_line( __( 'Generated book.json', 'edition' ), 'success' );
-    // }
-    // else {
-    //   PR_Packager::print_line( __( 'Failed to generate book.json ', 'edition' ), 'error' );
-    //   $packager->exit_on_error();
-    //   return;
-    // }
-    //
-    // $hpub_package = self::build( $packager, $editorial_project );
-    // if ( $hpub_package ) {
-    //   PR_Packager::print_line( sprintf( __( 'Generated hpub ', 'edition' ), $hpub_package ), 'success' );
-    // } else {
-    //   PR_Packager::print_line( __( 'Failed to create hpub package ', 'edition' ), 'error' );
-    //   $packager->exit_on_error();
-    //   return;
-    // }
-    //
-    // if ( PR_Packager_Shelf_JSON::generate_shelf( $editorial_project ) ) {
-    //   PR_Packager::print_line( sprintf( __( 'Generated shelf.json for editorial project: ', 'edition' ), $editorial_project->name ), 'success' );
-    // }
-    // else {
-    //   PR_Packager::print_line( __( 'Failed to generate shelf.json ', 'edition' ), 'error' );
-    //   $packager->exit_on_error();
-    //   return;
-    // }
+    // Build HTMLResources file
+    $packager->set_progress( 80, __( 'Creating resources file', 'edition' ) );
+    $resources_filename = $this->_build_html_resources_file( $packager->edition_post, $packager->edition_dir );
+    if ( !$resources_filename ) {
+      PR_Packager::print_line( sprintf( __( 'Failed to create %s', 'edition' ), PR_DPS_RESOURCES_FILENAME ), 'error' );
+      $packager->exit_on_error();
+      return;
+    }
+
+    $this->_build_folio_zip();
   }
 
   /**
@@ -205,11 +162,8 @@ final class PR_Packager_ADPS_Package
         [ 'value' => 'landscape', 'text' => __( "Landscape", 'adps_package' ) ],
       ]
     ]);
-
     $adps->add_field( '_pr_adps_is_flattened_stack', __( 'Flattened stack', 'edition' ), __( 'Determines whether Horizontal Swipe Only is turned on', 'adps_package' ), 'checkbox', false );
-
     $adps->add_field( '_pr_adps_is_trusted_content', __( 'Trusted content', 'edition' ), __( 'Allow Access to Entitlement Information', 'adps_package' ), 'checkbox', false );
-
     $adps->add_field( '_pr_adps_article_access', __( 'Article access', 'adps_package' ), '', 'select', '', [
       'options' => [
         [ 'value' => 'free', 'text' => __( "Free", 'adps_package' ) ],
@@ -217,16 +171,76 @@ final class PR_Packager_ADPS_Package
         [ 'value' => 'protected', 'text' => __( "Protected", 'adps_package' ) ]
       ]
     ]);
+    $adps->add_field( '_pr_adps_download_path', __( 'Local download path', 'edition' ), __( 'Local download path (i.e. "/Users/mike/Downloads")', 'adps_package' ), 'text', false );
 
     array_push( $metaboxes, $adps );
   }
 
+  public function pr_download_folio() {
+
+    if( isset( $_GET['filename'] ) ) {
+      $filename = $_GET['filename'];
+      // http headers for zip downloads
+      header( "Pragma: public" );
+      header( "Expires: 0" );
+      header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+      header( "Cache-Control: public" );
+      header( "Content-Description: File Transfer" );
+      header( "Content-type: application/zip" );
+      header( "Content-Disposition: attachment; filename=\"" . $filename . "\"" );
+      header( "Content-Length: ". filesize( PR_DPS_PATH . DS . $filename ) );
+      readfile( PR_DPS_PATH . DS . $filename );
+      exit;
+    }
+  }
+
   /**
-   * Add an xml entry on sidecar xml file
+	 * Download assets and build HTMLResources.zip
+	 *
+	 * @param object $edition_post
+	 * @param string $edition_dir
+	 * @return string or boolean false
+	 */
+	protected function _build_html_resources_file( $edition_post, $edition_dir ) {
+
+    // Get associated theme
+		$theme_dir = PR_Theme::get_theme_path( $edition_post->ID );
+		if ( !$theme_dir ) {
+			PR_Packager::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
+			$this->exit_on_error();
+			return;
+		}
+
+    // Download all shared assets
+    $shared_assets_dir = $theme_dir . PR_DPS_SHARED_ASSETS;
+		if ( !is_dir( $shared_assets_dir ) ) {
+			PR_Packager::print_line( sprintf( __( 'Can\'t read shared assets folder %s', 'edition' ), $shared_assets_dir ), 'warning' );
+		} else {
+      // Recursive copy shared assets into edition assets dir
+      $copied_files = PR_Utils::recursive_copy( $shared_assets_dir, $edition_dir . DS . PR_THEME_ASSETS_DIR );
+	    if ( is_array( $copied_files ) ) {
+        foreach ( $copied_files as $file ) {
+  				PR_Packager::print_line( sprintf( __( 'Error: Can\'t copy file %s ', 'edition' ), $file ), 'error' );
+  			}
+      } else {
+        PR_Packager::print_line( sprintf( __( 'Copy shared assets folder with %s files ', 'edition' ), $copied_files ), 'success' );
+  		}
+    }
+
+    // Create HTMLResources zip
+    $resources_filename = $this->_folio_dir . DS . PR_DPS_RESOURCES_FILENAME;
+    if ( PR_Utils::create_zip_file( $edition_dir . DS . PR_THEME_ASSETS_DIR, $resources_filename, '' ) ) {
+      return $resources_filename;
+    }
+    return false;
+  }
+
+  /**
+   * Add an xml entry on sidecar file
    * @param object $post
    * @void
    */
-  private function _add_sidecar_xml_entry( $post ) {
+  private function _add_xmlwriter_entry( $post ) {
 
     if ( empty( $this->_settings ) ) {
       return false;
@@ -238,31 +252,38 @@ final class PR_Packager_ADPS_Package
       }
     }
 
-    $this->_sidecar_xml->startElement( 'entry' );
+    $this->_xmlwriter->startElement( 'entry' );
+    $this->_xmlwriter->startElement( 'contentSource' );
 
-    $this->_sidecar_xml->startElement( 'contentSource' );
-    $this->_sidecar_xml->writeElement( 'articleName', PR_Utils::sanitize_string( $post->post_title ) );
-    $this->_sidecar_xml->writeElement( 'sourceFormat', 'html' );
-    $this->_sidecar_xml->writeElement( 'sourceFolder', $this->_folio_dir . DS . PR_Utils::sanitize_string( $post->post_title ) );
+    $article_filename = PR_Utils::sanitize_string( PR_Utils::trim_str( $post->post_title, 60 ) );
+    $this->_xmlwriter->writeElement( 'articleName', $article_filename );
+    $this->_xmlwriter->writeElement( 'sourceFormat', 'html' );
 
-    $this->_sidecar_xml->endElement(); // contentSource tag
+    $resources_path = $this->_folio_dir;
+    if ( strlen( $this->_settings['_pr_adps_download_path'] ) ) {
+      $resources_path = $this->_settings['_pr_adps_download_path'] . ( substr( $this->_settings['_pr_adps_download_path'], -1) == DS ? '' : DS );
+      $resources_path = str_replace( PR_DPS_PATH , $resources_path, $this->_folio_dir );
+    }
+    $this->_xmlwriter->writeElement( 'sourceFolder', $resources_path . DS . $article_filename );
 
-    $this->_sidecar_xml->writeElement( 'articleTitle', $post->post_title );
-    $this->_sidecar_xml->writeElement( 'author', $post->post_author );
-    $this->_sidecar_xml->writeElement( 'description', $post->post_excerpt );
-    $this->_sidecar_xml->writeElement( 'isAd', $post->post_type === 'pr_ad_bundle' );
+    $this->_xmlwriter->endElement(); // contentSource tag
 
-    $tags = wp_get_post_tags( $post->ID, array( 'fields' => 'names' ) );
+    $this->_xmlwriter->writeElement( 'articleTitle', PR_Utils::trim_str( $post->post_title, 60 ) );
+    $this->_xmlwriter->writeElement( 'author', get_the_author_meta( 'display_name', $post->post_author ) );
+    $this->_xmlwriter->writeElement( 'description', PR_Utils::trim_str( $post->post_excerpt, 120 ) );
+    $this->_xmlwriter->writeElement( 'isAd', $post->post_type === 'pr_ad_bundle' ? 'true' : 'false' );
+
+    $tags = wp_get_post_tags( $post->ID, [ 'fields' => 'names' ] );
     if ( $tags ) {
-      $this->_sidecar_xml->writeElement( 'tags', implode(' ', $tags) );
+      $this->_xmlwriter->writeElement( 'tags', implode(' ', $tags) );
     }
 
-    $this->_sidecar_xml->writeElement( 'smoothScrolling', $this->_settings['_pr_adps_smooth_scrolling'] );
-    $this->_sidecar_xml->writeElement( 'isFlattenedStack', $this->_settings['_pr_adps_is_flattened_stack'] );
-    $this->_sidecar_xml->writeElement( 'isTrustedContent', $this->_settings['_pr_adps_is_trusted_content'] );
-    $this->_sidecar_xml->writeElement( 'articleAccess', $this->_settings['_pr_adps_article_access'] );
+    $this->_xmlwriter->writeElement( 'smoothScrolling', $this->_settings['_pr_adps_smooth_scrolling'] );
+    $this->_xmlwriter->writeElement( 'isFlattenedStack', $this->_settings['_pr_adps_is_flattened_stack'] === 'on' ? 'true' : 'false' );
+    $this->_xmlwriter->writeElement( 'isTrustedContent', $this->_settings['_pr_adps_is_trusted_content'] === 'on' ? 'true' : 'false' );
+    $this->_xmlwriter->writeElement( 'articleAccess', $this->_settings['_pr_adps_article_access'] );
 
-    $this->_sidecar_xml->endElement(); // entry tag
+    $this->_xmlwriter->endElement(); // entry tag
   }
 
   /**
@@ -288,6 +309,26 @@ final class PR_Packager_ADPS_Package
       $settings[$setting] = $option;
     }
     $this->_settings = $settings;
+  }
+
+  /**
+   * Make and download folio zip
+   * @return boolean
+   */
+  private function _build_folio_zip() {
+
+    $filename = str_replace( PR_DPS_PATH, '', $this->_folio_dir ) . '.zip';
+    $filepath = dirname( $this->_folio_dir );
+    if ( PR_Utils::create_zip_file( $this->_folio_dir, $filepath . DS . $filename ) ) {
+      $download_link = admin_url( 'admin-ajax.php?action=pr_dps_download_folio&filename=' . $filename );
+      PR_Packager::print_line( sprintf( __( '<a href="%s"><b>Download folio</b></a>', 'edition' ), $download_link ), 'success' );
+      PR_Utils::remove_dir( $this->_folio_dir );
+      return true;
+    } else {
+      PR_Packager::print_line( sprintf( __( 'Error: Can\'t create file %s ', 'edition' ), $filename ), 'error' );
+      PR_Utils::remove_dir( $this->_folio_dir );
+      return false;
+    }
   }
 }
 

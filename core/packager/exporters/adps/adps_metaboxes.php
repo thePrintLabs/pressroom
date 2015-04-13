@@ -15,6 +15,7 @@ final class PR_Packager_ADPS_Metaboxes
   public function __construct() {
     add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
 		add_action( 'save_post', array( $this, 'save_pr_adps_fields'), 40 );
+    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
   }
 
   /**
@@ -47,6 +48,7 @@ final class PR_Packager_ADPS_Metaboxes
 
     // Settings
     $adps_settings = new PR_Metabox( 'adps_settings_metabox', __( 'Adobe DPS settings', 'adps_settings_metabox' ), 'normal', 'default', $post->ID );
+    $adps_settings->add_field( '_pr_adps_override', __( 'Override Issue settings', 'adps_settings_metabox' ), __( 'If enabled, will be used post settings below', 'adps_settings_metabox' ), 'checkbox', false );
     $adps_settings->add_field( '_pr_adps_smooth_scrolling', __( 'Smooth scrolling', 'adps_settings_metabox' ), '', 'select', '', [
       'options' => [
         [ 'value' => 'never', 'text' => __( "Never", 'adps_settings_metabox' ) ],
@@ -115,6 +117,17 @@ final class PR_Packager_ADPS_Metaboxes
     foreach ( $this->_metaboxes as $metabox ) {
       $metabox->save_values();
     }
+  }
+
+  /**
+   * add custom script to metabox
+   *
+   * @void
+   */
+  public function add_custom_script() {
+
+    wp_register_script( 'adps_metabox', PR_ASSETS_URI . '/js/pr.adps.metabox.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'adps_metabox' );
   }
 }
 

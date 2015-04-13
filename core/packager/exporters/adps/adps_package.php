@@ -59,7 +59,7 @@ final class PR_Packager_ADPS_Package
     $this->_load_settings( $packager->edition_post->ID, $editorial_project->term_id );
 
     // Create folio directory
-    $this->_folio_dir = PR_Utils::make_dir( PR_DPS_PATH, $editorial_project->slug . '_' . $packager->edition_post->ID );
+    $this->_folio_dir = PR_Utils::make_dir( PR_DPS_PATH, $editorial_project->slug . '_' . $packager->edition_post->post_name );
     if ( !$this->_folio_dir ) {
       PR_Packager::print_line( sprintf( __( 'Failed to create folder: %s', 'packager' ), PR_DPS_PATH . $this->_folio_dir ), 'error' );
       $packager->exit_on_error();
@@ -261,9 +261,10 @@ final class PR_Packager_ADPS_Package
     }
 
     // Overwrite settings with those of the post
-    foreach ( $this->_settings as $setting => $value ) {
-      $post_meta = get_post_meta( $post->ID, $setting, true );
-      if ( $post_meta != '') {
+    $override_meta = get_post_meta( $post->ID, '_pr_adps_override', true );
+    if ( $override_meta ) {
+      foreach ( $this->_settings as $setting => $value ) {
+        $post_meta = get_post_meta( $post->ID, $setting, true );
         $this->_settings[$setting] = $post_meta;
       }
     }

@@ -97,10 +97,27 @@ class PR_Theme
 	}
 
 	/**
+	 * Get current theme settings
+	 * @param int $edition_id
+	 *
+	 * @return array or boolean false
+	 */
+	public static function get_theme_settings( $edition_id ) {
+
+		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
+		if ( $theme_id ) {
+			$themes = self::get_themes();
+			return $themes[$theme_id];
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get current theme path
-	 * @param  int $edition_id
+	 * @param int $edition_id
 	 * @param bool $absolute
-	 * 
+	 *
 	 * @return string or boolean false
 	 */
 	public static function get_theme_path( $edition_id, $absolute = true ) {
@@ -157,6 +174,28 @@ class PR_Theme
 			}
 		}
 
+		return false;
+	}
+
+	/**
+	 * Get current theme assets path
+	 * @param int $edition_id
+	 * @param bool $absolute
+	 * @return string or boolean false
+	 */
+	public static function get_theme_assets_path( $edition_id, $absolute = true ) {
+
+		$theme_id = get_post_meta( $edition_id, '_pr_theme_select', true );
+		if ( $theme_id ) {
+			$themes = self::get_themes();
+			$options = $themes[$theme_id];
+			if( $absolute) {
+				return PR_THEMES_PATH . $options['path'] . DS . $options['assets'] . DS;
+			}
+			else {
+				return $options['path'] . DS . $options['assets'];
+			}
+		}
 		return false;
 	}
 
@@ -278,7 +317,8 @@ class PR_Theme
 			'version'				=> isset( $xml->version ) ? $xml->version[0]->__toString() : false ,
 			'description'		=> isset( $xml->description ) ? $xml->description[0]->__toString() : false ,
 			'thumbnail'			=> isset( $xml->thumbnail ) ? $xml->thumbnail[0]->__toString() : false ,
-			'website'			=> isset( $xml->website ) ? $xml->website[0]->__toString() : false ,
+			'website'				=> isset( $xml->website ) ? $xml->website[0]->__toString() : false ,
+			'assets'				=> isset( $xml->assets ) ? $xml->assets[0]->__toString() : 'assets',
 			'active'				=> 1,
 			'author_name'		=> $author && isset( $author->name ) ? $author->name[0]->__toString() : false ,
 			'author_email'	=> $author && isset( $author->email ) ? $author->email[0]->__toString() : false ,

@@ -5,8 +5,6 @@
  *
  */
 
-define( "PR_THEME_ASSETS_DIR", 'assets' );
-
 require_once( PR_PACKAGER_PATH . '/progressbar.php' );
 
 class PR_Packager
@@ -82,8 +80,8 @@ class PR_Packager
 		$this->set_progress( 2, __( 'Loading edition theme', 'edition' ) );
 
 		// Get associated theme
-		$theme_dir = PR_Theme::get_theme_path( $edition_post->ID );
-		if ( !$theme_dir ) {
+		$theme_assets_dir = PR_Theme::get_theme_assets_path( $edition_post->ID );
+		if ( !$theme_assets_dir ) {
 			self::print_line( __( 'Failed to load edition theme', 'edition' ), 'error' );
 			$this->exit_on_error();
 			return;
@@ -94,7 +92,7 @@ class PR_Packager
 		$this->set_progress( 30, __( 'Downloading assets', 'edition' ) );
 
 		// Download all assets
-		$downloaded_assets = $this->_download_assets( $theme_dir . PR_THEME_ASSETS_DIR );
+		$downloaded_assets = $this->_download_assets( $theme_assets_dir );
 		if ( !$downloaded_assets ) {
 			$this->exit_on_error();
 			return;
@@ -321,7 +319,7 @@ class PR_Packager
 						}
 					}
 					else {
-						$attachment_id = $this->_get_attachment_from_url( $url );
+						$attachment_id = self::get_attachment_from_url( $url );
 						if ( $attachment_id ) {
 							$info = pathinfo( $url );
 							$filename = $info['basename'];
@@ -372,12 +370,19 @@ class PR_Packager
 	}
 
 	/**
+	 * Add element to array of attachments
+	 * @param array $attachments
+	 */
+	public function add_post_attachment( $key, $value ) {
+		$this->_posts_attachments[$key] = $value;
+	}
+
+	/**
 	 * Reset array of attachments
 	 */
 	public function reset_post_attachments() {
 		$this->_posts_attachments = array();
 	}
-
 
 	/**
 	* Stop packager procedure and clear temp folder
@@ -389,6 +394,25 @@ class PR_Packager
 		$this->_clean_temp_dir();
 		$this->set_progress( 100, __( 'Error creating package', 'edition' ) );
 		ob_end_flush();
+	}
+
+	/**
+	 * Get attachment ID by url
+	 *
+	 * @param string $attachment_url
+	 * @return string or boolean false
+	 */
+	public static function get_attachment_from_url( $attachment_url ) {
+
+		global $wpdb;
+		$attachment_url = preg_replace( '/-[0-9]{1,4}x[0-9]{1,4}\.(jpg|jpeg|png|gif|bmp)$/i', '.$1', $attachment_url );
+		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid RLIKE '%s' LIMIT 1;", $attachment_url ) );
+		if ( $attachment ) {
+			return $attachment[0];
+		}
+		else {
+			return false;
+		}
 	}
 
 	/**
@@ -418,14 +442,14 @@ class PR_Packager
 	/**
 	 * Download assets into package folder
 	 *
-	 * @param  stirng $theme_assets_dir
+	 * @param string $theme_assets_dir
 	 * @return boolean
 	 */
 	protected function _download_assets( $theme_assets_dir ) {
 
-		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, PR_THEME_ASSETS_DIR );
+		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, basename( $theme_assets_dir ) );
 		if ( !$edition_assets_dir ) {
-			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . PR_THEME_ASSETS_DIR ), 'error');
+			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . basename( $theme_assets_dir ) ), 'error');
 			return false;
 		}
 
@@ -446,7 +470,6 @@ class PR_Packager
 		else {
 			self::print_line( sprintf( __( 'Copy assets folder with %s files ', 'edition' ), $copied_files ), 'success' );
 		}
-
 		return true;
 	}
 
@@ -479,25 +502,6 @@ class PR_Packager
 		ob_end_clean();
 
 		return $output;
-	}
-
-	/**
-	* Get attachment ID by url
-	*
-	* @param string $attachment_url
-	* @return string or boolean false
-	*/
-	protected function _get_attachment_from_url( $attachment_url ) {
-
-		global $wpdb;
-		$attachment_url = preg_replace( '/-[0-9]{1,4}x[0-9]{1,4}\.(jpg|jpeg|png|gif|bmp)$/i', '.$1', $attachment_url );
-		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid RLIKE '%s' LIMIT 1;", $attachment_url ) );
-		if ( $attachment ) {
-			return $attachment[0];
-		}
-		else {
-			return false;
-		}
 	}
 
 	/**

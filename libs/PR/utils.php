@@ -339,9 +339,37 @@ class PR_Utils
 	 */
 	public static function extract_urls( $content ) {
 
+		$urls = array();
+		// Extract absolute url
 		preg_match_all( "#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#", $content, $post_links );
 		$post_links = array_unique( $post_links[0] );
-		return array_values( $post_links );
+		$urls = array_values( $post_links );
+
+		// Extract scripts tags
+		preg_match_all('/<script\s[^>]*src=([\"\']??)([^\\1 >]*?)\\1[^>]*>(.*)<\/script>/siU', $content, $script_links );
+		if ( isset( $script_links[2] ) && !empty( $script_links[2] ) ) {
+			$script_links = array_unique( $script_links[2] );
+			$scripts = array_values( $script_links );
+			$urls = array_merge( $urls, $scripts );
+		}
+
+		// Extract link tags
+		preg_match_all('#<\s*link [^\>]*href\s*=\s*(["\'])(.*?)\1#im', $content, $style_links );
+		if ( isset( $style_links[2] ) && !empty( $style_links[2] ) ) {
+			$style_links = array_unique( $style_links[2] );
+			$links = array_values( $style_links );
+			$urls = array_merge( $urls, $links );
+		}
+
+		return $urls;
+	}
+
+	/**
+	 * Check if it is an absolute url
+	 * @param string $url
+	 */
+	public static function is_absolute_url( $url ) {
+    return preg_match( '|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url );
 	}
 
 	/**

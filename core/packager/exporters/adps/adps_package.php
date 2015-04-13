@@ -96,6 +96,7 @@ final class PR_Packager_ADPS_Package
 
     if ( $parsed_html_post ) {
       // Rewrite post url
+      $packager->reset_post_attachments();
       $parsed_html_post = $packager->rewrite_url( $parsed_html_post, 'html', PR_DPS_MEDIA_DIR );
       if ( $packager->save_html_file( $parsed_html_post, $article_filename, $article_dir ) ) {
         // Save media attachments

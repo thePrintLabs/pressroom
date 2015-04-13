@@ -24,6 +24,8 @@ class PR_Custom_Html
 		// Packager hooks
 		add_action( 'pr_packager_run_hpub_pr_custom_html', array( $this, 'chtml_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_web_pr_custom_html', array( $this, 'chtml_packager_run' ), 10, 2 );
+		add_action( 'pr_packager_run_adps_pr_custom_html', array( $this, 'chtml_adps_packager_run' ), 10, 2 );
+
 		add_action( 'pr_packager_shortcode_web_pr_custom_html', array( $this, 'chtml_web_shortcode' ), 10, 2 );
 		add_action( 'pr_packager_generate_book', array( $this, 'chtml_packager_book' ), 10, 3 );
 		add_action( 'pr_packager_parse_pr_custom_html', array( $this, 'chtml_packager_post_parse' ), 10, 2 );
@@ -193,6 +195,40 @@ class PR_Custom_Html
 
 				$title = PR_Utils::sanitize_string( $post->post_title );
 				if ( $zip->extractTo( $edition_dir . DS . 'pr_custom_html' . DS . $title ) ) {
+					PR_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $attached_file, 'success' );
+				} else {
+					PR_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $attached_file, 'error' );
+				}
+				$zip->close();
+
+			}
+			else {
+				PR_Packager::print_line( __( 'Failed to unzip file ', 'edition') . $attached_file, 'error' );
+			}
+		}
+	}
+
+	/**
+	* Add Custom html support to adps packager
+	* This function is called by a custom hook
+	* from the packager class
+	*
+	* @param  object $post
+	* @param  string $edition_dir
+	* @void
+	*/
+	public function chtml_adps_packager_run( $post, $edition_dir ) {
+
+		$attachment = self::get_chtml_attachment( $post->ID );
+		if ( $attachment && $attachment->post_mime_type == 'application/zip' ) {
+
+			$zip = new ZipArchive;
+			$attached_file = get_attached_file( $attachment->ID );
+
+			if ( $zip->open( $attached_file ) ) {
+
+				$title = PR_Utils::sanitize_string( $post->post_title );
+				if ( $zip->extractTo( $edition_dir ) ) {
 					PR_Packager::print_line( __( 'Unzipped file ', 'edition' ) . $attached_file, 'success' );
 				} else {
 					PR_Packager::print_line( __( 'Failed to unzip file ', 'edition' ) . $attached_file, 'error' );

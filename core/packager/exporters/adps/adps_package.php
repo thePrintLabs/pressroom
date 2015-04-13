@@ -9,6 +9,8 @@ define( "PR_DPS_SHARED_ASSETS", "shared" );
 define( "PR_DPS_RESOURCES_FILENAME", "HTMLResources.zip" );
 define( "PR_DPS_SIDECAR_FILENAME", "sidecar.xml" );
 
+require_once 'adps_metaboxes.php';
+
 final class PR_Packager_ADPS_Package
 {
   private $_xmlwriter;
@@ -19,7 +21,13 @@ final class PR_Packager_ADPS_Package
     '_pr_adps_is_flattened_stack',
     '_pr_adps_is_trusted_content',
     '_pr_adps_smooth_scrolling',
-    '_pr_adps_article_access'
+    '_pr_adps_article_access',
+    '_pr_adps_hide_from_toc',
+    '_pr_adps_title',
+    '_pr_adps_byline',
+    '_pr_adps_kicker',
+    '_pr_adps_description',
+    '_pr_adps_section',
   ];
 
   public function __construct() {
@@ -148,34 +156,39 @@ final class PR_Packager_ADPS_Package
    */
   public function pr_add_option( &$metaboxes, $item_id, $edition = false ) {
 
-    $adps = new PR_Metabox( 'adps_metabox', __( 'Adobe DPS', 'adps_package' ), 'normal', 'high', $item_id );
+    $adps_metabox = new PR_Metabox( 'adps_metabox', __( 'Adobe DPS', 'adps_package' ), 'normal', 'high', $item_id );
 
     if( $edition ) {
-      $adps->add_field( '_pr_adps_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
+      $adps_metabox->add_field( '_pr_adps_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
     }
 
-    $adps->add_field( '_pr_adps_smooth_scrolling', __( 'Smooth scrolling', 'adps_package' ), '', 'select', '', [
+    $adps_metabox->add_field( '_pr_adps_smooth_scrolling', __( 'Smooth scrolling', 'adps_package' ), '', 'select', '', [
       'options' => [
         [ 'value' => 'never', 'text' => __( "Never", 'adps_package' ) ],
-        [ 'value' => 'always', 'text' => __( "Always", 'adps_package' ) ],
+        [ 'value' => 'always', 'text' => __( "Both", 'adps_package' ) ],
         [ 'value' => 'portrait', 'text' => __( "Portrait", 'adps_package' ) ],
         [ 'value' => 'landscape', 'text' => __( "Landscape", 'adps_package' ) ],
       ]
     ]);
-    $adps->add_field( '_pr_adps_is_flattened_stack', __( 'Flattened stack', 'edition' ), __( 'Determines whether Horizontal Swipe Only is turned on', 'adps_package' ), 'checkbox', false );
-    $adps->add_field( '_pr_adps_is_trusted_content', __( 'Trusted content', 'edition' ), __( 'Allow Access to Entitlement Information', 'adps_package' ), 'checkbox', false );
-    $adps->add_field( '_pr_adps_article_access', __( 'Article access', 'adps_package' ), '', 'select', '', [
+    $adps_metabox->add_field( '_pr_adps_hide_from_toc', __( 'Hide From TOC', 'adps_settings_metabox' ), __( 'Prevent the article from appearing when users tap the TOC button in the viewer nav bar', 'adps_settings_metabox' ), 'checkbox', false );
+    $adps_metabox->add_field( '_pr_adps_is_flattened_stack', __( 'Horizontal Swipe Only', 'adps_settings_metabox' ), __( 'If enabled, users browse through the article by swiping left and right instead of up and down', 'adps_settings_metabox' ), 'checkbox', false );
+    $adps_metabox->add_field( '_pr_adps_is_trusted_content', __( 'Trusted content', 'adps_settings_metabox' ), __( 'Allow Access to Entitlement Information', 'adps_settings_metabox' ), 'checkbox', false );
+    $adps_metabox->add_field( '_pr_adps_article_access', __( 'Article access', 'adps_package' ), '', 'select', '', [
       'options' => [
         [ 'value' => 'free', 'text' => __( "Free", 'adps_package' ) ],
         [ 'value' => 'metered', 'text' => __( "Metered", 'adps_package' ) ],
         [ 'value' => 'protected', 'text' => __( "Protected", 'adps_package' ) ]
       ]
     ]);
-    $adps->add_field( '_pr_adps_download_path', __( 'Local download path', 'edition' ), __( 'Local download path (i.e. "/Users/mike/Downloads")', 'adps_package' ), 'text', false );
+    $adps_metabox->add_field( '_pr_adps_download_path', __( 'Local download path', 'adps_package' ), __( 'Local download path (i.e. "/Users/mike/Downloads")', 'adps_package' ), 'text', false );
 
-    array_push( $metaboxes, $adps );
+    array_push( $metaboxes, $adps_metabox );
   }
 
+  /**
+   * Force folio download
+   * @void
+   */
   public function pr_download_folio() {
 
     if( isset( $_GET['filename'] ) ) {
@@ -245,35 +258,46 @@ final class PR_Packager_ADPS_Package
     if ( empty( $this->_settings ) ) {
       return false;
     }
+
     // Overwrite settings with those of the post
     foreach ( $this->_settings as $setting => $value ) {
-      if ( !$value ) {
-        $this->_settings[$setting] = get_post_meta( $post->ID, $setting, true );
+      $post_meta = get_post_meta( $post->ID, $setting, true );
+      if ( $post_meta != '') {
+        $this->_settings[$setting] = $post_meta;
       }
     }
 
-    $this->_xmlwriter->startElement( 'entry' );
-    $this->_xmlwriter->startElement( 'contentSource' );
-
-    $article_filename = PR_Utils::sanitize_string( PR_Utils::trim_str( $post->post_title, 60 ) );
-    $this->_xmlwriter->writeElement( 'articleName', $article_filename );
-    $this->_xmlwriter->writeElement( 'sourceFormat', 'html' );
+    // Format fields
+    $filename = PR_Utils::sanitize_string( PR_Utils::trim_str( $post->post_title, 60 ) );
+    $title = PR_Utils::trim_str( strlen( $this->_settings['_pr_adps_title'] ) ? $this->_settings['_pr_adps_title'] : $post->post_title, 60 );
+    $author = PR_Utils::trim_str( strlen( $this->_settings['_pr_adps_byline'] ) ? $this->_settings['_pr_adps_byline'] : get_the_author_meta( 'display_name', $post->post_author ), 40 );
+    $description = PR_Utils::trim_str( strlen( $this->_settings['_pr_adps_description'] ) ? $this->_settings['_pr_adps_description'] : $post->post_excerpt, 120 );
+    $section = strlen( $this->_settings['_pr_adps_section'] ) ? PR_Utils::trim_str( $this->_settings['_pr_adps_section'], 60 ) : '';
+    $kicker = strlen( $this->_settings['_pr_adps_kicker'] ) ? PR_Utils::trim_str( $this->_settings['_pr_adps_kicker'], 35 ) : '';
+    $tags = wp_get_post_tags( $post->ID, [ 'fields' => 'names' ] );
 
     $resources_path = $this->_folio_dir;
     if ( strlen( $this->_settings['_pr_adps_download_path'] ) ) {
       $resources_path = $this->_settings['_pr_adps_download_path'] . ( substr( $this->_settings['_pr_adps_download_path'], -1) == DS ? '' : DS );
       $resources_path = str_replace( PR_DPS_PATH , $resources_path, $this->_folio_dir );
     }
-    $this->_xmlwriter->writeElement( 'sourceFolder', $resources_path . DS . $article_filename );
 
+    // XML
+    $this->_xmlwriter->startElement( 'entry' );
+
+    $this->_xmlwriter->startElement( 'contentSource' );
+    $this->_xmlwriter->writeElement( 'articleName', $filename );
+    $this->_xmlwriter->writeElement( 'sourceFormat', 'html' );
+    $this->_xmlwriter->writeElement( 'sourceFolder', $resources_path . DS . $filename );
     $this->_xmlwriter->endElement(); // contentSource tag
 
-    $this->_xmlwriter->writeElement( 'articleTitle', PR_Utils::trim_str( $post->post_title, 60 ) );
-    $this->_xmlwriter->writeElement( 'author', get_the_author_meta( 'display_name', $post->post_author ) );
-    $this->_xmlwriter->writeElement( 'description', PR_Utils::trim_str( $post->post_excerpt, 120 ) );
+    $this->_xmlwriter->writeElement( 'articleTitle', $title );
+    $this->_xmlwriter->writeElement( 'byline', $author );
+    $this->_xmlwriter->writeElement( 'description', $description );
+    $this->_xmlwriter->writeElement( 'section', $section );
+    $this->_xmlwriter->writeElement( 'kicker', $kicker );
     $this->_xmlwriter->writeElement( 'isAd', $post->post_type === 'pr_ad_bundle' ? 'true' : 'false' );
 
-    $tags = wp_get_post_tags( $post->ID, [ 'fields' => 'names' ] );
     if ( $tags ) {
       $this->_xmlwriter->writeElement( 'tags', implode(' ', $tags) );
     }
@@ -281,6 +305,7 @@ final class PR_Packager_ADPS_Package
     $this->_xmlwriter->writeElement( 'smoothScrolling', $this->_settings['_pr_adps_smooth_scrolling'] );
     $this->_xmlwriter->writeElement( 'isFlattenedStack', $this->_settings['_pr_adps_is_flattened_stack'] === 'on' ? 'true' : 'false' );
     $this->_xmlwriter->writeElement( 'isTrustedContent', $this->_settings['_pr_adps_is_trusted_content'] === 'on' ? 'true' : 'false' );
+    $this->_xmlwriter->writeElement( 'hideFromTOC', $this->_settings['_pr_adps_hide_from_toc'] === 'on' ? 'true' : 'false' );
     $this->_xmlwriter->writeElement( 'articleAccess', $this->_settings['_pr_adps_article_access'] );
 
     $this->_xmlwriter->endElement(); // entry tag
@@ -321,7 +346,9 @@ final class PR_Packager_ADPS_Package
     $filepath = dirname( $this->_folio_dir );
     if ( PR_Utils::create_zip_file( $this->_folio_dir, $filepath . DS . $filename ) ) {
       $download_link = admin_url( 'admin-ajax.php?action=pr_dps_download_folio&filename=' . $filename );
-      PR_Packager::print_line( sprintf( __( '<a href="%s"><b>Download folio</b></a>', 'edition' ), $download_link ), 'success' );
+      PR_Packager::print_line( sprintf( __( '<a href="%s" download><b>Download folio</b></a>', 'edition' ), $download_link ), 'success' );
+      PR_Packager::print_line( '<script type="text/javascript">downloadFile("' . $download_link . '");</script>' );
+
       PR_Utils::remove_dir( $this->_folio_dir );
       return true;
     } else {

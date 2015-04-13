@@ -1,0 +1,8 @@
+#publishing_popup {padding:10px 20px; font-family:"Helvetica Neue", Helvetica, Arial, sans-serif !important;}
+#publishing_popup .error .label {background: #c22d26;}
+#publishing_popup .success .label {background: #7dc42a;}
+#publishing_popup .info .label {background: #000;}
+#publishing_popup .label {color:#fff; text-transform:capitalize; padding:2px;width:60px;text-align:center;display:inline-block}
+#publishing_popup p { font-size: 12px; line-height: 20px; margin: 5px 0;}
+#publishing_popup h1 {margin:0 0 10px; color:#333;font-weight:300}
+#publishing_console { padding:10px; margin: 0 auto; font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }

@@ -412,19 +412,18 @@ class PR_Edition
 	public function publishing_render_console() {
 
 		$packager = new PR_Packager();
-		echo '<style type="text/css">
-		#publishing_popup {padding:10px 20px; font-family:"Helvetica Neue", Helvetica, Arial, sans-serif !important;}
-		#publishing_popup .error .label {background: #c22d26;}
-		#publishing_popup .success .label {background: #7dc42a;}
-		#publishing_popup .info .label {background: #000;}
-		#publishing_popup .label {color:#fff; text-transform:capitalize; padding:2px;width:60px;text-align:center;display:inline-block}
-		#publishing_popup p { font-size: 12px; line-height: 20px; margin: 5px 0;}
-		#publishing_popup h1 {margin:0 0 10px; color:#333;font-weight:300}
-		#publishing_console { padding:10px; margin: 0 auto; font-family:"Courier New", Courier, monospace; border:1px solid #d9d9d9;background:#f2f2f2; }
-		</style>';
-
-		echo '<div id="publishing_popup">
-		<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
+		$pl_url = plugins_url( 'assets', dirname( __DIR__ ) );
+		echo '<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>' . __("PressRoom Packager", 'pressroom') . '</title>
+<link href="' . $pl_url . '/css/pr.packager.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="' . $pl_url . '/js/download.min.js"></script>
+</head>
+<body>
+<div id="publishing_popup">
+<h1>' . __( 'Package and distribute', 'edition' ) . '</h1>';
 		$packager->pb->render();
 		echo '<div id="publishing_console">';
 		$editorial_terms = wp_get_post_terms( $_GET['edition_id'], PR_EDITORIAL_PROJECT );
@@ -437,7 +436,9 @@ class PR_Edition
 			echo '<p class="liveoutput error"><span class="label">Error</span>' . __( ' No editorial project linked to this edition', 'edition' ) .'</p>';
 		}
 		echo '</div>
-		</div>';
+</div>
+</body>
+</html>';
 		exit;
 	}
 

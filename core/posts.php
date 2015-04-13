@@ -1,13 +1,11 @@
 <?php
 class PR_posts
 {
-
   protected $_metaboxes = array();
   /**
    * constructor method
    * Add class functions to wordpress hooks
    *
-   * @void
    */
   public function __construct() {
 
@@ -40,16 +38,11 @@ class PR_posts
    *
    * @echo
    */
-  public function add_custom_metabox_callback() {
+  public function add_custom_metabox_callback( $post, $metabox ) {
 
-    echo '<input type="hidden" name="pr_posts_nonce" value="' . wp_create_nonce('pr_posts_nonce'). '" />';
     echo '<table class="form-table">';
-
-    foreach ( $this->_metaboxes as $metabox ) {
-
-      echo $metabox->fields_to_html();
-    }
-
+    $custom_metabox = $this->_metaboxes[$metabox['id']];
+    echo $custom_metabox->fields_to_html();
     echo '</table>';
   }
 
@@ -65,16 +58,7 @@ class PR_posts
     $e_meta = new PR_Metabox( 'sharing_metabox', __( 'Sharing', 'edition' ), 'normal', 'high', $post->ID );
 		$e_meta->add_field( '_pr_sharing_url', __( 'Sharing Link', 'edition' ), __( 'Sharing link inside application. Leave it blank, for default value. ', 'pressroom' ), 'text', '', array( 'placeholder' => $placeholder ) );
 
-    array_push( $this->_metaboxes, $e_meta );
-  }
-
-  /**
-	 * Render Meta Box content.
-	 *
-	 * @param WP_Post $post The post object.
-	 */
-	public function render_meta_box_content( $post ) {
-
+    $this->_metaboxes['sharing_metabox'] = $e_meta;
   }
 
   /**
@@ -84,11 +68,6 @@ class PR_posts
    * @void
    */
   public function save_pr_post( $post_id ) {
-
-    //Verify nonce
-    if ( !isset( $_POST['pr_posts_nonce'] ) || !wp_verify_nonce( $_POST['pr_posts_nonce'], 'pr_posts_nonce' ) ) {
-      return $post_id;
-    }
 
     //Check autosave
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
@@ -103,13 +82,9 @@ class PR_posts
     $post = get_post( $post_id );
     $this->get_custom_metaboxes( $post );
     foreach ( $this->_metaboxes as $metabox ) {
-
       $metabox->save_values();
     }
-
   }
-
-
 }
 
 $pr_posts = new PR_posts;

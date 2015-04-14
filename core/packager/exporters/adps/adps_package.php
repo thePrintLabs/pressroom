@@ -84,7 +84,7 @@ final class PR_Packager_ADPS_Package
    */
   public function adps_run( $packager, $post, $editorial_project, $parsed_html_post ) {
 
-    $article_filename = PR_Utils::sanitize_string( PR_Utils::trim_str( $post->post_title, 60 ) );
+    $article_filename = PR_Utils::sanitize_string( PR_Utils::trim_str( $post->post_name, 60 ) );
     $article_dir = PR_Utils::make_dir( $this->_folio_dir, $article_filename );
     if ( !$article_dir ) {
       PR_Packager::print_line( sprintf( __( 'Failed to create folder: %s', 'packager' ), $article_filename ), 'error' );

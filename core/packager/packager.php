@@ -447,13 +447,13 @@ class PR_Packager
 	 */
 	protected function _download_assets( $theme_assets_dir ) {
 
-		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, basename( $theme_assets_dir ) );
+		$edition_assets_dir = PR_Utils::make_dir( $this->edition_dir, basename( $theme_assets_dir ), false );
 		if ( !$edition_assets_dir ) {
 			self::print_line( sprintf( __( 'Failed to create folder %s', 'edition' ), PR_TMP_PATH . DS . basename( $theme_assets_dir ) ), 'error');
 			return false;
 		}
 
-		self::print_line( sprintf( __( 'Created folder ', 'edition' ), $edition_assets_dir ), 'success' );
+		self::print_line( sprintf( __( 'Created folder %s', 'edition' ), $edition_assets_dir ), 'success' );
 
 		if ( !is_dir( $theme_assets_dir ) ) {
 			self::print_line( sprintf( __( 'Error: Can\'t read assets folder %s', 'edition' ), $theme_assets_dir ), 'error' );

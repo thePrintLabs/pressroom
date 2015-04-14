@@ -13,9 +13,8 @@ final class PR_Packager_ADPS_Metaboxes
    *
    */
   public function __construct() {
-    add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
-		add_action( 'save_post', array( $this, 'save_pr_adps_fields'), 40 );
-    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
+
+    $this->_hooks();
   }
 
   /**
@@ -29,7 +28,7 @@ final class PR_Packager_ADPS_Metaboxes
 
     if( in_array( $post_type, $tpl_pressroom->get_allowed_post_types() ) ) {
 
-      $this->get_custom_metaboxes( $post );
+      $this->get_custom_metaboxes( $post->ID );
 
       foreach ( $this->_metaboxes as $metabox ) {
 
@@ -41,13 +40,13 @@ final class PR_Packager_ADPS_Metaboxes
   /**
    * Get custom metaboxes configuration
    *
-   * @param object $post
+   * @param int $post_id
    * @void
    */
-  public function get_custom_metaboxes( $post ) {
+  public function get_custom_metaboxes( $post_id ) {
 
     // Settings
-    $adps_settings = new PR_Metabox( 'adps_settings_metabox', __( 'Adobe DPS settings', 'adps_settings_metabox' ), 'normal', 'default', $post->ID );
+    $adps_settings = new PR_Metabox( 'adps_settings_metabox', __( 'Adobe DPS settings', 'adps_settings_metabox' ), 'normal', 'default', $post_id );
     $adps_settings->add_field( '_pr_adps_override', __( 'Override Issue settings', 'adps_settings_metabox' ), __( 'If enabled, will be used post settings below', 'adps_settings_metabox' ), 'checkbox', false );
     $adps_settings->add_field( '_pr_adps_smooth_scrolling', __( 'Smooth scrolling', 'adps_settings_metabox' ), '', 'select', '', [
       'options' => [
@@ -71,7 +70,7 @@ final class PR_Packager_ADPS_Metaboxes
     $this->_metaboxes['adps_settings_metabox'] = $adps_settings;
 
     // Custom fields
-    $adps_fields = new PR_Metabox( 'adps_fields_metabox', __( 'Adobe DPS fields', 'adps_fields_metabox' ), 'normal', 'high', $post->ID );
+    $adps_fields = new PR_Metabox( 'adps_fields_metabox', __( 'Adobe DPS fields', 'adps_fields_metabox' ), 'normal', 'high', $post_id );
     $adps_fields->add_field( '_pr_adps_title', __( 'Title', 'adps_fields_metabox' ), __( 'The Title appears in the table of contents and in folio navigation views. The maximum number of characters for Title is 60', 'adps_fields_metabox' ), 'text', false );
     $adps_fields->add_field( '_pr_adps_byline', __( 'Byline', 'adps_fields_metabox' ), __( 'Specify the author’s name. The maximum number of characters for Byline is 40', 'adps_fields_metabox' ), 'text', false );
     $adps_fields->add_field( '_pr_adps_kicker', __( 'Kicker', 'adps_fields_metabox' ), __( 'The section title of a magazine, such as “Reviews,” “Features,” or “Editorial.” The kicker appears in the table of contents and in folio navigation views. The maximum number of characters for Kicker is 35', 'adps_fields_metabox' ), 'text', false );
@@ -112,15 +111,36 @@ final class PR_Packager_ADPS_Metaboxes
       return $post_id;
     }
 
-    $post = get_post( $post_id );
-    $this->get_custom_metaboxes( $post );
+    $this->get_custom_metaboxes( $post_id );
     foreach ( $this->_metaboxes as $metabox ) {
       $metabox->save_values();
     }
   }
 
   /**
-   * add custom script to metabox
+   * Create metabox and custom fields
+   *
+   * @param object &$metaboxes
+   * @param int $item_id (it can be editorial project id or edition id);
+   * @void
+   */
+  public function pr_add_eproject_metabox( &$metaboxes, $item_id, $edition = false ) {
+
+    $this->get_custom_metaboxes( $item_id );
+    $adps_settings = $this->_metaboxes['adps_settings_metabox'];
+
+    // Remove override field
+    $adps_settings->remove_field( '_pr_adps_override' );
+    if( $edition ) {
+      $adps_settings->prepend_field( '_pr_adps_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
+    }
+    $adps_settings->add_field( '_pr_adps_download_path', __( 'Local download path', 'adps_package' ), __( 'Local download path (i.e. "/Users/mike/Downloads")', 'adps_package' ), 'text', false );
+
+    array_push( $metaboxes, $adps_settings );
+  }
+
+  /**
+   * Add custom script to metabox
    *
    * @void
    */
@@ -128,6 +148,20 @@ final class PR_Packager_ADPS_Metaboxes
 
     wp_register_script( 'adps_metabox', PR_ASSETS_URI . '/js/pr.adps.metabox.js', array( 'jquery' ), '1.0', true );
     wp_enqueue_script( 'adps_metabox' );
+  }
+
+  /**
+   * Register hooks
+   * @void
+   */
+  protected function _hooks() {
+
+    add_action( 'pr_add_eproject_tab', [ $this, 'pr_add_eproject_metabox' ], 10, 2 );
+    add_action( 'pr_add_edition_tab', [ $this, 'pr_add_eproject_metabox' ], 10, 3 );
+
+    add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
+		add_action( 'save_post', array( $this, 'save_pr_adps_fields'), 40 );
+    add_action( 'admin_footer', array( $this, 'add_custom_script' ) );
   }
 }
 

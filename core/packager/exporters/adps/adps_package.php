@@ -36,13 +36,7 @@ final class PR_Packager_ADPS_Package
 
   public function __construct() {
 
-    add_action( 'pr_add_eproject_tab', [ $this, 'pr_add_option' ], 10, 2 );
-    add_action( 'pr_add_edition_tab', [ $this, 'pr_add_option' ], 10, 3 );
-    add_action( 'wp_ajax_pr_dps_download_folio', array( $this, 'pr_download_folio' ), 10 );
-
-    add_action( 'pr_packager_adps_start', [ $this, 'adps_start' ], 10, 2 );
-    add_action( 'pr_packager_adps', [ $this, 'adps_run' ], 10, 4 );
-    add_action( 'pr_packager_adps_end', [ $this, 'adps_end' ], 10, 2 );
+    $this->_hooks();
 
     if ( !file_exists( PR_ADPS_PATH ) ) {
       PR_Utils::make_dir( PR_UPLOAD_PATH, 'adps' );
@@ -155,44 +149,6 @@ final class PR_Packager_ADPS_Package
   }
 
   /**
-   * Create metabox and custom fields
-   *
-   * @param object &$metaboxes
-   * @param int $item_id (it can be editorial project id or edition id);
-   * @void
-   */
-  public function pr_add_option( &$metaboxes, $item_id, $edition = false ) {
-
-    $adps_metabox = new PR_Metabox( 'adps_metabox', __( 'Adobe DPS', 'adps_package' ), 'normal', 'high', $item_id );
-
-    if( $edition ) {
-      $adps_metabox->add_field( '_pr_adps_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
-    }
-
-    $adps_metabox->add_field( '_pr_adps_smooth_scrolling', __( 'Smooth scrolling', 'adps_package' ), '', 'select', '', [
-      'options' => [
-        [ 'value' => 'never', 'text' => __( "Never", 'adps_package' ) ],
-        [ 'value' => 'always', 'text' => __( "Both", 'adps_package' ) ],
-        [ 'value' => 'portrait', 'text' => __( "Portrait", 'adps_package' ) ],
-        [ 'value' => 'landscape', 'text' => __( "Landscape", 'adps_package' ) ],
-      ]
-    ]);
-    $adps_metabox->add_field( '_pr_adps_hide_from_toc', __( 'Hide From TOC', 'adps_settings_metabox' ), __( 'Prevent the article from appearing when users tap the TOC button in the viewer nav bar', 'adps_settings_metabox' ), 'checkbox', false );
-    $adps_metabox->add_field( '_pr_adps_is_flattened_stack', __( 'Horizontal Swipe Only', 'adps_settings_metabox' ), __( 'If enabled, users browse through the article by swiping left and right instead of up and down', 'adps_settings_metabox' ), 'checkbox', false );
-    $adps_metabox->add_field( '_pr_adps_is_trusted_content', __( 'Trusted content', 'adps_settings_metabox' ), __( 'Allow Access to Entitlement Information', 'adps_settings_metabox' ), 'checkbox', false );
-    $adps_metabox->add_field( '_pr_adps_article_access', __( 'Article access', 'adps_package' ), '', 'select', '', [
-      'options' => [
-        [ 'value' => 'free', 'text' => __( "Free", 'adps_package' ) ],
-        [ 'value' => 'metered', 'text' => __( "Metered", 'adps_package' ) ],
-        [ 'value' => 'protected', 'text' => __( "Protected", 'adps_package' ) ]
-      ]
-    ]);
-    $adps_metabox->add_field( '_pr_adps_download_path', __( 'Local download path', 'adps_package' ), __( 'Local download path (i.e. "/Users/mike/Downloads")', 'adps_package' ), 'text', false );
-
-    array_push( $metaboxes, $adps_metabox );
-  }
-
-  /**
    * Force folio download
    * @void
    */
@@ -221,7 +177,7 @@ final class PR_Packager_ADPS_Package
 	 * @param object $packager
 	 * @return string or false
 	 */
-	public function _rewrite_url( $html, $packager ) {
+	private function _rewrite_url( $html, $packager ) {
 
 		if ( $html ) {
 			$post_rewrite_urls = array();
@@ -248,7 +204,7 @@ final class PR_Packager_ADPS_Package
 				}
         elseif ( !PR_Utils::is_absolute_url( $url ) && ( strpos( $url, '.css' ) !== false || strpos( $url, '.js' ) !== false ) ) {
           // Required by adobe
-          $post_rewrite_urls[$url] = '../' . $url;
+          $post_rewrite_urls[$url] = '..' . DS . $url;
         }
 			}
 
@@ -267,7 +223,7 @@ final class PR_Packager_ADPS_Package
 	 * @param string $edition_dir
 	 * @return string or boolean false
 	 */
-	protected function _build_html_resources_file( $edition_post, $edition_dir ) {
+	private function _build_html_resources_file( $edition_post, $edition_dir ) {
 
     // Get associated theme
     $theme_settings = PR_Theme::get_theme_settings( $edition_post->ID );
@@ -418,6 +374,18 @@ final class PR_Packager_ADPS_Package
       PR_Utils::remove_dir( $this->_folio_dir );
       return false;
     }
+  }
+
+  /**
+   * Register hooks
+   * @void
+   */
+  private function _hooks() {
+
+    add_action( 'wp_ajax_pr_dps_download_folio', array( $this, 'pr_download_folio' ), 10 );
+    add_action( 'pr_packager_adps_start', [ $this, 'adps_start' ], 10, 2 );
+    add_action( 'pr_packager_adps', [ $this, 'adps_run' ], 10, 4 );
+    add_action( 'pr_packager_adps_end', [ $this, 'adps_end' ], 10, 2 );
   }
 }
 

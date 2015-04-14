@@ -1,6 +1,5 @@
 <?php
-
-const PR_THEME_CONFIG_FILE = 'config.xml';
+define( 'PR_THEME_CONFIG_FILE', 'config.xml' );
 
 class PR_Theme
 {

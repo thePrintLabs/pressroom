@@ -34,21 +34,48 @@ class PR_Metabox
 
   /**
    * Add field to metabox
-   *
-   * @param array $f - metabox field
-   * @void
+   * @param  string $id
+   * @param  string $name
+   * @param  string $description
+   * @param  string $type
+   * @param  string $default
+   * @param  array  $extra
+   * @return array
    */
   public function add_field( $id, $name, $description, $type, $default, $extra = array() ) {
 
-    $params = array(
-       'id'           => $id,
-       'name'         => $name,
-       'desc'         => $description,
-       'type'         => $type,
-       'default'      => $default,
-    );
-    $field = array_merge( $params, $extra );
+    $field = $this->_make_field( $id, $name, $description, $type, $default, $extra );
     array_push( $this->fields, $field );
+  }
+
+  /**
+   * Prepend field to metabox
+   * @param  string $id
+   * @param  string $name
+   * @param  string $description
+   * @param  string $type
+   * @param  string $default
+   * @param  array  $extra
+   * @return array
+   */
+  public function prepend_field( $id, $name, $description, $type, $default, $extra = array() ) {
+
+    $field = $this->_make_field( $id, $name, $description, $type, $default, $extra );
+    array_unshift( $this->fields, $field );
+  }
+
+  /**
+   * Remove field from metabox
+   * @param string $id
+   * @void
+   */
+  public function remove_field( $id ) {
+
+    foreach ( $this->fields as $k => $field ) {
+      if ( $field['id'] == $id ) {
+        unset( $this->fields[$k] );
+      }
+    }
   }
 
   /**
@@ -442,5 +469,27 @@ class PR_Metabox
     wp_enqueue_style( 'wp-color-picker' );
     wp_register_script( 'metabox', PR_ASSETS_URI . '/js/pr.metabox.js', array( 'jquery', 'wp-color-picker' ), '1.0', true );
     wp_enqueue_script( 'metabox' );
+  }
+
+  /**
+   * set options for field
+   * @param  string $id
+   * @param  string $name
+   * @param  string $description
+   * @param  string $type
+   * @param  string $default
+   * @param  array  $extra
+   * @return array
+   */
+  protected function _make_field( $id, $name, $description, $type, $default, $extra = array() ) {
+    $params = array(
+       'id'           => $id,
+       'name'         => $name,
+       'desc'         => $description,
+       'type'         => $type,
+       'default'      => $default,
+    );
+    $field = array_merge( $params, $extra );
+    return $field;
   }
 }

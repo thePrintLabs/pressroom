@@ -153,7 +153,7 @@ jQuery(function(){
     var override_web = jQuery('#_pr_web_override_eproject');
     var override_hpub = jQuery('#_pr_hpub_override_eproject');
     var override_adps = jQuery('#_pr_adps_override_eproject');
-    
+
     override_web.click(function(e) {
       checkOverride(jQuery(this), 'web_metabox');
     });
@@ -163,7 +163,7 @@ jQuery(function(){
     });
 
     override_adps.click(function(e) {
-      checkOverride(jQuery(this), 'adps_metabox');
+      checkOverride(jQuery(this), 'adps_settings_metabox');
     });
 
     if(override_web.length) {
@@ -175,7 +175,7 @@ jQuery(function(){
     }
 
     if(override_adps.length) {
-      checkOverride(override_adps, 'adps_metabox');
+      checkOverride(override_adps, 'adps_settings_metabox');
     }
 
     function checkOverride(element, metabox) {

@@ -12,6 +12,13 @@ final class PR_Packager_Web_Package
 
   public function __construct() {
 
+    $options = get_option( 'pr_settings' );
+    $exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : false;
+    
+    if( !$exporters || !in_array( 'web', $exporters ) ) {
+      return;
+    }
+
     add_action( 'pr_add_eproject_tab', array( $this, 'pr_add_option' ), 10, 2 );
     add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 3 );
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );

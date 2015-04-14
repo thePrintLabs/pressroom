@@ -14,6 +14,13 @@ final class PR_Packager_ADPS_Metaboxes
    */
   public function __construct() {
 
+    $options = get_option( 'pr_settings' );
+    $exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : false;
+
+    if( !$exporters || !in_array( 'adps', $exporters ) ) {
+      return;
+    }
+    
     $this->_hooks();
   }
 

@@ -86,6 +86,18 @@ final class PR_Packager_Book_JSON
       global $tpl_pressroom;
 
       $book_url = str_replace( array( 'http://', 'https://' ), 'book://', PR_HPUB_URI );
+
+      $term = get_term( $term_id, PR_EDITORIAL_PROJECT );
+
+      $filename = PR_HPUB_PATH . PR_Utils::sanitize_string ( $term->slug ) . '_' . $packager->edition_post->ID . '.hpub';
+      $meta_key = '_pr_edition_hpub_' . $term_id;
+      if ( get_post_meta( $packager->edition_post->ID, $meta_key, true ) ) {
+        update_post_meta( $packager->edition_post->ID, $meta_key, $filename );
+      }
+      else {
+        add_post_meta( $packager->edition_post->ID, $meta_key, $filename, true );
+      }
+
       $hpub_url = str_replace( PR_HPUB_PATH, $book_url, get_post_meta( $packager->edition_post->ID, '_pr_edition_hpub_' . $term_id, true ) );
 
       $options = array(

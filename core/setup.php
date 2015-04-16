@@ -40,12 +40,12 @@ class PR_Setup
   }
 
   public static function disable_cron() {
-    wp_unschedule_event( time(), 'hourly', 'pr_checkexpiredtoken' );
+    wp_unschedule_event( time(), 'daily', 'pr_checkexpiredtoken' );
   }
 
   private static function _setup_cron() {
 
-    wp_schedule_event( time(), 'hourly', 'pr_checkexpiredtoken' );
+    wp_schedule_event( time(), 'daily', 'pr_checkexpiredtoken' );
   }
 
   /**

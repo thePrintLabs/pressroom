@@ -1,8 +1,12 @@
 <?php
 /**
-* PressRoom database class.
-* Add custom tables into database
-*/
+ * PressRoom setup class.
+ * Add custom tables into database
+ * Set cronjobs
+ */
+
+require_once( PR_CORE_PATH . 'cron.php' );
+
 class PR_Setup
 {
 
@@ -30,22 +34,13 @@ class PR_Setup
       array_push( $errors, __( "Error creating starterr theme in directory: <b>&quot;" . PR_PLUGIN_PATH . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
     }
 
-    self::_setup_cron();
+    PR_Cron::setup();
 
     if ( !empty( $errors ) ) {
       return $errors;
     }
 
     return false;
-  }
-
-  public static function disable_cron() {
-    wp_unschedule_event( time(), 'daily', 'pr_checkexpiredtoken' );
-  }
-
-  private static function _setup_cron() {
-
-    wp_schedule_event( time(), 'daily', 'pr_checkexpiredtoken' );
   }
 
   /**
@@ -201,15 +196,5 @@ class PR_Setup
     }
 
     return true;
-  }
-}
-
-add_action( 'pr_checkexpiredtoken', 'do_checkexpiredtoken');
-function do_checkexpiredtoken() {
-
-  global $wpdb;
-  $tokens = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->prefix . PR_TABLE_AUTH_TOKENS . ' WHERE ( created_time + expires_in ) < UNIX_TIMESTAMP() ', OBJECT_K );
-  foreach( $tokens as $token ) {
-      $wpdb->delete( $wpdb->prefix . PR_TABLE_AUTH_TOKENS, array( 'access_token' => $token->access_token ) );
   }
 }

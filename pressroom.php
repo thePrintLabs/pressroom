@@ -110,7 +110,7 @@ class TPL_Pressroom
 
 		// delete_option('rewrite_rules');
 		flush_rewrite_rules();
-		PR_Setup::disable_cron();
+		PR_Cron::disable();
 	}
 
 	/**

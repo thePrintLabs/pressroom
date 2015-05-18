@@ -17,7 +17,7 @@ class PR_Cron
     wp_schedule_event( time(), 'daily', 'pr_checkexpiredtoken' );
   }
 
-  public static function disable_cron() {
+  public static function disable() {
     wp_unschedule_event( time(), 'daily', 'pr_checkexpiredtoken' );
   }
 }

@@ -72,7 +72,7 @@ class PR_options_page {
 
     add_settings_field(
       'custom_post_type',
-      __( 'Connected custom post types', 'pressroom' ),
+      __( 'Custom post types', 'pressroom' ),
       array( $this, 'pr_custom_post_type' ),
       'pressroom',
       'pr_pressroom_section'
@@ -80,7 +80,7 @@ class PR_options_page {
 
     add_settings_field(
     'enabled_exporters',
-    __( 'Enabled Exporters', 'pressroom' ),
+    __( 'Exporters', 'pressroom' ),
     array( $this, 'pr_enabled_exporters' ),
     'pressroom',
     'pr_pressroom_section'
@@ -106,41 +106,62 @@ class PR_options_page {
   }
 
   /**
-   * Render custom_post_type field
+   * Render custom post_type field
    *
    * @void
    */
   public function pr_custom_post_type() {
 
     $options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_custom_post_type'] ) ? $options['pr_custom_post_type'] : '';
-    $post_types = get_post_types( '', 'objects');
-    $excluded = array('post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
-    echo '<ul>';
-    $atleastone = false;
-    foreach( $post_types as $post_type ) {
-      if( !in_array( $post_type->name, $excluded ) ) {
-        echo '<li><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="' .$post_type->name .'" '.( is_array( $value ) ? ( in_array( $post_type->name, $value )  ? 'checked="checked"' : "" ) : ( $value == $post_type->name ? 'checked="checked"' : "" ) ) . ' />' . $post_type->labels->name . '</li>';
-        $atleastone = true;
+    $post_types = get_post_types( null, 'objects' );
+    $excluded = array( 'post', 'page', 'attachment', 'revision', 'nav_menu_item', 'pr_edition' );
+    $enabled_posttype = isset( $options['pr_custom_post_type'] ) ? $options['pr_custom_post_type'] : [];
+    if ( !is_array( $enabled_posttype ) ) {
+      $enabled_posttype = [ $enabled_posttype ];
+    }
+
+    echo '<fieldset>
+    <legend class="screen-reader-text"><span>' . __( 'Custom post types', 'pressroom' ) . '</span></legend>';
+    $i = 0;
+    foreach ( $post_types as $post_type ) {
+      if ( !in_array( $post_type->name, $excluded ) ) {
+        $checked = in_array( $post_type->name, $enabled_posttype ) ? 'checked="checked"' : '';
+        echo '<label title="' . $post_type->name . '"><input type="checkbox" name="pr_settings[pr_custom_post_type][]" value="' . $post_type->name . '" ' . $checked . ' />' . $post_type->labels->name . '</span></label><br>';
+        $i++;
       }
     }
-    if( !$atleastone ) {
-      echo "No custom post types founds";
+    if ( !$i ) {
+      echo '<span>' . __( 'No custom post types founds', 'pressroom' ) . '</span>';
     }
-    echo '</ul>';
+    echo '</fieldset>';
   }
 
+  /**
+   * Render exporters field
+   * @return [type] [description]
+   */
   public function pr_enabled_exporters() {
 
     $options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : '';
     $exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-    echo '<ul>';
-    foreach( $exporters as $exporter ) {
-        echo '<li><input type="checkbox" name="pr_settings[pr_enabled_exporters][]" value="' .$exporter .'" '.( is_array( $value ) ? ( in_array( $exporter, $value )  ? 'checked="checked"' : "" ) : ( $value == $exporter ? 'checked="checked"' : "" ) ) . ' />' . $exporter . '</li>';
+    $enabled_exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : [];
+    if ( !is_array( $enabled_exporters ) ) {
+      $enabled_exporters = [ $enabled_exporters ];
     }
-    echo '</ul>';
 
+    echo '<fieldset>
+    <legend class="screen-reader-text"><span>' . __( 'Exporters', 'pressroom' ) . '</span></legend>';
+    foreach ( $exporters as $exporter ) {
+      $file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
+			if ( is_file( $file ) ) {
+        $file_data = get_file_data( $file , ['exporter_name' => 'Exporter Name', 'exporter_title' => 'Exporter Title' ] );
+        if ( isset( $file_data['exporter_name'], $file_data['exporter_title'] ) ) {
+          $checked = in_array( $file_data['exporter_name'], $enabled_exporters ) ? 'checked="checked"' : '';
+          echo '<label title="' . $file_data['exporter_name'] . '"><input type="checkbox" name="pr_settings[pr_enabled_exporters][]" value="' . $file_data['exporter_name'] . '" ' . $checked . ' /> <span>' . $file_data['exporter_title'] . '</span></label><br>';
+        }
+      }
+    }
+    echo '</fieldset>';
   }
 
   /**

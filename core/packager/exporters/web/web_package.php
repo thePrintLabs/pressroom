@@ -1,7 +1,9 @@
 <?php
 /**
-* PressRoom packager: Web package
-*/
+ * PressRoom packager: Web package
+ * Exporter Name: web
+ * Exporter Title: Web
+ */
 require_once( PR_PACKAGER_CONNECTORS_PATH . '/ftp_sftp.php' );
 
 final class PR_Packager_Web_Package
@@ -14,7 +16,7 @@ final class PR_Packager_Web_Package
 
     $options = get_option( 'pr_settings' );
     $exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : false;
-    
+
     if( !$exporters || !in_array( 'web', $exporters ) ) {
       return;
     }

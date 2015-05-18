@@ -1,6 +1,8 @@
 <?php
 /**
  * PressRoom packager: Adobe DPS package
+ * Exporter Name: adps
+ * Exporter Title: Adobe DPS
  */
 
 define( "PR_ADPS_PATH", PR_UPLOAD_PATH . 'adps/' );

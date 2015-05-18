@@ -387,7 +387,7 @@ class TPL_Pressroom
 
 		foreach( $exporters as $exporter ) {
 			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
-			if( is_file( $file ) ) {
+			if ( is_file( $file ) ) {
 				require_once( $file );
 			}
 			else {

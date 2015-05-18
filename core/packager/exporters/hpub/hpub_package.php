@@ -1,6 +1,8 @@
 <?php
 /**
 * PressRoom packager: Hpub package
+* Exporter Name: hpub
+* Exporter Title: HTML Publication
 */
 
 require_once( 'book_json.php' );

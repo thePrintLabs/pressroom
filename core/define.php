@@ -65,3 +65,4 @@ define( "PR_TABLE_RECEIPT_TRANSACTIONS", 'pr_receipt_transactions' );
 define( "PR_TABLE_PURCHASED_ISSUES", 'pr_purchased_issues' );
 define( "PR_TABLE_AUTH_TOKENS", 'pr_auth_tokens' );
 define( "PR_TABLE_STATS" , 'pr_statistics' );
+define( "PR_TABLE_LOGS" , 'pr_logs' );

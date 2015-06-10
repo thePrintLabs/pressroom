@@ -167,6 +167,9 @@ final class PR_Packager_Web_Package
 
     $this->_web_write( $packager, $editorial_project );
 
+    var_dump(PR_Packager::$log_output);
+    PR_Logs::update_log( $packager->log_id, PR_Packager::$log_output );
+
     PR_Utils::remove_dir( $this->root_folder );
 
   }

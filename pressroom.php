@@ -32,6 +32,7 @@ require_once( PR_CORE_PATH . 'theme.php' );
 require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );
+require_once( PR_CORE_PATH . 'logs.php' );
 
 require_once( PR_CONFIGS_PATH . 'edd.php' );
 //require_once( PR_CONFIGS_PATH . 'p2p.php' );
@@ -41,6 +42,7 @@ require_once( PR_SERVER_PATH . 'server.php' );
 
 require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
+require_once( PR_LIBS_PR_PATH . 'UI/logs_list.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/gallery_name.php' );
 
 class TPL_Pressroom
@@ -391,7 +393,7 @@ class TPL_Pressroom
 				require_once( $file );
 			}
 			else {
-				self::print_line( sprintf( __('Failed to load exporters <i>%s</i>', 'edition'), $file ), 'error' );
+				echo $file;
 				exit;
 			}
 		}

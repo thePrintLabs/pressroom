@@ -11,12 +11,14 @@ header('Content-Encoding: none;');
 class PR_Packager
 {
 	public static $verbose = true;
+	public static $log_output;
 	public $pb;
 	public $edition_dir;
 	public $linked_query;
 	public $edition_cover_image;
 	public $edition_post;
 	public $package_type;
+	public $log_id;
 	protected $_posts_attachments = array();
 
 	public function __construct() {
@@ -32,6 +34,18 @@ class PR_Packager
 	 * @void
 	 */
 	public function run( $editorial_project ) {
+
+		$current_user = wp_get_current_user();
+
+		$log = array(
+			'action'		=>	'package',
+			'object_id'	=>	(int) $_GET['edition_id'],
+			'ip'				=>	$_SERVER['REMOTE_ADDR'],
+			'author'		=>	$current_user->ID,
+			'type'			=>	$_GET['packager_type'],
+		);
+
+		$this->log_id = PR_Logs::insert_log( $log );
 
 		ob_start();
 
@@ -126,6 +140,8 @@ class PR_Packager
 
 		$this->_clean_temp_dir();
 
+		PR_Logs::update_log( $this->log_id, self::$log_output );
+
 		$this->set_progress( 100, __( 'Successfully created package', 'edition' ) );
 
 		self::print_line(__('Done', 'edition'), 'success');
@@ -153,7 +169,9 @@ class PR_Packager
 	public static function print_line( $output, $class = 'success' ) {
 
 		if ( self::$verbose ) {
-			echo '<p class="liveoutput ' . $class . '"><span class="label">' . $class . '</span> ' . $output . '</p>';
+			$out =  '<p class="liveoutput ' . $class . '"><span class="label">' . $class . '</span> ' . $output . '</p>';
+			echo $out;
+			self::$log_output .= $out;
 			ob_flush();
 			flush();
 		}
@@ -394,6 +412,8 @@ class PR_Packager
 
 		$this->_clean_temp_dir();
 		$this->set_progress( 100, __( 'Error creating package', 'edition' ) );
+
+		PR_Logs::update_log( $this->log_id, self::$log_output );
 		ob_end_flush();
 	}
 

@@ -147,6 +147,7 @@ final class PR_Packager_ADPS_Package
       return;
     }
 
+    PR_Logs::update_log( $packager->log_id, PR_Packager::$log_output );
     $this->_build_folio_zip();
   }
 

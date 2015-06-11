@@ -38,6 +38,8 @@ class Pressroom_List_Table extends WP_List_Table
     add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
     add_action( 'wp_ajax_bulk_presslist', array( $this, 'ajax_bulk_callback' ) );
     add_action( 'wp_ajax_update-custom-post-order', array( $this, 'ajax_update_post_order' ) );
+
+    add_action( 'quick_edit_custom_box', array( $this, 'display_custom_quickedit_book'), 10, 2 );
   }
 
   /**
@@ -272,6 +274,34 @@ class Pressroom_List_Table extends WP_List_Table
       $this->single_row_columns( $item );
       echo '</tr>';
    }
+
+
+  public function display_custom_quickedit_book( $column_name, $post_type ) {
+    static $printNonce = TRUE;
+    if ( $printNonce ) {
+        $printNonce = FALSE;
+        wp_nonce_field( plugin_basename( __FILE__ ), 'book_edit_nonce' );
+    }
+
+    ?>
+    <fieldset class="inline-edit-col-right inline-edit-book">
+      <div class="inline-edit-col column-<?php echo $column_name; ?>">
+        <label class="inline-edit-group">
+        <?php
+         switch ( $column_name ) {
+         case 'book_author':
+             ?><span class="title">Author</span><input name="book_author" /><?php
+             break;
+         case 'inprint':
+             ?><span class="title">In Print</span><input name="inprint" type="checkbox" /><?php
+             break;
+         }
+        ?>
+        </label>
+      </div>
+    </fieldset>
+    <?php
+  }
 
    /**
 	 * Override default display table adding custom bulk action and pagination

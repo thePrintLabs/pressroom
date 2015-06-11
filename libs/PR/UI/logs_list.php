@@ -33,11 +33,12 @@ class Pressroom_Logs_Table extends WP_List_Table
     ) );
 
     add_action( 'wp_ajax_presslist', array( $this, 'presslist_ajax_callback' ) );
-
     add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
-
+    add_action('init', array( $this, 'init_thickbox' ) );
+    add_action( 'admin_footer', array( $this, 'add_custom_styles' ) );
 
   }
+
 
   /**
   *
@@ -173,8 +174,8 @@ class Pressroom_Logs_Table extends WP_List_Table
 
     public function column_log_detail( $item ) {
 
-      echo '<a href="#"><i class="press-eye"></i></a>';
-      echo '<div style="display:none" class="log-detail">'.$item->detail.'</div>';
+      echo '<a href="#TB_inline?width=100%&height=550&inlineId=log-id-'.$item->id.'" class="thickbox"><i class="press-eye"></i></a>';
+      echo '<div style="display:none" class="log-detail" id="log-id-'.$item->id.'">'.$item->detail.'</div>';
     }
 
     public function column_log_author( $item ) {
@@ -441,6 +442,15 @@ class Pressroom_Logs_Table extends WP_List_Table
     $data = array();
 
     return $data;
+  }
+
+  public function init_thickbox() {
+     add_thickbox();
+  }
+
+  public function add_custom_styles() {
+    wp_register_style( 'pr_logs', PR_ASSETS_URI . 'css/pr.logs.css' );
+    wp_enqueue_style( 'pr_logs' );
   }
 }
 

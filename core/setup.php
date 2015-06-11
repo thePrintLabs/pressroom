@@ -130,7 +130,7 @@ class PR_Setup
       object_id int(10) unsigned NOT NULL,
       log_date int(10) unsigned NOT NULL,
       ip varchar(40) NOT NULL,
-      detail varchar(255) DEFAULT NULL,
+      detail longtext(255) DEFAULT NULL,
       author int(10) unsigned NOT NULL,
       type varchar(50) NOT NULL,
       PRIMARY KEY (id)

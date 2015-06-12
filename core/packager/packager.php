@@ -40,7 +40,7 @@ class PR_Packager
 		$log = array(
 			'action'		=>	'package',
 			'object_id'	=>	(int) $_GET['edition_id'],
-			'ip'				=>	$_SERVER['REMOTE_ADDR'],
+			'ip'				=>	PR_Utils::get_ip_address(),
 			'author'		=>	$current_user->ID,
 			'type'			=>	$_GET['packager_type'],
 		);

@@ -166,12 +166,17 @@ class PR_Packager
 	 * @param string $class
 	 * @echo
  	 */
-	public static function print_line( $output, $class = 'success' ) {
+	public static function print_line( $output, $class = 'success', $enable_log = true ) {
 
 		if ( self::$verbose ) {
 			$out =  '<p class="liveoutput ' . $class . '"><span class="label">' . $class . '</span> ' . $output . '</p>';
 			echo $out;
-			self::$log_output .= $out;
+
+			if( $enable_log ) {
+				self::$log_output .= $out;
+			}
+
+
 			ob_flush();
 			flush();
 		}

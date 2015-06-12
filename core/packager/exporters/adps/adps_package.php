@@ -369,7 +369,7 @@ final class PR_Packager_ADPS_Package
     $filepath = dirname( $this->_folio_dir );
     if ( PR_Utils::create_zip_file( $this->_folio_dir, $filepath . DS . $filename ) ) {
       $download_link = admin_url( 'admin-ajax.php?action=pr_dps_download_folio&filename=' . $filename );
-      PR_Packager::print_line( sprintf( __( '<script type="text/javascript">downloadFile("%s");</script><a href="%s" download><b>Download folio</b></a>', 'edition' ), $download_link, $download_link ), 'success' );
+      PR_Packager::print_line( sprintf( __( '<script type="text/javascript">downloadFile("%s");</script><a href="%s" download><b>Download folio</b></a>', 'edition' ), $download_link, $download_link ), 'success', false );
       PR_Utils::remove_dir( $this->_folio_dir );
       return true;
     } else {

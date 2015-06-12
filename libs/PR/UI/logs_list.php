@@ -32,8 +32,7 @@ class Pressroom_Logs_Table extends WP_List_Table
        'ajax'      => true,
     ) );
 
-    add_action( 'wp_ajax_presslist', array( $this, 'presslist_ajax_callback' ) );
-    add_action( 'wp_ajax__ajax_fetch_presslist', array( $this, 'ajax_fetch_presslist_callback' ) );
+    add_action( 'wp_ajax__ajax_fetch_logslist', array( $this, 'ajax_fetch_logslist_callback' ) );
     add_action('init', array( $this, 'init_thickbox' ) );
     add_action( 'admin_footer', array( $this, 'add_custom_styles' ) );
 
@@ -63,8 +62,11 @@ class Pressroom_Logs_Table extends WP_List_Table
 
 
     $data = $pr_logs->get_logs( $start_date, $end_date );
+
+    usort( $data, array( &$this, 'usort_reorder' ) );
+
     $columns = $this->get_columns();
-    //$sortable = $this->get_sortable_columns();
+    $sortable = $this->get_sortable_columns();
 
     $this->_column_headers = array( $columns, $hidden, $sortable );
 
@@ -129,6 +131,45 @@ class Pressroom_Logs_Table extends WP_List_Table
     }
   }
 
+  /**
+   * get_sortable_columns function.
+   * Define sortable columns
+   *
+   * @return array
+   */
+  public function get_sortable_columns() {
+
+    $sortable_columns = array(
+      'object_id'     => array( 'object_id', false ),
+      'log_date'      => array( 'log_date', false ),
+      'log_ip'        => array( 'ip', false ),
+      'log_author'    => array( 'author', false ),
+      'log_action'    => array( 'action', false ),
+      'log_type'      => array( 'type', false )
+    );
+
+    return $sortable_columns;
+  }
+
+  /**
+	 * usort_reorder function.
+	 *
+	 * @access public
+	 * @param mixed $a
+	 * @param mixed $b
+	 * @return void
+	 */
+  public function usort_reorder( $a, $b ) {
+	  // If no sort, default to title
+		$orderby = !empty( $_GET['orderby'] ) ? $_GET['orderby'] : 'log_date';
+		// If no order, default to asc
+		$order = !empty($_GET['order'] ) ? $_GET['order'] : 'asc';
+		// Determine sort order
+		$result = strcmp( $a->$orderby, $b->$orderby );
+		// Send final sort direction to usort
+    return ( $order === 'asc' ) ? $result : -$result;
+  }
+
 	/**
 	 * Override cb column
 	 *
@@ -151,7 +192,7 @@ class Pressroom_Logs_Table extends WP_List_Table
       static $row_class = '';
       $row_class = !strlen($row_class) ? ' class="alternate"' : '';
 
-      echo '<tr' . $row_class . ' id=' . $item->id .'">';
+      echo '<tr' . $row_class . ' id="' . $item->id .'">';
       $this->single_row_columns( $item );
       echo '</tr>';
     }
@@ -186,17 +227,17 @@ class Pressroom_Logs_Table extends WP_List_Table
         if ( $user instanceof WP_User && 0 !== $user->ID ) {
           //$user->display_name
           return sprintf(
-            '<a href="%s">%s <br/><span class="aal-author-name">%s</span></a><br /><small>%s</small>',
+            '<a href="%s">%s <br/><span class="pr-author-name">%s</span></a><br /><small>%s</small>',
             get_edit_user_link( $user->ID ),
             get_avatar( $user->ID, 40 ),
             $user->display_name,
-            isset( $user->roles[0] ) && isset( $wp_roles->role_names[ $user->roles[0] ] ) ? $wp_roles->role_names[ $user->roles[0] ] : __( 'Unknown', 'aryo-aal' )
+            isset( $user->roles[0] ) && isset( $wp_roles->role_names[ $user->roles[0] ] ) ? $wp_roles->role_names[ $user->roles[0] ] : __( 'Unknown', 'pr_logs' )
           );
         }
       }
       return sprintf(
-        '<span class="aal-author-name">%s</span>',
-        __( 'Guest', 'aryo-aal' )
+        '<span class="pr-author-name">%s</span>',
+        __( 'Guest', 'pr_logs' )
       );
     }
 
@@ -207,7 +248,15 @@ class Pressroom_Logs_Table extends WP_List_Table
 	 */
    public function display_tablenav( $which ) {
 
-      echo '<div class="tablenav ' . esc_attr( $which ) . '">';
+     $start_date = date('Y-m-d H:i', strtotime("-90 days"));
+     $end_date = date('Y-m-d H:i');
+
+     echo '<div class="tablenav ' . esc_attr( $which ) . '">
+     <div class="alignleft actions">
+     <input type="text" value="' .$start_date . '" class="pr-date" id="log_start_date" />
+     <input type="text" value="' .$end_date . '" class="pr-date" id="log_end_date" />
+     <input type="submit" value="' . __( 'Filter', 'edition' ) . '" class="button action" id="log-filter" />
+     </div>';
 
       $this->extra_tablenav( $which );
       $this->pagination( $which );
@@ -328,10 +377,10 @@ class Pressroom_Logs_Table extends WP_List_Table
 	 */
    public function display() {
 
-      wp_nonce_field( 'ajax-presslogs-nonce', '_ajax_presslist_nonce' );
+      wp_nonce_field( 'ajax-presslogs-nonce', '_ajax_logslist_nonce' );
 
-      echo '<input id="presslist_paged" type="hidden" name="current_page" value="' . $this->get_pagenum() . '" />';
-      echo '<input id="presslist_screen_per_page" type="hidden" name="scree_per_page" value="' . $this->_per_page . '" />';
+      echo '<input id="logslist_paged" type="hidden" name="current_page" value="' . $this->get_pagenum() . '" />';
+      echo '<input id="logslist_screen_per_page" type="hidden" name="scree_per_page" value="' . $this->_per_page . '" />';
       parent::display();
 	}
 
@@ -342,44 +391,35 @@ class Pressroom_Logs_Table extends WP_List_Table
     *
     * @return void
     */
-   public function ajax_fetch_logs_callback() {
+   public function ajax_fetch_logslist_callback() {
 
-      check_ajax_referer( 'ajax-presslogs-nonce', '_ajax_presslist_nonce' );
+      check_ajax_referer( 'ajax-presslogs-nonce', '_ajax_logslist_nonce' );
+
       $presslogs = new Pressroom_Logs_Table();
       $presslogs->_ajax_response_callback();
       exit;
    }
-
-	/**
-	 * Update post status related with current edition
-	 * @access public
-	 * @return void
-	 */
-	public function presslist_ajax_callback() {
-
-    $value = p2p_get_meta( $_POST['id'], 'status', true );
-
-    if ( p2p_update_meta( $_POST['id'], 'status', !$value ) ) {
-      wp_send_json( $value );
-		}
-
-    exit;
-	}
-
 
    /**
     * Add scripts required by table list
     *
     * @void
     */
-  public static function add_presslist_scripts() {
+  public static function add_logslist_scripts() {
 
-    //wp_register_script( 'presslist-ajax', PR_ASSETS_URI . 'js/presslist_ajax.js', array( 'jquery' ), '1.0', true );
-    wp_register_script( 'presslist-drag-drop', PR_ASSETS_URI . 'js/presslist_drag_drop.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script('jquery-ui-core');
-    wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script( 'presslist-ajax' );
-    wp_enqueue_script( 'presslist-drag-drop' );
+    wp_register_style( 'log_page', PR_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
+    wp_enqueue_style( 'log_page' );
+    wp_register_script( 'log_moment', PR_ASSETS_URI . '/js/moment.min.js' );
+    wp_enqueue_script( 'log_moment' );
+    wp_register_script( 'log_moment_tz', PR_ASSETS_URI . '/js/moment.timezone.min.js', array( 'log_moment' ) );
+    wp_enqueue_script( 'log_moment_tz' );
+    wp_register_script( 'log_datepicker', PR_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'log_datepicker' );
+
+    wp_register_script( 'logslist-ajax', PR_ASSETS_URI . 'js/logslist_ajax.js', array( 'jquery' ), '1.0', true );
+    wp_enqueue_script( 'logslist-ajax' );
+    wp_enqueue_script( 'jquery-ui-core');
+    wp_enqueue_script( 'jquery-ui-sortable');
   }
 
    /**
@@ -389,7 +429,7 @@ class Pressroom_Logs_Table extends WP_List_Table
     */
    protected function _ajax_response_callback() {
 
-      check_ajax_referer( 'ajax-presslogs-nonce', '_ajax_presslist_nonce' );
+      check_ajax_referer( 'ajax-presslogs-nonce', '_ajax_logslist_nonce' );
       $this->prepare_items();
 
       $total_items = $this->_pagination_args['total_items'];

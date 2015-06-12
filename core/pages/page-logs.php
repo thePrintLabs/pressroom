@@ -15,6 +15,7 @@ class PR_logs_page {
     }
 
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
+    add_action( 'admin_footer', array( $this, 'register_logs_script' ) );
   }
 
   /**
@@ -49,6 +50,10 @@ class PR_logs_page {
     $pr_table = new Pressroom_Logs_Table();
     $pr_table->prepare_items();
     $pr_table->display();
+  }
+
+  public function register_logs_script() {
+    Pressroom_Logs_Table::add_logslist_scripts();
   }
 }
 $pr_logs_page = new PR_logs_page();

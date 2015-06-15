@@ -65,7 +65,8 @@ class PR_Packager
 
 		if ( !PR_EDD_License::check_license() ) {
 			self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
-			exit;
+			$this->exit_on_error();
+			return;
 		}
 
 		if ( is_null( $this->edition_post ) ) {

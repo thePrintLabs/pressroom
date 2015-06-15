@@ -170,18 +170,6 @@ class Pressroom_Logs_Table extends WP_List_Table
     return ( $order === 'asc' ) ? $result : -$result;
   }
 
-	/**
-	 * Override cb column
-	 *
-	 * @access public
-	 * @param array $item
-	 * @return void
-	 */
-   public function column_cb( $item ) {
-
-      //return sprintf( '<input type="checkbox" name="linked_post" value="%s" />', $item->p2p_id );
-	}
-
     /**
     * single_row function.
     * @param array $item
@@ -199,6 +187,7 @@ class Pressroom_Logs_Table extends WP_List_Table
 
     /**
     * Override column issue title, adding link to post
+    *
     * @param  object $item
     * @echo
     */
@@ -208,17 +197,35 @@ class Pressroom_Logs_Table extends WP_List_Table
       echo '<a target="_blank" href="'.get_edit_post_link($item->object_id).'">' . $issue->post_title . '</a>';
     }
 
+    /**
+     * Define column log date
+     *
+     * @param  object $item
+     * @echo
+     */
     public function column_log_date( $item ) {
       $date = date( 'Y-m-d H:i:s', $item->log_date );
       echo $date;
     }
 
+    /**
+     * Define column log detail
+     *
+     * @param  object $item
+     * @echo
+     */
     public function column_log_detail( $item ) {
 
       echo '<a href="#TB_inline?width=100%&height=550&inlineId=log-id-'.$item->id.'" class="thickbox"><i class="press-eye"></i></a>';
       echo '<div style="display:none" class="log-detail" id="log-id-'.$item->id.'">'.$item->detail.'</div>';
     }
 
+    /**
+     * Define column log author
+     *
+     * @param  object $item
+     * @echo
+     */
     public function column_log_author( $item ) {
       global $wp_roles;
 
@@ -242,7 +249,8 @@ class Pressroom_Logs_Table extends WP_List_Table
     }
 
    /**
-	 * Override default display table adding custom bulk action and pagination
+	 * Override default display table adding custom date field
+	 *
 	 * @param mixed $which
 	 * @echo
 	 */
@@ -267,6 +275,7 @@ class Pressroom_Logs_Table extends WP_List_Table
 
 	/**
 	 * Override default pagination function to add number items to display
+	 *
 	 * @param mixed $which
 	 * @echo
 	 */
@@ -358,6 +367,7 @@ class Pressroom_Logs_Table extends WP_List_Table
 
 	/**
 	 * Override default extra_tablenav
+	 *
 	 * @param mixed $which
 	 * @return void
 	 */
@@ -429,65 +439,61 @@ class Pressroom_Logs_Table extends WP_List_Table
     */
    protected function _ajax_response_callback() {
 
-      check_ajax_referer( 'ajax-presslogs-nonce', '_ajax_logslist_nonce' );
-      $this->prepare_items();
+    check_ajax_referer( 'ajax-presslogs-nonce', '_ajax_logslist_nonce' );
+    $this->prepare_items();
 
-      $total_items = $this->_pagination_args['total_items'];
-      $total_pages = $this->_pagination_args['total_pages'];
-      ob_start();
-      if ( !empty( $_REQUEST['no_placeholder'] ) )
-           $this->display_rows();
-      else
-           $this->display_rows_or_placeholder();
+    $total_items = $this->_pagination_args['total_items'];
+    $total_pages = $this->_pagination_args['total_pages'];
+    ob_start();
+    if ( !empty( $_REQUEST['no_placeholder'] ) )
+         $this->display_rows();
+    else
+         $this->display_rows_or_placeholder();
 
-      $rows = ob_get_clean();
+    $rows = ob_get_clean();
 
-      ob_start();
-      $this->print_column_headers();
-      $headers = ob_get_clean();
+    ob_start();
+    $this->print_column_headers();
+    $headers = ob_get_clean();
 
-      ob_start();
-      $this->pagination( 'top' );
-      $pagination_top = ob_get_clean();
+    ob_start();
+    $this->pagination( 'top' );
+    $pagination_top = ob_get_clean();
 
-      ob_start();
-      $this->pagination( 'bottom' );
-      $pagination_bottom = ob_get_clean();
+    ob_start();
+    $this->pagination( 'bottom' );
+    $pagination_bottom = ob_get_clean();
 
-      $response = array( 'rows' => $rows );
-      $response['pagination']['top'] = $pagination_top;
-      $response['pagination']['bottom'] = $pagination_bottom;
-      $response['column_headers'] = $headers;
+    $response = array( 'rows' => $rows );
+    $response['pagination']['top'] = $pagination_top;
+    $response['pagination']['bottom'] = $pagination_bottom;
+    $response['column_headers'] = $headers;
 
-      if ( isset( $total_items ) )
-           $response['total_items_i18n'] = sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) );
+    if ( isset( $total_items ) )
+         $response['total_items_i18n'] = sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) );
 
-      if ( isset( $total_pages ) ) {
-           $response['total_pages'] = $total_pages;
-           $response['total_pages_i18n'] = number_format_i18n( $total_pages );
-      }
+    if ( isset( $total_pages ) ) {
+         $response['total_pages'] = $total_pages;
+         $response['total_pages_i18n'] = number_format_i18n( $total_pages );
+    }
 
-      echo json_encode( $response );
-      exit;
-   }
-
-   /**
-    *
-    * Select all posts in p2p connection with the current edition
-    *
-    * @return array
-    */
-  public function get_logs() {
-
-    $data = array();
-
-    return $data;
+    echo json_encode( $response );
+    exit;
   }
-
+  /**
+   * add thickbox
+   *
+   * @void
+   */
   public function init_thickbox() {
      add_thickbox();
   }
 
+  /**
+   * add custom style to log table
+   *
+   * @void
+   */
   public function add_custom_styles() {
     wp_register_style( 'pr_logs', PR_ASSETS_URI . 'css/pr.logs.css' );
     wp_enqueue_style( 'pr_logs' );

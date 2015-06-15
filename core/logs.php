@@ -16,7 +16,6 @@ class PR_Logs
    * Insert log
    *
    * @param  integer $data
-   *
    * @return integer
    */
   public static function insert_log( $data ) {
@@ -37,9 +36,9 @@ class PR_Logs
 
   /**
    * Update log
+   *
    * @param  int  $log_id
    * @param  object $data
-   *
    * @void
    */
   public static function update_log( $log_id, $detail ) {
@@ -53,7 +52,6 @@ class PR_Logs
    *
    * @param  string $start_date
    * @param  string $end_date
-   *
    * @return array
    */
   public function get_logs( $start_date, $end_date) {
@@ -65,7 +63,7 @@ class PR_Logs
 
     $sql = $wpdb->prepare( "SELECT *
     FROM " . $wpdb->prefix . PR_TABLE_LOGS . " WHERE
-    log_date BETWEEN '%d' AND '%d' ORDER BY log_date", $start_date, $end_date );
+    log_date BETWEEN '%d' AND '%d' ORDER BY log_date DESC", $start_date, $end_date );
     $results = $wpdb->get_results( $sql );
 
     return $results;

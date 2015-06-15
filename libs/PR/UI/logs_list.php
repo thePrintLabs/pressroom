@@ -94,7 +94,6 @@ class Pressroom_Logs_Table extends WP_List_Table
   public function get_columns() {
 
     $columns = array(
-      'cb'           => '<input type="checkbox" />',
       'object_id'    => __( 'Issue', 'pr_logs' ),
       'log_date'     => __( 'Date', 'pr_logs' ),
       'log_author'   => __( 'Author', 'pr_logs' ),

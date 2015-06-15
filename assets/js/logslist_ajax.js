@@ -1,13 +1,16 @@
 (function($) {
 
-  // calendar init
-  jQuery('.pr-date').datetimepicker({
+  var option = {
     format: 'Y-m-d H:i:s',
     lang: 'en',
+    scrollMonth: true,
     maxDate: moment().add(0, 'days').format('YYYY/MM/DD'),
     yearStart: moment().format('YYYY'),
     yearEnd: moment().add(14, 'days').format('YYYY'),
-  });
+  }
+  // calendar init
+  jQuery('#log_start_date').datetimepicker(option);
+  jQuery('#log_end_date').datetimepicker(option);
 list = {
 
     /**
@@ -62,7 +65,7 @@ list = {
             var data = {
                 paged: parseInt( $('input[name=paged].current-page').val() ) || '1',
                 order: $('#logslist_order').val() || 'asc',
-                orderby: $('#logslist_orderby').val() || 'title',
+                orderby: $('#logslist_orderby').val() || 'log_date',
                 start_date : $('#log_start_date').val(),
                 end_date : $('#log_end_date').val(),
             };

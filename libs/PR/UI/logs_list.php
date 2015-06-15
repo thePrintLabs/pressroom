@@ -253,9 +253,9 @@ class Pressroom_Logs_Table extends WP_List_Table
 
      echo '<div class="tablenav ' . esc_attr( $which ) . '">
      <div class="alignleft actions">
-     <input type="text" value="' .$start_date . '" class="pr-date" id="log_start_date" />
-     <input type="text" value="' .$end_date . '" class="pr-date" id="log_end_date" />
-     <input type="submit" value="' . __( 'Filter', 'edition' ) . '" class="button action" id="log-filter" />
+     <input type="text" value="' .$start_date . '"  class="pr-date" id="log_start_date" />
+     <input type="text" value="' .$end_date . '"  class="pr-date" id="log_end_date" />
+     <input type="submit" value="' . __( 'Filter', 'edition' ) . '" class="button button-primary action" id="log-filter" />
      </div>';
 
       $this->extra_tablenav( $which );

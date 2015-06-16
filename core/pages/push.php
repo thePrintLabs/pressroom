@@ -122,14 +122,9 @@ class PR_push_notification_page {
     <form action="options.php" method="post" id="pr-push-form">
       <div id="bg">
         <div class="pr-push-content">
-          <ul>
-            <li class="tab activeTab"><span class="press-filter"></span></li>
-            <li class="tab"><span class="press-send"></span></li>
-            <li class="tab"><span class="press-terminal"></span></li>
-          </ul>
           <br class="clear">
           <div class="prp-panel active">
-            <b><?php echo __('Editorial project', 'pressroom-push'); ?></b>
+            <b><?php echo __('Editorial project', 'pressroom-push'); ?></b><br/>
             <?php
             foreach ( $eprojects as $i => $eproject ) {
               echo '<label for="prp-eproject-' . $eproject->term_id . '" class="radio">
@@ -137,20 +132,21 @@ class PR_push_notification_page {
               <i>' . PR_Editorial_Project::get_bundle_id( $eproject->term_id ) . '</i></span></label>';
             }
             ?>
-            <button type="button" class="pr-option-btn" id="pr-btn-continue"><?php echo __("Continue", 'pressroom-push'); ?></button>
           </div>
 
           <div class="prp-panel">
-            <b><?php echo __('Push Notifications Type', 'pressroom-push'); ?></b>
-            <label for="prp-type-0" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-0" value="message" checked="checked"> <?php echo __('Message push', 'pressroom-push'); ?></label>
-            <label for="prp-type-1" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-1" value="download"> <?php echo __('Background download push', 'pressroom-push'); ?></label>
-            <div id="pr-edition-d">
-              <br>
-              <b><?php echo __('Issue to download', 'pressroom-push'); ?></b>
-              <label for="prp-edition-0" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-0" value="latest" checked="checked"> <?php echo __('Latest published edition', 'pressroom-push'); ?></label>
-              <label for="prp-edition-1" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-1" value="specific"> <?php echo __('Specific edition', 'pressroom-push'); ?></label>
-              <select name="pr_push[edition-slug]" class="combobox" disabled="disabled" id="prp-edition-s"></select>
-            </div>
+            <p>
+              <b><?php echo __('Push Notifications Type', 'pressroom-push'); ?></b>
+              <label for="prp-type-0" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-0" value="message" checked="checked"> <?php echo __('Message push', 'pressroom-push'); ?></label>
+              <label for="prp-type-1" class="radio"><input type="radio" name="pr_push[type]" class="prp-type" id="prp-type-1" value="download"> <?php echo __('Background download push', 'pressroom-push'); ?></label>
+              <div id="pr-edition-d">
+                <br>
+                <b><?php echo __('Issue to download', 'pressroom-push'); ?></b>
+                <label for="prp-edition-0" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-0" value="latest" checked="checked"> <?php echo __('Latest published edition', 'pressroom-push'); ?></label>
+                <label for="prp-edition-1" class="radio"><input type="radio" name="pr_push[edition]" id="prp-edition-1" value="specific"> <?php echo __('Specific edition', 'pressroom-push'); ?></label>
+                <select name="pr_push[edition-slug]" class="combobox" disabled="disabled" id="prp-edition-s"></select>
+              </div>
+            </p>
             <br>
             <b><?php echo __('Delivery time', 'pressroom-push'); ?></b>
             <label for="prp-time-0" class="radio"><input type="radio" name="pr_push[time]" class="prp-time" id="prp-time-0" value="now" checked="checked"> <?php echo __('Send immediately', 'pressroom-push'); ?></label>
@@ -160,7 +156,7 @@ class PR_push_notification_page {
               <input id="prp-rp-time" name="pr_push[date_time]" type="text" value="<?php echo date( 'Y-m-d H:s:i', strtotime( '+1 hour' ) ); ?>" class="textbox">
             </div>
             <br>
-            <b><?php echo __('Alert message', 'pressroom-push'); ?></b>
+            <b><?php echo __('Alert message', 'pressroom-push'); ?></b><br/>
             <textarea placeholder="The notification's message" name="pr_push[alert]" class="textbox textareabox"></textarea>
             <button type="submit" class="pr-option-btn"><?php echo __("Send notification", 'pressroom-push'); ?></button>
           </div>

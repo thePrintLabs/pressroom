@@ -207,21 +207,16 @@
 /* PUSH NOTIFICATION PAGE  */
 /****************************/
 
-.pr-push-content {
+/*.pr-push-content {
   position:relative;
   top:15%;
   height:70%;
   width:450px;
   margin-left:auto;
   margin-right:auto;
-  /*border-radius:5px;*/
   background:#fff;
   -webkit-box-shadow:  0px 0px 1px 0px rgba(0, 0, 0, .45);
   box-shadow:  0px 0px 1px 0px rgba(0, 0, 0, .45);
-  /*
-  -webkit-box-shadow:  0px 0px 15px 0px rgba(0, 0, 0, .45);
-  box-shadow:  0px 0px 15px 0px rgba(0, 0, 0, .45);
-  */
 }
 .pr-push-content b {
   margin-bottom:4px;
@@ -274,12 +269,14 @@
 .prp-panel.active {
   display:block;
 }
-
+*/
+form#pr-push-form {
+  max-width: 50%;
+}
 .textbox{
   height:50px;
   width:100%;
   border-radius:3px;
-  border:rgba(0,0,0,.3) 2px solid;
   box-sizing:border-box;
   padding:10px;
   margin-bottom:30px;
@@ -346,15 +343,16 @@
 }
 
 #pr-push-console {
-  width: 350px;
   height: 350px;
   border: 1px solid #d9d9d9;
   background: #f2f2f2;
   font-family: "Courier New", Courier, monospace;
   overflow-y: scroll;
+  margin-top: 20px;
   padding: 10px;
   word-wrap: break-word;
 }
+
 
 #pr-edition-d, #pr-edition-t {
   display: none;

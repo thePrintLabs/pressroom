@@ -120,44 +120,6 @@ class PR_Edition
 			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
 		}
 
-		$hpub = new PR_Metabox( 'hpub', __( 'hpub', 'edition' ), 'normal', 'high', $post->ID );
-		$hpub->add_field( '_pr_hpub_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
-		$hpub->add_field( '_pr_default', '<h3>Visualization properties</h3><hr>', '', 'textnode', '' );
-		$hpub->add_field( '_pr_orientation', __( 'Orientation', 'edition' ), __( 'The publication orientation.', 'edition' ), 'radio', '', array(
-			'options' => array(
-				array( 'value' => 'both', 'name' => __( "Both", 'edition' ) ),
-				array( 'value' => 'portrait', 'name' => __( "Portrait", 'edition' ) ),
-				array( 'value' => 'landscape', 'name' => __( "Landscape", 'edition' ) ),
-			)
-		) );
-		$hpub->add_field( '_pr_zoomable', __( 'Zoomable', 'editorial_project' ), __( 'Enable pinch to zoom of the page.', 'edition' ), 'checkbox', false );
-		$hpub->add_field( '_pr_body_bg_color', __( 'Body background color', 'edition' ), __( 'Background color to be shown before pages are loaded.', 'editorial_project' ), 'color', '#fff' );
-		$hpub->add_field( '_pr_bg_view', __( 'View background color', 'edition' ), __( 'View color to be shown before pages are loaded.', 'editorial_project' ), 'color', '#fff' );
-		$hpub->add_field( '_pr_background_image_portrait', __( 'Background image portrait', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in portrait mode.', 'editorial_project' ), 'file', '' );
-		$hpub->add_field( '_pr_background_image_landscape', __( 'Background image landscape', 'edition' ), __( 'Image file to be shown as a background before pages are loaded in landscape mode.', 'editorial_project' ), 'file', '' );
-		$hpub->add_field( '_pr_page_numbers_color', __( 'Page numbers color', 'edition' ), __( 'Color for page numbers to be shown before pages are loaded.', 'editorial_project' ), 'color', '#ffffff' );
-		$hpub->add_field( '_pr_page_numbers_alpha', __( 'Page number alpha', 'edition' ), __( 'Opacity for page numbers to be shown before pages are loaded. (min 0 => max 1)', 'editorial_project' ), 'decimal', 0.3 );
-		$hpub->add_field( '_pr_page_screenshot', __( 'Page Screenshoot', 'edition' ), __( 'Path to a folder containing the pre-rendered pages screenshots.', 'editorial_project' ), 'text', '' );
-		$hpub->add_field( '_pr_default', '<h3>Behaviour properties</h3><hr>', '', 'textnode', '' );
-
-		$hpub->add_field( '_pr_start_at_page', __( 'Start at page', 'edition' ), __( 'Defines the starting page of the publication. If the number is negative, the publication starting at the end and with numbering reversed. ( Note: this setting works only the first time issue is opened )', 'editorial_project' ), 'number', 1 );
-		$hpub->add_field( '_pr_rendering', __( 'Rendering type', 'edition' ), __( 'App rendering mode. See the page on <a target="_blank" href="https://github.com/Simbul/baker/wiki/Baker-rendering-modes">Baker rendering modes.</a>', 'edition' ), 'radio', '', array(
-			'options' => array(
-				array( 'value' => 'screenshots', 'name' => __( "Screenshots", 'edition' ) ),
-				array( 'value' => 'three-cards', 'name' => __( "Three cards", 'edition' ) )
-			)
-		) );
-		$hpub->add_field( '_pr_vertical_bounce', __( 'Vertical Bounce', 'edition' ), __( 'Bounce animation when vertical scrolling interaction reaches the end of a page.', 'editorial_project' ), 'checkbox', true );
-		$hpub->add_field( '_pr_media_autoplay', __( 'Media autoplay', 'edition' ), __( 'Media should be played automatically when the page is loaded.', 'editorial_project' ), 'checkbox', true );
-		$hpub->add_field( '_pr_vertical_pagination', __( 'Vertical pagination', 'edition' ), __( 'Vertical page scrolling should be paginated in the whole publication.', 'editorial_project' ), 'checkbox', false );
-		$hpub->add_field( '_pr_page_turn_tap', __( 'Page turn tap', 'edition' ), __( 'Tap on the right (or left) side to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
-		$hpub->add_field( '_pr_page_turn_swipe', __( 'Page turn swipe', 'edition' ), __( 'Swipe on the page to go forward (or back) by one page.', 'editorial_project' ), 'checkbox', true );
-
-		$hpub->add_field( '_pr_default', '<h3>Toc properties</h3><hr>', '', 'textnode', '' );
-		$hpub->add_field( '_pr_index_height', __( 'TOC height', 'edition' ), __( 'Height (in pixels) for the toc bar.', 'editorial_project' ), 'number', 150 );
-		$hpub->add_field( '_pr_index_width', __( 'TOC width', 'edition' ), __( 'Width (in pixels) for the toc bar. When empty, the width is automatically set to the width of the page.', 'editorial_project' ), 'number', '' );
-		$hpub->add_field( '_pr_index_bounce', __( 'TOC bounce', 'edition' ), __( 'Bounce effect when a scrolling interaction reaches the end of the page.', 'editorial_project' ), 'checkbox', false );
-
 		$metaboxes = array();
 
 		// Hook to add tab to edition metabox
@@ -170,7 +132,6 @@ class PR_Edition
 		$this->_metaboxes = array(
 			(object) $flatplan,
 			$e_meta,
-			$hpub,
 		);
 
 		$this->_metaboxes = array_merge( $this->_metaboxes, $metaboxes );

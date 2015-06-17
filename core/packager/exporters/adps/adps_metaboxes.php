@@ -20,7 +20,7 @@ final class PR_Packager_ADPS_Metaboxes
     if( !$exporters || !in_array( 'adps', $exporters ) ) {
       return;
     }
-    
+
     $this->_hooks();
   }
 

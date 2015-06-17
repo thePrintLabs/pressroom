@@ -416,19 +416,22 @@ class Pressroom_Logs_Table extends WP_List_Table
     */
   public static function add_logslist_scripts() {
 
-    wp_register_style( 'log_page', PR_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
-    wp_enqueue_style( 'log_page' );
-    wp_register_script( 'log_moment', PR_ASSETS_URI . '/js/moment.min.js' );
-    wp_enqueue_script( 'log_moment' );
-    wp_register_script( 'log_moment_tz', PR_ASSETS_URI . '/js/moment.timezone.min.js', array( 'log_moment' ) );
-    wp_enqueue_script( 'log_moment_tz' );
-    wp_register_script( 'log_datepicker', PR_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'log_datepicker' );
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-logs' ) {
+      wp_register_style( 'log_page', PR_ASSETS_URI . 'css/jquery.datetimepicker.min.css' );
+      wp_enqueue_style( 'log_page' );
+      wp_register_script( 'log_moment', PR_ASSETS_URI . '/js/moment.min.js' );
+      wp_enqueue_script( 'log_moment' );
+      wp_register_script( 'log_moment_tz', PR_ASSETS_URI . '/js/moment.timezone.min.js', array( 'log_moment' ) );
+      wp_enqueue_script( 'log_moment_tz' );
+      wp_register_script( 'log_datepicker', PR_ASSETS_URI . '/js/jquery.datetimepicker.min.js', array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( 'log_datepicker' );
 
-    wp_register_script( 'logslist-ajax', PR_ASSETS_URI . 'js/logslist_ajax.js', array( 'jquery' ), '1.0', true );
-    wp_enqueue_script( 'logslist-ajax' );
-    wp_enqueue_script( 'jquery-ui-core');
-    wp_enqueue_script( 'jquery-ui-sortable');
+      wp_register_script( 'logslist-ajax', PR_ASSETS_URI . 'js/logslist_ajax.js', array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( 'logslist-ajax' );
+      wp_enqueue_script( 'jquery-ui-core');
+      wp_enqueue_script( 'jquery-ui-sortable');
+    }
   }
 
    /**
@@ -494,8 +497,12 @@ class Pressroom_Logs_Table extends WP_List_Table
    * @void
    */
   public function add_custom_styles() {
-    wp_register_style( 'pr_logs', PR_ASSETS_URI . 'css/pr.logs.css' );
-    wp_enqueue_style( 'pr_logs' );
+
+    global $pagenow;
+    if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-logs' ) {
+      wp_register_style( 'pr_logs', PR_ASSETS_URI . 'css/pr.logs.css' );
+      wp_enqueue_style( 'pr_logs' );
+    }
   }
 }
 

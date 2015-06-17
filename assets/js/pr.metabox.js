@@ -69,7 +69,12 @@ jQuery(function(){
 
     jQuery('#pressroom_metabox').removeClass('postbox');
     jQuery('.tabbed').css('display','none');
-    jQuery('.hpub_metabox').css('display','table-row');
+    var className = jQuery('.taxonomy-pr_editorial_project .tabbed').first().attr('class');
+    if(className) {
+      className = className.replace( 'tabbed', '').trim();
+      jQuery('.' + className).css('display', 'table-row');
+    }
+
     jQuery('.basic_metabox').css('display','table-row');
 
     jQuery('.flatplan').css('display','table-row');

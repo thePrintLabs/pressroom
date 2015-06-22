@@ -3,7 +3,7 @@
 class PR_Edition
 {
 	public $pr_option;
-	public $exportes;
+	public $exporters;
 	public $ck_exporters;
 	protected $_metaboxes = array();
 
@@ -12,12 +12,12 @@ class PR_Edition
 	 *
 	 * @void
 	 */
-	public function __construct() {
+	public function __construct( $exporters) {
 
 		if ( !is_admin() ) {
 			return;
 		}
-
+		$this->exporters = $exporters;
 		if( !$this->check_exporters() ) {
 			add_action( 'admin_notices', array( $this, 'exporters_notice' ) );
 		}
@@ -666,9 +666,9 @@ class PR_Edition
 	public function check_exporters() {
 
 		$this->pr_options = get_option( 'pr_settings' );
-		$this->exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-		$this->ck_exporters = false;
+		//$this->exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
 
+		$this->ck_exporters = false;
 		if( isset( $this->pr_options['pr_enabled_exporters'] ) ) {
 			foreach( $this->exporters as $exporter ) {
 				if( in_array( $exporter, $this->pr_options['pr_enabled_exporters'] ) ) {

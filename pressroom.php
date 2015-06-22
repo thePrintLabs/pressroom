@@ -50,6 +50,7 @@ class TPL_Pressroom
 	public $configs;
 	public $edition;
 	public $preview;
+	public $exporters = array();
 
 	public function __construct() {
 
@@ -61,6 +62,7 @@ class TPL_Pressroom
 		$this->_load_pages();
 		$this->_load_extensions();
 		$this->_load_exporters();
+		$this->_load_add_ons();
 
 		$this->_create_edition();
 		$this->_create_preview();
@@ -81,6 +83,7 @@ class TPL_Pressroom
 		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
 		add_filter( 'template', array( $this, 'set_template_name'), 10 );
 		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
+
 	}
 
 	/**
@@ -390,6 +393,7 @@ class TPL_Pressroom
 		foreach( $exporters as $exporter ) {
 			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
 			if ( is_file( $file ) ) {
+				$this->exporters[$file] = $exporter;
 				require_once( $file );
 			}
 			else {
@@ -399,6 +403,10 @@ class TPL_Pressroom
 		}
 
 		return true;
+	}
+
+	protected function _load_add_ons() {
+		do_action_ref_array( 'pressroom/add_ons', array( &$this ) );
 	}
 
 	/**
@@ -450,7 +458,7 @@ class TPL_Pressroom
 	protected function _create_edition() {
 
 		if ( is_null( $this->edition ) ) {
-			$this->edition = new PR_Edition;
+			$this->edition = new PR_Edition( $this->exporters );
 		}
 	}
 

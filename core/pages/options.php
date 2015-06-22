@@ -143,7 +143,9 @@ class PR_options_page {
   public function pr_enabled_exporters() {
 
     $options = get_option( 'pr_settings' );
-    $exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+    // $exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+    global $tpl_pressroom;
+    $exporters = $tpl_pressroom->exporters;
     $enabled_exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : [];
     if ( !is_array( $enabled_exporters ) ) {
       $enabled_exporters = [ $enabled_exporters ];
@@ -151,8 +153,7 @@ class PR_options_page {
 
     echo '<fieldset>
     <legend class="screen-reader-text"><span>' . __( 'Exporters', 'pressroom' ) . '</span></legend>';
-    foreach ( $exporters as $exporter ) {
-      $file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
+    foreach ( $exporters as $file => $exporter ) {
 			if ( is_file( $file ) ) {
         $file_data = get_file_data( $file , ['exporter_name' => 'Exporter Name', 'exporter_title' => 'Exporter Title' ] );
         if ( isset( $file_data['exporter_name'], $file_data['exporter_title'] ) ) {

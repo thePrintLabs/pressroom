@@ -62,7 +62,7 @@ class TPL_Pressroom
 		$this->_load_pages();
 		$this->_load_extensions();
 		$this->_load_exporters();
-		$this->_load_add_ons();
+		//$this->_load_add_ons();
 
 		$this->_create_edition();
 		$this->_create_preview();
@@ -83,6 +83,8 @@ class TPL_Pressroom
 		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
 		add_filter( 'template', array( $this, 'set_template_name'), 10 );
 		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
+
+		add_action( 'plugins_loaded', array( $this, 'load_add_ons' ) );
 
 	}
 
@@ -332,6 +334,10 @@ class TPL_Pressroom
 		</div>';
 	}
 
+	public function load_add_ons() {
+		do_action_ref_array( 'pressroom/add_ons', array( &$this ) );
+	}
+
 	/**
 	 * Check if permalink structure is set to Post Name
 	 * ( required for Editorial Project endpoint )
@@ -405,10 +411,6 @@ class TPL_Pressroom
 		return true;
 	}
 
-	protected function _load_add_ons() {
-		do_action_ref_array( 'pressroom/add_ons', array( &$this ) );
-	}
-
 	/**
 	* Load plugin pages
 	*
@@ -458,7 +460,7 @@ class TPL_Pressroom
 	protected function _create_edition() {
 
 		if ( is_null( $this->edition ) ) {
-			$this->edition = new PR_Edition( $this->exporters );
+			$this->edition = new PR_Edition();
 		}
 	}
 

@@ -9,7 +9,7 @@ if ( !class_exists('PR_EDD_License') ) {
   	private $item_shortname;
   	private $version;
   	private $author;
-    private $options;
+    private $license_key;
 
     /**
 	   * Class constructor
@@ -19,19 +19,17 @@ if ( !class_exists('PR_EDD_License') ) {
   	 * @param string  $_item_name
   	 * @param string  $_version
   	 * @param string  $_author
-  	 * @param string  $_optname
+  	 * @param string  $_licence_key
   	 */
-    function __construct( $_file, $_item_name, $_version, $_author, $_optname = null ) {
+    function __construct( $_file, $_item_name, $_version, $_author, $_licence_key = '' ) {
 
       if ( is_admin() ) {
-
-        $this->options = get_option( 'pr_settings' );
 
         $this->file           = $_file;
         $this->item_name      = $_item_name;
         $this->item_shortname = 'edd_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
         $this->version        = $_version;
-        $this->license        = $this->options && isset( $this->options['pr_license_key'] ) ? $this->options['pr_license_key'] : '';
+        $this->license        = $_licence_key;
         $this->author         = $_author;
 
         // Setup hooks
@@ -95,12 +93,10 @@ if ( !class_exists('PR_EDD_License') ) {
   	 */
 	  public function activate_license() {
 
-      if ( isset( $_POST['pr_license_key_activate'], $_POST['pr_settings']['pr_license_key'] ) && strlen( $_POST['pr_settings']['pr_license_key'] ) ) {
+      if ( isset( $_POST['pr_license_key_' . $this->item_name . '_activate'], $_POST['pr_settings']['pr_license_key_' . $this->item_name] ) && strlen( $_POST['pr_settings']['pr_license_key_' . $this->item_name] ) ) {
 
-        $license = sanitize_text_field( $_POST['pr_settings']['pr_license_key'] );
-
+        $license = sanitize_text_field( $_POST['pr_settings']['pr_license_key_' . $this->item_name] );
         $settings = get_option( 'pr_settings' );
-
         $api_params = array(
     			'edd_action' => 'activate_license',
     			'license'    => $license,
@@ -117,9 +113,9 @@ if ( !class_exists('PR_EDD_License') ) {
   		  );
 
         if ( is_wp_error( $response ) ) {
-          $settings['pr_license_key'] = '';
+          $settings['pr_license_key_' . $this->item_name] = '';
           update_option( 'pr_settings', $settings );
-          delete_option( 'pr_valid_license' );
+          delete_option( 'pr_valid_license_' . $this->item_name );
           $param = urlencode( $response->get_error_message() );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
           exit;
@@ -127,17 +123,17 @@ if ( !class_exists('PR_EDD_License') ) {
 
         $license_data = json_decode( wp_remote_retrieve_body( $response ) );
         if ( !isset( $license_data->license ) || $license_data->license != 'valid' ) {
-          $settings['pr_license_key'] = '';
+          $settings['pr_license_key_' . $this->item_name] = '';
           update_option( 'pr_settings', $settings );
-          delete_option( 'pr_valid_license' );
+          delete_option( 'pr_valid_license_' . $this->item_name );
           $param = urlencode( __( "The license key is invalid", 'pressroom-license' ) );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
           exit;
         }
 
-        $settings['pr_license_key'] = trim( $license );
+        $settings['pr_license_key_' . $this->item_name] = trim( $license );
         update_option( 'pr_settings', $settings );
-        update_option( 'pr_valid_license', $license_data->license );
+        update_option( 'pr_valid_license_' . $this->item_name, $license_data->license );
         $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );
         wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_activated_license&pmparam=' . $param ) );
         exit;
@@ -152,7 +148,7 @@ if ( !class_exists('PR_EDD_License') ) {
   	 */
 	  public function deactivate_license() {
 
-      if ( isset( $_POST['pr_license_key_deactivate'] ) ) {
+      if ( isset( $_POST['pr_license_key_' . $this->item_name . '_deactivate'] ) ) {
 
         $settings = get_option( 'pr_settings' );
   			$api_params = array(
@@ -177,15 +173,15 @@ if ( !class_exists('PR_EDD_License') ) {
 
   			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
   			if ( $license_data->license == 'deactivated' ) {
-          $settings['pr_license_key'] = '';
-          delete_option( 'pr_valid_license' );
+          $settings['pr_license_key_' . $this->item_name] = '';
+          delete_option( 'pr_valid_license_' . $this->item_name );
           update_option( 'pr_settings', $settings );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
           exit;
         }
         else if( $license_data->license == 'failed' ) {
-          $settings['pr_license_key'] = '';
-          delete_option( 'pr_valid_license' );
+          $settings['pr_license_key_' . $this->item_name] = '';
+          delete_option( 'pr_valid_license_' . $this->item_name );
           update_option( 'pr_settings', $settings );
           wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
         }
@@ -199,7 +195,7 @@ if ( !class_exists('PR_EDD_License') ) {
     public static function check_license() {
 
       $options = get_option( 'pr_settings' );
-      $license = isset( $options['pr_license_key'] ) ? $options['pr_license_key'] : '';
+      $license = isset( $options['pr_license_key_' . $this->item_name] ) ? $options['pr_license_key_' . $this->item_name] : '';
       if ( !strlen( $license ) ) {
         return false;
       }
@@ -207,7 +203,7 @@ if ( !class_exists('PR_EDD_License') ) {
       $api_params = array(
         'edd_action' => 'check_license',
         'license'    => $license,
-        'item_name'  => urlencode( PR_PRODUCT_NAME ),
+        'item_name'  => urlencode( $this->item_name ),
         'url'        => home_url()
       );
 

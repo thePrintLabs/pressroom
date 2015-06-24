@@ -84,9 +84,9 @@ class TPL_Pressroom
 		add_filter( 'template', array( $this, 'set_template_name'), 10 );
 		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
 
+		/* Once all plugin are loaded, load core and external exporters */
 		add_action( 'plugins_loaded', array( $this, 'load_exporters' ) );
 		add_action( 'plugins_loaded', array( $this, 'load_core_exporters' ), 20 );
-
 
 	}
 
@@ -336,12 +336,17 @@ class TPL_Pressroom
 		</div>';
 	}
 
+	/**
+	 *  Load add-ons exporters
+	 *
+	 * @void
+	 */
 	public function load_exporters() {
 		do_action_ref_array( 'pressroom/add_ons', array( &$this ) );
 	}
 
 	/**
-	* Get all exporters from relative dir
+	* Get all core exporters from relative dir
 	*
 	* @void
 	*/
@@ -382,7 +387,6 @@ class TPL_Pressroom
 
 		return true;
 	}
-
 
 	/**
 	 * Load plugin configuration settings

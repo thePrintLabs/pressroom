@@ -4,6 +4,7 @@
  * Exporter Name: web
  * Exporter Title: Web
  */
+
 require_once( PR_PACKAGER_CONNECTORS_PATH . '/ftp_sftp.php' );
 
 final class PR_Packager_Web_Package
@@ -42,7 +43,6 @@ final class PR_Packager_Web_Package
   public function load_settings( $edition_id, $eproject_id ) {
 
     $settings = array(
-      '_pr_container_theme',
       '_pr_ftp_protocol',
       '_pr_local_path',
       '_pr_ftp_server',
@@ -82,11 +82,6 @@ final class PR_Packager_Web_Package
 
     $this->root_folder = $packager->edition_dir;
 
-    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
-      $this->_get_container( $packager->edition_dir );
-      $packager->edition_dir = $packager->edition_dir . DS . 'contents';
-    }
-
     $packager->make_toc( $editorial_project, $packager->edition_dir, "toc" );
   }
 
@@ -103,17 +98,10 @@ final class PR_Packager_Web_Package
 
     if( $parsed_html_post ) {
 
-      // Rewrite post url
-      $container = isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ? true : false;
-      if( $container ) {
-        self::rewrite_url( $packager, $parsed_html_post );
-      }
-      else {
-        $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
-      }
 
-      // Create index.html file for no-container web package
-      if( $packager->linked_query->posts[0]->post_title == $post->post_title && !$container ) {
+      $parsed_html_post = $packager->rewrite_url( $parsed_html_post );
+
+      if( $packager->linked_query->posts[0]->post_title == $post->post_title ) {
         $post_title = "index";
       }
       else {
@@ -142,10 +130,6 @@ final class PR_Packager_Web_Package
    */
   public function web_packager_end( $packager, $editorial_project ) {
 
-    if( isset( $this->pstgs['_pr_container_theme'] ) && $this->pstgs['_pr_container_theme'] != "no-container" ) {
-      $this->_shortcode_replace( $packager );
-    }
-
     $media_dir = PR_Utils::make_dir( $packager->edition_dir, PR_EDITION_MEDIA );
 
     if ( !$media_dir ) {
@@ -167,7 +151,6 @@ final class PR_Packager_Web_Package
 
     $this->_web_write( $packager, $editorial_project );
 
-    var_dump(PR_Packager::$log_output);
     PR_Logs::update_log( $packager->log_id, PR_Packager::$log_output );
 
     PR_Utils::remove_dir( $this->root_folder );
@@ -188,14 +171,6 @@ final class PR_Packager_Web_Package
     if( $edition ) {
       $web->add_field( '_pr_web_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
     }
-
-    $web->add_field( '_pr_container_theme', __( 'Container theme', 'web_package' ), __( 'Web viewer theme', 'web_package' ), 'select', '', array(
-      'options' => array(
-        array( 'value' => 'standard', 'text' => __( "Standard Web Viewer", 'web_package' ) ),
-        array( 'value' => 'no-container', 'text' => __( "No container", 'web_package' ) ),
-        )
-      )
-    );
 
     do_action_ref_array( 'pr_add_web_field', array( &$web ) );
 
@@ -237,55 +212,6 @@ final class PR_Packager_Web_Package
     }
 
     exit;
-  }
-
-  /**
-   * Copy web reader in the package
-   *
-   * @param  string $dir
-   * @void
-   */
-  protected function _get_container( $dir ) {
-
-    PR_Utils::recursive_copy( PR_PACKAGER_EXPORTERS_PATH . 'web' . DS . 'reader', $dir);
-  }
-
-  /**
-   * Replace shortcode reader index.html with posts iframes
-   *
-   * @param  object $packager
-   * @void
-   */
-  protected function _shortcode_replace( $packager ) {
-
-
-    $toc_full = isset( $this->pstgs['_pr_index_height'] ) ? false : true;
-    if( $toc_full ) {
-      $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index_full_toc.html');
-    }
-    else {
-      $html = file_get_contents( $packager->edition_dir  . DS . '../' . 'index.html');
-    }
-
-    $replace = "";
-    foreach( $packager->linked_query->posts as $post ) {
-
-
-      $src = 'contents/'. PR_Utils::sanitize_string( $post->post_title ) .'.html';
-
-      if( has_action( "pr_packager_shortcode_{$packager->package_type}_{$post->post_type}" ) ) {
-        do_action_ref_array( "pr_packager_shortcode_{$packager->package_type}_{$post->post_type}", array( $post, &$src ) );
-      }
-
-      $replace.= '<div class="swiper-slide" data-hash="item-'. $post->ID .'">
-      <iframe height="100%" width="100%" frameborder="0" src="' . $src . '"></iframe>
-      </div>';
-    }
-
-    $html = str_replace( '[EDITION_POSTS]', $replace, $html );
-    $html = str_replace( '[TOC_HEIGHT]', isset( $this->pstgs['_pr_index_height'] ) ? $this->pstgs['_pr_index_height'] : '', $html );
-
-    file_put_contents( $packager->edition_dir . DS . '../' . 'index.html' , $html );
   }
 
   /**
@@ -394,5 +320,4 @@ final class PR_Packager_Web_Package
     }
   }
 }
-
 $pr_packager_web_package = new PR_Packager_Web_Package;

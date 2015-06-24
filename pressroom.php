@@ -61,7 +61,7 @@ class TPL_Pressroom
 		$this->_load_configs();
 		$this->_load_pages();
 		$this->_load_extensions();
-		$this->_load_exporters();
+		//$this->_load_exporters();
 		//$this->_load_add_ons();
 
 		$this->_create_edition();
@@ -84,7 +84,9 @@ class TPL_Pressroom
 		add_filter( 'template', array( $this, 'set_template_name'), 10 );
 		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
 
-		add_action( 'plugins_loaded', array( $this, 'load_add_ons' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_exporters' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_core_exporters' ), 20 );
+
 
 	}
 
@@ -334,8 +336,34 @@ class TPL_Pressroom
 		</div>';
 	}
 
-	public function load_add_ons() {
+	public function load_exporters() {
 		do_action_ref_array( 'pressroom/add_ons', array( &$this ) );
+	}
+
+	/**
+	* Get all exporters from relative dir
+	*
+	* @void
+	*/
+	public function load_core_exporters() {
+
+		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+
+		foreach( $exporters as $exporter ) {
+			if( !in_array( $exporter, $this->exporters ) ) {
+				$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
+				if ( is_file( $file ) ) {
+					$this->exporters[$file] = $exporter;
+					require_once( $file );
+				}
+				else {
+					echo $file;
+					exit;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -385,30 +413,6 @@ class TPL_Pressroom
 				}
 			}
 		}
-	}
-
-	/**
-	* Get all exporters from relative dir
-	*
-	* @void
-	*/
-	protected function _load_exporters() {
-
-		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-
-		foreach( $exporters as $exporter ) {
-			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
-			if ( is_file( $file ) ) {
-				$this->exporters[$file] = $exporter;
-				require_once( $file );
-			}
-			else {
-				echo $file;
-				exit;
-			}
-		}
-
-		return true;
 	}
 
 	/**

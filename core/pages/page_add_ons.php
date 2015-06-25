@@ -44,7 +44,7 @@ class PR_add_ons_page {
     </p>';
 
     if ( in_array($add_on->info->slug, $this->pr_options['pr_enabled_exporters'] ) ) {
-      $html.= '<h3 class="theme-name" id="' . $add_on->info->id . '-name"><span>Attivo:</span> ' . $add_on['name'] . '</h3>
+      $html.= '<h3 class="theme-name" id="' . $add_on->info->id . '-name"><span>Attivo:</span> ' . $add_on->info->title . '</h3>
       <div class="theme-actions">
       <a class="button button-primary pr-theme-deactivate" href="' . admin_url('admin.php?page=pressroom-themes&theme_id='. $add_on->info->id .'&theme_status=false') . '">Deactivate</a>
       <a class="button button-secondary pr-theme-delete" href="#">Delete</a>

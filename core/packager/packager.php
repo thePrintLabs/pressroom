@@ -63,11 +63,11 @@ class PR_Packager
 
 		$this->package_type = $_GET['packager_type'];
 
-		if ( !PR_EDD_License::check_license() ) {
-			self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
-			$this->exit_on_error();
-			return;
-		}
+		// if ( !PR_EDD_License::check_license() ) {
+		// 	self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
+		// 	$this->exit_on_error();
+		// 	return;
+		// }
 
 		if ( is_null( $this->edition_post ) ) {
 			ob_end_flush();

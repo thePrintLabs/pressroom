@@ -455,7 +455,9 @@ class PR_Edition
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-		wp_enqueue_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.css' );
+
+		wp_register_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.css' );
+		wp_enqueue_style( 'pressroom' );
 
 		wp_register_script( 'edition', PR_ASSETS_URI . '/js/pr.edition.js', array( 'jquery' ), '1.0', true );
 		wp_enqueue_script( 'edition' );

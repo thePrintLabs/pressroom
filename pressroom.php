@@ -29,6 +29,7 @@ require_once( PR_CORE_PATH . 'edition/edition.php' );
 require_once( PR_CORE_PATH . 'edition/editorial_project.php' );
 require_once( PR_CORE_PATH . 'posts.php' );
 require_once( PR_CORE_PATH . 'theme.php' );
+require_once( PR_CORE_PATH . 'add_ons.php' );
 require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );

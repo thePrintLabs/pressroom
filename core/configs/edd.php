@@ -92,52 +92,55 @@ if ( !class_exists('PR_EDD_License') ) {
   	 * @return  void
   	 */
 	  public function activate_license() {
+      if ( isset( $_POST['item_slug']) && strlen( $_POST['item_slug'] ) ) {
+        $item_slug = $_POST['item_slug'];
+        if ( isset( $_POST['pr_license_key_' . $item_slug . '_activate'], $_POST['pr_settings']['pr_license_key_' . $item_slug] ) && strlen( $_POST['pr_settings']['pr_license_key_' . $item_slug] ) ) {
+          $item_name = $_POST['item_' . $item_slug . '_name'];
+          $license = sanitize_text_field( $_POST['pr_settings']['pr_license_key_' . $item_slug] );
 
-      if ( isset( $_POST['pr_license_key_' . $this->item_name . '_activate'], $_POST['pr_settings']['pr_license_key_' . $this->item_name] ) && strlen( $_POST['pr_settings']['pr_license_key_' . $this->item_name] ) ) {
+          $settings = get_option( 'pr_settings' );
+          $api_params = array(
+      			'edd_action' => 'activate_license',
+      			'license'    => $license,
+      			'item_name'  => urlencode( $item_name ),
+            'url'        => home_url()
+      		);
 
-        $license = sanitize_text_field( $_POST['pr_settings']['pr_license_key_' . $this->item_name] );
-        $settings = get_option( 'pr_settings' );
-        $api_params = array(
-    			'edd_action' => 'activate_license',
-    			'license'    => $license,
-    			'item_name'  => urlencode( $this->item_name ),
-          'url'        => home_url()
-    		);
+    		  $response = wp_remote_get(
+      			add_query_arg( $api_params, PR_API_URL ),
+      			array(
+      				'timeout'   => 15,
+      				'sslverify' => false
+      			)
+    		  );
 
-  		  $response = wp_remote_get(
-    			add_query_arg( $api_params, PR_API_URL ),
-    			array(
-    				'timeout'   => 15,
-    				'sslverify' => false
-    			)
-  		  );
+          if ( is_wp_error( $response ) ) {
+            $settings['pr_license_key_' . $item_slug] = '';
+            update_option( 'pr_settings', $settings );
+            delete_option( 'pr_valid_license_' . $item_slug );
+            $param = urlencode( $response->get_error_message() );
+            wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
+            exit;
+          }
 
-        if ( is_wp_error( $response ) ) {
-          $settings['pr_license_key_' . $this->item_name] = '';
+          $license_data = json_decode( wp_remote_retrieve_body( $response ) );
+          if ( !isset( $license_data->license ) || $license_data->license != 'valid' ) {
+            $settings['pr_license_key_' . $item_slug] = '';
+            update_option( 'pr_settings', $settings );
+            delete_option( 'pr_valid_license_' . $item_slug );
+            $param = urlencode( __( "The license key is invalid", 'pressroom-license' ) );
+            wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
+            exit;
+          }
+
+          $settings['pr_license_key_' . $item_slug] = trim( $license );
           update_option( 'pr_settings', $settings );
-          delete_option( 'pr_valid_license_' . $this->item_name );
-          $param = urlencode( $response->get_error_message() );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
+          update_option( 'pr_valid_license_' . $item_slug, $license_data->license );
+          $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );
+          wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=updated&pmcode=success_activated_license&pmparam=' . $param ) );
           exit;
-        }
-
-        $license_data = json_decode( wp_remote_retrieve_body( $response ) );
-        if ( !isset( $license_data->license ) || $license_data->license != 'valid' ) {
-          $settings['pr_license_key_' . $this->item_name] = '';
-          update_option( 'pr_settings', $settings );
-          delete_option( 'pr_valid_license_' . $this->item_name );
-          $param = urlencode( __( "The license key is invalid", 'pressroom-license' ) );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_activated_license&pmparam=' . $param ) );
-          exit;
-        }
-
-        $settings['pr_license_key_' . $this->item_name] = trim( $license );
-        update_option( 'pr_settings', $settings );
-        update_option( 'pr_valid_license_' . $this->item_name, $license_data->license );
-        $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );
-        wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_activated_license&pmparam=' . $param ) );
-        exit;
-	    }
+	      }
+      }
     }
 
     /**
@@ -147,43 +150,45 @@ if ( !class_exists('PR_EDD_License') ) {
   	 * @return  void
   	 */
 	  public function deactivate_license() {
+      if ( isset( $_POST['item_slug']) && strlen( $_POST['item_slug'] ) ) {
+        $item_slug = $_POST['item_slug'];
+        if ( isset( $_POST['pr_license_key_' . $item_slug . '_deactivate'] ) ) {
+          $item_name = $_POST['item_' . $item_slug . '_name'];
+          $settings = get_option( 'pr_settings' );
+    			$api_params = array(
+    				'edd_action' => 'deactivate_license',
+    				'license'    => $this->license,
+    				'item_slug'  => urlencode( $item_name )
+    			);
 
-      if ( isset( $_POST['pr_license_key_' . $this->item_name . '_deactivate'] ) ) {
+    			$response = wp_remote_get(
+    				add_query_arg( $api_params, PR_API_URL ),
+    				array(
+    					'timeout'   => 15,
+    					'sslverify' => false
+    				)
+    			);
 
-        $settings = get_option( 'pr_settings' );
-  			$api_params = array(
-  				'edd_action' => 'deactivate_license',
-  				'license'    => $this->license,
-  				'item_name'  => urlencode( $this->item_name )
-  			);
+    			if ( is_wp_error( $response ) ) {
+    				$param = urlencode( $response->get_error_message() );
+            wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=error&pmcode=failed_deactivated_license&pmparam=' . $param ) );
+            exit;
+          }
 
-  			$response = wp_remote_get(
-  				add_query_arg( $api_params, PR_API_URL ),
-  				array(
-  					'timeout'   => 15,
-  					'sslverify' => false
-  				)
-  			);
-
-  			if ( is_wp_error( $response ) ) {
-  				$param = urlencode( $response->get_error_message() );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=error&pmcode=failed_deactivated_license&pmparam=' . $param ) );
-          exit;
-        }
-
-  			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-  			if ( $license_data->license == 'deactivated' ) {
-          $settings['pr_license_key_' . $this->item_name] = '';
-          delete_option( 'pr_valid_license_' . $this->item_name );
-          update_option( 'pr_settings', $settings );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
-          exit;
-        }
-        else if( $license_data->license == 'failed' ) {
-          $settings['pr_license_key_' . $this->item_name] = '';
-          delete_option( 'pr_valid_license_' . $this->item_name );
-          update_option( 'pr_settings', $settings );
-          wp_redirect( admin_url( 'admin.php?page=pressroom&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
+    			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+    			if ( $license_data->license == 'deactivated' ) {
+            $settings['pr_license_key_' . $item_slug] = '';
+            delete_option( 'pr_valid_license_' . $item_slug );
+            update_option( 'pr_settings', $settings );
+            wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
+            exit;
+          }
+          else if( $license_data->license == 'failed' ) {
+            $settings['pr_license_key_' . $item_slug] = '';
+            delete_option( 'pr_valid_license_' . $item_slug );
+            update_option( 'pr_settings', $settings );
+            wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
+          }
         }
   		}
 	  }
@@ -192,10 +197,10 @@ if ( !class_exists('PR_EDD_License') ) {
      * Validate license
      * @return boolean
      */
-    public static function check_license() {
+    public static function check_license( $item_slug, $item_name ) {
 
       $options = get_option( 'pr_settings' );
-      $license = isset( $options['pr_license_key_' . $this->item_name] ) ? $options['pr_license_key_' . $this->item_name] : '';
+      $license = isset( $options['pr_license_key_' . $item_slug] ) ? $options['pr_license_key_' . $item_slug] : '';
       if ( !strlen( $license ) ) {
         return false;
       }
@@ -203,7 +208,7 @@ if ( !class_exists('PR_EDD_License') ) {
       $api_params = array(
         'edd_action' => 'check_license',
         'license'    => $license,
-        'item_name'  => urlencode( $this->item_name ),
+        'item_name'  => urlencode( $item_name ),
         'url'        => home_url()
       );
 
@@ -220,5 +225,3 @@ if ( !class_exists('PR_EDD_License') ) {
     }
   }
 }
-
-$pr_license = new PR_EDD_License( PR_PLUGIN_PATH . 'pressroom.php', PR_PRODUCT_NAME, PR_VERSION, 'thePrintLabs' );

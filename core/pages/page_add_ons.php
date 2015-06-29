@@ -31,32 +31,36 @@ class PR_add_ons_page {
   * @param array $add_on
   * @return string
   */
-  public function _render_add_on( $add_on ) {
+  public function _render_add_on( $add_on, $installed, $enabled ) {
 
-    $html = '<div class="theme ' . ( in_array($add_on->info->slug, $this->pr_options['pr_enabled_exporters']) ? 'active' : '' ) . '" data-name="' . $add_on->info->id . '" tabindex="0">
+    $html = '<div class="theme ' . ( $installed ? ( $enabled ? 'active' : '' ) : '' ) . '" data-name="' . $add_on->info->id . '" tabindex="0">
     <div class="theme-screenshot pr-theme-screenshot">
     <img src="'.$add_on->info->thumbnail.'" alt="">
     </div>
     <p class="pr-theme-description">' . $add_on->info->content . '</p>
-    <p class="pr-theme-description">
-    <span class="pr-theme-version">' . __("Price ", 'pressroom-themes' ) . $add_on->pricing->amount . '</span>
+    <p class="pr-theme-description">';
+    if( !$installed ) {
+      $html .= '<span class="pr-theme-version">' . __("Price ", 'pressroom-themes' ) . $add_on->pricing->amount . '</span>';
+    }
+    $html .= '
     <span>' . __("Category", 'pressroom-themes' ) . ' <a href="#" target="_blank">' . $add_on->info->category[0]->name . '</a></span>
     </p>';
 
-    if ( in_array($add_on->info->slug, $this->pr_options['pr_enabled_exporters'] ) ) {
-      $html.= '<h3 class="theme-name" id="' . $add_on->info->id . '-name"><span>Attivo:</span> ' . $add_on->info->title . '</h3>
-      <div class="theme-actions">
-      <a class="button button-primary pr-theme-deactivate" href="' . admin_url('admin.php?page=pressroom-themes&theme_id='. $add_on->info->id .'&theme_status=false') . '">Deactivate</a>
-      <a class="button button-secondary pr-theme-delete" href="#">Delete</a>
-      </div>';
+    $html.= '<h3 class="theme-name" id="' . $add_on->info->id . '-name">' . $add_on->info->title . '</h3>
+    <div class="theme-actions">';
+
+    if( $installed && $enabled ) {
+      $html .= '<a class="button button-primary pr-theme-deactivate" href="' . admin_url('admin.php?page=pressroom-add-ons&theme_id='. $add_on->info->id .'&theme_status=false') . '">'.__( "Disable", 'pressroom-themes' ).'</a>';
+    }
+    else if( $installed ) {
+      $html .= '<a class="button button-primary pr-theme-activate" href="' . admin_url('admin.php?page=pressroom-add-ons&theme_id='. $add_on->info->id .'&theme_status=false') . '">'.__( "Enable", 'pressroom-themes' ).'</a>';
     }
     else {
-      $html.= '<h3 class="theme-name" id="' . $add_on->info->id . '-name">' . $add_on->info->title . '</h3>
-      <div class="theme-actions pr-theme-actions">
-      <a class="button button-primary pr-theme-activate" href="' . admin_url('admin.php?page=pressroom-themes&theme_id='. $add_on->info->id .'&theme_status=true') . '">Activate</a>
-      <a class="button button-secondary pr-theme-delete" href="#">Delete</a>
-      </div>';
+      $html .= '<a class="button button-primary pr-theme-deactivate" href="' . admin_url('admin.php?page=pressroom-add-ons&theme_id='. $add_on->info->id .'&theme_status=false') . '">'.__( "Buy", 'pressroom-themes' ).'</a>';
     }
+
+    $html .= '
+    </div>';
 
     $html.= '</div>';
 
@@ -69,6 +73,9 @@ class PR_add_ons_page {
    */
   public function pr_add_ons_page() {
 
+
+    global $tpl_pressroom;
+    $exporters = $tpl_pressroom->exporters;
     $add_ons = PR_Add_ons::get_add_ons();
     echo '<div class="wrap" id="edd-add-ons">
     <h2>PressRoom Add-ons <span class="title-count theme-count" id="pr-theme-count">' . count( $add_ons ) . '</span>
@@ -78,7 +85,19 @@ class PR_add_ons_page {
     <div class="themes">';
     if( $add_ons ) {
       foreach ( $add_ons as $add_on ) {
-        echo $this->_render_add_on( $add_on );
+        $installed = false;
+        $enabled = false;
+        $key = array_search( $add_on->info->slug, $exporters );
+
+        // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
+        if( file_exists( $key ) && strpos( $key, PR_PLUGIN_PATH ) === false ) {
+          $installed = true;
+        }
+        if( in_array( $add_on->info->slug, $this->pr_options['pr_enabled_exporters'] ) ) {
+          $enabled = true;
+        }
+
+        echo $this->_render_add_on( $add_on, $installed, $enabled );
       }
     }
     echo '

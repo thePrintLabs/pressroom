@@ -379,6 +379,10 @@ form#pr-push-form {
   color: #555;
 }
 
+.theme-browser .theme .pr-theme-description-input {
+  padding: 11px;
+}
+
 .pr-theme-description .pr-theme-version {
   color: #b3b3b3;
   font-size: 13px;
@@ -396,6 +400,9 @@ form#pr-push-form {
 .pr-theme-actions, .theme-browser.rendered .theme:focus .pr-theme-screenshot img, .theme-browser.rendered .theme:hover .pr-theme-screenshot img {
   opacity:1 !important;
   filter: alpha(opacity=100) !important;
+}
+.pr-theme-screenshot img {
+  height: 100% !important;
 }
 
 #pr-theme-upload {

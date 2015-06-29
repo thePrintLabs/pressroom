@@ -48,8 +48,8 @@ class PR_addons_page {
       $html .= '<p class="pr-theme-description"><span>' . __("Your license key", 'pressroom-addons' ) . ' <b>abc123456789dcas2aabc123456789</b></span></p>';
     }
     else if( $installed ) {
-      $html .= '<p class="pr-theme-description"><span>' . __("Enter your license key", 'pressroom-addons' ) . '</span></p>
-      <p class="pr-theme-description"><input type="text" style="width:100%"></p>';
+      $html .= '
+      <p class="pr-theme-description pr-theme-description-input"><input type="text" style="width:100%" placeholder="' . __("Enter your license key", 'pressroom-addons' ) . '"></p>';
     }
 
     $html .= '<h3 class="theme-name" id="' . $add_on->info->id . '-name">' . $add_on->info->title . '</h3>';
@@ -90,6 +90,7 @@ class PR_addons_page {
     <div class="themes">';
     if( $add_ons ) {
       foreach ( $add_ons as $add_on ) {
+
         $installed = false;
         $activated = false;
         $key = array_search( $add_on->info->slug, $exporters );

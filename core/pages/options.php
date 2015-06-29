@@ -65,22 +65,6 @@ class PR_options_page {
       'pr_pressroom_section'
     );
 
-    add_settings_field(
-    'enabled_exporters',
-    __( 'Exporters', 'pressroom' ),
-    array( $this, 'pr_enabled_exporters' ),
-    'pressroom',
-    'pr_pressroom_section'
-  );
-
-    add_settings_field(
-      'pr_license',
-      __( 'License key', 'pressroom' ),
-      array( $this, 'pr_license_key' ),
-      'pressroom',
-      'pr_pressroom_section'
-    );
-
     do_action( 'pr_add_extra_options' );
   }
 
@@ -124,57 +108,6 @@ class PR_options_page {
   }
 
   /**
-   * Render exporters field
-   * @return [type] [description]
-   */
-  public function pr_enabled_exporters() {
-
-    $options = get_option( 'pr_settings' );
-    // $exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-    global $tpl_pressroom;
-    $exporters = $tpl_pressroom->exporters;
-    $enabled_exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : [];
-    if ( !is_array( $enabled_exporters ) ) {
-      $enabled_exporters = [ $enabled_exporters ];
-    }
-
-    echo '<fieldset>
-    <legend class="screen-reader-text"><span>' . __( 'Exporters', 'pressroom' ) . '</span></legend>';
-    foreach ( $exporters as $file => $exporter ) {
-			if ( is_file( $file ) ) {
-        $file_data = get_file_data( $file , ['exporter_name' => 'Exporter Name', 'exporter_title' => 'Exporter Title' ] );
-        if ( isset( $file_data['exporter_name'], $file_data['exporter_title'] ) ) {
-          $checked = in_array( $file_data['exporter_name'], $enabled_exporters ) ? 'checked="checked"' : '';
-          echo '<label title="' . $file_data['exporter_name'] . '"><input type="checkbox" name="pr_settings[pr_enabled_exporters][]" value="' . $file_data['exporter_name'] . '" ' . $checked . ' /> <span>' . $file_data['exporter_title'] . '</span></label><br>';
-        }
-      }
-    }
-    echo '</fieldset>';
-  }
-
-  /**
-   * Render the licence field type
-   *
-   * @void
-   */
-  public function pr_license_key() {
-
-    $options = get_option( 'pr_settings' );
-    $value = isset( $options['pr_license_key'] ) ? $options['pr_license_key'] : '';
-    $valid = get_option( 'pr_valid_license');
-
-    $html = '<input type="text" id="pr_license_key" name="pr_settings[pr_license_key]" value="' . $value . '"/>';
-    if ( $valid == "valid" ) {
-      $html .= '<input type="submit" class="button-secondary" name="pr_license_key_deactivate" value="' . __( 'Deactivate License',  'pr-settings' ) . '"/>';
-    }
-    else {
-      $html .= '<input type="submit" class="button-secondary" name="pr_license_key_activate" value="' . __( 'Activate License',  'pr-settings' ) . '"/>';
-    }
-    echo $html;
-
-  }
-
-  /**
    * render setting section
    *
    * @echo
@@ -215,11 +148,6 @@ class PR_options_page {
     if( isset( $new_value['pr_custom_post_type'] ) ) {
       $post_type = is_array( $new_value['pr_custom_post_type'] ) ? $new_value['pr_custom_post_type'] : explode( ',', $new_value['pr_custom_post_type'] );
       $new_value['pr_custom_post_type'] = $post_type;
-    }
-
-    if( isset( $new_value['pr_enabled_exporters'] ) ) {
-      $post_type = is_array( $new_value['pr_enabled_exporters'] ) ? $new_value['pr_enabled_exporters'] : explode( ',', $new_value['pr_enabled_exporters'] );
-      $new_value['pr_enabled_exporters'] = $post_type;
     }
 
     return $new_value;

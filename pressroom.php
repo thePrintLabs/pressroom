@@ -29,7 +29,7 @@ require_once( PR_CORE_PATH . 'edition/edition.php' );
 require_once( PR_CORE_PATH . 'edition/editorial_project.php' );
 require_once( PR_CORE_PATH . 'posts.php' );
 require_once( PR_CORE_PATH . 'theme.php' );
-require_once( PR_CORE_PATH . 'add_ons.php' );
+require_once( PR_CORE_PATH . 'addons.php' );
 require_once( PR_CORE_PATH . 'packager/packager.php' );
 require_once( PR_CORE_PATH . 'preview/preview.php' );
 require_once( PR_CORE_PATH . 'api.php' );
@@ -45,6 +45,7 @@ require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/logs_list.php' );
 require_once( PR_LIBS_PR_PATH . 'UI/gallery_name.php' );
+require_once( PR_PAGES_PATH . 'options.php');
 
 class TPL_Pressroom
 {
@@ -60,10 +61,7 @@ class TPL_Pressroom
 		}
 
 		$this->_load_configs();
-		$this->_load_pages();
 		$this->_load_extensions();
-		//$this->_load_exporters();
-		//$this->_load_add_ons();
 
 		$this->_create_edition();
 		$this->_create_preview();
@@ -412,23 +410,6 @@ class TPL_Pressroom
 
 		if ( is_dir( PR_EXTENSIONS_PATH ) ) {
 			$files = PR_Utils::search_files( PR_EXTENSIONS_PATH, 'php' );
-			if ( !empty( $files ) ) {
-				foreach ( $files as $file ) {
-					require_once( $file );
-				}
-			}
-		}
-	}
-
-	/**
-	* Load plugin pages
-	*
-	* @void
-	*/
-	protected function _load_pages() {
-
-		if ( is_dir( PR_PAGES_PATH ) ) {
-			$files = PR_Utils::search_files( PR_PAGES_PATH, 'php' );
 			if ( !empty( $files ) ) {
 				foreach ( $files as $file ) {
 					require_once( $file );

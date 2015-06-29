@@ -29,7 +29,7 @@ class PR_push_notification_page {
    */
   public function pr_add_admin_menu() {
 
-    add_submenu_page( 'pressroom', __( 'Push notification' ), __( 'Push Notification' ), 'manage_options', 'pressroom-push', array( $this, 'pressroom_push_notification_page' ) );
+    add_submenu_page( 'pressroom', __( 'Push notification', 'pressroom-push' ), __( 'Push Notification', 'pressroom-push' ), 'manage_options', 'pressroom-push', array( $this, 'pressroom_push_notification_page' ) );
   }
 
   /**

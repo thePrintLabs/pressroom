@@ -382,6 +382,7 @@ form#pr-push-form {
 .theme-browser .theme .pr-theme-description-input {
   padding: 11px;
 }
+.theme-browser .theme .theme-actions { opacity: 1 }
 
 .pr-theme-description .pr-theme-version {
   color: #b3b3b3;

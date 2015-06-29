@@ -21,7 +21,7 @@ class PR_themes_page {
   */
   public function pr_add_admin_menu() {
 
-    add_submenu_page('pressroom', __('Themes'), __('Themes'), 'manage_options', 'pressroom-themes', array( $this, 'pr_themes_page' ));
+    add_submenu_page('pressroom', __('Themes', 'pressroom-themes'), __('Themes', 'pressroom-themes'), 'manage_options', 'pressroom-themes', array( $this, 'pr_themes_page' ));
   }
 
   /**

@@ -20,6 +20,8 @@ class PR_options_page {
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'admin_init', array( $this, 'pr_settings_init' ) );
     add_filter( 'pre_update_option_pr_settings', array( $this, 'pr_save_options' ), 10, 2 );
+
+    $this->_load_pages();
   }
 
   /**
@@ -29,21 +31,6 @@ class PR_options_page {
 
     add_menu_page( 'pressroom', 'Pressroom', 'manage_options', 'pressroom', array( $this, 'pr_options_page' ) );
     add_submenu_page('pressroom', __('Settings'), __('Settings'), 'manage_options', 'pressroom', array( $this, 'pr_options_page' ));
-  }
-
-  /**
-   * add option to database
-   *
-   * @void
-   */
-  protected function pr_settings_exist() {
-
-  	if( false == get_option( 'pressroom_settings' ) ) {
-
-  		add_option( 'pressroom_settings' );
-
-  	}
-
   }
 
   /**
@@ -264,6 +251,20 @@ class PR_options_page {
       wp_enqueue_style( 'chosen', PR_ASSETS_URI . 'css/chosen.min.css' );
       wp_register_script( 'chosen', PR_ASSETS_URI . '/js/chosen.jquery.min.js', array( 'jquery'), '1.0', true );
       wp_enqueue_script( 'chosen' );
+    }
+  }
+
+  /**
+	 * Load plugin pages
+	 *
+	 * @void
+	 */
+  protected function _load_pages() {
+    $files = PR_Utils::search_files( __DIR__, 'php' );
+  	if ( !empty( $files ) ) {
+      foreach ( $files as $file ) {
+        require_once( $file );
+      }
     }
   }
 }

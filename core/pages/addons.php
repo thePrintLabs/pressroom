@@ -36,6 +36,8 @@ class PR_addons_page {
     $item_id = $addon->info->id;
     $item_slug = $addon->info->slug;
     $item_name = $addon->info->title;
+    $item_price = $addon->pricing->amount;
+    $item_link = $addon->info->link;
 
     $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
     <form method="post" name="' . $item_slug . '">
@@ -55,6 +57,9 @@ class PR_addons_page {
     else if ( $installed ) {
       $html .= '<p class="pr-theme-description pr-theme-description-input"><input type="text" id="pr_license_key" name="pr_settings[pr_license_key_' . $item_slug . ']" style="width:100%" placeholder="' . __("Enter your license key", 'pressroom-addons' ) . '"></p>';
     }
+    else {
+      $html .= '<p class="pr-theme-description pr-theme-description">'.__( "Price ", 'pressroom-themes' ). $item_price .'</p>';
+    }
 
     $html .= '<h3 class="theme-name" id="' . $item_id . '-name">' . $item_name . '</h3>';
     $html .= '<div class="theme-actions">';
@@ -65,7 +70,7 @@ class PR_addons_page {
       $html .= '<input type="submit" class="button button-primary pr-theme-activate" name="pr_license_key_' . $item_slug . '_activate" value="' . __( "Activate", 'pressroom-addons' ) . '"/>';
     }
     else {
-      $html .= '<a class="button button-primary pr-theme-deactivate" href="#">'.__( "Buy", 'pressroom-themes' ).'</a>';
+      $html .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Buy", 'pressroom-themes' ).'</a>';
     }
 
     $html .= '</div>
@@ -83,8 +88,8 @@ class PR_addons_page {
    */
   public function pressroom_addons_page() {
 
-    global $tpl_pressroom;
-    $exporters = $tpl_pressroom->exporters;
+
+    $enabled_exporters = isset( $this->pr_options['pr_enabled_exporters'] ) ? $this->pr_options['pr_enabled_exporters'] : false ;
     $addons = PR_Addons::get();
     echo '<div class="wrap" id="edd-add-ons">
     <h2>PressRoom Add-ons <span class="title-count theme-count" id="pr-theme-count">' . count( $addons ) . '</span>
@@ -96,17 +101,14 @@ class PR_addons_page {
       foreach ( $addons as $addon ) {
 
         $is_installed = false;
-        $is_activated = false;
-        $key = array_search( $addon->info->slug, $exporters );
+        $filepath = $enabled_exporters[$addon->info->slug]['filepath'];
 
         // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
-        if ( file_exists( $key ) && strpos( $key, PR_PLUGIN_PATH ) === false ) {
+        if ( file_exists( $filepath ) && strpos( $filepath, PR_PLUGIN_PATH ) === false ) {
           $is_installed = true;
         }
 
-        if ( in_array( $addon->info->slug, $this->pr_options['pr_enabled_exporters'] ) ) {
-            $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title );
-        }
+        $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title );
 
         echo $this->_render_add_on( $addon, $is_installed, $is_activated );
       }

@@ -52,7 +52,6 @@ class TPL_Pressroom
 	public $configs;
 	public $edition;
 	public $preview;
-	public $exporters = array();
 
 	public function __construct() {
 
@@ -341,7 +340,7 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function load_exporters() {
-		do_action_ref_array( 'pressroom/add_ons', array( &$this ) );
+		do_action_ref_array( 'pressroom/add_ons', array() );
 	}
 
 	/**
@@ -352,12 +351,14 @@ class TPL_Pressroom
 	public function load_core_exporters() {
 
 		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
+		$settings = get_option( 'pr_settings' );
 
 		foreach( $exporters as $exporter ) {
-			if( !in_array( $exporter, $this->exporters ) ) {
+			if( !isset( $settings['pr_enabled_exporters'][$exporter] ) ) {
 				$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
 				if ( is_file( $file ) ) {
-					$this->exporters[$file] = $exporter;
+					$settings['pr_enabled_exporters'][$exporter]['filepath'] = $file;
+					update_option( 'pr_settings', $settings );
 					require_once( $file );
 				}
 				else {

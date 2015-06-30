@@ -16,9 +16,8 @@ class PR_Edition
 		if ( !is_admin() ) {
 			return;
 		}
-		if( !$this->check_exporters() ) {
-			add_action( 'admin_notices', array( $this, 'exporters_notice' ) );
-		}
+
+		$this->check_exporters();
 
 		add_theme_support( 'post-thumbnails', array( PR_EDITION ) );
 
@@ -229,8 +228,10 @@ class PR_Edition
 			echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
 			echo '<select id="pr_packager_type" name="pr_packager_type">';
 
-			foreach( $this->pr_options['pr_enabled_exporters'] as $exporter ) {
-				echo '<option '. ( $packager_type == $exporter ? 'selected="selected"' : '' ) .' value="'.$exporter.'">'.$exporter.'</option>';
+			foreach( $this->pr_options['pr_enabled_exporters'] as $key => $exporter ) {
+				if( isset( $exporter['active'] ) && $exporter['active'] ) {
+					echo '<option '. ( $packager_type == $key ? 'selected="selected"' : '' ) .' value="'.$key.'">'.$key.'</option>';
+				}				
 			}
 
 			echo '</select>';
@@ -640,20 +641,6 @@ class PR_Edition
 		}
 
 		return $types;
-	}
-
-	/**
-	 * Render admin notice for exporters
-	 *
-	 * @void
-	 */
-	public function exporters_notice() {
-
-		$setting_page_url = admin_url() . 'admin.php?page=pressroom';
-		echo '
-		<div class="error pr-alert">
-			<p>' . __( sprintf( 'Pressroom: You have to select at least one exporter from <a href="%s">setting page</a>', $setting_page_url ), 'edition' ). '</p>
-		</div>';
 	}
 
 	/**

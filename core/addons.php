@@ -13,7 +13,6 @@ class PR_Addons
       'key'         => '0a3d8d5a0639ffc26ee159d5938a95fc',
       'token'       => 'cfad94f3c1652a52dda2b7ec5451780f',
     );
-    //http://test.press-room.io/edd-api/products/?key=0a3d8d5a0639ffc26ee159d5938a95fc&token=cfad94f3c1652a52dda2b7ec5451780f
     $response = wp_remote_get( add_query_arg( $api_params, PR_API_EDD_URL . 'products' ), array( 'timeout' => 15, 'sslverify' => false ) );
     $response = json_decode( wp_remote_retrieve_body( $response ) );
 		foreach( $response->products as $product ) {

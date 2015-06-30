@@ -55,19 +55,14 @@ class PR_Packager
 		}
 
 		$options = get_option( 'pr_settings' );
-		if( !isset( $options['pr_enabled_exporters'] ) || !in_array( $_GET['packager_type'], $options['pr_enabled_exporters'] ) ) {
-			$setting_page_url = admin_url() . 'admin.php?page=pressroom';
-			self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom settings page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
+		$exporter = isset( $options['pr_enabled_exporters'][$_GET['packager_type']]) ? $options['pr_enabled_exporters'][$_GET['packager_type']] : false ;
+		if( !$exporter || !isset( $exporter['active'] ) || !$exporter['active'] ) {
+			$setting_page_url = admin_url() . 'admin.php?page=pressroom-addons';
+			self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom add-ons page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
 			exit;
 		}
 
 		$this->package_type = $_GET['packager_type'];
-
-		// if ( !PR_EDD_License::check_license() ) {
-		// 	self::print_line( __( 'Not valid or expired license. ', 'edition' ), 'error' );
-		// 	$this->exit_on_error();
-		// 	return;
-		// }
 
 		if ( is_null( $this->edition_post ) ) {
 			ob_end_flush();

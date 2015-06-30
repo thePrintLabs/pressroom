@@ -134,6 +134,7 @@ if ( !class_exists('PR_EDD_License') ) {
           }
 
           $settings['pr_license_key_' . $item_slug] = trim( $license );
+          $settings['pr_enabled_exporters'][$item_slug]['active'] = true;
           update_option( 'pr_settings', $settings );
           update_option( 'pr_valid_license_' . $item_slug, $license_data->license );
           $param = urlencode( __( "The license key is valid", 'pressroom-license' ) );

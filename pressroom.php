@@ -351,20 +351,11 @@ class TPL_Pressroom
 	public function load_core_exporters() {
 
 		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-		$settings = get_option( 'pr_settings' );
 
 		foreach( $exporters as $exporter ) {
-			if( !isset( $settings['pr_enabled_exporters'][$exporter] ) ) {
-				$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/{$exporter}_package.php";
-				if ( is_file( $file ) ) {
-					$settings['pr_enabled_exporters'][$exporter]['filepath'] = $file;
-					update_option( 'pr_settings', $settings );
-					require_once( $file );
-				}
-				else {
-					echo $file;
-					exit;
-				}
+			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/index.php";
+			if ( is_file( $file ) ) {
+				require_once( $file );
 			}
 		}
 

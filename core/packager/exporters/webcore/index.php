@@ -7,7 +7,7 @@
 
 require_once( PR_PACKAGER_CONNECTORS_PATH . '/ftp_sftp.php' );
 
-final class PR_Packager_Web_Package
+final class PR_Packager_Web_Core_Package
 {
 
   public $pstgs = array();
@@ -15,12 +15,17 @@ final class PR_Packager_Web_Package
 
   public function __construct() {
 
-    $options = get_option( 'pr_settings' );
-    $exporters = isset( $options['pr_enabled_exporters'] ) ? $options['pr_enabled_exporters'] : false;
+    $settings = get_option( 'pr_settings' );
+    $exporters = isset( $options['pr_enabled_exporters']['web'] ) ? $options['pr_enabled_exporters']['web'] : false;
 
-    if( !$exporters || !in_array( 'web', $exporters ) ) {
+    if( $exporters || isset( $exporters['active'] ) || $exporters['active'] ) {
+      unset( $settings['pr_enabled_exporters']['webcore'] );
+      update_option( 'pr_settings', $settings );
       return;
     }
+
+    $settings['pr_enabled_exporters']['webcore'] = ['filepath' => __FILE__, 'active' => true, 'name' => 'Web' ];
+		update_option( 'pr_settings', $settings );
 
     add_action( 'pr_add_eproject_tab', array( $this, 'pr_add_option' ), 10, 2 );
     add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 3 );
@@ -166,7 +171,7 @@ final class PR_Packager_Web_Package
    */
   public function pr_add_option( &$metaboxes, $item_id, $edition = false ) {
 
-    $web = new PR_Metabox( 'web_metabox', __( 'web', 'web_package' ), 'normal', 'high', $item_id );
+    $web = new PR_Metabox( 'web_metabox', __( 'Web', 'web_package' ), 'normal', 'high', $item_id );
 
     if( $edition ) {
       $web->add_field( '_pr_web_override_eproject', __( 'Override Editorial Project settings', 'editorial_project' ), __( 'If enabled, will be used edition settings below', 'edition' ), 'checkbox', false );
@@ -320,4 +325,4 @@ final class PR_Packager_Web_Package
     }
   }
 }
-$pr_packager_web_package = new PR_Packager_Web_Package;
+$pr_packager_web_core_package = new PR_Packager_Web_Core_Package;

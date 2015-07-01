@@ -179,6 +179,7 @@ if ( !class_exists('PR_EDD_License') ) {
     			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
     			if ( $license_data->license == 'deactivated' ) {
             $settings['pr_license_key_' . $item_slug] = '';
+            $settings['pr_enabled_exporters'][$item_slug]['active'] = '';
             delete_option( 'pr_valid_license_' . $item_slug );
             update_option( 'pr_settings', $settings );
             wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );
@@ -186,6 +187,7 @@ if ( !class_exists('PR_EDD_License') ) {
           }
           else if( $license_data->license == 'failed' ) {
             $settings['pr_license_key_' . $item_slug] = '';
+            $settings['pr_enabled_exporters'][$item_slug]['active'] = '';
             delete_option( 'pr_valid_license_' . $item_slug );
             update_option( 'pr_settings', $settings );
             wp_redirect( admin_url( 'admin.php?page=pressroom-addons&settings-updated=true&pmtype=updated&pmcode=success_deactivated_license' ) );

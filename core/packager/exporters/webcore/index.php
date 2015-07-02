@@ -16,7 +16,7 @@ final class PR_Packager_Web_Core_Package
   public function __construct() {
 
     $settings = get_option( 'pr_settings' );
-    $exporters = isset( $options['pr_enabled_exporters']['web'] ) ? $options['pr_enabled_exporters']['web'] : false;
+    $exporters = isset( $settings['pr_enabled_exporters']['web'] ) ? $settings['pr_enabled_exporters']['web'] : false;
 
     if( $exporters || isset( $exporters['active'] ) || $exporters['active'] ) {
       unset( $settings['pr_enabled_exporters']['webcore'] );

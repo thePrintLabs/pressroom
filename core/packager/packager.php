@@ -59,7 +59,8 @@ class PR_Packager
 		if( !$exporter || !isset( $exporter['active'] ) || !$exporter['active'] ) {
 			$setting_page_url = admin_url() . 'admin.php?page=pressroom-addons';
 			self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom add-ons page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
-			exit;
+			$this->exit_on_error();
+			return;
 		}
 
 		$this->package_type = $_GET['packager_type'];
@@ -71,7 +72,8 @@ class PR_Packager
 
 		if( !$this->linked_query->posts ) {
 			self::print_line( __( 'No posts linked to this edition ', 'edition' ), 'error' );
-			exit;
+			$this->exit_on_error();
+			return;
 		}
 
 		self::print_line( sprintf( __( 'Create package for %s', 'edition' ), $editorial_project->name ), 'success' );
@@ -89,6 +91,16 @@ class PR_Packager
 
 		self::print_line( sprintf( __( 'Create folder %s ', 'edition' ), $this->edition_dir ), 'success' );
 		$this->set_progress( 2, __( 'Loading edition theme', 'edition' ) );
+
+		// check if theme is active
+		$theme_id = get_post_meta( $edition_post->ID, '_pr_theme_select', true );
+		$themes = get_option( 'pressroom_themes' );
+		$themes_page_url = admin_url() . 'admin.php?page=pressroom-themes';
+		if( !isset( $themes[$theme_id]['active'] ) || !$themes[$theme_id]['active'] ) {
+			self::print_line( sprintf( __('Theme %s not enabled. Please enable it from <a href="%s">Pressroom themes page</a>', 'edition'), $theme_id, $themes_page_url ), 'error' );
+			$this->exit_on_error();
+			return;
+		}
 
 		// Get associated theme
 		$theme_assets_dir = PR_Theme::get_theme_assets_path( $edition_post->ID );

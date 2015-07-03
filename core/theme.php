@@ -12,6 +12,25 @@ class PR_Theme
 		$this->search_themes();
 	}
 
+	public static function get_remote_themes() {
+		$api_params = array(
+      'key'         => '0a3d8d5a0639ffc26ee159d5938a95fc',
+      'token'       => 'cfad94f3c1652a52dda2b7ec5451780f',
+    );
+    $response = wp_remote_get( add_query_arg( $api_params, PR_API_EDD_URL . 'products' ), array( 'timeout' => 15, 'sslverify' => false ) );
+    $response = json_decode( wp_remote_retrieve_body( $response ) );
+		$themes = array();
+		foreach( $response->products as $product ) {
+      foreach( $product->info->category as $category ) {
+        if( $category->slug == 'themes' ) {
+          array_push( $themes, $product );
+        }
+      }
+    }
+
+		return $themes;
+  }
+
 	/**
 	 * Search themes installed
 	 *

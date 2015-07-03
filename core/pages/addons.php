@@ -26,7 +26,7 @@ class PR_addons_page {
   }
 
   /**
-  * Render a single theme
+  * Render a single addon
   * @param array $addon
   * @return string
   */
@@ -76,6 +76,8 @@ class PR_addons_page {
     $html .= '</div>
     <input type="hidden" name="item_' . $item_slug . '_name" value="' . $item_name . '" />
     <input type="hidden" name="item_slug" value="' . $item_slug . '" />
+    <input type="hidden" name="return_page" value="pressroom-addons" />
+    <input type="hidden" name="type" value="exporter" />      
     </form>
     </div>';
 

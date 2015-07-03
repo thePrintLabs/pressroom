@@ -29,35 +29,56 @@ class PR_themes_page {
   * @param array $theme
   * @return string
   */
-  public function _render_theme( $theme ) {
+  public function _render_theme( $theme, $installed, $activated ) {
 
-    $html = '<div class="theme ' . ( $theme['active'] ? 'active' : '' ) . '" data-name="' . $theme['uniqueid'] . '" tabindex="0">
+    $options = get_option( 'pr_settings' );
+    $item_id = $theme->info->id;
+    $item_slug = $theme->info->slug;
+    $item_name = $theme->info->title;
+    $item_price = $theme->pricing->amount;
+    $item_link = $theme->info->link;
+
+    $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
+    <form method="post" name="' . $item_slug . '">
     <div class="theme-screenshot pr-theme-screenshot">
-    <img src="' . PR_THEME_URI . $theme['path'] . DS . $theme['thumbnail'] . '" alt="">
+    <img src="'.$theme->info->thumbnail.'" alt="">
     </div>
-    <p class="pr-theme-description">' . $theme['description'] . '</p>
-    <p class="pr-theme-description">
-    <span class="pr-theme-version">' . __("Version ", 'pressroom-themes' ) . $theme['version'] . '</span>
-    <span>' . __("Made by", 'pressroom-themes' ) . ' <a href="' . $theme['author_site'] . '" target="_blank">' . $theme['author_name'] . '</a></span>
-    <span>' . __("Theme url", 'pressroom-themes' ) . ' <a href="' . $theme['website'] . '" target="_blank">' . $theme['website'] . '</a></span>
+    <p class="pr-theme-description">' . $theme->info->content . '</p>
+    <p class="pr-theme-description">';
+
+    $html .= '
+    <span>' . __("Category", 'pressroom-themes' ) . ' <a href="#" target="_blank">' . $theme->info->category[0]->name . '</a></span>
     </p>';
 
-    if ( $theme['active'] ) {
-      $html.= '<h3 class="theme-name" id="' . $theme['uniqueid'] . '-name"><span>Attivo:</span> ' . $theme['name'] . '</h3>
-      <div class="theme-actions">
-      <a class="button button-primary pr-theme-deactivate" href="' . admin_url('admin.php?page=pressroom-themes&theme_id='. $theme['uniqueid'] .'&theme_status=false') . '">Deactivate</a>
-      <a class="button button-secondary pr-theme-delete" href="#">Delete</a>
-      </div>';
+    if ( $installed && $activated ) {
+      $html .= '<p class="pr-theme-description"><span>' . __("Your license key", 'pressroom-addons' ) . ' <b>' . $options['pr_license_key_' . $item_slug] . '</b></span></p>';
+    }
+    else if ( $installed ) {
+      $html .= '<p class="pr-theme-description pr-theme-description-input"><input type="text" id="pr_license_key" name="pr_settings[pr_license_key_' . $item_slug . ']" style="width:100%" placeholder="' . __("Enter your license key", 'pressroom-addons' ) . '"></p>';
     }
     else {
-      $html.= '<h3 class="theme-name" id="' . $theme['uniqueid'] . '-name">' . $theme['name'] . '</h3>
-      <div class="theme-actions pr-theme-actions">
-      <a class="button button-primary pr-theme-activate" href="' . admin_url('admin.php?page=pressroom-themes&theme_id='. $theme['uniqueid'] .'&theme_status=true') . '">Activate</a>
-      <a class="button button-secondary pr-theme-delete" href="#">Delete</a>
-      </div>';
+      $html .= '<p class="pr-theme-description pr-theme-description">'.__( "Price ", 'pressroom-themes' ). $item_price .'</p>';
     }
 
-    $html.= '</div>';
+    $html .= '<h3 class="theme-name" id="' . $item_id . '-name">' . $item_name . '</h3>';
+    $html .= '<div class="theme-actions">';
+    if ( $installed && $activated ) {
+      $html .= '<input type="submit" class="button button-primary pr-theme-deactivate" name="pr_license_key_' . $item_slug . '_deactivate" value="' . __( "Deactivate", 'pressroom-addons' ) . '"/>';
+    }
+    else if ( $installed ) {
+      $html .= '<input type="submit" class="button button-primary pr-theme-activate" name="pr_license_key_' . $item_slug . '_activate" value="' . __( "Activate", 'pressroom-addons' ) . '"/>';
+    }
+    else {
+      $html .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Buy", 'pressroom-themes' ).'</a>';
+    }
+
+    $html .= '</div>
+    <input type="hidden" name="item_' . $item_slug . '_name" value="' . $item_name . '" />
+    <input type="hidden" name="item_slug" value="' . $item_slug . '" />
+    <input type="hidden" name="return_page" value="pressroom-themes" />
+    <input type="hidden" name="type" value="theme" />
+    </form>
+    </div>';
 
     return $html;
   }
@@ -71,7 +92,9 @@ class PR_themes_page {
     $this->_update_theme_status();
     $this->_upload_theme();
 
-    $themes = PR_Theme::get_themes();
+    $themes = PR_Theme::get_remote_themes();
+    $available_themes = get_option('pressroom_themes');
+
     echo '<div class="wrap" id="edd-add-ons">
     <h2>PressRoom Themes <span class="title-count theme-count" id="pr-theme-count">' . count( $themes ) . '</span>
     <a href="' . PR_API_URL . '" target="_blank" class="hide-if-no-js add-new-h2">' . __('Ottieni altri temi', 'pressroom-themes') . '</a>
@@ -82,7 +105,20 @@ class PR_themes_page {
     <div class="themes">';
     if( $themes ) {
       foreach ( $themes as $theme ) {
-        echo $this->_render_theme( $theme );
+        $pr_license = new PR_EDD_License( __FILE__, $theme->info->slug, '1.0', 'thePrintLabs' );
+
+        $is_installed = false;
+
+        $filepath = PR_THEMES_PATH . $available_themes[$theme->info->slug]['path'];
+
+        // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
+        if ( file_exists( $filepath ) ) {
+          $is_installed = true;
+        }
+
+        $is_activated = PR_EDD_License::check_license( $theme->info->slug, $theme->info->title );
+
+        echo $this->_render_theme( $theme, $is_installed, $is_activated  );
       }
     }
     echo '<div class="theme add-new-theme">

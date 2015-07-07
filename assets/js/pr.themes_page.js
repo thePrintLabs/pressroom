@@ -1,4 +1,47 @@
 (function($){
+  var themes_loaded = false;
+  $(".nav-tab").click(function(){
+
+    $(".nav-tab").removeClass('nav-tab-active');
+    jQuery(this).addClass('nav-tab-active');
+
+    var tab = $(this).data('tab');
+    switch(tab) {
+      case 'remotes':
+        if(themes_loaded == false) {
+          $.post(ajaxurl, {
+            'action':'pr_get_remote_themes',
+          }, function(response) {
+            if (response) {
+              jQuery(response).appendTo('#themes-container');
+              themes_loaded = true;
+            } else {
+              jQuery('<div>No themes founds</div>').appendTo('#themes-container');
+            }
+            $('#themes-installed').fadeOut('fast', function(){
+              $('#themes-remote').fadeIn('fast');
+            });
+          });
+        }
+        else {
+          $('#themes-installed').fadeOut('fast', function(){
+            $('#themes-remote').fadeIn('fast');
+          });
+        }
+
+        break;
+      case 'installed':
+        $('#themes-remote').fadeOut('fast', function() {
+          $('#themes-installed').fadeIn('fast');
+        });
+        break;
+      default:
+        break;
+    }
+  });
+
+
+
   $("#pr-theme-upload").change(function(){ $("#pr-theme-form").submit();});
   $(".pr-theme-delete").click(function(){ if(confirm(pr.delete_confirm)){
     $parent = $(this).parent().parent('.theme');

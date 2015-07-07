@@ -77,7 +77,7 @@ class PR_addons_page {
     <input type="hidden" name="item_' . $item_slug . '_name" value="' . $item_name . '" />
     <input type="hidden" name="item_slug" value="' . $item_slug . '" />
     <input type="hidden" name="return_page" value="pressroom-addons" />
-    <input type="hidden" name="type" value="exporter" />      
+    <input type="hidden" name="type" value="exporter" />
     </form>
     </div>';
 
@@ -110,7 +110,7 @@ class PR_addons_page {
           $is_installed = true;
         }
 
-        $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title );
+        $is_activated = PR_EDD_License::check_license( $addon );
 
         echo $this->_render_add_on( $addon, $is_installed, $is_activated );
       }

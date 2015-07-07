@@ -140,7 +140,7 @@ class PR_themes_page {
     $installed_themes = PR_Theme::get_themes();
 
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
-    echo '<a class="nav-tab nav-tab-active' . '" data-tab="installed" href="#">' . __('Installati', 'pressroom-themes') . '</a>';
+    echo '<a class="nav-tab nav-tab-active' . '" data-tab="installed" href="#">' . __('Installed', 'pressroom-themes') . '</a>';
     echo '<a class="nav-tab' . '" data-tab="remotes" href="#">' . __('Download', 'pressroom-themes') . '</a>';
 
     echo '</h2>';

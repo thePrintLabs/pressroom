@@ -103,7 +103,7 @@ class PR_addons_page {
       foreach ( $addons as $addon ) {
 
         $is_installed = false;
-        $filepath = $enabled_exporters[$addon->info->slug]['filepath'];
+        $filepath = isset( $enabled_exporters[$addon->info->slug]['filepath'] ) ? $enabled_exporters[$addon->info->slug]['filepath'] : false ;
 
         // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
         if ( file_exists( $filepath ) ) {

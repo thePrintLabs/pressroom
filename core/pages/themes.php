@@ -32,24 +32,21 @@ class PR_themes_page {
   */
   public function _render_theme( $theme, $installed, $activated, $free ) {
 
-    $options = get_option( 'pr_settings' );
-    $item_id = $theme->info->id;
-    $item_slug = $theme->info->slug;
-    $item_name = $theme->info->title;
-    $item_price = $theme->pricing->amount;
-    $item_link = $theme->info->link;
+    $options    = get_option( 'pr_settings' );
+    $item_id    = isset( $theme['id'] ) ? $theme['id'] : false;
+    $item_slug  = isset( $theme['slug'] ) ? $theme['slug'] : false;
+    $item_name  = isset( $theme['title'] ) ? $theme['title'] : false;
+    $item_price = isset( $theme['price'] ) ? $theme['price'] : false;
+    $item_link  = isset( $theme['link'] ) ? $theme['link'] : false;
+    $item_thumbnail  = isset( $theme['thumbnail'] ) ? $theme['thumbnail'] : false;
+    $item_content  = isset( $theme['content'] ) ? $theme['content'] : false;
 
     $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
     <form method="post" name="' . $item_slug . '">
     <div class="theme-screenshot pr-theme-screenshot">
-    <img src="'.$theme->info->thumbnail.'" alt="">
+    <img src="'.$item_thumbnail.'" alt="">
     </div>
-    <p class="pr-theme-description">' . $theme->info->content . '</p>
-    <p class="pr-theme-description">';
-
-    $html .= '
-    <span>' . __("Category", 'pressroom-themes' ) . ' <a href="#" target="_blank">' . $theme->info->category[0]->name . '</a></span>
-    </p>';
+    <p class="pr-theme-description">' . $item_content . '</p>';
 
     if ( $installed && $activated && !$free ) {
       $html .= '<p class="pr-theme-description"><span>' . __("Your license key", 'pressroom-addons' ) . ' <b>' . $options['pr_license_key_' . $item_slug] . '</b></span></p>';
@@ -156,7 +153,18 @@ class PR_themes_page {
 
     if( $installed_themes ) {
       foreach ( $installed_themes as $theme ) {
-        echo $this->_render_theme_installed( $theme );
+        if( isset( $theme['paid'] ) && $theme['paid'] ) {
+          $theme = array(
+            'slug'      =>  $theme['uniqueid'],
+            'title'     =>  $theme['name'],
+            'thumbnail' =>  PR_THEME_URI . $theme['path'] . DS . $theme['thumbnail'],
+            'content'   =>  $theme['description'],
+          );
+          $this->prepare_theme( $theme, false );
+        }
+        else {
+          echo $this->_render_theme_installed( $theme );
+        }
       }
     }
     echo '<div class="theme add-new-theme">
@@ -178,28 +186,23 @@ class PR_themes_page {
   public function get_remote_themes() {
 
     $themes = PR_Theme::get_remote_themes();
-    $available_themes = get_option('pressroom_themes');
+
     echo '<div class="theme-browser rendered" id="themes-remote" style="display:none">
     <div class="themes">';
     if( $themes ) {
       foreach ( $themes as $theme ) {
-        $pr_license = new PR_EDD_License( __FILE__, $theme->info->slug, '1.0', 'thePrintLabs' );
-
-        $is_installed = false;
-
-        if( isset( $available_themes[$theme->info->slug] ) ) {
-          $filepath = isset( $available_themes[$theme->info->slug]['path'] ) ? PR_THEMES_PATH . $available_themes[$theme->info->slug]['path'] : false;
-          // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
-          if ( file_exists( $filepath ) ) {
-            $is_installed = true;
-          }
-        }
-
-        $is_activated = PR_EDD_License::check_license( $theme );
         $is_free = $theme->pricing->amount == 0 ? true : false;
+        $remote_theme = array(
+          'id'        =>  $theme->info->id,
+          'slug'      =>  $theme->info->slug,
+          'title'     =>  $theme->info->title,
+          'price'     =>  $theme->pricing->amount,
+          'link'      =>  $theme->info->link,
+          'thumbnail' =>  $theme->info->thumbnail,
+          'content'   =>  $theme->info->content,
+        );
 
-        echo $this->_render_theme( $theme, $is_installed, $is_activated, $is_free  );
-
+        $this->prepare_theme( $remote_theme, $is_free );
       }
     }
     echo'
@@ -208,6 +211,26 @@ class PR_themes_page {
     </div>';
 
     die();
+  }
+
+  public function prepare_theme( $theme, $is_free ) {
+
+    $pr_license = new PR_EDD_License( __FILE__, $theme['slug'], '1.0', 'thePrintLabs' );
+    $available_themes = get_option('pressroom_themes');
+    $is_installed = false;
+
+    if( isset( $available_themes[$theme['slug']] ) ) {
+      $filepath = isset( $available_themes[$theme['slug']]['path'] ) ? PR_THEMES_PATH . $available_themes[$theme['slug']]['path'] : false;
+      // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
+      if ( file_exists( $filepath ) ) {
+        $is_installed = true;
+      }
+
+    }
+
+    $is_activated = PR_EDD_License::check_license( $theme['slug'], $theme['title'], $is_free  );
+
+    echo $this->_render_theme( $theme, $is_installed, $is_activated, $is_free  );
   }
 
   /**

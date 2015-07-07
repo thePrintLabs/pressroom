@@ -333,6 +333,7 @@ class PR_Theme
 			'name'					=> isset( $xml->name ) ? $xml->name[0]->__toString() : false ,
 			'date'					=> isset( $xml->date ) ? $xml->date[0]->__toString() : false ,
 			'version'				=> isset( $xml->version ) ? $xml->version[0]->__toString() : false ,
+			'paid'					=> isset( $xml->paid ) ? $xml->paid[0]->__toString() : false ,
 			'description'		=> isset( $xml->description ) ? $xml->description[0]->__toString() : false ,
 			'thumbnail'			=> isset( $xml->thumbnail ) ? $xml->thumbnail[0]->__toString() : false ,
 			'website'				=> isset( $xml->website ) ? $xml->website[0]->__toString() : false ,

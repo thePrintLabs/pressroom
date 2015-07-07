@@ -232,20 +232,15 @@ if ( !class_exists('PR_EDD_License') ) {
      * Validate license
      * @return boolean
      */
-    public static function check_license( $item ) {
-
-      $item_slug = $item->info->slug;
-      $item_name = $item->info->title;
-      $item_price = $item->pricing->amount;
-
-      if( $item_price == 0 ) {
-        return true;
-      }
+    public static function check_license( $item_slug, $item_name, $is_free = false ) {
 
       $options = get_option( 'pr_settings' );
       $license = isset( $options['pr_license_key_' . $item_slug] ) ? $options['pr_license_key_' . $item_slug] : '';
       if ( !strlen( $license ) ) {
         return false;
+      }
+      if( $is_free ) {
+        return true;
       }
       $api_params = array(
         'edd_action' => 'check_license',

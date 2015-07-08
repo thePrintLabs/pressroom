@@ -30,7 +30,7 @@ class PR_addons_page {
   * @param array $addon
   * @return string
   */
-  public function _render_add_on( $addon, $installed, $activated ) {
+  public function _render_add_on( $addon, $installed, $activated, $free ) {
 
     $options = get_option( 'pr_settings' );
     $item_id = $addon->info->id;
@@ -57,19 +57,25 @@ class PR_addons_page {
     else if ( $installed ) {
       $html .= '<p class="pr-theme-description pr-theme-description-input"><input type="text" id="pr_license_key" name="pr_settings[pr_license_key_' . $item_slug . ']" style="width:100%" placeholder="' . __("Enter your license key", 'pressroom-addons' ) . '"></p>';
     }
+    elseif( $free ) {
+      $html .= '<p class="pr-theme-description pr-theme-description">'.__( "Free ", 'pressroom-themes' ). '</p>';
+    }
     else {
       $html .= '<p class="pr-theme-description pr-theme-description">'.__( "Price ", 'pressroom-themes' ). $item_price .'</p>';
     }
 
     $html .= '<h3 class="theme-name" id="' . $item_id . '-name">' . $item_name . '</h3>';
     $html .= '<div class="theme-actions">';
-    if ( $installed && $activated ) {
+    if ( $installed && $activated && !$free ) {
       $html .= '<input type="submit" class="button button-primary pr-theme-deactivate" name="pr_license_key_' . $item_slug . '_deactivate" value="' . __( "Deactivate", 'pressroom-addons' ) . '"/>';
     }
-    else if ( $installed ) {
+    else if ( $installed && !$free ) {
       $html .= '<input type="submit" class="button button-primary pr-theme-activate" name="pr_license_key_' . $item_slug . '_activate" value="' . __( "Activate", 'pressroom-addons' ) . '"/>';
     }
-    else {
+    elseif( !$installed && $free ) {
+      $html .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Download", 'pressroom-themes' ).'</a>';
+    }
+    elseif( !$installed  && !$free ) {
       $html .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Buy", 'pressroom-themes' ).'</a>';
     }
 
@@ -110,9 +116,11 @@ class PR_addons_page {
           $is_installed = true;
         }
 
-        $is_activated = PR_EDD_License::check_license( $addon );
+        $is_free = $addon->pricing->amount == 0 ? true : false;
+        
+        $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title, $is_free );
 
-        echo $this->_render_add_on( $addon, $is_installed, $is_activated );
+        echo $this->_render_add_on( $addon, $is_installed, $is_activated, $is_free );
       }
     }
 

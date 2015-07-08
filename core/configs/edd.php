@@ -234,14 +234,16 @@ if ( !class_exists('PR_EDD_License') ) {
      */
     public static function check_license( $item_slug, $item_name, $is_free = false ) {
 
+      if( $is_free ) {
+        return true;
+      }
+
       $options = get_option( 'pr_settings' );
       $license = isset( $options['pr_license_key_' . $item_slug] ) ? $options['pr_license_key_' . $item_slug] : '';
       if ( !strlen( $license ) ) {
         return false;
       }
-      if( $is_free ) {
-        return true;
-      }
+
       $api_params = array(
         'edd_action' => 'check_license',
         'license'    => $license,

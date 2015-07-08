@@ -1,4 +1,13 @@
 (function($){
+
+  var options = {
+    bg: '#2f2f2f',
+  	target: document.getElementById('pr-progressbar'),
+  	id: 'pr-progressbar'
+  };
+
+  var nanobar = new Nanobar( options );
+
   var themes_loaded = false;
   $(".nav-tab").click(function(){
 
@@ -9,18 +18,24 @@
     switch(tab) {
       case 'remotes':
         if(themes_loaded == false) {
+          nanobar.go( 10 );
           $.post(ajaxurl, {
             'action':'pr_get_remote_themes',
           }, function(response) {
+            nanobar.go( 30 );
             if (response) {
+              nanobar.go( 50 );
               jQuery(response).appendTo('#themes-container');
               themes_loaded = true;
+              nanobar.go( 70 );
             } else {
               jQuery('<div>No themes founds</div>').appendTo('#themes-container');
             }
             $('#themes-installed').fadeOut('fast', function(){
               $('#themes-remote').fadeIn('fast');
             });
+          }).done(function() {
+            nanobar.go( 100 );
           });
         }
         else {
@@ -122,4 +137,5 @@
       }
     });
   }
+
 })(jQuery);

@@ -14,8 +14,6 @@ class PR_addons_page {
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
 
     $this->pr_options = get_option( 'pr_settings' );
-    //add_action( 'wp_ajax_pr_delete_theme', array( $this, 'pr_delete_theme' ) );
-    //add_action( 'wp_ajax_pr_upload_theme', array( $this, 'pr_upload_theme' ) );
   }
 
   /**
@@ -99,6 +97,7 @@ class PR_addons_page {
 
     $enabled_exporters = isset( $this->pr_options['pr_enabled_exporters'] ) ? $this->pr_options['pr_enabled_exporters'] : false ;
     $addons = PR_Addons::get();
+
     echo '<div class="wrap" id="edd-add-ons">
     <h2>PressRoom Add-ons <span class="title-count theme-count" id="pr-theme-count">' . count( $addons ) . '</span>
     </h2>
@@ -117,7 +116,7 @@ class PR_addons_page {
         }
 
         $is_free = $addon->pricing->amount == 0 ? true : false;
-        
+
         $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title, $is_free );
 
         echo $this->_render_add_on( $addon, $is_installed, $is_activated, $is_free );
@@ -140,8 +139,8 @@ class PR_addons_page {
 
     global $pagenow;
     if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-addons' ) {
-      wp_register_script( "pr_themes_page", PR_ASSETS_URI . "/js/pr.themes_page.js", array( 'jquery' ), '1.0', true );
-      wp_enqueue_script( "pr_themes_page" );
+      // wp_register_script( "pr_themes_page", PR_ASSETS_URI . "/js/pr.addons_page.js", array( 'jquery' ), '1.0', true );
+      // wp_enqueue_script( "pr_themes_page" );
       //wp_localize_script( "pr_themes_page", "pr", $this->_get_i18n_strings() );
     }
   }

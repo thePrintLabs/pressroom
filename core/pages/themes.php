@@ -136,18 +136,21 @@ class PR_themes_page {
 
     $installed_themes = PR_Theme::get_themes();
 
-    echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
-    echo '<a class="nav-tab nav-tab-active' . '" data-tab="installed" href="#">' . __('Installed', 'pressroom-themes') . '</a>';
-    echo '<a class="nav-tab' . '" data-tab="remotes" href="#">' . __('Download', 'pressroom-themes') . '</a>';
 
-    echo '</h2>';
 
     echo '<div class="wrap" id="themes-container">
     <h2>PressRoom Themes
     <a href="#" class="button button-primary right" id="pr-flush-themes-cache">' . __("Flush themes cache", 'pressroom-themes') . '</a>
     </h2>
-    <br>
+    <br/>';
 
+    echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
+    echo '<a class="nav-tab nav-tab-active' . '" data-tab="installed" href="#">' . __('Installed', 'pressroom-themes') . '</a>';
+    echo '<a class="nav-tab' . '" data-tab="remotes" href="#">' . __('Download', 'pressroom-themes') . '</a>';
+    echo '</h2>';
+    echo '<div id="pr-progressbar"></div><br/>';
+
+    echo'
     <div class="theme-browser rendered" id="themes-installed">
     <div class="themes">';
 
@@ -242,6 +245,8 @@ class PR_themes_page {
 
     global $pagenow;
     if( $pagenow == 'admin.php' && $_GET['page'] == 'pressroom-themes' ) {
+      wp_register_script( "nanobar", PR_ASSETS_URI . "/js/nanobar.min.js", array( 'jquery' ), '1.0', true );
+      wp_enqueue_script( "nanobar" );
       wp_register_script( "pr_themes_page", PR_ASSETS_URI . "/js/pr.themes_page.js", array( 'jquery' ), '1.0', true );
       wp_enqueue_script( "pr_themes_page" );
       wp_localize_script( "pr_themes_page", "pr", $this->_get_i18n_strings() );

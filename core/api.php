@@ -292,3 +292,13 @@ function pr_cycle_matches( $matches ) {
 
   return array();
 }
+
+function pr_get_template_directory() {
+
+  return get_option('pr_theme_root') . DS . get_option( 'stylesheet' );
+}
+
+function pr_get_template_directory_uri() {
+
+  return get_option('pr_theme_uri') . DS . get_option( 'stylesheet' );
+}

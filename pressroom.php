@@ -77,8 +77,10 @@ class TPL_Pressroom
 		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
 
+
 		/* Override default wordpress theme path */
 		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
+		add_filter( 'theme_root_uri', array( $this, 'set_theme_uri' ), 10 );
 		add_filter( 'template', array( $this, 'set_template_name'), 10 );
 		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
 
@@ -267,12 +269,23 @@ class TPL_Pressroom
    */
   public function set_theme_root( $path ) {
 
+		update_option( 'pr_theme_root', $path );
     if ( isset( $_GET['pr_no_theme'] ) ) {
       return realpath( PR_THEMES_PATH );
     }
 
     return $path;
   }
+
+	public function set_theme_uri( $uri ) {
+
+		update_option( 'pr_theme_uri', $uri );
+		if ( isset( $_GET['pr_no_theme'] ) ) {
+			return PR_THEME_URI;
+		}
+
+		return $uri;
+	}
 
 	/**
 	 * Override default wordpress theme
@@ -281,7 +294,6 @@ class TPL_Pressroom
 	 * return string
 	 */
 	public function set_template_name( $name ) {
-
 
 		if ( isset( $_GET['pr_no_theme'], $_GET['edition_id'] ) ) {
 			$name = PR_Theme::get_theme_path( $_GET['edition_id'], false );

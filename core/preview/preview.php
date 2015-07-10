@@ -231,6 +231,9 @@ class PR_Preview {
             }
           }
         }
+        else {
+          $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $html);
+        }
       }
 
       return $html;

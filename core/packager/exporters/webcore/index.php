@@ -320,7 +320,22 @@ final class PR_Packager_Web_Core_Package
               }
             }
           }
+          else {
+            $attachment_id = PR_Packager::get_attachment_from_url( $url );
+
+            if ( $attachment_id ) {
+
+              $info = pathinfo( $url );
+              $filename = $info['basename'];
+              $post_rewrite_urls[$url] = PR_EDITION_MEDIA . $filename;
+              // Add attachments that will be downloaded
+              $packager->add_post_attachment( $filename, $url );
+            }
+          }
         }
+      }
+      if ( !empty( $post_rewrite_urls ) ) {
+        $html = str_replace( array_keys( $post_rewrite_urls ), $post_rewrite_urls, $html );
       }
     }
   }

@@ -136,6 +136,8 @@ class TPL_Pressroom
 				'name' 		=> P2P_EDITION_CONNECTION,
 				'from'	 	=> $types,
 				'to' 			=> PR_EDITION,
+				'admin_column' => 'any',
+				'admin_dropdown' => 'from',
 				'sortable' 	=> false,
 				'title' => array(
     				'from'	=> __( 'Included into issue', 'pressroom' )

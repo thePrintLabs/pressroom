@@ -30,7 +30,7 @@ class PR_themes_page {
   * @param array $theme
   * @return string
   */
-  public function _render_theme( $theme, $installed, $activated, $free ) {
+  public function render_theme( $theme, $installed, $activated, $free ) {
 
     $options    = get_option( 'pr_settings' );
     $item_id    = isset( $theme['id'] ) ? $theme['id'] : false;
@@ -92,7 +92,7 @@ class PR_themes_page {
  * @param array $theme
  * @return string
  */
- public function _render_theme_installed( $theme ) {
+ public function render_theme_installed( $theme ) {
 
    $html = '<div class="theme ' . ( $theme['active'] ? 'active' : '' ) . '" data-name="' . $theme['uniqueid'] . '" tabindex="0">
    <div class="theme-screenshot pr-theme-screenshot">
@@ -166,7 +166,7 @@ class PR_themes_page {
           $this->prepare_theme( $theme, false );
         }
         else {
-          echo $this->_render_theme_installed( $theme );
+          echo $this->render_theme_installed( $theme );
         }
       }
     }
@@ -233,7 +233,7 @@ class PR_themes_page {
 
     $is_activated = PR_EDD_License::check_license( $theme['slug'], $theme['title'], $is_free  );
 
-    echo $this->_render_theme( $theme, $is_installed, $is_activated, $is_free  );
+    echo $this->render_theme( $theme, $is_installed, $is_activated, $is_free  );
   }
 
   /**

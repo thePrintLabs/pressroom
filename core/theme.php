@@ -12,6 +12,11 @@ class PR_Theme
 		$this->search_themes();
 	}
 
+	/**
+	 * Get theme list from online feed
+	 *
+	 * @return array $themes
+	 */
 	public static function get_remote_themes() {
 		$api_params = array(
       'key'         => '0a3d8d5a0639ffc26ee159d5938a95fc',
@@ -318,6 +323,12 @@ class PR_Theme
 		}
 	}
 
+	/**
+	 * Get property from config.xml file
+	 * @param  string $config_file
+	 *
+	 * @return bool or array $metadata
+	 */
 	protected static function _parse_theme_config( $config_file ) {
 
 		$xml = simplexml_load_file( $config_file );

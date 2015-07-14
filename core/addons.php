@@ -43,7 +43,7 @@ class PR_Addons
 	}
 
 	/**
-	 * Validate themes array and check if all property is set to theme pages
+	 * Validate addons array and check if all property is set
 	 *
 	 * @return array
 	 */
@@ -55,7 +55,7 @@ class PR_Addons
 		}
 
 		foreach ( $addons as $k => $addon ) {
-			$config_file = $addon['path'];
+			$config_file = $addon['config'];
 			$addon_meta = self::_parse_addon_config( $config_file );
 
 			if ( !$addon_meta ) {
@@ -78,6 +78,11 @@ class PR_Addons
 		return self::$_addons;
 	}
 
+	/**
+	 * Get remote addons from online feed
+	 *
+	 * @return array $remotes
+	 */
 	public static function get_remote_addons() {
 		$api_params = array(
       'key'         => '0a3d8d5a0639ffc26ee159d5938a95fc',
@@ -97,10 +102,6 @@ class PR_Addons
 		return $remotes;
   }
 
-	public static function get_installed_addons() {
-
-	}
-
   /**
    * Get add-ons objects
    *
@@ -111,6 +112,12 @@ class PR_Addons
     return $model::$_addons;
   }
 
+	/**
+	 * Get property from config.xml file
+	 * @param  string $config_file
+	 *
+	 * @return bool or array $metadata
+	 */
 	protected static function _parse_addon_config( $config_file ) {
 
 		if(!file_exists( $config_file ) ) {

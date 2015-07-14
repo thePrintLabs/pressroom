@@ -90,7 +90,7 @@ class PR_addons_page {
   }
 
   /**
-  * Render a single addon
+  * Render a single installed addon
   * @param array $addon
   * @return string
   */
@@ -140,7 +140,7 @@ class PR_addons_page {
   }
 
   /**
-   * Render themes page
+   * Render addons page
    * @echo
    */
   public function pressroom_addons_page() {
@@ -150,8 +150,7 @@ class PR_addons_page {
     $addons = PR_Addons::get();
 
     echo '<div class="wrap" id="addons-container">
-    <h2>PressRoom Add-ons <span class="title-count theme-count" id="pr-theme-count">' . count( $addons ) . '</span>
-    </h2>
+    <h2>PressRoom Add-ons</h2>
     <br>';
 
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
@@ -188,6 +187,11 @@ class PR_addons_page {
     </div>';
   }
 
+  /**
+   * Get addons list from online feed
+   *
+   * @echo
+   */
   public function get_remote_addons() {
 
     $enabled_exporters = isset( $this->pr_options['pr_enabled_exporters'] ) ? $this->pr_options['pr_enabled_exporters'] : false ;

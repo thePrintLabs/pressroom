@@ -186,6 +186,11 @@ class PR_themes_page {
     </div>';
   }
 
+  /**
+   * Get theme list from online feed
+   *
+   * @echo
+   */
   public function get_remote_themes() {
 
     $themes = PR_Theme::get_remote_themes();
@@ -216,6 +221,13 @@ class PR_themes_page {
     die();
   }
 
+  /**
+   * Check theme status before render
+   * @param  array $theme
+   * @param  boolean $is_free
+   * 
+   * @echo
+   */
   public function prepare_theme( $theme, $is_free ) {
 
     $pr_license = new PR_EDD_License( __FILE__, $theme['slug'], '1.0', 'thePrintLabs' );

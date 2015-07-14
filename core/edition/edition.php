@@ -227,7 +227,6 @@ class PR_Edition
 			$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
 			echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
 			echo '<select id="pr_packager_type" name="pr_packager_type">';
-			var_dump($this->pr_options['pr_enabled_exporters']);
 			foreach( $this->pr_options['pr_enabled_exporters'] as $key => $exporter ) {
 				if( isset( $exporter['active'] ) && $exporter['active'] ) {
 					echo '<option '. ( $packager_type == $key ? 'selected="selected"' : '' ) .' value="'.$key.'">'.$exporter['name'].'</option>';

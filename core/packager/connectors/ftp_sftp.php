@@ -162,9 +162,9 @@ class PR_Ftp_Sftp
   public function pr_add_field( $metabox ) {
     $metabox->add_field( '_pr_ftp_protocol', __( 'Transfer protocol', 'editorial_project' ), '', 'radio', '', array(
       'options' => array(
+        array( 'value' => 'local', 'name' => __( "local filesystem", 'web_package' ) ),
         array( 'value' => 'ftp', 'name' => __( "ftp", 'web_package' ) ),
         array( 'value' => 'sftp', 'name' => __( "sftp", 'web_package' ) ),
-        array( 'value' => 'local', 'name' => __( "local filesystem", 'web_package' ) )
       )
     ));
 

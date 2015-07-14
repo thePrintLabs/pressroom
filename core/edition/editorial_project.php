@@ -244,7 +244,7 @@ class PR_Editorial_Project
     $terms = get_terms( PR_EDITORIAL_PROJECT );
     foreach( $terms as $term ) {
       $option = self::get_config( $term->term_id, '_pr_prefix_bundle_id');
-      if ( isset($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
+      if ( isset($_POST['_pr_prefix_bundle_id']) && strlen($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
         $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
         wp_redirect( $url );
         exit;
@@ -276,7 +276,7 @@ class PR_Editorial_Project
     $terms = get_terms( PR_EDITORIAL_PROJECT );
     foreach( $terms as $term ) {
       $option = self::get_config( $term->term_id, '_pr_prefix_bundle_id');
-      if ( isset($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
+      if ( isset($_POST['_pr_prefix_bundle_id']) && strlen($_POST['_pr_prefix_bundle_id']) && $option == $_POST['_pr_prefix_bundle_id'] && $term->term_id != $term_id ) {
         $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id . '&pmtype=error&pmcode=duplicate_entry&pmparam=app_id' );
         wp_redirect( $url );
         exit;

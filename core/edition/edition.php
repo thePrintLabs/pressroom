@@ -314,19 +314,19 @@ class PR_Edition
 
 			p2p_update_meta( $post->p2p_id, 'order', $current_order);
 
-			// @TODO Remove ( automatic template/post association )
-			// $template = p2p_get_meta( $post->p2p_id, 'template', true );
-			//
-			// if( !$template || !file_exists( PR_THEMES_PATH . $template ) ) {
-			//
-			// 	$current_theme = get_post_meta( $edition->ID, '_pr_theme_select', true );
-			//
-			// 	if ( $current_theme ) {
-			// 		$themes = PR_Theme::get_themes();
-			// 		$default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
-			// 		p2p_update_meta( $post->p2p_id, 'template', $default_template);
-			// 	}
-			// }
+
+			$template = p2p_get_meta( $post->p2p_id, 'template', true );
+
+			if( !$template || !file_exists( PR_THEMES_PATH . $template ) ) {
+
+				$current_theme = get_post_meta( $edition->ID, '_pr_theme_select', true );
+
+				if ( $current_theme ) {
+					$themes = PR_Theme::get_themes();
+					// $default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
+					p2p_update_meta( $post->p2p_id, 'template', '');
+				}
+			}
 		}
 	}
 

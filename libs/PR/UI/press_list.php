@@ -211,7 +211,7 @@ class Pressroom_List_Table extends WP_List_Table
           foreach ( $pages as $page ) {
             if ( $page['rule'] == 'content' || $page['rule'] == 'cover' ) {
               $page_path = $themes[$current_theme]['path'] . DS . $page['path'];
-              $html.= '<option ' . ( strpos( $template, $page['path'] ) ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page_path . '" >' . $page['name'] . '</option>';
+              $html.= '<option ' . ( strpos( $template, $page_path ) ? 'selected="selected"' : '' ) . ' id="t_' . $item->p2p_id . '" data-index="' . $item->p2p_id . '" value="' . $page_path . '" >' . $page['name'] . '</option>';
             }
           }
           $html .= '</select>';

@@ -13,6 +13,7 @@ class PR_addons_page {
     add_action( 'admin_footer', array( $this, 'add_custom_scripts' ) );
     add_action( 'admin_menu', array( $this, 'pr_add_admin_menu' ) );
     add_action( 'wp_ajax_pr_get_remote_addons', array( $this, 'get_remote_addons' ) );
+    add_action( 'wp_ajax_pr_dismiss_notice', array( $this, 'dismiss_notice' ) );
 
     $this->pr_options = get_option( 'pr_settings' );
   }
@@ -145,20 +146,44 @@ class PR_addons_page {
    */
   public function pressroom_addons_page() {
 
-
     $enabled_exporters = isset( $this->pr_options['pr_enabled_exporters'] ) ? $this->pr_options['pr_enabled_exporters'] : false ;
     $addons = PR_Addons::get();
+    $coupon = PR_Addons::get_discount_codes()[0];
+
+    $current_user = wp_get_current_user();
+    $notice = get_user_meta( $current_user->ID, 'pr_addons_notice', true );
+    $products_list = '';
+    foreach( $coupon->products as $product ) {
+      $products_list .= $product . ',';
+    }
+
 
     echo '<div class="wrap" id="addons-container">
-    <h2>PressRoom Add-ons</h2>
-    <br>';
+    <h2>PressRoom Add-ons</h2>';
+
+    if( !$notice ) {
+      echo '<div class="discount-container pr-alert update-nag">
+        <div class="discount-message">
+        <p>'. sprintf( __( 'Get a coupon for %s save %d %s ', 'edition' ),$products_list , $coupon->amount, $coupon->type ) .'</p>
+        </div>
+        <div class="show-code-container">
+          <a id="show-code" class="button button-primary" href="#">Show code</a>
+        </div>
+        <span class="pr-dismiss-notice">
+          <a href="#" id="pr-dismiss-notice"><span class="dashicons dashicons-no"></span></a>
+        </span>
+        <div id="discount-code" style="display:none"><b> '. $coupon->code.'</b></div>
+      </div><br>';
+    }
 
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
     echo '<a class="nav-tab nav-tab-active' . '" data-tab="installed" href="#">' . __('Installed', 'pressroom-addons') . '</a>';
     echo '<a class="nav-tab' . '" data-tab="remotes" href="#">' . __('Download', 'pressroom-addons') . '</a>';
     echo '</h2>';
-    echo '<div id="pr-progressbar"></div><br/>
+    echo '<div id="pr-progressbar"></div><br/>';
 
+
+    echo'
     <div class="theme-browser rendered" id="addons-installed">
     <div class="themes">';
     if ( $addons ) {
@@ -222,6 +247,15 @@ class PR_addons_page {
     </div>
     <br class="clear">
     </div>';
+  }
+
+  public function dismiss_notice() {
+
+    $current_user = wp_get_current_user();
+    if( update_user_meta($current_user->ID, 'pr_addons_notice', true) ) {
+      wp_send_json_success();
+    }
+
   }
   /**
    * Add custom scripts to footer

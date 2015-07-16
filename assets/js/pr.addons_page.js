@@ -55,4 +55,18 @@
     }
   });
 
+  $('#show-code').click(function(){
+    $('#discount-code').slideToggle();
+  });
+
+  $('#pr-dismiss-notice').click(function(){
+    $.post(ajaxurl, {
+      'action':'pr_dismiss_notice',
+    }, function(response) {
+      if (response) {
+        $('.discount-container').remove();
+      }
+    });
+  });
+
 })(jQuery);

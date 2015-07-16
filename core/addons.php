@@ -8,7 +8,6 @@ class PR_Addons
 
 
 	public function __construct() {
-
 		$this->search();
 	}
 
@@ -83,11 +82,14 @@ class PR_Addons
 	 *
 	 * @return array $remotes
 	 */
-	public static function get_remote_addons() {
+	public static function get_remote_addons( $product_id = false ) {
 		$api_params = array(
       'key'         => '0a3d8d5a0639ffc26ee159d5938a95fc',
       'token'       => 'cfad94f3c1652a52dda2b7ec5451780f',
     );
+		if( $product_id ) {
+			$api_params['product'] = $product_id;
+		}
     $response = wp_remote_get( add_query_arg( $api_params, PR_API_EDD_URL . 'products' ), array( 'timeout' => 15, 'sslverify' => false ) );
     $response = json_decode( wp_remote_retrieve_body( $response ) );
 		$remotes = array();
@@ -100,6 +102,40 @@ class PR_Addons
     }
 
 		return $remotes;
+  }
+
+	/**
+	 * Get remote addons from online feed
+	 *
+	 * @return array $remotes
+	 */
+	public static function get_discount_codes() {
+		$api_params = array(
+      'key'         => '0a3d8d5a0639ffc26ee159d5938a95fc',
+      'token'       => 'cfad94f3c1652a52dda2b7ec5451780f',
+    );
+    $response = wp_remote_get( add_query_arg( $api_params, PR_API_EDD_URL . 'discounts' ), array( 'timeout' => 15, 'sslverify' => false ) );
+    $response = json_decode( wp_remote_retrieve_body( $response ) );
+		$discount_codes = array();
+
+		foreach( $response->discounts as $discount ) {
+			$name = explode( '::', $discount->name );
+			$category = trim( $name[1] );
+			if( $discount->status == 'active' && $category == 'exporters' ) {
+				$discount->name = $name[0];
+				$products = $discount->product_requirements;
+				if( $products ) {
+					foreach( $products as $product_id ) {
+						$product = self::get_remote_addons( $product_id );
+						$discount->products[] = '<a href="'.$product[0]->info->link.'">' . $product[0]->info->title . ' </a>';
+					}
+				}
+
+				array_push( $discount_codes, $discount );
+			}
+    }
+
+		return $discount_codes;
   }
 
   /**

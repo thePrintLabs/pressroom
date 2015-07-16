@@ -409,3 +409,42 @@ form#pr-push-form {
 #pr-theme-upload {
   display:none;
 }
+
+.discount-container {
+  display: block;
+  position: relative;
+}
+
+#discount-code {
+  margin-top: 10px;
+  background: #eee;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+.pr-dismiss-notice {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.pr-dismiss-notice a {
+  text-decoration: none;
+}
+.discount-message {
+  display: inline-block;
+  width: 78%;
+  margin-top: 8px;
+}
+.show-code-container {
+  display: inline-block;
+  width: 20%;
+  text-align: right;
+}
+@media screen and (max-width: 782px) {
+  .discount-message {
+    width: 100%;
+  }
+  .show-code-container {
+    width: 100%;
+  }
+}

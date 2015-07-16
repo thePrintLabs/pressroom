@@ -38,7 +38,7 @@ class PR_Edition
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
-		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
+		add_action( 'admin_init', array( $this, 'register_edition_scripts' ) );
 
 	}
 

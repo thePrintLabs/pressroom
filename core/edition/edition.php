@@ -114,7 +114,7 @@ class PR_Edition
 			'options' => $this->_get_subscription_types( $post )
 		) );
 		foreach ( $editorial_terms as $term) {
-			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '' );
+			$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '', array( 'required' => 'required' ) );
 		}
 
 		$metaboxes = array();

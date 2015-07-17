@@ -136,38 +136,10 @@ class PR_Editorial_Project
    */
   public function get_custom_metabox( $term_id ) {
 
-    $sub_meta = new PR_Metabox( 'sub_metabox', __( 'In-App Purchases', 'editorial_project' ), 'normal', 'high', $term_id );
-    $sub_meta->add_field( '_pr_itunes_secret', __( 'iTunes Shared Secret', 'editorial_project' ), __( 'A shared secret is a unique code that you should use when you make the call to our servers for your In-App Purchase receipts.', 'editorial_project' ), 'text', '' );
-    $sub_meta->add_field( '_pr_prefix_bundle_id', __( 'App Bundle ID', 'edition' ), __( 'Application Bundle ID is the unique identifier of your application', 'editorial_project' ), 'text', '' );
-    $sub_meta->add_field( '_pr_single_edition_prefix', __( 'Single edition prefix', 'edition' ), __( 'Single edition prefix', 'editorial_project' ), 'text_autocompleted', '' );
-    $sub_meta->add_field( '_pr_subscription_prefix', __( 'Subscription prefix', 'edition' ), __( 'Subscription prefix', 'editorial_project' ), 'text_autocompleted', '' );
-    $sub_meta->add_field( '_pr_subscription_types', __( 'Subscription types', 'edition' ), __( 'Subscription types', 'editorial_project' ), 'repeater_with_radio', '', array(
-      'radio_field'   => '_pr_subscription_method',
-      'radio_options' => array(
-        array( 'value' => 'all', 'name' => __( "All", 'editorial_project' ) ),
-        array( 'value' => 'last', 'name' => __( "Last edition", 'editorial_project' ) )
-      ),
-    ));
-
-    $push_meta = new PR_Metabox( 'push_metabox', __( 'Push notification', 'editorial_project' ), 'normal', 'high', $term_id );
-    $push_meta->add_field( 'pr_push_service', __( 'Push service', 'editorial_project' ), __( 'Push notification service', 'edition' ), 'radio', '', array(
-      'options' => array(
-      array( 'value' => 'parse', 'name' => __( "Parse", 'editorial_project' ) ),
-      array( 'value' => 'urbanairship', 'name' => __( "Urban Airship", 'editorial_project' ) ),
-      )
-    ));
-    $push_meta->add_field( 'pr_push_api_app_id', __( 'App key', 'edition' ), __( 'The main identifier of your app. <b>Urban Airship</b>: <i>App Key</i><b> - Parse: </b><i>Application Id</i>', 'editorial_project' ), 'text', '' );
-    $push_meta->add_field( 'pr_push_api_key', __( 'App secret', 'edition' ), __( 'The secret token for authentication <b>Urban Airship</b>: <i>App Master Secret</i><b> - Parse: </b><i>REST API Key</i> ', 'editorial_project' ), 'text', '' );
-
     $metaboxes = array();
     do_action_ref_array( 'pr_add_eproject_tab', array( &$metaboxes, $term_id ) );
 
-    $this->_metaboxes = array(
-      $sub_meta,
-      $push_meta,
-    );
-
-    $this->_metaboxes = array_merge( $metaboxes, $this->_metaboxes  );
+    $this->_metaboxes = $metaboxes;
   }
 
   /**

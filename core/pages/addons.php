@@ -149,7 +149,6 @@ class PR_addons_page {
     $enabled_exporters = isset( $this->pr_options['pr_enabled_exporters'] ) ? $this->pr_options['pr_enabled_exporters'] : false ;
     $addons = PR_Addons::get();
     $coupons = PR_Addons::get_discount_codes();
-
     $current_user = wp_get_current_user();
 
     echo '<div class="wrap" id="addons-container">
@@ -250,7 +249,12 @@ class PR_addons_page {
     <br class="clear">
     </div>';
   }
-
+  
+  /**
+   * Ajax callback to dismiss notice
+   *
+   * @json success
+   */
   public function dismiss_notice() {
 
     $current_user = wp_get_current_user();

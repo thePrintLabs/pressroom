@@ -88,7 +88,7 @@ class PR_themes_page {
     return $html;
   }
 
-  /**
+ /**
  * Render a single theme
  * @param array $theme
  * @return string
@@ -328,6 +328,11 @@ class PR_themes_page {
     wp_send_json_error();
   }
 
+  /**
+   * Ajax callback to dismiss notice
+   *
+   * @json success
+   */
   public function dismiss_notice() {
 
     $current_user = wp_get_current_user();

@@ -55,16 +55,20 @@
     }
   });
 
-  $('#show-code').click(function(){
-    $('#discount-code').slideToggle();
+  $('.show-code').click(function(){
+    var index = $(this).data('index');
+    $('.discount-code-' + index).slideToggle();
   });
 
-  $('#pr-dismiss-notice').click(function(){
+  $('.pr-dismiss-notice').click(function(){
+    var index = $(this).data('index');
+    console.log(index);
     $.post(ajaxurl, {
       'action':'pr_dismiss_notice',
+      'id'    : index,
     }, function(response) {
       if (response) {
-        $('.discount-container').remove();
+        $('.discount-container-' + index).remove();
       }
     });
   });

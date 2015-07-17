@@ -415,19 +415,19 @@ form#pr-push-form {
   position: relative;
 }
 
-#discount-code {
+.discount-code {
   margin-top: 10px;
   background: #eee;
   padding: 10px 20px;
   border-radius: 5px;
   border: 1px solid #ddd;
 }
-.pr-dismiss-notice {
+.pr-dismiss-notice-container {
   position: absolute;
   right: 5px;
   top: 5px;
 }
-.pr-dismiss-notice a {
+.pr-dismiss-notice-container a {
   text-decoration: none;
 }
 .discount-message {

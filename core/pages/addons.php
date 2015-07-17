@@ -36,7 +36,7 @@ class PR_addons_page {
     $item_id = $addon->info->id;
     $item_slug = $addon->info->slug;
     $item_name = $addon->info->title;
-    $item_price = $addon->pricing->amount;
+    $item_price = $addon->pricing->amount . '$';
     $item_link = $addon->info->link;
 
     $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
@@ -148,32 +148,34 @@ class PR_addons_page {
 
     $enabled_exporters = isset( $this->pr_options['pr_enabled_exporters'] ) ? $this->pr_options['pr_enabled_exporters'] : false ;
     $addons = PR_Addons::get();
-    $coupon = PR_Addons::get_discount_codes()[0];
+    $coupons = PR_Addons::get_discount_codes();
 
     $current_user = wp_get_current_user();
-    $notice = get_user_meta( $current_user->ID, 'pr_addons_notice', true );
-    $products_list = '';
-    foreach( $coupon->products as $product ) {
-      $products_list .= $product . ',';
-    }
-
 
     echo '<div class="wrap" id="addons-container">
     <h2>PressRoom Add-ons</h2>';
 
-    if( !$notice ) {
-      echo '<div class="discount-container pr-alert update-nag">
-        <div class="discount-message">
-        <p>'. sprintf( __( 'Get a coupon for %s save %d %s ', 'edition' ),$products_list , $coupon->amount, $coupon->type ) .'</p>
-        </div>
-        <div class="show-code-container">
-          <a id="show-code" class="button button-primary" href="#">Show code</a>
-        </div>
-        <span class="pr-dismiss-notice">
-          <a href="#" id="pr-dismiss-notice"><span class="dashicons dashicons-no"></span></a>
-        </span>
-        <div id="discount-code" style="display:none"><b> '. $coupon->code.'</b></div>
-      </div><br>';
+    foreach( $coupons as $key => $coupon ) {
+      $notice = get_user_meta( $current_user->ID, 'pr_addons_notice_' . $coupon->ID, true );
+      if( !$notice ) {
+        $products_list = '';
+        foreach( $coupon->products as $product ) {
+          $products_list .= $product . ',';
+        }
+        $type = $coupon->type == 'percent' ? '%' : '$';
+        echo '<div class="discount-container discount-container-'.$coupon->ID.' pr-alert update-nag">
+          <div class="discount-message">
+          <p>'. sprintf( __( 'Get a coupon for %s save %d %s ', 'edition' ),$products_list , $coupon->amount, $type ) .'</p>
+          </div>
+          <div class="show-code-container">
+            <a data-index="'.$key.'" class="show-code button button-primary" href="#">Show code</a>
+          </div>
+          <span class="pr-dismiss-notice-container">
+            <a href="#" class="pr-dismiss-notice" data-index="'. $coupon->ID .'"><span class="dashicons dashicons-no"></span></a>
+          </span>
+          <div class="discount-code discount-code-' . $key . '" style="display:none"><b> '. $coupon->code.'</b></div>
+        </div><br>';
+      }
     }
 
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
@@ -252,7 +254,7 @@ class PR_addons_page {
   public function dismiss_notice() {
 
     $current_user = wp_get_current_user();
-    if( update_user_meta($current_user->ID, 'pr_addons_notice', true) ) {
+    if( update_user_meta($current_user->ID, 'pr_addons_notice_' . $_POST['id'], true) ) {
       wp_send_json_success();
     }
 
@@ -275,7 +277,7 @@ class PR_addons_page {
   }
 
   /**
-  * Active / Deactive theme
+  * Active / Deactive addon
   * @void
   */
   protected function _update_add_on_status() {

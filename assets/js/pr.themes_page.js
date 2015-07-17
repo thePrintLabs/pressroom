@@ -138,4 +138,22 @@
     });
   }
 
+  $('.show-code').click(function(){
+    var index = $(this).data('index');
+    $('.discount-code-' + index).slideToggle();
+  });
+
+  $('.pr-dismiss-notice').click(function(){
+    var index = $(this).data('index');
+    console.log(index);
+    $.post(ajaxurl, {
+      'action':'pr_dismiss_notice',
+      'id'    : index,
+    }, function(response) {
+      if (response) {
+        $('.discount-container-' + index).remove();
+      }
+    });
+  });
+
 })(jQuery);

@@ -15,6 +15,7 @@ class PR_themes_page {
     add_action( 'wp_ajax_pr_delete_theme', array( $this, 'pr_delete_theme' ) );
     add_action( 'wp_ajax_pr_upload_theme', array( $this, 'pr_upload_theme' ) );
     add_action( 'wp_ajax_pr_get_remote_themes', array( $this, 'get_remote_themes' ) );
+    add_action( 'wp_ajax_pr_dismiss_notice', array( $this, 'dismiss_notice' ) );
   }
 
   /**
@@ -36,7 +37,7 @@ class PR_themes_page {
     $item_id    = isset( $theme['id'] ) ? $theme['id'] : false;
     $item_slug  = isset( $theme['slug'] ) ? $theme['slug'] : false;
     $item_name  = isset( $theme['title'] ) ? $theme['title'] : false;
-    $item_price = isset( $theme['price'] ) ? $theme['price'] : false;
+    $item_price = isset( $theme['price'] ) ? $theme['price'] . '$' : false;
     $item_link  = isset( $theme['link'] ) ? $theme['link'] : false;
     $item_thumbnail  = isset( $theme['thumbnail'] ) ? $theme['thumbnail'] : false;
     $item_content  = isset( $theme['content'] ) ? $theme['content'] : false;
@@ -134,15 +135,37 @@ class PR_themes_page {
     $this->_update_theme_status();
     $this->_upload_theme();
 
-    $installed_themes = PR_Theme::get_themes();
-
-
-
     echo '<div class="wrap" id="themes-container">
     <h2>PressRoom Themes
     <a href="#" class="button button-primary right" id="pr-flush-themes-cache">' . __("Flush themes cache", 'pressroom-themes') . '</a>
     </h2>
     <br/>';
+
+    $coupons = PR_Theme::get_discount_codes();
+    $current_user = wp_get_current_user();
+
+    foreach( $coupons as $key => $coupon ) {
+      $notice = get_user_meta( $current_user->ID, 'pr_themes_notice_' . $coupon->ID, true );
+      if( !$notice ) {
+        $products_list = '';
+        foreach( $coupon->products as $product ) {
+          $products_list .= $product . ',';
+        }
+        $type = $coupon->type == 'percent' ? '%' : '$';
+        echo '<div class="discount-container discount-container-'.$coupon->ID.' pr-alert update-nag">
+          <div class="discount-message">
+          <p>'. sprintf( __( 'Get a coupon for %s save %d %s ', 'edition' ),$products_list , $coupon->amount, $type ) .'</p>
+          </div>
+          <div class="show-code-container">
+            <a data-index="'.$key.'" class="show-code button button-primary" href="#">Show code</a>
+          </div>
+          <span class="pr-dismiss-notice-container">
+            <a href="#" class="pr-dismiss-notice" data-index="'. $coupon->ID .'"><span class="dashicons dashicons-no"></span></a>
+          </span>
+          <div class="discount-code discount-code-' . $key . '" style="display:none"><b> '. $coupon->code.'</b></div>
+        </div><br>';
+      }
+    }
 
     echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
     echo '<a class="nav-tab nav-tab-active' . '" data-tab="installed" href="#">' . __('Installed', 'pressroom-themes') . '</a>';
@@ -154,6 +177,7 @@ class PR_themes_page {
     <div class="theme-browser rendered" id="themes-installed">
     <div class="themes">';
 
+    $installed_themes = PR_Theme::get_themes();
     if( $installed_themes ) {
       foreach ( $installed_themes as $theme ) {
         if( isset( $theme['paid'] ) && $theme['paid'] ) {
@@ -204,7 +228,7 @@ class PR_themes_page {
           'id'        =>  $theme->info->id,
           'slug'      =>  $theme->info->slug,
           'title'     =>  $theme->info->title,
-          'price'     =>  $theme->pricing->amount,
+          'price'     =>  $theme->pricing->amount . '$',
           'link'      =>  $theme->info->link,
           'thumbnail' =>  $theme->info->thumbnail,
           'content'   =>  $theme->info->content,
@@ -225,7 +249,7 @@ class PR_themes_page {
    * Check theme status before render
    * @param  array $theme
    * @param  boolean $is_free
-   * 
+   *
    * @echo
    */
   public function prepare_theme( $theme, $is_free ) {
@@ -302,6 +326,15 @@ class PR_themes_page {
       wp_send_json_success();
     }
     wp_send_json_error();
+  }
+
+  public function dismiss_notice() {
+
+    $current_user = wp_get_current_user();
+    if( update_user_meta($current_user->ID, 'pr_themes_notice_' . $_POST['id'], true) ) {
+      wp_send_json_success();
+    }
+
   }
 
   /**

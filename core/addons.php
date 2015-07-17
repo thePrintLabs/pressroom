@@ -121,13 +121,15 @@ class PR_Addons
 		foreach( $response->discounts as $discount ) {
 			$name = explode( '::', $discount->name );
 			$category = trim( $name[1] );
-			if( $discount->status == 'active' && $category == 'exporters' ) {
+			if( $discount->status == 'active' && $category == 'addons' ) {
 				$discount->name = $name[0];
 				$products = $discount->product_requirements;
 				if( $products ) {
 					foreach( $products as $product_id ) {
 						$product = self::get_remote_addons( $product_id );
-						$discount->products[] = '<a href="'.$product[0]->info->link.'">' . $product[0]->info->title . ' </a>';
+						if( $product ) {
+							$discount->products[] = '<a href="'.$product[0]->info->link.'">' . $product[0]->info->title . ' </a>';
+						}						
 					}
 				}
 

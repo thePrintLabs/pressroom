@@ -112,6 +112,8 @@ class PR_Preview {
     ob_start();
     $pr_theme_url = PR_THEME::get_theme_uri( $edition->ID );
     $pr_package_type = self::$package_type;
+    $editorial_terms = wp_get_post_terms( $edition->ID, PR_EDITORIAL_PROJECT );
+    $editorial_project_id = $editorial_terms[0]->term_id;
     $posts = $linked_query;
     self::add_functions_file( $edition->ID );
     require_once( $toc );
@@ -141,7 +143,8 @@ class PR_Preview {
       'numberposts' => 1
     ));
     $post = $wp_query->posts[0];
-
+    $editorial_terms = wp_get_post_terms( $edition->ID, PR_EDITORIAL_PROJECT );
+    $editorial_project_id = $editorial_terms[0]->term_id;
     $p2p_id = p2p_type( P2P_EDITION_CONNECTION )->get_p2p_id( $post, $edition );
     if ( !$p2p_id ) {
       return false;

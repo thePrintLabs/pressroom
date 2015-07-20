@@ -440,6 +440,12 @@ form#pr-push-form {
   width: 20%;
   text-align: right;
 }
+.pressroom-addons-alert td {
+  background: #f7f7f7 !important;
+}
+.pressroom-addons-alert .dashicons {
+  color: #d54e21;
+}
 @media screen and (max-width: 782px) {
   .discount-message {
     width: 100%;

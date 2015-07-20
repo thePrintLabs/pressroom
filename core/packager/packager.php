@@ -275,7 +275,7 @@ class PR_Packager
 		$pr_package_type = $this->package_type;
 		$pr_theme_url = PR_THEME::get_theme_uri( $this->edition_post->ID );
 
-		$posts = $this->linked_query;
+		$edition_posts = $this->linked_query;
 		$this->add_functions_file();
 		require( $toc );
 		$output = ob_get_contents();

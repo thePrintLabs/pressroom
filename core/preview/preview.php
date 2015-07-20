@@ -114,7 +114,7 @@ class PR_Preview {
     $pr_package_type = self::$package_type;
     $editorial_terms = wp_get_post_terms( $edition->ID, PR_EDITORIAL_PROJECT );
     $editorial_project_id = $editorial_terms[0]->term_id;
-    $posts = $linked_query;
+    $edition_posts = $linked_query;
     self::add_functions_file( $edition->ID );
     require_once( $toc );
     $output = ob_get_contents();

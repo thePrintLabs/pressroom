@@ -228,14 +228,13 @@ class PR_Preview {
 
               if ( $post->ID == $post_id ) {
                 $path = PR_Utils::sanitize_string( $post->post_title ) . '.' . $extension;
-                $html = str_replace( $url, admin_url() . 'admin-ajax.php?action=pr_preview&edition_id='.$edition->ID.'&pr_no_theme=true&package_type='.$_GET['package_type'].'#toc-' . $post_id, $html );
-                $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_parent\">", $html);
+                $html = str_replace( 'href="'. $url .'"', 'href="'. admin_url() . 'admin-ajax.php?action=pr_preview&edition_id='.$edition->ID.'&pr_no_theme=true&package_type='.$_GET['package_type'].'#toc-' . $post_id.'" target="_parent"', $html );
               }
             }
           }
         }
         else {
-          $html = preg_replace("/<a(.*?)>/", "<a$1 target=\"_blank\">", $html);
+          $html = str_replace('href="'. $url .'"', 'href="'. $url .'" target="_blank"', $html);
         }
       }
 
@@ -288,7 +287,6 @@ class PR_Preview {
   public function add_preview_metabox_callback( $post ) {
 
     $editions = PR_Edition::get_linked_editions( $post );
-    $options = get_option( 'pr_settings' );
     echo '<label for="post_status">' . __("Choose an issue:", 'pressroom') . '</label>
     <div id="post-preview-select">
     <select name="pr_prw_edition_id" id="pr_prw_edition_id">';
@@ -296,13 +294,9 @@ class PR_Preview {
       echo '<option value="' . $edition->ID . '">' . $edition->post_title . '</option>';
     }
     echo '</select>
-    <select id="package_type">';
-    foreach( $options['pr_enabled_exporters'] as $key => $exporter ) {
-      if( isset( $exporter['active'] ) && $exporter['active'] ) {
-        echo '<option value="'.$key.'">'.$exporter['name'].'</option>';
-      }
-    }
-    echo'
+    <select id="package_type">
+    <option value="web">web</option>
+    <option value="hpub">hpub</option>
     </select>
     </div>
     <hr/>

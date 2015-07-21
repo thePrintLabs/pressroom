@@ -3,7 +3,7 @@
 /**
  * Get posts ids array linked to the edition
  *
- * @param int or object $edition
+ * @param object $edition
  * @param boolean $only_enabled
  * @return array
  */
@@ -28,7 +28,7 @@ function pr_get_edition_posts_id( $edition, $only_enabled = true ) {
 /**
  * Get posts linked to an edition
  *
- * @param int or object $edition
+ * @param object $edition
  * @param boolean $only_enabled
  * @return array or boolean false
  */
@@ -131,14 +131,14 @@ function pr_book( $edition_id ) {
  * Get previous or next post from edition posts array
  *
  * @param  int $post_id
- * @param  int $edition_id
+ * @param  object $edition
  * @param  boolean $prev
  * @param  boolean $next
  * @return string or boolean
  */
-function pr_get_edition_post( $post_id, $edition_id, $position = '' ) {
+function pr_get_edition_post( $post_id, $edition, $position = '' ) {
 
-  $linked_query = pr_get_edition_posts( $edition_id, true );
+  $linked_query = pr_get_edition_posts( $edition, true );
   $linked_posts = $linked_query->posts;
   foreach( $linked_posts as $k => $post ) {
 
@@ -173,24 +173,39 @@ function pr_get_edition_post( $post_id, $edition_id, $position = '' ) {
  * Get previous post
  *
  * @param  int $post_id
- * @param  int $edition_id
+ * @param  object $edition
  * @return string or boolean
  */
-function pr_prev( $post_id, $edition_id ) {
+function pr_prev( $post_id = false, $edition = false ) {
 
-  return pr_get_edition_post( $post_id, $edition_id, 'prev' );
+  if( !$edition && isset( $_GET['edition_id'] ) ) {
+    $edition = get_post( $_GET['edition_id'] );
+  }
+  if( !$post_id ) {
+    global $post;
+    $post_id = $post->ID;
+  }
+
+  return pr_get_edition_post( $post_id, $edition, 'prev' );
 }
 
 /**
  * Get next post
  *
  * @param  int $post_id
- * @param  int $edition_id
+ * @param  object $edition
  * @return string or boolean
  */
-function pr_next( $post_id, $edition_id ) {
+function pr_next( $post_id = false, $edition = false ) {
 
-  return pr_get_edition_post( $post_id, $edition_id, 'next' );
+  if( !$edition && isset( $_GET['edition_id'] ) ) {
+    $edition = get_post( $_GET['edition_id'] );
+  }
+  if( !$post_id ) {
+    global $post;
+    $post_id = $post->ID;
+  }
+  return pr_get_edition_post( $post_id, $edition, 'next' );
 }
 
 /**
@@ -199,7 +214,12 @@ function pr_next( $post_id, $edition_id ) {
  * @param  object $post
  * @return string $permalink
  */
-function pr_get_sharing_placeholder( $post_id ) {
+function pr_get_sharing_placeholder( $post_id = false ) {
+
+  if( !$post_id ) {
+    global $post;
+    $post_id = $post->ID;
+  }
 
   $permalink = get_permalink( $post_id );
   $domain = get_home_url();
@@ -220,8 +240,12 @@ function pr_get_sharing_placeholder( $post_id ) {
  * @param  object $post
  * @return string $sharing_url
  */
-function pr_get_sharing_url( $post_id ) {
+function pr_get_sharing_url( $post_id = false ) {
 
+  if( !$post_id ) {
+    global $post;
+    $post_id = $post->ID;
+  }
   $sharing_url = get_post_meta( $post_id, '_pr_sharing_url', true );
 
   if( $sharing_url ) {

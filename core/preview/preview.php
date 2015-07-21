@@ -288,6 +288,7 @@ class PR_Preview {
   public function add_preview_metabox_callback( $post ) {
 
     $editions = PR_Edition::get_linked_editions( $post );
+    $options = get_option( 'pr_settings' );
     echo '<label for="post_status">' . __("Choose an issue:", 'pressroom') . '</label>
     <div id="post-preview-select">
     <select name="pr_prw_edition_id" id="pr_prw_edition_id">';
@@ -295,9 +296,13 @@ class PR_Preview {
       echo '<option value="' . $edition->ID . '">' . $edition->post_title . '</option>';
     }
     echo '</select>
-    <select id="package_type">
-    <option value="web">web</option>
-    <option value="hpub">hpub</option>
+    <select id="package_type">';
+    foreach( $options['pr_enabled_exporters'] as $key => $exporter ) {
+      if( isset( $exporter['active'] ) && $exporter['active'] ) {
+        echo '<option value="'.$key.'">'.$exporter['name'].'</option>';
+      }
+    }
+    echo'
     </select>
     </div>
     <hr/>

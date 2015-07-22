@@ -23,6 +23,7 @@ if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 require_once( __DIR__ . '/core/define.php' );
 require_once( __DIR__ . '/core/settings.php' );
 require_once( PR_LIBS_PR_PATH . 'utils.php' );
+require_once( PR_LIBS_PR_PATH . 'UI/class.settings-api.php' );
 
 require_once( PR_CORE_PATH . 'setup.php' );
 require_once( PR_CORE_PATH . 'edition/edition.php' );

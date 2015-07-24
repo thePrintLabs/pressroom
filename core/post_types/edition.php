@@ -39,6 +39,9 @@ class PR_Edition
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
 		add_action( 'admin_init', array( $this, 'register_edition_scripts' ) );
+		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
+
+		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 
 	}
 
@@ -182,6 +185,29 @@ class PR_Edition
 		// render Wp list table for flatplan
 		$this->add_presslist();
 		echo '</div>';
+	}
+
+	/**
+	 * Custom featured image title
+	 * @void
+	 */
+	public function change_featured_image_box() {
+		remove_meta_box( 'postimagediv', PR_EDITION, 'side' );
+		add_meta_box('postimagediv', __('Cover Image'), 'post_thumbnail_meta_box', PR_EDITION, 'side', 'high');
+	}
+
+	/**
+	 * Custom featured image labels
+	 * @param  string $content
+	 * @return string
+	 */
+	public function change_featured_image_html( $content ) {
+		global $post;
+		if ( $post && $post->post_type == PR_EDITION ) {
+			$content = str_replace( __( 'Remove featured image' ), __( 'Remove cover image' ), $content);
+			$content = str_replace( __( 'Set featured image' ), __( 'Set cover image' ), $content);
+		}
+		return $content;
 	}
 
 	/**

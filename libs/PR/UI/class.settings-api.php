@@ -129,7 +129,7 @@ class WeDevs_Settings_API {
                 $type = isset( $option['type'] ) ? $option['type'] : 'text';
                 $subsection = isset( $option['subsection'] ) ? $option['subsection']  : false;
                 $label = isset( $option['subsection'] ) ? "{$section}[{$option['subsection']}][{$option['name']}]"  : "{$section}[{$option['name']}]";
-                
+
                 $args = array(
                     'id' => $option['name'],
                     'label_for' => $label,
@@ -624,6 +624,7 @@ class WeDevs_Settings_API {
             /** WordPress 3.8 Fix **/
             .form-table th { padding: 20px 10px; }
             #wpbody-content .metabox-holder { padding-top: 5px; }
+            .metabox-holder form > h3{ display: none; }
         </style>
         <?php
     }

@@ -27,7 +27,7 @@ define( "PR_TMP_PATH", trailingslashit( PR_API_PATH . 'tmp/' ) );
 define( "PR_PREVIEW_TMP_PATH", trailingslashit( PR_TMP_PATH . 'preview/' ) );
 
 // URL
-define( "PR_PLUGIN_URI", plugin_dir_url( PR_LIBS_PATH_PATH ) );
+define( "PR_PLUGIN_URI", plugin_dir_url( PR_LIBS_PATH ) );
 define( "PR_CORE_URI", PR_PLUGIN_URI . 'core/' );
 define( "PR_ASSETS_URI", PR_PLUGIN_URI. 'assets/' );
 define( "PR_PREVIEW_URI", PR_PLUGIN_URI . 'api/tmp/preview/' );

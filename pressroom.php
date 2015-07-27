@@ -88,6 +88,8 @@ class TPL_Pressroom
 		add_action( 'plugins_loaded', array( $this, 'load_exporters' ) );
 		add_action( 'plugins_loaded', array( $this, 'load_core_exporters' ), 20 );
 
+		add_action( 'admin_init', array( $this, 'register_pressroom_styles' ), 20 );
+
 	}
 
 	/**
@@ -374,6 +376,16 @@ class TPL_Pressroom
 		}
 
 		return true;
+	}
+
+	/**
+	 * Add jQuery datepicker script and css styles
+	 * @void
+	 */
+	public function register_pressroom_styles() {
+
+		wp_register_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.css' );
+		wp_enqueue_style( 'pressroom' );
 	}
 
 	/**

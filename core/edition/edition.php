@@ -38,7 +38,7 @@ class PR_Edition
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
 
-		add_action( 'admin_init', array( $this, 'register_edition_scripts' ) );
+		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
 
 	}
 
@@ -455,9 +455,6 @@ class PR_Edition
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-
-		wp_register_style( 'pressroom', PR_ASSETS_URI . 'css/pressroom.css' );
-		wp_enqueue_style( 'pressroom' );
 
 		wp_register_script( 'edition', PR_ASSETS_URI . '/js/pr.edition.js', array( 'jquery' ), '1.0', true );
 		wp_enqueue_script( 'edition' );

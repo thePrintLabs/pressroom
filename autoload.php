@@ -6,24 +6,22 @@ class PR_Autoload {
 
   public function __construct() {
 
-    $this->_load_libs();
-    $this->_load_api();
-    $this->_load_taxonomies();
-    $this->_load_post_types();
+    $this->load_libs();
+    $this->load_api();
+    $this->load_taxonomies();
+    $this->load_post_types();
 
-    $this->_load_packager();
-    $this->_load_preview();
-
-    $this->_load_server();
-
-    $this->_load_pages();
+    $this->load_packager();
+    $this->load_preview();
+    $this->load_server();
+    $this->load_pages();
   }
 
-  protected function _load_api() {
+  public function load_api() {
     require_once PR_ROOT . 'api.php';
   }
 
-  protected function _load_libs() {
+  public function load_libs() {
     if ( is_dir( PR_LIBS_PATH ) ) {
       $dirs = PR_Utils::search_dir( PR_LIBS_PATH );
       if ( !empty( $dirs ) ) {
@@ -35,27 +33,27 @@ class PR_Autoload {
     }
   }
 
-  protected function _load_taxonomies() {
+  public function load_taxonomies() {
     $this->_load_files( PR_TAXONOMIES_PATH );
   }
 
-  protected function _load_post_types() {
+  public function load_post_types() {
     $this->_load_files( PR_POST_TYPES_PATH );
   }
 
-  protected function _load_packager() {
+  public function load_packager() {
     require_once PR_PACKAGER_PATH . 'packager.php';
   }
 
-  protected function _load_preview() {
+  public function load_preview() {
     require_once PR_PREVIEW_PATH . 'preview.php';
   }
 
-  protected function _load_server() {
+  public function load_server() {
     require_once PR_SERVER_PATH . 'server.php';
   }
 
-  protected function _load_pages() {
+  public function load_pages() {
     require_once PR_PAGES_PATH . 'options.php';
   }
 

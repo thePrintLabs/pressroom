@@ -21,8 +21,8 @@ class PR_Server
    */
   protected function _load_connectors() {
 
-    if ( is_dir( PR_CONNECTORS_PATH ) ) {
-      $files = PR_Utils::search_files( PR_CONNECTORS_PATH, 'php' );
+    if ( is_dir( PR_SERVER_CONNECTORS_PATH ) ) {
+      $files = PR_Utils::search_files( PR_SERVER_CONNECTORS_PATH, 'php' );
       if ( !empty( $files ) ) {
         foreach ( $files as $file ) {
           require_once $file;

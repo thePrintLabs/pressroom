@@ -1,15 +1,12 @@
 <?php
-
 class PR_Preview {
 
   public static $package_type;
-  public function __construct() {
 
+  public function __construct() {
     add_action( 'add_meta_boxes', array( $this, 'add_preview_metabox' ), 10 );
     add_action( 'wp_ajax_preview_draw_page', array( $this, 'draw_page' ), 10 );
-
   }
-
 
   /**
    * Init preview slider
@@ -23,7 +20,7 @@ class PR_Preview {
       return;
     }
 
-    if( $_GET['package_type'] ) {
+    if ( $_GET['package_type'] ) {
       self::$package_type = $_GET['package_type'];
     }
 
@@ -41,7 +38,7 @@ class PR_Preview {
 
     if ( PR_Utils::make_dir( PR_PREVIEW_TMP_PATH, $edition_dir ) ) {
       $font_path = PR_Theme::get_theme_path( $edition->ID ) . 'assets' . DS . 'fonts';
-      if( file_exists( $font_path ) ) {
+      if ( file_exists( $font_path ) ) {
         PR_Utils::recursive_copy( $font_path, $edition_path . DS . 'fonts');
       }
       self::draw_toc( $edition, $linked_query );

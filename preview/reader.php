@@ -39,7 +39,6 @@ if ( empty( $terms ) ) {
 $edition = get_post( $edition_id );
 $edition_name = PR_Utils::sanitize_string( $edition->post_title );
 $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
-
 ?>
 <!DOCTYPE html>
 <head>
@@ -59,7 +58,6 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
   wp_enqueue_script('jquery');
   wp_head();
   ?>
-
   <link rel="stylesheet" href=<?php echo PR_ASSETS_URI ."/css/preview/preview.ish.min.css" ?>>
   <link rel="stylesheet" type="text/css" href=<?php echo PR_ASSETS_URI ."/css/preview/preview.min.css" ?> />
   <link rel="stylesheet" type="text/css" href=<?php echo PR_ASSETS_URI . "/css/preview/idangerous.swiper.min.css" ?> />
@@ -171,11 +169,12 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
     </div>
   </div>
 </div>
-<script> $ = jQuery;</script>
-<script src=<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.min.js"?>></script>
-<script src=<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.hashnav.min.js"?>></script>
-<script src=<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.min.js"?>></script>
-<script src=<?php echo PR_ASSETS_URI . "/js/preview/pr.toc.js"?>></script>
-<script src=<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.ish.min.js"?>></script>
+<script>$ = jQuery;</script>
+<script src="<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.min.js"?>"></script>
+<script src="<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.hashnav.min.js"?>"></script>
+<script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.min.js"?>"></script>
+<script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.toc.js"?>"></script>
+<script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.ish.min.js"?>"></script>
 </body>
 </html>
+<?php exit; ?>

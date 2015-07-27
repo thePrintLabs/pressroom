@@ -14,9 +14,7 @@ class PR_Editorial_Project
     add_action( 'init', array( $this, 'add_editorial_project_taxonomy' ), 0 );
 
     if ( is_admin() ) {
-
-      include_once( PR_CORE_LIBS_PATH . 'UI/eproject_walker.php' );
-
+      
       add_filter( 'manage_edit-' . PR_EDITORIAL_PROJECT . '_columns', array( $this, 'editorial_project_columns' ) );
       add_filter( 'manage_' . PR_EDITORIAL_PROJECT . '_custom_column', array( $this, 'manage_columns' ), 10, 3 );
       add_filter( 'wp_tag_cloud', array( $this, 'remove_tag_cloud' ), 10, 2 );

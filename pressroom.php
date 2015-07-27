@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Pressroom Pro
+ * Plugin Name: Pressroom
  * Plugin URI: http://press-room.io/
  * Description: PressRoom turns Wordpress into a multi channel publishing environment.
  * Version: 1.1.1
- * Author: ThePrintLabs
- * Author URI: http://www.theprintlabs.com
+ * Author: thePrintLabs Ltd
+ * Author URI: http://theprintlabs.com
  * License: GPLv2
  *
  *   _____                                               _____
@@ -15,37 +15,12 @@
  *  | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
  *  |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
  *
- *  Copyright © 2014 - thePrintLabs Ltd.
+ * Copyright © 2014 - 2015 - thePrintLabs Ltd.
  */
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
-require_once( __DIR__ . '/core/define.php' );
-require_once( __DIR__ . '/core/settings.php' );
-require_once( PR_LIBS_PR_PATH . 'utils.php' );
-
-require_once( PR_CORE_PATH . 'setup.php' );
-require_once( PR_CORE_PATH . 'edition/edition.php' );
-require_once( PR_CORE_PATH . 'edition/editorial_project.php' );
-require_once( PR_CORE_PATH . 'posts.php' );
-require_once( PR_CORE_PATH . 'theme.php' );
-require_once( PR_CORE_PATH . 'addons.php' );
-require_once( PR_CORE_PATH . 'packager/packager.php' );
-require_once( PR_CORE_PATH . 'preview/preview.php' );
-require_once( PR_CORE_PATH . 'api.php' );
-require_once( PR_CORE_PATH . 'logs.php' );
-
-require_once( PR_CONFIGS_PATH . 'edd.php' );
-//require_once( PR_CONFIGS_PATH . 'p2p.php' );
-require_once( PR_LIBS_PATH . 'posts-to-posts/posts-to-posts.php' );
-
-require_once( PR_SERVER_PATH . 'server.php' );
-
-require_once( PR_LIBS_PR_PATH . 'UI/metabox.php' );
-require_once( PR_LIBS_PR_PATH . 'UI/press_list.php' );
-require_once( PR_LIBS_PR_PATH . 'UI/logs_list.php' );
-require_once( PR_LIBS_PR_PATH . 'UI/gallery_name.php' );
-require_once( PR_PAGES_PATH . 'options.php');
+require_once __DIR__ . '/core/include.php';
 
 class TPL_Pressroom
 {
@@ -54,42 +29,20 @@ class TPL_Pressroom
 	public $preview;
 
 	public function __construct() {
-
 		if ( !is_admin() ) {
 			return;
 		}
 
 		$this->_load_configs();
-		$this->_load_extensions();
+		$this->_load_customs( PR_TAXONOMIES_PATH );
+		$this->_load_customs( PR_POST_TYPES_PATH );
+
+		$this->_hooks();
+		$this->_actions();
+		$this->_filters();
 
 		$this->_create_edition();
 		$this->_create_preview();
-
-		if( !$this->_check_permalink_structure() ) {
-			add_action( 'admin_notices', array( $this, 'permalink_notice' ) );
-		}
-
-		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
-		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
-		add_action( 'admin_notices', array( $this, 'check_pressroom_notice' ), 20 );
-		add_action( 'p2p_init', array( $this, 'register_post_connection' ) );
-		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
-		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
-		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
-
-
-		/* Override default wordpress theme path */
-		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
-		add_filter( 'theme_root_uri', array( $this, 'set_theme_uri' ), 10 );
-		add_filter( 'template', array( $this, 'set_template_name'), 10 );
-		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
-
-		/* Once all plugin are loaded, load core and external exporters */
-		add_action( 'plugins_loaded', array( $this, 'load_exporters' ) );
-		add_action( 'plugins_loaded', array( $this, 'load_core_exporters' ), 20 );
-
-		add_action( 'admin_init', array( $this, 'register_pressroom_styles' ), 20 );
-
 	}
 
 	/**
@@ -99,15 +52,13 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function plugin_activation() {
-
-		$errors = PR_Setup::install();
-		if ($errors !== false) {
+		$response = PR_Setup::install();
+		if ( false !== $response ) {
 			$html = '<h1>' . __('Pressroom') . '</h1>
 			<p><b>' .__( 'An error occurred during activation. Please see details below.', 'pressroom_setup' ). '</b></p>
 			<ul><li>' .implode( "</li><li>", $errors ). '</li></ul>';
 			wp_die( $html, __( 'Pressroom activation error', 'pressroom_setup' ), ('back_link=true') );
 		}
-
 		do_action( 'press_flush_rules' );
 		flush_rewrite_rules();
 	}
@@ -118,8 +69,6 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function plugin_deactivation() {
-
-		// delete_option('rewrite_rules');
 		flush_rewrite_rules();
 		PR_Cron::disable();
 	}
@@ -131,48 +80,46 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function register_post_connection() {
-
 		$types = $this->get_allowed_post_types();
-
 		p2p_register_connection_type( array(
-				'name' 		=> P2P_EDITION_CONNECTION,
-				'from'	 	=> $types,
-				'to' 			=> PR_EDITION,
-				'admin_column' => 'any',
-				'admin_dropdown' => 'from',
-				'sortable' 	=> false,
-				'title' => array(
-    				'from'	=> __( 'Included into issue', 'pressroom' )
-    			),
-				'to_labels' => array(
-      			'singular_name'	=> __( 'Issue', 'pressroom' ),
-      			'search_items' 	=> __( 'Search issue', 'pressroom' ),
-      			'not_found'			=> __( 'No issue found.', 'pressroom' ),
-      			'create'				=> __( 'Select an issue', 'pressroom' ),
-  				),
-				'admin_box' => array(
-					'show' 		=> 'from',
-					'context'	=> 'side',
-					'priority'	=> 'high',
+			'name' 		=> P2P_EDITION_CONNECTION,
+			'from'	 	=> $types,
+			'to' 			=> PR_EDITION,
+			'admin_column' => 'any',
+			'admin_dropdown' => 'from',
+			'sortable' 	=> false,
+			'title' => array(
+  				'from'	=> __( 'Included into issue', 'pressroom' )
+  			),
+			'to_labels' => array(
+    			'singular_name'	=> __( 'Issue', 'pressroom' ),
+    			'search_items' 	=> __( 'Search issue', 'pressroom' ),
+    			'not_found'			=> __( 'No issue found.', 'pressroom' ),
+    			'create'				=> __( 'Select an issue', 'pressroom' ),
 				),
-				'fields' => array(
-					'status' => array(
-						'title'		=> __( 'Visible', 'pressroom' ),
-						'type'		=> 'checkbox',
-						'default'	=> 1,
-					),
-					'template' => array(
-						'title' 		=> '',
-						'type' 		=> 'hidden',
-						'values'		=>	array(),
-					),
-					'order' => array(
-						'title'		=> '',
-						'type' 		=> 'hidden',
-						'default' 	=> 0,
-						'values' 	=>	array(),
-					),
-				)
+			'admin_box' => array(
+				'show' 		=> 'from',
+				'context'	=> 'side',
+				'priority'	=> 'high',
+			),
+			'fields' => array(
+				'status' => array(
+					'title'		=> __( 'Visible', 'pressroom' ),
+					'type'		=> 'checkbox',
+					'default'	=> 1,
+				),
+				'template' => array(
+					'title' 		=> '',
+					'type' 		=> 'hidden',
+					'values'		=>	array(),
+				),
+				'order' => array(
+					'title'		=> '',
+					'type' 		=> 'hidden',
+					'default' 	=> 0,
+					'values' 	=>	array(),
+				),
+			)
 		) );
 	}
 
@@ -183,15 +130,14 @@ class TPL_Pressroom
 	 * @void
 	 */
 	public function post_connection_add_default_theme( $p2p_id ) {
-
 		$connection = p2p_get_connection( $p2p_id );
 		if ( $connection->p2p_type == P2P_EDITION_CONNECTION ) {
 			$themes = PR_Theme::get_themes();
-			$theme_code = get_post_meta( $connection->p2p_to, '_pr_theme_select', true );
-			if ( $theme_code && $themes ) {
-				$pages = $themes[$theme_code];
+			$selected_theme = get_post_meta( $connection->p2p_to, '_pr_theme_select', true );
+			if ( !empty( $themes ) && $selected_theme ) {
+				$pages = $themes[$selected_theme];
 				foreach ( $pages as $page ) {
-					if ( isset($page['rule']) && $page['rule'] == 'post' ) {
+					if ( isset( $page['rule'] ) && $page['rule'] == 'post' ) {
 						p2p_add_meta( $p2p_id, 'template', $page['path'] );
 					}
 				}
@@ -200,39 +146,12 @@ class TPL_Pressroom
 	}
 
 	/**
-	 * Custom featured image title
-	 * @void
-	 */
-	public function change_featured_image_box() {
-
-		remove_meta_box( 'postimagediv', PR_EDITION, 'side' );
-		add_meta_box('postimagediv', __('Cover Image'), 'post_thumbnail_meta_box', PR_EDITION, 'side', 'high');
-	}
-
-	/**
-	 * Custom featured image labels
-	 * @param  string $content
-	 * @return string
-	 */
-	public function change_featured_image_html( $content ) {
-
-		global $post;
-		if ( $post && $post->post_type == PR_EDITION ) {
-			$content = str_replace( __( 'Remove featured image' ), __( 'Remove cover image' ), $content);
-			$content = str_replace( __( 'Set featured image' ), __( 'Set cover image' ), $content);
-		}
-		return $content;
-	}
-
-	/**
 	 * Check admin notices and display
 	 *
 	 * @echo
 	 */
 	public function check_pressroom_notice() {
-
-		if ( isset( $_GET['pmtype'] ) && isset( $_GET['pmcode'] ) ) {
-
+		if ( isset( $_GET['pmtype'], $_GET['pmcode'] ) ) {
 			$msg_type = $_GET['pmtype'];
 			$msg_code = $_GET['pmcode'];
 			$msg_param = isset( $_GET['pmparam'] ) ? urldecode( $_GET['pmparam'] ) : '';
@@ -272,22 +191,18 @@ class TPL_Pressroom
    * return string
    */
   public function set_theme_root( $path ) {
-
 		update_option( 'pr_theme_root', $path );
     if ( isset( $_GET['pr_no_theme'] ) ) {
-      return realpath( PR_THEMES_PATH );
+      return PR_THEMES_PATH;
     }
-
-    return $path;
+		return $path;
   }
 
 	public function set_theme_uri( $uri ) {
-
 		update_option( 'pr_theme_uri', $uri );
 		if ( isset( $_GET['pr_no_theme'] ) ) {
 			return PR_THEME_URI;
 		}
-
 		return $uri;
 	}
 
@@ -298,11 +213,9 @@ class TPL_Pressroom
 	 * return string
 	 */
 	public function set_template_name( $name ) {
-
 		if ( isset( $_GET['pr_no_theme'], $_GET['edition_id'] ) ) {
 			$name = PR_Theme::get_theme_path( $_GET['edition_id'], false );
 		}
-
 		return $name;
 	}
 
@@ -312,11 +225,9 @@ class TPL_Pressroom
 	 * @return array
 	 */
 	public function get_allowed_post_types() {
-
 		$types = array( 'post', 'page' );
 		$custom_types = $this->_load_custom_post_types();
 		$types = array_merge( $types, $custom_types );
-
 		return $types;
 	}
 
@@ -388,6 +299,48 @@ class TPL_Pressroom
 		wp_enqueue_style( 'pressroom' );
 	}
 
+	 /*
+	 * Register hooks
+	 * @void
+	 */
+	protected function _hooks() {
+		register_activation_hook( __FILE__, array( $this, 'plugin_activation' ) );
+		register_deactivation_hook( __FILE__, array( $this, 'plugin_deactivation' ) );
+	}
+
+	/**
+	 * Register actions
+	 * @void
+	 */
+	protected function _actions() {
+		if ( !$this->_check_permalink_structure() ) {
+			add_action( 'admin_notices', array( $this, 'permalink_notice' ) );
+		}
+
+		add_action( 'admin_notices', array( $this, 'check_pressroom_notice' ), 20 );
+		add_action( 'p2p_init', array( $this, 'register_post_connection' ) );
+
+		/* Once all plugin are loaded, load core and external exporters */
+		add_action( 'plugins_loaded', array( $this, 'load_exporters' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_core_exporters' ), 20 );
+
+		add_action( 'admin_init', array( $this, 'register_pressroom_styles' ), 20 );
+	}
+
+	/**
+	 * Register filters
+	 * @void
+	 */
+	protected function _filters() {
+		add_filter( 'p2p_created_connection', array( $this, 'post_connection_add_default_theme' ) );
+
+		/* Override default wordpress theme path */
+		add_filter( 'theme_root', array( $this, 'set_theme_root' ), 10 );
+		add_filter( 'theme_root_uri', array( $this, 'set_theme_uri' ), 10 );
+		add_filter( 'template', array( $this, 'set_template_name'), 10 );
+		add_filter( 'stylesheet', array( $this, 'set_template_name'), 10 );
+	}
+
 	/**
 	 * Check if permalink structure is set to Post Name
 	 * ( required for Editorial Project endpoint )
@@ -397,11 +350,9 @@ class TPL_Pressroom
 	protected function _check_permalink_structure() {
 
 		$structure = get_option('permalink_structure');
-
 		if( $structure != "/%postname%/" ) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -420,17 +371,16 @@ class TPL_Pressroom
 	}
 
 	/**
-	 * Load plugin extensions
+	 * Load plugin custom types
 	 *
 	 * @void
 	 */
-	protected function _load_extensions() {
-
-		if ( is_dir( PR_EXTENSIONS_PATH ) ) {
-			$files = PR_Utils::search_files( PR_EXTENSIONS_PATH, 'php' );
+	protected function _load_customs( $path ) {
+		if ( is_dir( $path ) ) {
+			$files = PR_Utils::search_files( $path, 'php' );
 			if ( !empty( $files ) ) {
 				foreach ( $files as $file ) {
-					require_once( $file );
+					require_once $file;
 				}
 			}
 		}
@@ -442,7 +392,6 @@ class TPL_Pressroom
 	 * @return array - custom post types
 	 */
 	protected function _load_custom_post_types() {
-
 		$types = array();
 		if ( !empty( $this->configs ) && isset( $this->configs['pr_custom_post_type'] ) ) {
 			$custom_types = $this->configs['pr_custom_post_type'];
@@ -452,8 +401,7 @@ class TPL_Pressroom
 						array_push( $types, $post_type );
 					}
 				}
-			}
-			elseif ( is_string( $custom_types ) && strlen( $custom_types ) ) {
+			} elseif ( is_string( $custom_types ) && strlen( $custom_types ) ) {
 				array_push( $types, $custom_types );
 			}
 		}
@@ -461,29 +409,27 @@ class TPL_Pressroom
 	}
 
 	/**
-	* Instance a new edition object
-	*
-	* @void
-	*/
+	 * Instance a new edition object
+	 *
+	 * @void
+	 */
 	protected function _create_edition() {
-
 		if ( is_null( $this->edition ) ) {
 			$this->edition = new PR_Edition();
 		}
 	}
 
 	/**
-	* Instance a new preview object
-	*
-	* @void
-	*/
+	 * Instance a new preview object
+	 *
+	 * @void
+	 */
 	protected function _create_preview() {
-
 		if ( is_null( $this->preview ) ) {
 			$this->preview = new PR_Preview;
 		}
 	}
 }
 
-/* instantiate the plugin class */
+// Instantiate the plugin class
 $tpl_pressroom = new TPL_Pressroom();

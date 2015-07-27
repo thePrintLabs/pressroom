@@ -28,10 +28,10 @@ class PR_Setup
       array_push( $errors, __( "Error creating required tables. Check your database permissions.", 'pressroom_setup' ) );
     }
     if ( !self::_setup_filesystem() ) {
-      array_push( $errors, __( "Error creating required directory: <b>&quot;" . PR_PLUGIN_PATH . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
+      array_push( $errors, __( "Error creating required directory: <b>&quot;" . PR_ROOT . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
     }
     if ( !self::_setup_starterr_theme() ) {
-      array_push( $errors, __( "Error creating starterr theme in directory: <b>&quot;" . PR_PLUGIN_PATH . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
+      array_push( $errors, __( "Error creating starterr theme in directory: <b>&quot;" . PR_ROOT . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
     }
 
     PR_Cron::setup();
@@ -160,7 +160,7 @@ class PR_Setup
   private static function _setup_filesystem() {
 
     $wp_upload_dir = wp_upload_dir();
-    $api_dir = PR_Utils::make_dir( PR_PLUGIN_PATH, 'api' );
+    $api_dir = PR_Utils::make_dir( PR_ROOT, 'api' );
     $upload_dir = PR_Utils::make_dir( $wp_upload_dir['basedir'], 'pressroom' );
 
     if ( !$api_dir || !$upload_dir ) {
@@ -185,7 +185,7 @@ class PR_Setup
    */
   private static function _setup_starterr_theme() {
 
-    $file_path = PR_PLUGIN_PATH . PR_STARTERR_ZIP;
+    $file_path = PR_ROOT . PR_STARTERR_ZIP;
 
     if ( file_exists( $file_path ) ) {
       $zip = new ZipArchive;

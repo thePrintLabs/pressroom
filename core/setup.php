@@ -174,6 +174,7 @@ class PR_Setup
     $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'web' );
     $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'shelf' );
     $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'themes' );
+    $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'settings' );    
 
     return !$api_dir && !$upload_dir ? false : true;
   }

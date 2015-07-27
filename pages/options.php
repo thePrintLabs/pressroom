@@ -175,7 +175,7 @@ class PR_options_page {
     $files = PR_Utils::search_files( __DIR__, 'php' );
   	if ( !empty( $files ) ) {
       foreach ( $files as $file ) {
-        require_once( $file );
+        require_once $file;
       }
     }
   }

@@ -50,7 +50,7 @@ if ( !class_exists('PR_EDD_License') ) {
 	  private function _includes() {
 
 		  if ( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
-        require_once( PR_LIBS_PATH . 'EDD/EDD_SL_Plugin_Updater.php' );
+        require_once trailingslashit( PR_LIBS_PATH . "EDD" ) . "EDD_SL_Plugin_Updater.php";
       }
     }
 

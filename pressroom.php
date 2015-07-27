@@ -20,7 +20,7 @@
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
-require_once __DIR__ . '/core/include.php';
+require_once __DIR__ . '/autoload.php';
 
 class TPL_Pressroom
 {
@@ -34,8 +34,6 @@ class TPL_Pressroom
 		}
 
 		$this->_load_configs();
-		$this->_load_customs( PR_TAXONOMIES_PATH );
-		$this->_load_customs( PR_POST_TYPES_PATH );
 
 		$this->_hooks();
 		$this->_actions();
@@ -273,20 +271,20 @@ class TPL_Pressroom
 	/**
 	* Get all core exporters from relative dir
 	*
-	* @void
+	* @return boolean
 	*/
 	public function load_core_exporters() {
-
 		$exporters = PR_Utils::search_dir( PR_PACKAGER_EXPORTERS_PATH );
-
-		foreach( $exporters as $exporter ) {
-			$file = PR_PACKAGER_EXPORTERS_PATH . "{$exporter}/index.php";
-			if ( is_file( $file ) ) {
-				require_once( $file );
+		if ( !empty( $exporters ) ) {
+			foreach ( $exporters as $exporter ) {
+				$file = trailingslashit( PR_PACKAGER_EXPORTERS_PATH . $exporter ) . "index.php";
+				if ( is_file( $file ) ) {
+					require_once $file;
+				}
 			}
+			return true;
 		}
-
-		return true;
+		return false;
 	}
 
 	/**
@@ -367,22 +365,6 @@ class TPL_Pressroom
 			$this->configs = get_option('pr_settings', array(
 				'pr_custom_post_type' => array()
 			));
-		}
-	}
-
-	/**
-	 * Load plugin custom types
-	 *
-	 * @void
-	 */
-	protected function _load_customs( $path ) {
-		if ( is_dir( $path ) ) {
-			$files = PR_Utils::search_files( $path, 'php' );
-			if ( !empty( $files ) ) {
-				foreach ( $files as $file ) {
-					require_once $file;
-				}
-			}
 		}
 	}
 

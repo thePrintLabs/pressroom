@@ -5,7 +5,7 @@
  *
  */
 
-require_once( PR_PACKAGER_PATH . '/progressbar.php' );
+require_once PR_PACKAGER_PATH . 'progressbar.php';
 header('Content-Encoding: none;');
 
 class PR_Packager

@@ -5,7 +5,7 @@
  * Exporter Title: Web
  */
 
-require_once( PR_PACKAGER_CONNECTORS_PATH . '/ftp_sftp.php' );
+require_once PR_PACKAGER_CONNECTORS_PATH . 'ftp_sftp.php';
 
 final class PR_Packager_Web_Core_Package
 {

@@ -12,7 +12,6 @@ class PR_Edition
 	 * @void
 	 */
 	public function __construct() {
-
 		if ( !is_admin() ) {
 			return;
 		}
@@ -396,7 +395,7 @@ class PR_Edition
 	public function publishing_render_console() {
 
 		$packager = new PR_Packager();
-		$pl_url = plugins_url( 'assets', dirname( __DIR__ ) );
+		$pl_url = plugins_url( 'assets', __DIR__ );
 		echo '<!DOCTYPE html>
 <html>
 <head>
@@ -433,7 +432,7 @@ class PR_Edition
 	*/
 	public function pr_preview() {
 
-		require PR_CORE_PATH . "preview" . DS . "reader.php";
+		require PR_PREVIEW_PATH . "reader.php";
 	}
 
 	/**

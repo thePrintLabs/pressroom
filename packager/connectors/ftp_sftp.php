@@ -1,8 +1,8 @@
 <?php
 error_reporting(E_ALL ^ E_DEPRECATED);
-require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php' );
-require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-ssh2.php' );
-require_once( ABSPATH . 'wp-admin/includes/class-wp-filesystem-ftpsockets.php' );
+require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-ssh2.php';
+require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-ftpsockets.php';
 
 class PR_Ftp_Sftp
 {

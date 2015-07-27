@@ -5,8 +5,6 @@
  * Set cronjobs
  */
 
-require_once( PR_CORE_PATH . 'cron.php' );
-
 class PR_Setup
 {
 
@@ -136,7 +134,7 @@ class PR_Setup
       PRIMARY KEY (id)
     ) $charset_collate;";
 
-    require_once ( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     dbDelta( $sql_receipts );
     dbDelta( $sql_purchased_issues );
     dbDelta( $sql_auth_tokens );

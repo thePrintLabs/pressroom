@@ -365,7 +365,7 @@ class PR_themes_page {
 
     if ( !empty( $_FILES['pr-theme-upload'] ) ) {
       if ( !function_exists( 'wp_handle_upload' ) ) {
-        require_once( ABSPATH . 'wp-admin/includes/file.php' );
+        require_once ABSPATH . 'wp-admin/includes/file.php';
       }
 
       $file_types = wp_check_filetype( basename( $_FILES['pr-theme-upload']['name'] ) );

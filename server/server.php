@@ -4,12 +4,13 @@ class PR_Server
 {
   public function __construct() {
 
-    require_once( PR_CORE_PATH . 'stats.php' );
-    require_once( PR_SERVER_PATH . 'api.php' );
-    require_once( PR_SERVER_PATH . 'shelf.php' );
-    require_once( PR_SERVER_PATH . 'issue.php' );
-    require_once( PR_SERVER_PATH . 'push.php' );
-    require_once( PR_SERVER_PATH . 'feed.php' );
+    $files = PR_Utils::search_files( __DIR__ , 'php' );
+    if ( !empty( $files ) ) {
+      foreach ( $files as $file ) {
+        require_once $file;
+      }
+    }
+
     $this->_load_connectors();
   }
 
@@ -24,7 +25,7 @@ class PR_Server
       $files = PR_Utils::search_files( PR_CONNECTORS_PATH, 'php' );
       if ( !empty( $files ) ) {
         foreach ( $files as $file ) {
-          require_once( $file );
+          require_once $file;
         }
       }
     }

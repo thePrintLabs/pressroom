@@ -2,18 +2,15 @@
 define( "DS", DIRECTORY_SEPARATOR );
 
 // Core
-define( "PR_ROOT", plugin_dir_path( __DIR__ ) );
-define( "PR_CORE_PATH", trailingslashit( PR_ROOT . 'core' ) );
-define( "PR_CONFIGS_PATH", trailingslashit( PR_CORE_PATH . 'configs' ) );
-define( "PR_PAGES_PATH", trailingslashit( PR_CORE_PATH . 'pages' ) );
-define( "PR_TAXONOMIES_PATH", trailingslashit( PR_CORE_PATH . 'taxonomies' ) );
-define( "PR_POST_TYPES_PATH", trailingslashit( PR_CORE_PATH . 'post_types' ) );
-// Libs
+define( "PR_ROOT", plugin_dir_path( __FILE__ ) );
+define( "PR_CONFIGS_PATH", trailingslashit( PR_ROOT . 'configs' ) );
+define( "PR_PAGES_PATH", trailingslashit( PR_ROOT . 'pages' ) );
+define( "PR_TAXONOMIES_PATH", trailingslashit( PR_ROOT . 'taxonomies' ) );
+define( "PR_POST_TYPES_PATH", trailingslashit( PR_ROOT . 'post_types' ) );
 define( "PR_LIBS_PATH", trailingslashit( PR_ROOT . 'libs' ) );
-define( "PR_CORE_LIBS_PATH", trailingslashit( PR_LIBS_PATH . 'PR' ) );
 
 // Packager
-define( "PR_PACKAGER_PATH", trailingslashit( PR_CORE_PATH . 'packager' ) );
+define( "PR_PACKAGER_PATH", trailingslashit( PR_ROOT . 'packager' ) );
 define( "PR_PACKAGER_CONNECTORS_PATH", trailingslashit( PR_PACKAGER_PATH . 'connectors' ) );
 define( "PR_PACKAGER_EXPORTERS_PATH", trailingslashit( PR_PACKAGER_PATH . 'exporters' ) );
 
@@ -21,10 +18,13 @@ define( "PR_PACKAGER_EXPORTERS_PATH", trailingslashit( PR_PACKAGER_PATH . 'expor
 define( "PR_SERVER_PATH", trailingslashit( PR_ROOT . 'server' ) );
 define( "PR_CONNECTORS_PATH", trailingslashit( PR_SERVER_PATH . 'connectors' ) );
 
+// Peview
+define( "PR_PREVIEW_PATH", trailingslashit( PR_ROOT . 'preview' ) );
+
 // API
-define( "PR_API_PATH", trailingslashit( PR_ROOT . 'api/' ) );
-define( "PR_TMP_PATH", trailingslashit( PR_API_PATH . 'tmp/' ) );
-define( "PR_PREVIEW_TMP_PATH", trailingslashit( PR_TMP_PATH . 'preview/' ) );
+define( "PR_API_PATH", trailingslashit( PR_ROOT . 'api' ) );
+define( "PR_TMP_PATH", trailingslashit( PR_API_PATH . 'tmp' ) );
+define( "PR_PREVIEW_TMP_PATH", trailingslashit( PR_TMP_PATH . 'preview' ) );
 
 // URL
 define( "PR_PLUGIN_URI", plugin_dir_url( PR_LIBS_PATH ) );

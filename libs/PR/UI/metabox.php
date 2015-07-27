@@ -125,7 +125,7 @@ class PR_Metabox
                    'post_status'     => 'inherit'
                 );
 
-                require_once( ABSPATH . 'wp-admin/includes/image.php' );
+                require_once ABSPATH . 'wp-admin/includes/image.php';
                 $attach_id = wp_insert_attachment( $attachment, $file, $this->post_id );
                 $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
                 wp_update_attachment_metadata( $attach_id, $attach_data );
@@ -227,7 +227,7 @@ class PR_Metabox
                   'post_status'     => 'inherit'
                 );
 
-                require_once( ABSPATH . 'wp-admin/includes/image.php' );
+                require_once ABSPATH . 'wp-admin/includes/image.php';
                 $attach_id = wp_insert_attachment( $attachment, $uploaded['file'], $this->post_id );
                 $attach_data = wp_generate_attachment_metadata( $attach_id, $uploaded['file'] );
                 wp_update_attachment_metadata( $attach_id, $attach_data );

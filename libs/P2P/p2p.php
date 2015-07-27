@@ -17,7 +17,7 @@ if ( !defined( 'P2P_TEXTDOMAIN' ) ) {
 	define( 'P2P_TEXTDOMAIN', 'posts-to-posts' );
 }
 
-require_once dirname( __FILE__ ) . '/scb/load.php';
+require_once __DIR__ . '/scb/load.php';
 
 function _pr_p2p_load() {
 	load_plugin_textdomain( P2P_TEXTDOMAIN, '', basename( dirname( __FILE__ ) ) . '/lang' );
@@ -27,7 +27,7 @@ function _pr_p2p_load() {
 		return;
 	}
 
-	require_once dirname( __FILE__ ) . '/core/init.php';
+	require_once __DIR__ . '/core/init.php';
 
 	register_uninstall_hook( __FILE__, array( 'P2P_Storage', 'uninstall' ) );
 

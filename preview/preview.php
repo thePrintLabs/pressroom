@@ -116,7 +116,7 @@ class PR_Preview {
     $editorial_project_id = $editorial_terms[0]->term_id;
     $edition_posts = $linked_query;
     self::add_functions_file( $edition->ID );
-    require_once( $toc );
+    require_once $toc;
     $output = ob_get_contents();
     ob_end_clean();
 

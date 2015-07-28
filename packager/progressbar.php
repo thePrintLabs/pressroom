@@ -22,7 +22,7 @@ class ProgressBar {
     sleep(1);
   }
 
-  public function setProgressBarProgress( $percentDone, $text = '' ) {
+  public function setProgress( $percentDone, $text = '' ) {
 
     $this->percentDone = $percentDone;
     $percentage = number_format( $this->percentDone, $this->decimals, '.', '' ).'%';

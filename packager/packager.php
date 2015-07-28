@@ -39,7 +39,7 @@ class PR_Packager
 
 		$log = array(
 			'action'		=>	'package',
-			'object_id'	=>	(int) $_GET['edition_id'],
+			'object_id'	=>	$_GET['edition_id'],
 			'ip'				=>	PR_Utils::get_ip_address(),
 			'author'		=>	$current_user->ID,
 			'type'			=>	$_GET['packager_type'],
@@ -90,7 +90,7 @@ class PR_Packager
 		}
 
 		self::print_line( sprintf( __( 'Create folder %s ', 'edition' ), $this->edition_dir ), 'success' );
-		$this->set_progress( 2, __( 'Loading edition theme', 'edition' ) );
+		$this->set_progress( 5, __( 'Loading edition theme', 'edition' ) );
 
 		// check if theme is active
 		$theme_id = get_post_meta( $edition_post->ID, '_pr_theme_select', true );
@@ -123,9 +123,7 @@ class PR_Packager
 
 		$total_progress = 40;
 		$progress_step = round( $total_progress / count( $this->linked_query->posts ) );
-
 		foreach ( $this->linked_query->posts as $k => $post ) {
-
 			if( has_action( "pr_packager_parse_{$post->post_type}" ) ) {
 				do_action_ref_array( "pr_packager_parse_{$post->post_type}", array( $this, $post ) );
 				$parsed_post = false;
@@ -164,8 +162,7 @@ class PR_Packager
 	* @void
 	*/
 	public function set_progress( $percentage, $text = '' ) {
-
-		$this->pb->setProgressBarProgress( $percentage, $text );
+		$this->pb->setProgress( $percentage, $text );
 	}
 
 	/**
@@ -175,16 +172,12 @@ class PR_Packager
 	 * @echo
  	 */
 	public static function print_line( $output, $class = 'success', $enable_log = true ) {
-
 		if ( self::$verbose ) {
 			$out =  '<p class="liveoutput ' . $class . '"><span class="label">' . $class . '</span> ' . $output . '</p>';
 			echo $out;
-
 			if( $enable_log ) {
 				self::$log_output .= $out;
 			}
-
-
 			ob_flush();
 			flush();
 		}

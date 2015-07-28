@@ -4,8 +4,8 @@ class PR_Edition
 {
 	public $pr_option;
 	public $ck_exporters;
-	protected $_edition_metaboxes = array();
-	protected $_exporters_metaboxes = array();
+	protected $_edition_mb = array();
+	protected $_exporters_mb = array();
 
 	/**
 	 * Register required hooks
@@ -125,11 +125,11 @@ class PR_Edition
 			'title' => __('Flatplan' , 'edition'),
 		);
 
-		$this->_exporters_metaboxes = array(
+		$this->_exporters_mb = array(
 			$flatplan
 		);
 
-		$this->_exporters_metaboxes = array_merge( $this->_exporters_metaboxes, $metaboxes );
+		$this->_exporters_mb = array_merge( $this->_exporters_mb, $metaboxes );
 	}
 
 	/**
@@ -146,7 +146,7 @@ class PR_Edition
 		$metabox->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
 		$metabox->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
 
-		$this->_edition_metaboxes = array(
+		$this->_edition_mb = array(
 			$metabox
 		);
 	}
@@ -182,7 +182,7 @@ class PR_Edition
 		$this->add_tabs_to_form( $post );
 		echo '</div>';
 		echo '<table class="form-table">';
-		foreach ( $this->_exporters_metaboxes as $metabox ) {
+		foreach ( $this->_exporters_mb as $metabox ) {
 			// render html fields except for flatplan
 			if ( $metabox->id != 'flatplan' ) {
 				echo $metabox->fields_to_html( false, $metabox->id );
@@ -204,7 +204,7 @@ class PR_Edition
 	 */
 	public function add_custom_metabox_callback( $post ) {
 		$this->get_edition_metaboxes( $post );
-		foreach ( $this->_edition_metaboxes as $metabox ) {
+		foreach ( $this->_edition_mb as $metabox ) {
 			echo $metabox->fields_to_html( false, $metabox->id );
 		}
 	}
@@ -242,7 +242,7 @@ class PR_Edition
 
 		$this->get_exporters_metaboxes( $post );
 		echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
-		foreach ( $this->_exporters_metaboxes as $key => $metabox ) {
+		foreach ( $this->_exporters_mb as $key => $metabox ) {
 			echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
 		}
 		echo '</h2>';
@@ -316,7 +316,7 @@ class PR_Edition
 		}
 
 		$this->get_exporters_metaboxes( $post );
-		foreach ( $this->_exporters_metaboxes as $metabox ) {
+		foreach ( $this->_exporters_mb as $metabox ) {
 			// flat plan does not have fields to save
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
@@ -324,7 +324,7 @@ class PR_Edition
 		}
 
 		$this->get_edition_metaboxes( $post );
-		foreach ($this->_edition_metaboxes as $metabox ) {
+		foreach ($this->_edition_mb as $metabox ) {
 			$metabox->save_values();
 		}
 
@@ -475,14 +475,14 @@ class PR_Edition
 		}
 
 		$this->get_exporters_metaboxes( $post );
-		foreach ( $this->_exporters_metaboxes as $metabox ) {
+		foreach ( $this->_exporters_mb as $metabox ) {
 			if( $metabox->id != 'flatplan') {
 				$metabox->save_values();
 			}
 		}
 
 		$this->get_edition_metaboxes( $post );
-		foreach ( $this->_edition_metaboxes as $metabox ) {
+		foreach ( $this->_edition_mb as $metabox ) {
 			$metabox->save_values();
 		}
 

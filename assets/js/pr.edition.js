@@ -41,7 +41,7 @@
 
             $('#' + missing_templates[i] ).css('background-color', 'rgba( 217, 83, 79, 0.3)');
           }
-          alert('Some article missing template.');
+          alert('No layout assigned to one or more articles');
         }
       }
     });

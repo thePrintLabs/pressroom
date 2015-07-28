@@ -13,16 +13,16 @@ class PR_Packager
 	public static $verbose = true;
 	public static $log_output;
 	public $pb;
-	public $edition_dir;
 	public $linked_query;
+	public $edition_dir;
 	public $edition_cover_image;
 	public $edition_post;
 	public $package_type;
 	public $log_id;
+
 	protected $_posts_attachments = array();
 
 	public function __construct() {
-
 		$this->_get_linked_posts();
 		$this->pb = new ProgressBar();
 	}
@@ -129,7 +129,7 @@ class PR_Packager
 				$parsed_post = false;
 			}
 			else {
-				$parsed_post = $this->_post_parse( $post, $editorial_project );
+				$parsed_post = $this->_parse_post( $post, $editorial_project );
 				if ( !$parsed_post ) {
 					self::print_line( sprintf( __( 'You have to select a layout for %s', 'edition' ), $post->post_title ), 'error' );
 					continue;
@@ -506,7 +506,7 @@ class PR_Packager
 	* @param  object $post
 	* @return string
 	*/
-	protected function _post_parse( $linked_post, $editorial_project ) {
+	protected function _parse_post( $linked_post, $editorial_project ) {
 		$page = PR_Theme::get_theme_page( $this->edition_post->ID, $linked_post->p2p_id );
 		if ( !$page || !file_exists( $page )  ) {
 			return false;

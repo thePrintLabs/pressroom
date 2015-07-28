@@ -514,7 +514,6 @@ class PR_Packager
 	* @return string
 	*/
 	protected function _post_parse( $linked_post, $editorial_project ) {
-
 		$page = PR_Theme::get_theme_page( $this->edition_post->ID, $linked_post->p2p_id );
 		if ( !$page || !file_exists( $page )  ) {
 			return false;
@@ -534,7 +533,6 @@ class PR_Packager
 		$output = ob_get_contents();
 		wp_reset_postdata();
 		ob_end_clean();
-
 		return $output;
 	}
 
@@ -544,7 +542,6 @@ class PR_Packager
 	* @void
 	*/
 	protected function _clean_temp_dir() {
-
 		self::print_line(__('Cleaning temporary files ', 'edition') );
 		PR_Utils::remove_dir( $this->edition_dir );
 	}

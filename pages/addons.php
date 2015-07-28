@@ -69,7 +69,7 @@ class PR_addons_page {
     if ( $installed && $activated && !$free ) {
       $html .= '<input type="submit" class="button button-primary pr-theme-deactivate" name="pr_license_key_' . $item_slug . '_deactivate" value="' . __( "Deactivate", 'pressroom-addons' ) . '"/>';
     }
-    else if ( $installed && !$free ) {
+    elseif ( $installed && !$free ) {
       $html .= '<input type="submit" class="button button-primary pr-theme-activate" name="pr_license_key_' . $item_slug . '_activate" value="' . __( "Activate", 'pressroom-addons' ) . '"/>';
     }
     elseif( !$installed && $free ) {

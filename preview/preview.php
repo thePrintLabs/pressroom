@@ -27,7 +27,7 @@ class PR_Preview {
     delete_transient( 'pr_preview_linked_query_' . $edition_id );
 
     $linked_query = self::_get_linked_query( $edition );
-
+    
     if ( empty( $linked_query ) ) {
       return;
     }

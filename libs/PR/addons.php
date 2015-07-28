@@ -6,7 +6,6 @@ class PR_Addons
 	protected static $_addons = array();
 	protected static $_errors = array();
 
-
 	public function __construct() {
 		$this->search();
 	}
@@ -17,7 +16,6 @@ class PR_Addons
 	 * @void
 	 */
 	public function search() {
-
 		$settings = get_option( 'pr_settings' );
 		$addons = $settings['pr_enabled_exporters'] ;
 		$addons_to_check = array();

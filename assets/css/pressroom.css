@@ -404,6 +404,7 @@ form#pr-push-form {
 }
 .pr-theme-screenshot img {
   height: 100% !important;
+  width: auto !important;
 }
 
 #pr-theme-upload {

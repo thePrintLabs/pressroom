@@ -26,24 +26,21 @@ class PR_Edition
 		add_action( 'init', array( 'PR_Theme', 'search_themes' ), 20 );
 
 		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
-		add_action( 'save_post_' . PR_EDITION, array( $this, 'save_edition'), 40 );
+		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
 
+		add_action( 'save_post_' . PR_EDITION, array( $this, 'save_edition'), 40 );
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
 		add_action( 'wp_ajax_render_console', array( $this, 'publishing_render_console' ) );
 		add_action( 'wp_ajax_pr_preview', array( $this, 'pr_preview' ) );
 
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
 
+		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
+		add_action('admin_menu', array( $this, 'remove_default_metaboxes' ) );
+		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
+
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
-
-		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
-
-		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
-
-		add_action('admin_menu', array( $this, 'remove_default_metaboxes' ) );
-
-		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 	}
 
 	/**
@@ -99,36 +96,13 @@ class PR_Edition
 	 * @void
 	 */
 	public function get_exporters_metaboxes( $post ) {
-		$editorial_terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-
-		// $e_meta = new PR_Metabox( 'edition_metabox', __( 'Issue Meta', 'edition' ), 'normal', 'high', $post->ID );
-		// $e_meta->add_field( '_pr_newsstand_issue_cover', __( ' iTunes Newsstand cover', 'edition' ), __( 'Cover art image should be .png file and have an aspect ratio between 1:2 and 2:1.<br/>This icon must be at least 1024px on the long side.', 'edition' ), 'file', '' );
-		// $e_meta->add_field( '_pr_edition_free', __( 'Edition free', 'edition' ), __( 'Edition free', 'edition' ), 'radio', '', array(
-		// 	'options' => array(
-		// 		array( 'value' => 0, 'name' => __( "Paid", 'edition' ) ),
-		// 		array( 'value' => 1, 'name' => __( "Free", 'edition' ) )
-		// 	)
-		// ) );
-		// $e_meta->add_field( '_pr_subscriptions_select', __( 'Included in subscription', 'edition' ), __( 'Select a subscription type', 'edition' ), 'select_multiple', '', array(
-		// 	'options' => $this->_get_subscription_types( $post )
-		// ) );
-		// foreach ( $editorial_terms as $term) {
-		// 	$e_meta->add_field( '_pr_product_id_' . $term->term_id, __( 'Product identifier', 'edition' ), __( 'Product identifier for ' . $term->name . ' editorial project', 'edition' ), 'text', '', array( 'required' => 'required' ) );
-		// }
-
 		$metaboxes = array();
 		// Hook to add tab to edition metabox
 		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID, true ) );
-
-		$flatplan = (object)array(
+		array_push( $this->_exporters_mb, (object)array(
 			'id' 		=> 'flatplan',
 			'title' => __('Flatplan' , 'edition'),
-		);
-
-		$this->_exporters_mb = array(
-			$flatplan
-		);
-
+		) );
 		$this->_exporters_mb = array_merge( $this->_exporters_mb, $metaboxes );
 	}
 
@@ -145,10 +119,7 @@ class PR_Edition
 		$metabox->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
 		$metabox->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
 		$metabox->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
-
-		$this->_edition_mb = array(
-			$metabox
-		);
+		array_push( $this->_edition_mb, $metabox );
 	}
 
 	/**
@@ -170,27 +141,31 @@ class PR_Edition
 	 * @echo
 	 */
 	public function add_exporter_metabox_callback( $post ) {
-		echo '<input type="hidden" name="pr_edition_nonce" value="' . wp_create_nonce('pr_edition_nonce'). '" />';
-		echo '<div class="press-header postbox">';
-		echo '<div class="press-container">';
-		echo '<i class="press-pr-logo-gray-wp"></i>';
-		echo '<div class="press-header-right">';
+		$this->get_exporters_metaboxes( $post );
+		echo '<input type="hidden" name="pr_edition_nonce" value="' . wp_create_nonce('pr_edition_nonce'). '" />
+		<div class="press-header postbox">
+		<div class="press-container">
+		<i class="press-pr-logo-gray-wp"></i>
+		<div class="press-header-right">';
 		$this->add_publication_action( $post->ID );
-		echo '</div>';
-		echo '</div>';
-		echo '<hr/>';
-		$this->add_tabs_to_form( $post );
-		echo '</div>';
-		echo '<table class="form-table">';
+		echo '</div>
+		</div>
+		<hr/>
+		<h2 class="nav-tab-wrapper pr-tab-wrapper">';
+		foreach ( $this->_exporters_mb as $i => $metabox ) {
+			echo '<a class="nav-tab ' . ( !$i ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
+		}
+		echo '</h2>
+		</div>
+		<table class="form-table">';
 		foreach ( $this->_exporters_mb as $metabox ) {
-			// render html fields except for flatplan
 			if ( $metabox->id != 'flatplan' ) {
 				echo $metabox->fields_to_html( false, $metabox->id );
 			}
 		}
 
-		echo '</table>';
-		echo '<div class="tabbed flatplan">';
+		echo '</table>
+		<div class="tabbed flatplan">';
 		// render Wp list table for flatplan
 		$this->add_presslist();
 		echo '</div>';
@@ -233,22 +208,6 @@ class PR_Edition
 	}
 
 	/**
-	* Add tabs menu to edit form
-	*
-	* @param object $term
-	* @echo
-	*/
-	public function add_tabs_to_form( $post ) {
-
-		$this->get_exporters_metaboxes( $post );
-		echo '<h2 class="nav-tab-wrapper pr-tab-wrapper">';
-		foreach ( $this->_exporters_mb as $key => $metabox ) {
-			echo '<a class="nav-tab ' . ( !$key ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
-		}
-		echo '</h2>';
-	}
-
-	/**
 	* Pressroom metabox callback
 	* Render Wp list table
 	*
@@ -266,21 +225,19 @@ class PR_Edition
 	* Publication metabox callback
 	* Render publication buttons
 	*
+	* @param int $post_id
 	* @echo
 	*/
 	public function add_publication_action( $post_id ) {
-
-		if( $this->ck_exporters ) {
-
-			$packager_type = get_post_meta( $post_id, 'pr_packager_type', true );
+		if ( $this->ck_exporters ) {
+			$packager_type = get_post_meta( $post_id, '_pr_packager_type', true );
 			echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
 			echo '<select id="pr_packager_type" name="pr_packager_type">';
 			foreach( $this->pr_options['pr_enabled_exporters'] as $key => $exporter ) {
-				if( isset( $exporter['active'] ) && $exporter['active'] ) {
+				if ( isset( $exporter['active'] ) && $exporter['active'] ) {
 					echo '<option '. ( $packager_type == $key ? 'selected="selected"' : '' ) .' value="'.$key.'">'.$exporter['name'].'</option>';
 				}
 			}
-
 			echo '</select>';
 			echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
 			echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
@@ -330,7 +287,7 @@ class PR_Edition
 
 		$pr_packager_type = isset( $_POST['pr_packager_type'] ) ? $_POST['pr_packager_type'] : false;
 		if( $pr_packager_type ) {
-			update_post_meta($post_id, 'pr_packager_type', $pr_packager_type );
+			update_post_meta($post_id, '_pr_packager_type', $pr_packager_type );
 		}
 
 		$this->sanitize_linked_posts( $post );
@@ -497,7 +454,7 @@ class PR_Edition
 		// saving packager type
 		$pr_packager_type = isset( $_POST['pr_packager_type'] ) ? $_POST['pr_packager_type'] : false;
 		if( $pr_packager_type ) {
-			update_post_meta( $post->ID, 'pr_packager_type', $pr_packager_type );
+			update_post_meta( $post->ID, '_pr_packager_type', $pr_packager_type );
 		}
 
 		wp_send_json_success();
@@ -678,44 +635,11 @@ class PR_Edition
 	}
 
 	/**
-	* Get subscription types terms
-	*
-	* @param object $post
-	* @return array
-	*/
-	protected function _get_subscription_types( $post ) {
-
-		$terms = wp_get_post_terms( $post->ID, PR_EDITORIAL_PROJECT );
-		$types = array();
-		if ( !empty( $terms ) ) {
-			foreach ( $terms as $term ) {
-
-				$term_meta = get_option( "taxonomy_term_" . $term->term_id );
-				if ( $term_meta ) {
-					$term_types = isset( $term_meta['_pr_subscription_types'] ) ? $term_meta['_pr_subscription_types'] : '';
-					if( $term_types ) {
-						foreach ( $term_types as $type ) {
-
-							$types[$term->name][] = array(
-								'value' => $term_meta['_pr_prefix_bundle_id']. '.' . $term_meta['_pr_subscription_prefix']. '.' . $type,
-								'text'  => $type,
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $types;
-	}
-
-	/**
 	 * Enabled exporters check
 	 *
 	 * @return bool
 	 */
 	public function check_exporters() {
-
 		$this->pr_options = get_option( 'pr_settings' );
 		$this->ck_exporters = false;
 		if( isset( $this->pr_options['pr_enabled_exporters'] ) ) {
@@ -724,7 +648,6 @@ class PR_Edition
 				return true;
 			}
 		}
-
 		return false;
 	}
 }

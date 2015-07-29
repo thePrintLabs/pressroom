@@ -58,16 +58,16 @@ class pressroom_Plist {
     $padShelf->add( 'layoutType', new CFString( 'grid' ) );
     $padShelf->add( 'gridColumns', new CFNumber( 2 ) );
     $padShelf->add( 'scrollDirection', new CFString( 'vertical' ) );
-    $padShelf->add( 'pagingEnabled', new CFBoolean( true ) );
-    $padShelf->add( 'backgroundFillStyle', new CFString( isset( $hpub_pad['backgroundFillStyle'] ) ? $hpub_pad['backgroundFillStyle'] : '' ) );
-    $padShelf->add( 'backgroundFillGradientStart', new CFString( isset( $hpub_pad['backgroundFillGradientStart'] ) ? $hpub_pad['backgroundFillGradientStart'] : '' ) );
-    $padShelf->add( 'backgroundFillGradientStop', new CFString( isset( $hpub_pad['backgroundFillGradientStop'] ) ? $hpub_pad['backgroundFillGradientStop'] : '' ) );
-    $padShelf->add( 'backgroundFillColor', new CFString( isset( $hpub_pad['backgroundFillColor'] ) ? $hpub_pad['backgroundFillColor'] : '') );
+    $padShelf->add( 'pagingEnabled', new CFBoolean( false ) );
+    $padShelf->add( 'backgroundFillStyle', new CFString( isset( $hpub_pad['backgroundFillStyle'] ) ? $hpub_pad['backgroundFillStyle'] : 'Image' ) );
+    $padShelf->add( 'backgroundFillGradientStart', new CFString( isset( $hpub_pad['backgroundFillGradientStart'] ) ? $hpub_pad['backgroundFillGradientStart'] : '#FFFFFF' ) );
+    $padShelf->add( 'backgroundFillGradientStop', new CFString( isset( $hpub_pad['backgroundFillGradientStop'] ) ? $hpub_pad['backgroundFillGradientStop'] : '#EEEEEE' ) );
+    $padShelf->add( 'backgroundFillColor', new CFString( isset( $hpub_pad['backgroundFillColor'] ) ? $hpub_pad['backgroundFillColor'] : '#FFFFFF') );
     $padShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $hpub_pad['backgroundFitStyle'] ) ? $hpub_pad['backgroundFitStyle'] : false ) );
     $padShelf->add( 'headerHidden', new CFBoolean( isset( $hpub_pad['headerHidden'] ) ? $hpub_pad['headerHidden'] : false  ) );
     $padShelf->add( 'headerSticky', new CFBoolean( isset( $hpub_pad['headerSticky'] ) ? $hpub_pad['headerSticky'] : false ) );
     $padShelf->add( 'headerStretch', new CFBoolean( isset( $hpub_pad['headerStretch'] ) ? $hpub_pad['headerStretch'] : false ) );
-    $padShelf->add( 'headerBackgroundColor', new CFString( isset( $hpub_pad['headerBackgroundColor'] ) ? $hpub_pad['headerBackgroundColor'] : '' ) );
+    $padShelf->add( 'headerBackgroundColor', new CFString( isset( $hpub_pad['headerBackgroundColor'] ) ? $hpub_pad['headerBackgroundColor'] : 'clear' ) );
     $padShelf->add( 'headerImageFill', new CFBoolean( isset( $hpub_pad['headerImageFill'] ) ? $hpub_pad['headerImageFill'] : false ) );
     $padShelf->add( 'headerHeightLandscape', new CFNumber( 118 ) );
     $padShelf->add( 'headerHeightPortrait', new CFNumber( 118 ) );
@@ -117,7 +117,7 @@ class pressroom_Plist {
     $portraitActionButton->add( 'font', new CFString( 'Gotham-Book' ) );
     $portraitActionButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['portrait']['ActionButtonFontSize'] ) ? $hpub_pad['portrait']['ActionButtonFontSize'] : 13 ) );
     $portraitActionButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['portrait']['ActionButtonBackgroundColor'] ) ? $hpub_pad['portrait']['ActionButtonBackgroundColor'] : '#97724A'  ) );
-    $portraitActionButton->add( 'color', new CFString( isset( $hpub_pad['portrait']['ActionButtonTextColor'] ) ? $hpub_pad['portrait']['ActionButtonTextColor'] : '#FFFFFF'  ) );
+    $portraitActionButton->add( 'textColor', new CFString( isset( $hpub_pad['portrait']['ActionButtonTextColor'] ) ? $hpub_pad['portrait']['ActionButtonTextColor'] : '#FFFFFF'  ) );
 
     $padIssuePortrait->add( 'archiveButton', $portraitArchiveButton = new CFDictionary() );
     $portraitArchiveButton->add( 'width', new CFNumber( 110 ) );
@@ -125,7 +125,7 @@ class pressroom_Plist {
     $portraitArchiveButton->add( 'font', new CFString( 'Gotham-Book' ) );
     $portraitArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['portrait']['ArchiveButtonFontSize'] ) ? $hpub_pad['portrait']['ArchiveButtonFontSize'] : 13  ) );
     $portraitArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['portrait']['ArchiveButtonBackgroundColor'] ) ? $hpub_pad['portrait']['ArchiveButtonBackgroundColor'] : '#97724A'  ) );
-    $portraitArchiveButton->add( 'color', new CFString( isset( $hpub_pad['portrait']['ArchiveButtonTextColor'] ) ? $hpub_pad['portrait']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
+    $portraitArchiveButton->add( 'textColor', new CFString( isset( $hpub_pad['portrait']['ArchiveButtonTextColor'] ) ? $hpub_pad['portrait']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
 
     $padIssuePortrait->add( 'cover', $portraitCover = new CFDictionary() );
     $portraitCover->add( 'backgroundColor', new CFString( isset( $hpub_pad['portrait']['CoverBackgroundColor'] ) ? $hpub_pad['portrait']['CoverBackgroundColor'] : '#FFFFFF'  ) );
@@ -300,15 +300,15 @@ class pressroom_Plist {
     $phoneShelf->add( 'gridColumns', new CFNumber( 1 ) );
     $phoneShelf->add( 'scrollDirection', new CFString( 'horizontal' ) );
     $phoneShelf->add( 'pagingEnabled', new CFBoolean( true ) );
-    $phoneShelf->add( 'backgroundFillStyle', new CFString( isset( $hpub_phone['backgroundFillStyle'] ) ? $hpub_phone['backgroundFillStyle'] : '' ) );
-    $phoneShelf->add( 'backgroundFillGradientStart', new CFString( isset( $hpub_phone['backgroundFillGradientStart'] ) ? $hpub_phone['backgroundFillGradientStart'] : '' ) );
-    $phoneShelf->add( 'backgroundFillGradientStop', new CFString( isset( $hpub_phone['backgroundFillGradientStop'] ) ? $hpub_phone['backgroundFillGradientStop'] : '' ) );
-    $phoneShelf->add( 'backgroundFillColor', new CFString( isset( $hpub_phone['backgroundFillColor'] ) ? $hpub_phone['backgroundFillColor'] : '') );
+    $phoneShelf->add( 'backgroundFillStyle', new CFString( isset( $hpub_phone['backgroundFillStyle'] ) ? $hpub_phone['backgroundFillStyle'] : 'Image' ) );
+    $phoneShelf->add( 'backgroundFillGradientStart', new CFString( isset( $hpub_phone['backgroundFillGradientStart'] ) ? $hpub_phone['backgroundFillGradientStart'] : '#FFFFFF' ) );
+    $phoneShelf->add( 'backgroundFillGradientStop', new CFString( isset( $hpub_phone['backgroundFillGradientStop'] ) ? $hpub_phone['backgroundFillGradientStop'] : '#EEEEEE' ) );
+    $phoneShelf->add( 'backgroundFillColor', new CFString( isset( $hpub_phone['backgroundFillColor'] ) ? $hpub_phone['backgroundFillColor'] : '#FFFFFF') );
     $phoneShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $hpub_phone['backgroundFitStyle'] ) ? $hpub_phone['backgroundFitStyle'] : false ) );
     $phoneShelf->add( 'headerHidden', new CFBoolean( isset( $hpub_phone['headerHidden'] ) ? $hpub_phone['headerHidden'] : true  ) );
     $phoneShelf->add( 'headerSticky', new CFBoolean( isset( $hpub_phone['headerSticky'] ) ? $hpub_phone['headerSticky'] : false ) );
     $phoneShelf->add( 'headerStretch', new CFBoolean( isset( $hpub_phone['headerStretch'] ) ? $hpub_phone['headerStretch'] : false ) );
-    $phoneShelf->add( 'headerBackgroundColor', new CFString( isset( $hpub_phone['headerBackgroundColor'] ) ? $hpub_phone['headerBackgroundColor'] : '' ) );
+    $phoneShelf->add( 'headerBackgroundColor', new CFString( isset( $hpub_phone['headerBackgroundColor'] ) ? $hpub_phone['headerBackgroundColor'] : 'clear' ) );
     $phoneShelf->add( 'headerImageFill', new CFBoolean( isset( $hpub_phone['headerImageFill'] ) ? $hpub_phone['headerImageFill'] : false ) );
     $phoneShelf->add( 'headerHeightLandscape', new CFNumber( 150 ) );
     $phoneShelf->add( 'headerHeightPortrait', new CFNumber( 150 ) );
@@ -530,11 +530,6 @@ class pressroom_Plist {
     $phoneAuthenticationViewOptions->add( 'labelFontSize', new CFNumber( isset( $hpub_phone['authenticationViewOptions']['labelFontSize'] ) ? $hpub_phone['authenticationViewOptions']['labelFontSize'] : 14  ) );
     $phoneAuthenticationViewOptions->add( 'separatorColor', new CFString( isset( $hpub_phone['authenticationViewOptions']['separatorColor'] ) ? $hpub_phone['authenticationViewOptions']['separatorColor'] : '#D8D8D8'  ) );
     $phoneAuthenticationViewOptions->add( 'separatorHeight', new CFNumber( 1 ) );
-
-
-
-
-
 
     /*
      * Save PList as XML

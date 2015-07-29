@@ -27,17 +27,15 @@ class PR_Edition
 
 		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
 		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
+		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
+		add_action( 'admin_menu', array( $this, 'remove_default_metaboxes' ) );
+		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
+		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 
 		add_action( 'save_post_' . PR_EDITION, array( $this, 'save_edition'), 40 );
 		add_action( 'wp_ajax_publishing', array( $this, 'ajax_publishing_callback' ) );
 		add_action( 'wp_ajax_render_console', array( $this, 'publishing_render_console' ) );
 		add_action( 'wp_ajax_pr_preview', array( $this, 'pr_preview' ) );
-
-		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
-
-		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
-		add_action('admin_menu', array( $this, 'remove_default_metaboxes' ) );
-		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 
 		add_action( 'manage_' . PR_EDITION . '_posts_columns', array( $this, 'cover_columns' ) );
 		add_action( 'manage_' . PR_EDITION . '_posts_custom_column', array( $this, 'cover_output_column' ), 10, 2 );
@@ -460,7 +458,10 @@ class PR_Edition
 		wp_send_json_success();
 	}
 
-	// REMOVE POST META BOXES
+	/**
+	 * Remove default post metaboxes
+	 * @void
+	 */
 	public function remove_default_metaboxes() {
 		remove_meta_box( 'authordiv', PR_EDITION, 'normal' ); // Author Metabox
 		remove_meta_box( 'commentstatusdiv', PR_EDITION, 'normal' ); // Comments Status Metabox

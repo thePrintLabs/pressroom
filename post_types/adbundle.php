@@ -20,8 +20,8 @@ class PR_ADBundle
 		add_action( 'post_edit_form_tag', array( $this, 'form_add_enctype' ) );
 		add_action( 'save_post_pr_ad_bundle', array( $this, 'save_adbundle' ), 40 );
 		add_filter( 'add_meta_boxes', array( $this, 'add_adbundle_metaboxes' ), 40, 2 );
+		add_action( 'admin_menu', array( $this, 'remove_default_metaboxes' ) );
 
-		// Packager hooks
 		add_action( 'pr_packager_run_hpub_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_web_pr_ad_bundle', array( $this, 'adb_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_adps_pr_ad_bundle', array( $this, 'adb_adps_packager_run' ), 10, 2 );
@@ -30,10 +30,7 @@ class PR_ADBundle
 		add_action( 'pr_packager_generate_book', array( $this, 'adb_packager_book' ), 10, 3 );
 		add_action( 'pr_packager_parse_pr_ad_bundle', array( $this, 'adb_packager_post_parse' ), 10, 2 );
 
-		// Preview hooks
 		add_action( 'pr_preview_pr_ad_bundle', array( $this, 'adb_preview' ), 10, 3 );
-
-		//Presslist hook
 		add_action( 'pr_presslist_pr_ad_bundle', array( $this, 'adbundle_presslist' ), 10, 3 );
 
 	}
@@ -91,7 +88,7 @@ class PR_ADBundle
 	*/
 	public function get_custom_metaboxes( $post_type, $post ) {
 
-		$adb_meta = new PR_Metabox( 'adbundle_metabox', __( 'Ad Bundle metabox', 'adbundle' ), 'normal', 'high', $post->ID );
+		$adb_meta = new PR_Metabox( 'adbundle_metabox', __( 'Ad Bundle Settings', 'adbundle' ), 'normal', 'high', $post->ID );
 		$adb_meta->add_field( '_pr_html_file', __( 'Html file', 'adbundle' ), __( 'The HTML file from within the ZIP that will be used in the issue.', 'adbundle' ), 'text', 'index.html' );
 		$adb_meta->add_field( '_pr_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 
@@ -110,6 +107,23 @@ class PR_ADBundle
 		foreach ( $this->_metaboxes as $metabox ) {
 			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_adbundle_metabox_callback' ), 'pr_ad_bundle', $metabox->context, $metabox->priority );
 		}
+	}
+
+	/**
+	 * Remove default post metaboxes
+	 * @void
+	 */
+	public function remove_default_metaboxes() {
+		remove_meta_box( 'authordiv', 'pr_ad_bundle', 'normal' ); // Author Metabox
+		remove_meta_box( 'commentstatusdiv', 'pr_ad_bundle', 'normal' ); // Comments Status Metabox
+		remove_meta_box( 'commentsdiv', 'pr_ad_bundle', 'normal' ); // Comments Metabox
+		remove_meta_box( 'postcustom', 'pr_ad_bundle', 'normal' ); // Custom Fields Metabox
+		remove_meta_box( 'postexcerpt', 'pr_ad_bundle', 'normal' ); // Excerpt Metabox
+		remove_meta_box( 'revisionsdiv', 'pr_ad_bundle', 'normal' ); // Revisions Metabox
+		remove_meta_box( 'slugdiv', 'pr_ad_bundle', 'normal' ); // Slug Metabox
+		remove_meta_box( 'trackbacksdiv', 'pr_ad_bundle', 'normal' ); // Trackback Metabox
+		remove_meta_box( 'categorydiv', 'pr_ad_bundle', 'normal' ); // Categories Metabox
+		remove_meta_box( 'formatdiv', 'pr_ad_bundle', 'normal' ); // Formats Metabox
 	}
 
 	/**

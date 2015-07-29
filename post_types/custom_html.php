@@ -19,9 +19,9 @@ class PR_Custom_Html
 		add_action( 'init', array( $this, 'add_custom_html_post_type' ), 20 );
 		add_action( 'post_edit_form_tag', array( $this, 'form_add_enctype' ) );
 		add_action( 'save_post_pr_custom_html', array( $this, 'save_custom_html' ), 40 );
+		add_action( 'admin_menu', array( $this, 'remove_default_metaboxes' ) );
 		add_filter( 'add_meta_boxes', array( $this, 'add_custom_html_metaboxes' ), 40, 2 );
 
-		// Packager hooks
 		add_action( 'pr_packager_run_hpub_pr_custom_html', array( $this, 'chtml_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_web_pr_custom_html', array( $this, 'chtml_packager_run' ), 10, 2 );
 		add_action( 'pr_packager_run_adps_pr_custom_html', array( $this, 'chtml_adps_packager_run' ), 10, 2 );
@@ -30,10 +30,7 @@ class PR_Custom_Html
 		add_action( 'pr_packager_generate_book', array( $this, 'chtml_packager_book' ), 10, 3 );
 		add_action( 'pr_packager_parse_pr_custom_html', array( $this, 'chtml_packager_post_parse' ), 10, 2 );
 
-		// Preview hooks
 		add_action( 'pr_preview_pr_custom_html', array( $this, 'chtml_preview' ), 10, 3 );
-
-		//Presslist hook
 		add_action( 'pr_presslist_pr_custom_html', array( $this, 'chtml_presslist' ), 10, 3 );
 
 	}
@@ -91,7 +88,7 @@ class PR_Custom_Html
 	*/
 	public function get_custom_metaboxes( $post_type, $post ) {
 
-		$chtml_meta = new PR_Metabox( 'chtml_metabox', __( 'Custom Html metabox', 'pr_custom_html' ), 'normal', 'high', $post->ID );
+		$chtml_meta = new PR_Metabox( 'chtml_metabox', __( 'Custom Html Settings', 'pr_custom_html' ), 'normal', 'high', $post->ID );
 		$chtml_meta->add_field( '_pr_html_file', __( 'Html file', 'pr_custom_html' ), __( 'The HTML file from within the ZIP that will be used in the issue.', 'pr_custom_html' ), 'text', 'index.html' );
 		$chtml_meta->add_field( '_pr_zip', __( 'Zip File', 'edition' ), __( 'Upload zip file', 'edition' ), 'file', '', array( 'allow' => array( 'url', 'attachment' ) ) );
 
@@ -110,6 +107,23 @@ class PR_Custom_Html
 		foreach ( $this->_metaboxes as $metabox ) {
 			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_chtml_metabox_callback' ), 'pr_custom_html', $metabox->context, $metabox->priority );
 		}
+	}
+
+	/**
+	 * Remove default post metaboxes
+	 * @void
+	 */
+	public function remove_default_metaboxes() {
+		remove_meta_box( 'authordiv', 'pr_custom_html', 'normal' ); // Author Metabox
+		remove_meta_box( 'commentstatusdiv', 'pr_custom_html', 'normal' ); // Comments Status Metabox
+		remove_meta_box( 'commentsdiv', 'pr_custom_html', 'normal' ); // Comments Metabox
+		remove_meta_box( 'postcustom', 'pr_custom_html', 'normal' ); // Custom Fields Metabox
+		remove_meta_box( 'postexcerpt', 'pr_custom_html', 'normal' ); // Excerpt Metabox
+		remove_meta_box( 'revisionsdiv', 'pr_custom_html', 'normal' ); // Revisions Metabox
+		remove_meta_box( 'slugdiv', 'pr_custom_html', 'normal' ); // Slug Metabox
+		remove_meta_box( 'trackbacksdiv', 'pr_custom_html', 'normal' ); // Trackback Metabox
+		remove_meta_box( 'categorydiv', 'pr_custom_html', 'normal' ); // Categories Metabox
+		remove_meta_box( 'formatdiv', 'pr_custom_html', 'normal' ); // Formats Metabox
 	}
 
 	/**

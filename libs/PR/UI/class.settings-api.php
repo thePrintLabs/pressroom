@@ -420,9 +420,11 @@ class WeDevs_Settings_API {
     function callback_color( $args ) {
 
         $value = esc_attr( $this->get_option( $args['id'], $args['value_section'], $args['std'], $args['subsection'] ) );
+        $check_value = $value == 'clear';
         $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
 
-        $html = sprintf( '<input type="text" class="%1$s-text wp-color-picker-field" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" />', $size, $args['section'], $args['id'], $value, $args['std'] );
+        $html = sprintf( '<input type="text" class="%1$s-text wp-color-picker-field" id="%2$s_%3$s" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" />', $size, $args['section'], $args['id'], $value, $args['std'] );
+        $html .= sprintf( '<label class="color-check-label" for="check_%2$s_%3$s"><input type="checkbox" class="%1$s-checkbox pr-color-checkbox" id="check_%2$s_%3$s" data-picker="%2$s[%3$s]" name="check-%2$s[%3$s]" value="clear" %4$s />Transparent</label>', $size, $args['section'],  $args['id'], $check_value ? 'checked="checked"' : '' );
         $html .= $this->get_field_description( $args );
 
         echo $html;
@@ -551,6 +553,14 @@ class WeDevs_Settings_API {
         ?>
         <script>
             jQuery(document).ready(function($) {
+
+                // Trasparent color picker
+                $('.pr-color-checkbox').change(function(){
+
+                  var picker = $(this).data('picker');
+                  $('input[name="'+picker+'"]').val($(this).is(':checked') ? 'clear' : '');
+                });
+
                 //Initiate Color Picker
                 $('.wp-color-picker-field').wpColorPicker();
 

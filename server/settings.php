@@ -47,7 +47,7 @@ class pressroom_Plist {
     foreach( $methods as $method ) {
       $productIds->add( new CFString( $method ) );
     }
-    //$dict->add( 'requestTimeout', new CFNumber( 15 ) );
+    $dict->add( 'requestTimeout', new CFNumber( 15 ) );
 
     /* Pad */
     $dict->add( 'Pad', $pad = new CFDictionary() );
@@ -64,6 +64,7 @@ class pressroom_Plist {
     $padShelf->add( 'backgroundFillGradientStop', new CFString( isset( $hpub_pad['backgroundFillGradientStop'] ) ? $hpub_pad['backgroundFillGradientStop'] : '#EEEEEE' ) );
     $padShelf->add( 'backgroundFillColor', new CFString( isset( $hpub_pad['backgroundFillColor'] ) ? $hpub_pad['backgroundFillColor'] : '#FFFFFF') );
     $padShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $hpub_pad['backgroundFitStyle'] ) ? $hpub_pad['backgroundFitStyle'] : false ) );
+    $padShelf->add( 'backgroundImage', new CFString( isset( $hpub_pad['backgroundImage'] ) ? $hpub_pad['backgroundImage'] : '' ) );
     $padShelf->add( 'headerHidden', new CFBoolean( isset( $hpub_pad['headerHidden'] ) ? $hpub_pad['headerHidden'] : false  ) );
     $padShelf->add( 'headerSticky', new CFBoolean( isset( $hpub_pad['headerSticky'] ) ? $hpub_pad['headerSticky'] : false ) );
     $padShelf->add( 'headerStretch', new CFBoolean( isset( $hpub_pad['headerStretch'] ) ? $hpub_pad['headerStretch'] : false ) );
@@ -100,15 +101,15 @@ class pressroom_Plist {
     $padIssuePortrait->add( 'infoLabel', $portraitInfoLabel = new CFDictionary() );
     $portraitInfoLabel->add( 'align', new CFString( isset( $hpub_pad['portrait']['infoLabelAlign'] ) ? $hpub_pad['portrait']['infoLabelAlign'] : 'left'  ) );
     $portraitInfoLabel->add( 'font', new CFString( 'Gotham-Book' ) );
-    $portraitInfoLabel->add( 'fontSize', new CFNumber( isset( $hpub_pad['portrait']['infoLabelFontSize'] ) ? $hpub_pad['portrait']['infoLabelFontSize'] : 14 ) );
-    $portraitInfoLabel->add( 'color', new CFString( isset( $hpub_pad['portrait']['infoLabelColor'] ) ? $hpub_pad['portrait']['infoLabelColor'] : '#A87F52' ) );
+    $portraitInfoLabel->add( 'fontSize', new CFNumber( isset( $hpub_pad['portrait']['infoLabelFontSize'] ) ? $hpub_pad['portrait']['infoLabelFontSize'] : 13 ) );
+    $portraitInfoLabel->add( 'color', new CFString( isset( $hpub_pad['portrait']['infoLabelColor'] ) ? $hpub_pad['portrait']['infoLabelColor'] : '#8C8C8C' ) );
     $portraitInfoLabel->add( 'lineSpacing', new CFNumber( 4 ) );
     $portraitInfoLabel->add( 'numberOfLines', new CFNumber( 4 ) );
 
-    $portraitTitleLabel->add( 'margin', $portraitInfoLabelMargin = new CFDictionary() );
-    $portraitInfoLabelMargin->add( 'top', new CFNumber( 0 ) );
+    $portraitInfoLabel->add( 'margin', $portraitInfoLabelMargin = new CFDictionary() );
+    $portraitInfoLabelMargin->add( 'top', new CFNumber( 10 ) );
     $portraitInfoLabelMargin->add( 'right', new CFNumber( 0 ) );
-    $portraitInfoLabelMargin->add( 'bottom', new CFNumber( 0 ) );
+    $portraitInfoLabelMargin->add( 'bottom', new CFNumber( 15 ) );
     $portraitInfoLabelMargin->add( 'left', new CFNumber( 15 ) );
 
     $padIssuePortrait->add( 'actionButton', $portraitActionButton = new CFDictionary() );
@@ -120,11 +121,11 @@ class pressroom_Plist {
     $portraitActionButton->add( 'textColor', new CFString( isset( $hpub_pad['portrait']['ActionButtonTextColor'] ) ? $hpub_pad['portrait']['ActionButtonTextColor'] : '#FFFFFF'  ) );
 
     $padIssuePortrait->add( 'archiveButton', $portraitArchiveButton = new CFDictionary() );
-    $portraitArchiveButton->add( 'width', new CFNumber( 110 ) );
+    $portraitArchiveButton->add( 'width', new CFNumber( 30 ) );
     $portraitArchiveButton->add( 'height', new CFNumber( 30 ) );
     $portraitArchiveButton->add( 'font', new CFString( 'Gotham-Book' ) );
-    $portraitArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['portrait']['ArchiveButtonFontSize'] ) ? $hpub_pad['portrait']['ArchiveButtonFontSize'] : 13  ) );
-    $portraitArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['portrait']['ArchiveButtonBackgroundColor'] ) ? $hpub_pad['portrait']['ArchiveButtonBackgroundColor'] : '#97724A'  ) );
+    $portraitArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['portrait']['ArchiveButtonFontSize'] ) ? $hpub_pad['portrait']['ArchiveButtonFontSize'] : 14  ) );
+    $portraitArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['portrait']['ArchiveButtonBackgroundColor'] ) ? $hpub_pad['portrait']['ArchiveButtonBackgroundColor'] : '#A8A8A8'  ) );
     $portraitArchiveButton->add( 'textColor', new CFString( isset( $hpub_pad['portrait']['ArchiveButtonTextColor'] ) ? $hpub_pad['portrait']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
 
     $padIssuePortrait->add( 'cover', $portraitCover = new CFDictionary() );
@@ -151,61 +152,61 @@ class pressroom_Plist {
 
     /* Landscape */
     $padIssue->add( 'landscape', $padIssueLandscape = new CFDictionary() );
-    $padIssueLandscape->add( 'cellHeight', new CFNumber( 270 ) );
+    $padIssueLandscape->add( 'cellHeight', new CFNumber( 230 ) );
 
-    $padIssueLandscape->add( 'cellPadding', $portraitCellpadding = new CFDictionary() );
-    $portraitCellpadding->add( 'top', new CFNumber( 70 ) );
-    $portraitCellpadding->add( 'right', new CFNumber( 25 ) );
-    $portraitCellpadding->add( 'bottom', new CFNumber( 0 ) );
-    $portraitCellpadding->add( 'left', new CFNumber( 25 ) );
+    $padIssueLandscape->add( 'cellPadding', $landscapeCellpadding = new CFDictionary() );
+    $landscapeCellpadding->add( 'top', new CFNumber( 50 ) );
+    $landscapeCellpadding->add( 'right', new CFNumber( 25 ) );
+    $landscapeCellpadding->add( 'bottom', new CFNumber( 0 ) );
+    $landscapeCellpadding->add( 'left', new CFNumber( 25 ) );
 
-    $padIssueLandscape->add( 'titleLabel', $portraitTitleLabel = new CFDictionary() );
-    $portraitTitleLabel->add( 'align', new CFString( isset( $hpub_pad['landscape']['titleLabelAlign'] ) ? $hpub_pad['landscape']['titleLabelAlign'] : 'left'  ) );
-    $portraitTitleLabel->add( 'font', new CFString( 'Gotham-Book' ) );
-    $portraitTitleLabel->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['titleLabelFontSize'] ) ? $hpub_pad['landscape']['titleLabelFontSize'] : 14 ) );
-    $portraitTitleLabel->add( 'color', new CFString( isset( $hpub_pad['landscape']['titleLabelColor'] ) ? $hpub_pad['landscape']['titleLabelColor'] : '#A87F52' ) );
+    $padIssueLandscape->add( 'titleLabel', $landscapeTitleLabel = new CFDictionary() );
+    $landscapeTitleLabel->add( 'align', new CFString( isset( $hpub_pad['landscape']['titleLabelAlign'] ) ? $hpub_pad['landscape']['titleLabelAlign'] : 'left'  ) );
+    $landscapeTitleLabel->add( 'font', new CFString( 'Gotham-Book' ) );
+    $landscapeTitleLabel->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['titleLabelFontSize'] ) ? $hpub_pad['landscape']['titleLabelFontSize'] : 14 ) );
+    $landscapeTitleLabel->add( 'color', new CFString( isset( $hpub_pad['landscape']['titleLabelColor'] ) ? $hpub_pad['landscape']['titleLabelColor'] : '#A87F52' ) );
 
-    $portraitTitleLabel->add( 'margin', $portraitTitleLabelMargin = new CFDictionary() );
-    $portraitTitleLabelMargin->add( 'top', new CFNumber( 0 ) );
-    $portraitTitleLabelMargin->add( 'right', new CFNumber( 0 ) );
-    $portraitTitleLabelMargin->add( 'bottom', new CFNumber( 0 ) );
-    $portraitTitleLabelMargin->add( 'left', new CFNumber( 15 ) );
+    $landscapeTitleLabel->add( 'margin', $landscapeTitleLabelMargin = new CFDictionary() );
+    $landscapeTitleLabelMargin->add( 'top', new CFNumber( 0 ) );
+    $landscapeTitleLabelMargin->add( 'right', new CFNumber( 0 ) );
+    $landscapeTitleLabelMargin->add( 'bottom', new CFNumber( 0 ) );
+    $landscapeTitleLabelMargin->add( 'left', new CFNumber( 15 ) );
 
-    $padIssueLandscape->add( 'infoLabel', $portraitInfoLabel = new CFDictionary() );
-    $portraitInfoLabel->add( 'align', new CFString( isset( $hpub_pad['landscape']['infoLabelAlign'] ) ? $hpub_pad['landscape']['infoLabelAlign'] : 'left'  ) );
-    $portraitInfoLabel->add( 'font', new CFString( 'Gotham-Book' ) );
-    $portraitInfoLabel->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['infoLabelFontSize'] ) ? $hpub_pad['landscape']['infoLabelFontSize'] : 14 ) );
-    $portraitInfoLabel->add( 'color', new CFString( isset( $hpub_pad['landscape']['infoLabelColor'] ) ? $hpub_pad['landscape']['infoLabelColor'] : '#A87F52' ) );
-    $portraitInfoLabel->add( 'lineSpacing', new CFNumber( 4 ) );
-    $portraitInfoLabel->add( 'numberOfLines', new CFNumber( 4 ) );
+    $padIssueLandscape->add( 'infoLabel', $landscapeInfoLabel = new CFDictionary() );
+    $landscapeInfoLabel->add( 'align', new CFString( isset( $hpub_pad['landscape']['infoLabelAlign'] ) ? $hpub_pad['landscape']['infoLabelAlign'] : 'left'  ) );
+    $landscapeInfoLabel->add( 'font', new CFString( 'Gotham-Book' ) );
+    $landscapeInfoLabel->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['infoLabelFontSize'] ) ? $hpub_pad['landscape']['infoLabelFontSize'] : 13 ) );
+    $landscapeInfoLabel->add( 'color', new CFString( isset( $hpub_pad['landscape']['infoLabelColor'] ) ? $hpub_pad['landscape']['infoLabelColor'] : '#8C8C8C' ) );
+    $landscapeInfoLabel->add( 'lineSpacing', new CFNumber( 5 ) );
+    $landscapeInfoLabel->add( 'numberOfLines', new CFNumber( 4 ) );
 
-    $portraitTitleLabel->add( 'margin', $portraitInfoLabelMargin = new CFDictionary() );
-    $portraitInfoLabelMargin->add( 'top', new CFNumber( 0 ) );
-    $portraitInfoLabelMargin->add( 'right', new CFNumber( 0 ) );
-    $portraitInfoLabelMargin->add( 'bottom', new CFNumber( 0 ) );
-    $portraitInfoLabelMargin->add( 'left', new CFNumber( 15 ) );
+    $landscapeInfoLabel->add( 'margin', $landscapeInfoLabelMargin = new CFDictionary() );
+    $landscapeInfoLabelMargin->add( 'top', new CFNumber( 10 ) );
+    $landscapeInfoLabelMargin->add( 'right', new CFNumber( 0 ) );
+    $landscapeInfoLabelMargin->add( 'bottom', new CFNumber( 15 ) );
+    $landscapeInfoLabelMargin->add( 'left', new CFNumber( 15 ) );
 
-    $padIssueLandscape->add( 'actionButton', $portraitActionButton = new CFDictionary() );
-    $portraitActionButton->add( 'width', new CFNumber( 110 ) );
-    $portraitActionButton->add( 'height', new CFNumber( 30 ) );
-    $portraitActionButton->add( 'font', new CFString( 'Gotham-Book' ) );
-    $portraitActionButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['ActionButtonFontSize'] ) ? $hpub_pad['landscape']['ActionButtonFontSize'] : 13  ) );
-    $portraitActionButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['landscape']['ActionButtonBackgroundColor'] ) ? $hpub_pad['landscape']['ActionButtonBackgroundColor'] : '#97724A'  ) );
-    $portraitActionButton->add( 'textColor', new CFString( isset( $hpub_pad['landscape']['ActionButtonTextColor'] ) ? $hpub_pad['landscape']['ActionButtonTextColor'] : '#FFFFFF'  ) );
+    $padIssueLandscape->add( 'actionButton', $landscapeActionButton = new CFDictionary() );
+    $landscapeActionButton->add( 'width', new CFNumber( 110 ) );
+    $landscapeActionButton->add( 'height', new CFNumber( 30 ) );
+    $landscapeActionButton->add( 'font', new CFString( 'Gotham-Book' ) );
+    $landscapeActionButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['ActionButtonFontSize'] ) ? $hpub_pad['landscape']['ActionButtonFontSize'] : 14  ) );
+    $landscapeActionButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['landscape']['ActionButtonBackgroundColor'] ) ? $hpub_pad['landscape']['ActionButtonBackgroundColor'] : '#97724A'  ) );
+    $landscapeActionButton->add( 'textColor', new CFString( isset( $hpub_pad['landscape']['ActionButtonTextColor'] ) ? $hpub_pad['landscape']['ActionButtonTextColor'] : '#FFFFFF'  ) );
 
-    $padIssueLandscape->add( 'archiveButton', $portraitArchiveButton = new CFDictionary() );
-    $portraitArchiveButton->add( 'width', new CFNumber( 110 ) );
-    $portraitArchiveButton->add( 'height', new CFNumber( 30 ) );
-    $portraitArchiveButton->add( 'font', new CFString( 'Gotham-Book' ) );
-    $portraitArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['ArchiveButtonFontSize'] ) ? $hpub_pad['landscape']['ArchiveButtonFontSize'] : 13 ) );
-    $portraitArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['landscape']['ArchiveButtonBackgroundColor'] ) ? $hpub_pad['landscape']['ArchiveButtonBackgroundColor'] : '#97724A'  ) );
-    $portraitArchiveButton->add( 'textColor', new CFString( isset( $hpub_pad['landscape']['ArchiveButtonTextColor'] ) ? $hpub_pad['landscape']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
+    $padIssueLandscape->add( 'archiveButton', $landscapeArchiveButton = new CFDictionary() );
+    $landscapeArchiveButton->add( 'width', new CFNumber( 30 ) );
+    $landscapeArchiveButton->add( 'height', new CFNumber( 30 ) );
+    $landscapeArchiveButton->add( 'font', new CFString( 'Gotham-Book' ) );
+    $landscapeArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_pad['landscape']['ArchiveButtonFontSize'] ) ? $hpub_pad['landscape']['ArchiveButtonFontSize'] : 14 ) );
+    $landscapeArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_pad['landscape']['ArchiveButtonBackgroundColor'] ) ? $hpub_pad['landscape']['ArchiveButtonBackgroundColor'] : '#A8A8A8'  ) );
+    $landscapeArchiveButton->add( 'textColor', new CFString( isset( $hpub_pad['landscape']['ArchiveButtonTextColor'] ) ? $hpub_pad['landscape']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
 
-    $padIssueLandscape->add( 'cover', $portraitCover = new CFDictionary() );
-    $portraitCover->add( 'backgroundColor', new CFString( isset( $hpub_pad['landscape']['CoverBackgroundColor'] ) ? $hpub_pad['landscape']['CoverBackgroundColor'] : '#FFFFFF'  ) );
-    $portraitCover->add( 'borderColor', new CFString( isset( $hpub_pad['landscape']['BorderColor'] ) ? $hpub_pad['landscape']['BorderColor'] : '#979797'  ) );
-    $portraitCover->add( 'borderSize', new CFNumber( 0 ) );
-    $portraitCover->add( 'shadowOpacity', new CFNumber( 0 ) );
+    $padIssueLandscape->add( 'cover', $landscapeCover = new CFDictionary() );
+    $landscapeCover->add( 'backgroundColor', new CFString( isset( $hpub_pad['landscape']['CoverBackgroundColor'] ) ? $hpub_pad['landscape']['CoverBackgroundColor'] : '#FFFFFF'  ) );
+    $landscapeCover->add( 'borderColor', new CFString( isset( $hpub_pad['landscape']['BorderColor'] ) ? $hpub_pad['landscape']['BorderColor'] : '#979797'  ) );
+    $landscapeCover->add( 'borderSize', new CFNumber( 0 ) );
+    $landscapeCover->add( 'shadowOpacity', new CFNumber( 0 ) );
 
     $padIssueLandscape->add( 'buttonAlign', new CFString( isset( $hpub_pad['landscape']['buttonAlign'] ) ? $hpub_pad['landscape']['buttonAlign'] : 'left'  ) );
 
@@ -226,12 +227,12 @@ class pressroom_Plist {
     $pad->add( 'navigationBarOptions', $padnavigationBarOptions = new CFDictionary() );
 
     $padnavigationBarOptions->add( 'book', $padNavBook = new CFDictionary() );
-    $padNavBook->add( 'tintColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['tintColor'] ) ? $hpub_pad['navigationBarOptionBook']['tintColor'] : '#A99870'  ) );
-    $padNavBook->add( 'titleFontSize', new CFNumber( isset( $hpub_pad['navigationBarOptionBook']['titleFontSize'] ) ? $hpub_pad['navigationBarOptionBook']['titleFontSize'] : 16  ) );
+    $padNavBook->add( 'tintColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['tintColor'] ) ? $hpub_pad['navigationBarOptionBook']['tintColor'] : '#FFFFFF'  ) );
+    $padNavBook->add( 'titleFontSize', new CFNumber( isset( $hpub_pad['navigationBarOptionBook']['titleFontSize'] ) ? $hpub_pad['navigationBarOptionBook']['titleFontSize'] : 18  ) );
     $padNavBook->add( 'titleFont', new CFString( 'Gotham-Book' ) );
-    $padNavBook->add( 'titleColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['titleColor'] ) ? $hpub_pad['navigationBarOptionBook']['titleColor'] : '#A99870'  ) );
-    $padNavBook->add( 'backgroundColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['backgroundColor'] ) ? $hpub_pad['navigationBarOptionBook']['backgroundColor'] : '#FFFFFF'  ) );
-    $padNavBook->add( 'marginBottom', new CFNumber( 0 ) );
+    $padNavBook->add( 'titleColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['titleColor'] ) ? $hpub_pad['navigationBarOptionBook']['titleColor'] : '#FFFFFF'  ) );
+    $padNavBook->add( 'backgroundColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['backgroundColor'] ) ? $hpub_pad['navigationBarOptionBook']['backgroundColor'] : 'clear'  ) );
+    $padNavBook->add( 'marginBottom', new CFNumber( 60 ) );
 
     $padnavigationBarOptions->add( 'shelf', $padNavShelf = new CFDictionary() );
     $padNavShelf->add( 'tintColor', new CFString( isset( $hpub_pad['navigationBarOptionShelf']['tintColor'] ) ? $hpub_pad['navigationBarOptionShelf']['tintColor'] : '#A99870'  ) );
@@ -245,7 +246,7 @@ class pressroom_Plist {
     $padSubscriptionViewOptions->add( 'useNativeControl', new CFBoolean( false ) );
     $padSubscriptionViewOptions->add( 'backgroundColor', new CFString( isset( $hpub_pad['subscriptionViewOption']['backgroundColor'] ) ? $hpub_pad['subscriptionViewOption']['backgroundColor'] : '#FFFFFF'  ) );
     $padSubscriptionViewOptions->add( 'buttonWidth', new CFNumber( 0 ) );
-    $padSubscriptionViewOptions->add( 'buttonHeight', new CFNumber( 40 ) );
+    $padSubscriptionViewOptions->add( 'buttonHeight', new CFNumber( 60 ) );
     $padSubscriptionViewOptions->add( 'buttonTintColor', new CFString( isset( $hpub_pad['subscriptionViewOption']['buttonTintColor'] ) ? $hpub_pad['subscriptionViewOption']['buttonTintColor'] : '#999999'  ) );
     $padSubscriptionViewOptions->add( 'buttonTintColorHighlighted', new CFString( isset( $hpub_pad['subscriptionViewOption']['buttonTintColorHighlighted'] ) ? $hpub_pad['subscriptionViewOption']['buttonTintColorHighlighted'] : '#A99870'  ) );
     $padSubscriptionViewOptions->add( 'buttonBackgroundColor', new CFString( isset( $hpub_pad['subscriptionViewOption']['buttonBackgroundColor'] ) ? $hpub_pad['subscriptionViewOption']['buttonBackgroundColor'] : '#FFFFFF'  ) );
@@ -256,9 +257,9 @@ class pressroom_Plist {
     $padSubscriptionViewOptionsMargin->add( 'bottom', new CFNumber( 10 ) );
     $padSubscriptionViewOptionsMargin->add( 'left', new CFNumber( 30 ) );
 
-    $padSubscriptionViewOptions->add( 'buttonFont', new CFString( 'Lato-Light' ) );
-    $padSubscriptionViewOptions->add( 'buttonFontSize', new CFNumber( isset( $hpub_pad['subscriptionViewOption']['buttonFontSize'] ) ? $hpub_pad['subscriptionViewOption']['buttonFontSize'] : 17  ) );
-    $padSubscriptionViewOptions->add( 'separatorColor', new CFString( isset( $hpub_pad['subscriptionViewOption']['SeparatorColor'] ) ? $hpub_pad['subscriptionViewOption']['SeparatorColor'] : '#D8D8D8'  ) );
+    $padSubscriptionViewOptions->add( 'buttonFont', new CFString( 'Lato-Regular' ) );
+    $padSubscriptionViewOptions->add( 'buttonFontSize', new CFNumber( isset( $hpub_pad['subscriptionViewOption']['buttonFontSize'] ) ? $hpub_pad['subscriptionViewOption']['buttonFontSize'] : 21  ) );
+    $padSubscriptionViewOptions->add( 'separatorColor', new CFString( isset( $hpub_pad['subscriptionViewOption']['SeparatorColor'] ) ? $hpub_pad['subscriptionViewOption']['separatorColor'] : '#D8D8D8'  ) );
     $padSubscriptionViewOptions->add( 'separatorHeight', new CFNumber( 1 ) );
 
     $pad->add( 'authenticationViewOptions', $padAuthenticationViewOptions = new CFDictionary() );
@@ -394,59 +395,59 @@ class pressroom_Plist {
     $phoneIssue->add( 'landscape', $phoneIssueLandscape = new CFDictionary() );
     $phoneIssueLandscape->add( 'cellHeight', new CFNumber( 0 ) );
 
-    $phoneIssueLandscape->add( 'cellPadding', $portraitCellpadding = new CFDictionary() );
-    $portraitCellpadding->add( 'top', new CFNumber( 20 ) );
-    $portraitCellpadding->add( 'right', new CFNumber( 15 ) );
-    $portraitCellpadding->add( 'bottom', new CFNumber( 0 ) );
-    $portraitCellpadding->add( 'left', new CFNumber( 15 ) );
+    $phoneIssueLandscape->add( 'cellPadding', $landscapeCellpadding = new CFDictionary() );
+    $landscapeCellpadding->add( 'top', new CFNumber( 20 ) );
+    $landscapeCellpadding->add( 'right', new CFNumber( 15 ) );
+    $landscapeCellpadding->add( 'bottom', new CFNumber( 0 ) );
+    $landscapeCellpadding->add( 'left', new CFNumber( 15 ) );
 
-    $phoneIssueLandscape->add( 'titleLabel', $portraitTitleLabel = new CFDictionary() );
-    $portraitTitleLabel->add( 'align', new CFString( isset( $hpub_phone['landscape']['titleLabelAlign'] ) ? $hpub_phone['landscape']['titleLabelAlign'] : 'left'  ) );
-    $portraitTitleLabel->add( 'font', new CFString( 'Lato-Regular' ) );
-    $portraitTitleLabel->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['titleLabelFontSize'] ) ? $hpub_phone['landscape']['titleLabelFontSize'] : 17 ) );
-    $portraitTitleLabel->add( 'color', new CFString( isset( $hpub_phone['landscape']['titleLabelColor'] ) ? $hpub_phone['landscape']['titleLabelColor'] : '#A99870' ) );
+    $phoneIssueLandscape->add( 'titleLabel', $landscapeTitleLabel = new CFDictionary() );
+    $landscapeTitleLabel->add( 'align', new CFString( isset( $hpub_phone['landscape']['titleLabelAlign'] ) ? $hpub_phone['landscape']['titleLabelAlign'] : 'left'  ) );
+    $landscapeTitleLabel->add( 'font', new CFString( 'Lato-Regular' ) );
+    $landscapeTitleLabel->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['titleLabelFontSize'] ) ? $hpub_phone['landscape']['titleLabelFontSize'] : 17 ) );
+    $landscapeTitleLabel->add( 'color', new CFString( isset( $hpub_phone['landscape']['titleLabelColor'] ) ? $hpub_phone['landscape']['titleLabelColor'] : '#A99870' ) );
 
-    $portraitTitleLabel->add( 'margin', $portraitTitleLabelMargin = new CFDictionary() );
-    $portraitTitleLabelMargin->add( 'top', new CFNumber( 0 ) );
-    $portraitTitleLabelMargin->add( 'right', new CFNumber( 15 ) );
-    $portraitTitleLabelMargin->add( 'bottom', new CFNumber( 0 ) );
-    $portraitTitleLabelMargin->add( 'left', new CFNumber( 15 ) );
+    $landscapeTitleLabel->add( 'margin', $landscapeTitleLabelMargin = new CFDictionary() );
+    $landscapeTitleLabelMargin->add( 'top', new CFNumber( 0 ) );
+    $landscapeTitleLabelMargin->add( 'right', new CFNumber( 15 ) );
+    $landscapeTitleLabelMargin->add( 'bottom', new CFNumber( 0 ) );
+    $landscapeTitleLabelMargin->add( 'left', new CFNumber( 15 ) );
 
-    $phoneIssueLandscape->add( 'infoLabel', $portraitInfoLabel = new CFDictionary() );
-    $portraitInfoLabel->add( 'align', new CFString( isset( $hpub_phone['landscape']['infoLabelAlign'] ) ? $hpub_phone['landscape']['infoLabelAlign'] : 'left'  ) );
-    $portraitInfoLabel->add( 'font', new CFString( 'Lato-Regular' ) );
-    $portraitInfoLabel->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['infoLabelfontSize'] ) ? $hpub_phone['landscape']['infoLabelfontSize'] : 14 ) );
-    $portraitInfoLabel->add( 'color', new CFString( isset( $hpub_phone['landscape']['infoLabelColor'] ) ? $hpub_phone['landscape']['infoLabelColor'] : '#8C8C8C' ) );
-    $portraitInfoLabel->add( 'lineSpacing', new CFNumber( 5 ) );
-    $portraitInfoLabel->add( 'numberOfLines', new CFNumber( 5 ) );
+    $phoneIssueLandscape->add( 'infoLabel', $landscapeInfoLabel = new CFDictionary() );
+    $landscapeInfoLabel->add( 'align', new CFString( isset( $hpub_phone['landscape']['infoLabelAlign'] ) ? $hpub_phone['landscape']['infoLabelAlign'] : 'left'  ) );
+    $landscapeInfoLabel->add( 'font', new CFString( 'Lato-Regular' ) );
+    $landscapeInfoLabel->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['infoLabelfontSize'] ) ? $hpub_phone['landscape']['infoLabelfontSize'] : 14 ) );
+    $landscapeInfoLabel->add( 'color', new CFString( isset( $hpub_phone['landscape']['infoLabelColor'] ) ? $hpub_phone['landscape']['infoLabelColor'] : '#8C8C8C' ) );
+    $landscapeInfoLabel->add( 'lineSpacing', new CFNumber( 5 ) );
+    $landscapeInfoLabel->add( 'numberOfLines', new CFNumber( 5 ) );
 
-    $portraitTitleLabel->add( 'margin', $portraitInfoLabelMargin = new CFDictionary() );
-    $portraitInfoLabelMargin->add( 'top', new CFNumber( 10 ) );
-    $portraitInfoLabelMargin->add( 'right', new CFNumber( 15 ) );
-    $portraitInfoLabelMargin->add( 'bottom', new CFNumber( 15 ) );
-    $portraitInfoLabelMargin->add( 'left', new CFNumber( 15 ) );
+    $landscapeInfoLabel->add( 'margin', $landscapeInfoLabelMargin = new CFDictionary() );
+    $landscapeInfoLabelMargin->add( 'top', new CFNumber( 10 ) );
+    $landscapeInfoLabelMargin->add( 'right', new CFNumber( 15 ) );
+    $landscapeInfoLabelMargin->add( 'bottom', new CFNumber( 15 ) );
+    $landscapeInfoLabelMargin->add( 'left', new CFNumber( 15 ) );
 
-    $phoneIssueLandscape->add( 'actionButton', $portraitActionButton = new CFDictionary() );
-    $portraitActionButton->add( 'width', new CFNumber( 40 ) );
-    $portraitActionButton->add( 'height', new CFNumber( 40 ) );
-    $portraitActionButton->add( 'font', new CFString( 'Lato-Regular' ) );
-    $portraitActionButton->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['ActionButtonFontSize'] ) ? $hpub_phone['landscape']['ActionButtonFontSize'] : 17  ) );
-    $portraitActionButton->add( 'backgroundColor', new CFString( isset( $hpub_phone['landscape']['ActionButtonBackgroundColor'] ) ? $hpub_phone['landscape']['ActionButtonBackgroundColor'] : '#A99870'  ) );
-    $portraitActionButton->add( 'textColor', new CFString( isset( $hpub_phone['landscape']['ActionButtonTextColor'] ) ? $hpub_phone['landscape']['ActionButtonTextColor'] : '#FFFFFF'  ) );
+    $phoneIssueLandscape->add( 'actionButton', $landscapeActionButton = new CFDictionary() );
+    $landscapeActionButton->add( 'width', new CFNumber( 140 ) );
+    $landscapeActionButton->add( 'height', new CFNumber( 40 ) );
+    $landscapeActionButton->add( 'font', new CFString( 'Lato-Regular' ) );
+    $landscapeActionButton->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['ActionButtonFontSize'] ) ? $hpub_phone['landscape']['ActionButtonFontSize'] : 17  ) );
+    $landscapeActionButton->add( 'backgroundColor', new CFString( isset( $hpub_phone['landscape']['ActionButtonBackgroundColor'] ) ? $hpub_phone['landscape']['ActionButtonBackgroundColor'] : '#A99870'  ) );
+    $landscapeActionButton->add( 'textColor', new CFString( isset( $hpub_phone['landscape']['ActionButtonTextColor'] ) ? $hpub_phone['landscape']['ActionButtonTextColor'] : '#FFFFFF'  ) );
 
-    $phoneIssueLandscape->add( 'archiveButton', $portraitArchiveButton = new CFDictionary() );
-    $portraitArchiveButton->add( 'width', new CFNumber( 40 ) );
-    $portraitArchiveButton->add( 'height', new CFNumber( 40 ) );
-    $portraitArchiveButton->add( 'font', new CFString( 'Lato-Regular' ) );
-    $portraitArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['ArchiveButtonFontSize'] ) ? $hpub_phone['landscape']['ArchiveButtonFontSize'] : 17  ) );
-    $portraitArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_phone['landscape']['ArchiveButtonBackgroundColor'] ) ? $hpub_phone['landscape']['ArchiveButtonBackgroundColor'] : '#A8A8A8'  ) );
-    $portraitArchiveButton->add( 'textColor', new CFString( isset( $hpub_phone['landscape']['ArchiveButtonTextColor'] ) ? $hpub_phone['landscape']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
+    $phoneIssueLandscape->add( 'archiveButton', $landscapeArchiveButton = new CFDictionary() );
+    $landscapeArchiveButton->add( 'width', new CFNumber( 40 ) );
+    $landscapeArchiveButton->add( 'height', new CFNumber( 40 ) );
+    $landscapeArchiveButton->add( 'font', new CFString( 'Lato-Regular' ) );
+    $landscapeArchiveButton->add( 'fontSize', new CFNumber( isset( $hpub_phone['landscape']['ArchiveButtonFontSize'] ) ? $hpub_phone['landscape']['ArchiveButtonFontSize'] : 17  ) );
+    $landscapeArchiveButton->add( 'backgroundColor', new CFString( isset( $hpub_phone['landscape']['ArchiveButtonBackgroundColor'] ) ? $hpub_phone['landscape']['ArchiveButtonBackgroundColor'] : '#A8A8A8'  ) );
+    $landscapeArchiveButton->add( 'textColor', new CFString( isset( $hpub_phone['landscape']['ArchiveButtonTextColor'] ) ? $hpub_phone['landscape']['ArchiveButtonTextColor'] : '#FFFFFF'  ) );
 
-    $phoneIssueLandscape->add( 'cover', $portraitCover = new CFDictionary() );
-    $portraitCover->add( 'backgroundColor', new CFString( isset( $hpub_phone['landscape']['CoverBackgroundColor'] ) ? $hpub_phone['landscape']['CoverBackgroundColor'] : '#FFFFFF'  ) );
-    $portraitCover->add( 'borderColor', new CFString( isset( $hpub_phone['landscape']['BorderColor'] ) ? $hpub_phone['landscape']['BorderColor'] : '#979797'  ) );
-    $portraitCover->add( 'borderSize', new CFNumber( 0 ) );
-    $portraitCover->add( 'shadowOpacity', new CFNumber( 0 ) );
+    $phoneIssueLandscape->add( 'cover', $landscapeCover = new CFDictionary() );
+    $landscapeCover->add( 'backgroundColor', new CFString( isset( $hpub_phone['landscape']['CoverBackgroundColor'] ) ? $hpub_phone['landscape']['CoverBackgroundColor'] : '#FFFFFF'  ) );
+    $landscapeCover->add( 'borderColor', new CFString( isset( $hpub_phone['landscape']['BorderColor'] ) ? $hpub_phone['landscape']['BorderColor'] : '#979797'  ) );
+    $landscapeCover->add( 'borderSize', new CFNumber( 0 ) );
+    $landscapeCover->add( 'shadowOpacity', new CFNumber( 0 ) );
 
     $phoneIssueLandscape->add( 'buttonAlign', new CFString( isset( $hpub_phone['landscape']['buttonAlign'] ) ? $hpub_phone['landscape']['buttonAlign'] : 'left'  ) );
 
@@ -475,12 +476,12 @@ class pressroom_Plist {
     $phoneNavBook->add( 'marginBottom', new CFNumber( 0 ) );
 
     $phonenavigationBarOptions->add( 'shelf', $phoneNavShelf = new CFDictionary() );
-    $phoneNavShelf->add( 'tintColor', new CFString( isset( $hpub_phone['navigationBarOptionShelf']['tintColor'] ) ? $hpub_phone['navigationBarOptionShelf']['tintColor'] : '#A99870'  ) );
+    $phoneNavShelf->add( 'tintColor', new CFString( isset( $hpub_phone['navigationBarOptionShelf']['tintColor'] ) ? $hpub_phone['navigationBarOptionShelf']['tintColor'] : '#FFFFFF'  ) );
     $phoneNavShelf->add( 'titleFontSize', new CFNumber( isset( $hpub_phone['navigationBarOptionShelf']['titleFontSize'] ) ? $hpub_phone['navigationBarOptionShelf']['titleFontSize'] : 16  ) );
     $phoneNavShelf->add( 'titleFont', new CFString( 'Gotham-Book' ) );
-    $phoneNavShelf->add( 'titleColor', new CFString( isset( $hpub_phone['navigationBarOptionShelf']['titleColor'] ) ? $hpub_phone['navigationBarOptionShelf']['titleColor'] : '#A99870'  ) );
-    $phoneNavShelf->add( 'backgroundColor', new CFString( isset( $hpub_phone['navigationBarOptionShelf']['backgroundColor'] ) ? $hpub_phone['navigationBarOptionShelf']['backgroundColor'] : '#FFFFFF'  ) );
-    $phoneNavShelf->add( 'marginBottom', new CFNumber( 0 ) );
+    $phoneNavShelf->add( 'titleColor', new CFString( isset( $hpub_phone['navigationBarOptionShelf']['titleColor'] ) ? $hpub_phone['navigationBarOptionShelf']['titleColor'] : '#FFFFFF'  ) );
+    $phoneNavShelf->add( 'backgroundColor', new CFString( isset( $hpub_phone['navigationBarOptionShelf']['backgroundColor'] ) ? $hpub_phone['navigationBarOptionShelf']['backgroundColor'] : 'clear'  ) );
+    $phoneNavShelf->add( 'marginBottom', new CFNumber( 30 ) );
 
     $phone->add( 'subscriptionViewOptions', $phoneSubscriptionViewOptions = new CFDictionary() );
     $phoneSubscriptionViewOptions->add( 'useNativeControl', new CFBoolean( false ) );

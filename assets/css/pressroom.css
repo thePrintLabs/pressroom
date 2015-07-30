@@ -447,6 +447,11 @@ form#pr-push-form {
 .pressroom-addons-alert .dashicons {
   color: #d54e21;
 }
+.color-check-label {
+  vertical-align: top;
+  display: inline-block;
+  margin: 4px 0 0 10px;
+}
 @media screen and (max-width: 782px) {
   .discount-message {
     width: 100%;

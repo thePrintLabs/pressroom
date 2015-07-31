@@ -197,14 +197,16 @@ class PR_Edition
 	 * Render Wp list table for flatplan
 	 * @void
 	 */
-	public function add_presslist_to_form() {
-		echo '<div class="tabbed flatplan" id="pressroom_metabox">
+	public function add_presslist_to_form ($post ) {
+		if ($post->post_type == PR_EDITION) {
+			echo '<div class="tabbed flatplan" id="pressroom_metabox">
 <div class="inside">';
-		$pr_table = new Pressroom_List_Table();
-		$pr_table->prepare_items();
-		$pr_table->display();
-		echo '</div>
+			$pr_table = new Pressroom_List_Table();
+			$pr_table->prepare_items();
+			$pr_table->display();
+			echo '</div>
 </div>';
+		}
 	}
 
 	/**

@@ -229,7 +229,7 @@ class PR_themes_page {
           'slug'      =>  $theme->info->slug,
           'title'     =>  $theme->info->title,
           'price'     =>  $theme->pricing->amount . '$',
-          'link'      =>  $theme->info->link,
+          'link'      =>  PR_API_URL . 'checkout?edd_action=add_to_cart&download_id=' . $theme->info->id,
           'thumbnail' =>  $theme->info->thumbnail,
           'content'   =>  $theme->info->content,
         );

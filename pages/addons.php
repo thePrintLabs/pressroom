@@ -37,7 +37,7 @@ class PR_addons_page {
     $item_slug = $addon->info->slug;
     $item_name = $addon->info->title;
     $item_price = $addon->pricing->amount . '$';
-    $item_link = $addon->info->link;
+    $item_link = PR_API_URL . 'checkout?edd_action=add_to_cart&download_id=' . $addon->info->id;
 
     $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
     <form method="post" name="' . $item_slug . '">

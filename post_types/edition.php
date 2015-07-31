@@ -200,13 +200,16 @@ class PR_Edition
 	 * @void
 	 */
 	public function add_presslist_to_form() {
-		echo '<div class="tabbed flatplan" id="pressroom_metabox">
-		<div class="inside">';
-		$pr_table = new Pressroom_List_Table();
-		$pr_table->prepare_items();
-		$pr_table->display();
-		echo '</div>
-		</div>';
+		global $pagenow, $post_type;
+		if ( $pagenow == 'post.php' && $post_type == PR_EDITION ) {
+			echo '<div class="tabbed flatplan" id="pressroom_metabox">
+			<div class="inside">';
+			$pr_table = new Pressroom_List_Table();
+			$pr_table->prepare_items();
+			$pr_table->display();
+			echo '</div>
+			</div>';
+		}
 	}
 
 	/**

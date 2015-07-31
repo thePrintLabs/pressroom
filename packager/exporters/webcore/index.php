@@ -28,7 +28,7 @@ final class PR_Packager_Web_Core_Package
 		update_option( 'pr_settings', $settings );
 
     add_action( 'pr_add_eproject_tab', array( $this, 'pr_add_option' ), 10, 2 );
-    add_action( 'pr_add_edition_tab', array( $this, 'pr_add_option' ), 10, 3 );
+    add_action( 'pr_add_edition_exporter_metabox', array( $this, 'pr_add_option' ), 10, 3 );
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );
 
     // packager hooks

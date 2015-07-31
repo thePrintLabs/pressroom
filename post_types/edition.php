@@ -151,9 +151,9 @@ class PR_Edition
 	 * @param object $post
 	 * @echo
 	 */
-	public function add_issue_metabox_callback( $post ) {
+	public function add_issue_metabox_callback( $post, $metabox ) {
 		$issue_metabox = $this->get_issuemeta_metabox( $post );
-		echo $issue_metabox->fields_to_html( false, $metabox->id );
+		echo $issue_metabox->fields_to_html( false, $metabox['id'] );
 	}
 
 	/**

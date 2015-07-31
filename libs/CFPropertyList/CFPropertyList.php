@@ -65,7 +65,7 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator {
    * @var string
    */
   protected $file = null;
-  
+
   /**
    * Detected format of PropertyList
    * @var integer

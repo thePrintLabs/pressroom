@@ -127,7 +127,7 @@ class PR_Edition
 
 		$this->get_exporters_metaboxes( $post );
 		foreach ( $this->_exporters_mb as $metabox ) {
-			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_exporter_metabox_callback' ), PR_EDITION, $metabox->context, $metabox->priority );
+			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_exporter_metabox_callback' ), PR_EDITION, $metabox->context, $metabox->priority, 'advanced', 'default' );
 		}
 	}
 
@@ -139,9 +139,11 @@ class PR_Edition
 	 */
 	public function add_exporter_metabox_callback( $post, $metabox ) {
 		foreach ( $this->_exporters_mb as $exporter_mb ) {
+			echo '<table class="form-table">';
 			if ( $exporter_mb->id == $metabox['id'] ) {
 				echo $exporter_mb->fields_to_html( false, $exporter_mb->id );
 			}
+			echo '</table>';
 		}
 	}
 
@@ -199,12 +201,12 @@ class PR_Edition
 	 */
 	public function add_presslist_to_form() {
 		echo '<div class="tabbed flatplan" id="pressroom_metabox">
-<div class="inside">';
+		<div class="inside">';
 		$pr_table = new Pressroom_List_Table();
 		$pr_table->prepare_items();
 		$pr_table->display();
 		echo '</div>
-</div>';
+		</div>';
 	}
 
 	/**

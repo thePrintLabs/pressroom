@@ -1,5 +1,4 @@
 jQuery(function(){
-
   // color picker init
   jQuery('.pr-color-picker').wpColorPicker();
   if(jQuery(".chosen-select").length)
@@ -68,7 +67,7 @@ jQuery(function(){
     });
 
     jQuery('#pressroom_metabox').removeClass('postbox');
-    jQuery('.tabbed').css('display','none');
+    // jQuery('.tabbed').css('display','none');
     var className = jQuery('.taxonomy-pr_editorial_project .tabbed').first().attr('class');
     if(className) {
       className = className.replace( 'tabbed', '').trim();
@@ -186,16 +185,16 @@ jQuery(function(){
     function checkOverride(element, metabox) {
 
       if(element.is(':checked')) {
-        jQuery( '.'+metabox + ' input').removeAttr('disabled');
-        jQuery( '.'+metabox + ' select').removeAttr('disabled');
-        jQuery( '.'+metabox + ' button').removeAttr('disabled');
-        jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#222');
+        jQuery( '#'+metabox + ' input').removeAttr('disabled');
+        jQuery( '#'+metabox + ' select').removeAttr('disabled');
+        jQuery( '#'+metabox + ' button').removeAttr('disabled');
+        jQuery( '#'+metabox+' h3, .'+metabox+' label').css('color','#222');
       }
       else {
-        jQuery( '.'+metabox+' input').attr('disabled','disabled');
-        jQuery( '.'+metabox+' select').attr('disabled','disabled');
-        jQuery( '.'+metabox + ' button').attr('disabled','disabled');
-        jQuery( '.'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
+        jQuery( '#'+metabox+' input').attr('disabled','disabled');
+        jQuery( '#'+metabox+' select').attr('disabled','disabled');
+        jQuery( '#'+metabox + ' button').attr('disabled','disabled');
+        jQuery( '#'+metabox+' h3, .'+metabox+' label').css('color','#ddd');
         element.removeAttr('disabled');
         element.parent().parent().find('label').css('color','#222');
       }

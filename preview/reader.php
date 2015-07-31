@@ -31,6 +31,7 @@ if ( empty( $linked_posts ) ) {
 }
 
 $terms = wp_get_post_terms( $_GET['edition_id'], PR_EDITORIAL_PROJECT );
+
 if ( empty( $terms ) ) {
   wp_die( __( "<b>There was an error while trying to build the issue preview.</b><p>Suggestions:</p><ul>
   <li>Ensure that there is least one editorial project linked to this edition</li></ul>", 'pressroom' ) );
@@ -39,6 +40,14 @@ if ( empty( $terms ) ) {
 $edition = get_post( $edition_id );
 $edition_name = PR_Utils::sanitize_string( $edition->post_title );
 $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
+
+$intheight = intval($index_height);
+
+if ($intheight > 0) :
+
+  $style_height = 'style="height:'.$intheight.'px;display:none"';
+
+endif;
 ?>
 <!DOCTYPE html>
 <head>
@@ -164,8 +173,25 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
         </div>
       </div>
     </div>
-    <div id="toc" style="height:<?php echo $index_height ?>px;display:none">
-      <iframe width="100%" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DS . "index.html"  ?>"></iframe>
+    <?php 
+
+    if ($intheight > 0) :
+
+    ?>
+    <div id="toc" <?php echo $style_height ?>>
+      <iframe width="100%" height="<?php echo $intheight ?>" frameborder="0" scrolling="no" src="<?php echo PR_PREVIEW_URI . $edition_name . DS . "index.html"  ?>"></iframe>
+    <?php 
+
+    else:
+
+    ?>
+    <div id="toc">
+      <iframe width="100%" id="toc-frame" frameborder="0" src="<?php echo PR_PREVIEW_URI . $edition_name . DS . "index.html"  ?>"></iframe>
+    <?php 
+
+    endif;
+
+    ?>
     </div>
   </div>
 </div>
@@ -173,7 +199,11 @@ $index_height = get_post_meta( $edition->ID, '_pr_index_height', true );
 <script src="<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.min.js"?>"></script>
 <script src="<?php echo PR_ASSETS_URI . "/js/preview/idangerous.swiper.hashnav.min.js"?>"></script>
 <script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.min.js"?>"></script>
+<?php if ($intheight > 0) : ?>
 <script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.toc.js"?>"></script>
+<?php else: ?>
+<script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.toc-full.js"?>"></script>
+<?php endif; ?>
 <script src="<?php echo PR_ASSETS_URI . "/js/preview/pr.reader.ish.min.js"?>"></script>
 </body>
 </html>

@@ -2,9 +2,6 @@
 
 class PR_Edition
 {
-	public $pr_option;
-	public $ck_exporters;
-	protected $_edition_mb = array();
 	protected $_exporters_mb = array();
 
 	/**
@@ -17,8 +14,6 @@ class PR_Edition
 			return;
 		}
 
-		$this->check_exporters();
-
 		add_theme_support( 'post-thumbnails', array( PR_EDITION ) );
 
 		add_action( 'press_flush_rules', array( $this, 'add_edition_post_type' ), 10 );
@@ -30,6 +25,8 @@ class PR_Edition
 		add_action( 'admin_footer', array( $this, 'register_edition_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'remove_default_metaboxes' ) );
 		add_action( 'post_edit_form_tag', array( $this,'form_add_enctype' ) );
+		add_action( 'edit_form_after_title', array( $this,'add_presslist_to_form' ) );
+
 		add_filter( 'admin_post_thumbnail_html', array( $this, 'change_featured_image_html' ) );
 
 		add_action( 'save_post_' . PR_EDITION, array( $this, 'save_edition'), 40 );
@@ -95,29 +92,25 @@ class PR_Edition
 	 */
 	public function get_exporters_metaboxes( $post ) {
 		$metaboxes = array();
-		// Hook to add tab to edition metabox
-		do_action_ref_array( 'pr_add_edition_tab', array( &$metaboxes, $post->ID, true ) );
-		array_push( $this->_exporters_mb, (object)array(
-			'id' 		=> 'flatplan',
-			'title' => __('Flatplan' , 'edition'),
-		) );
-		$this->_exporters_mb = array_merge( $this->_exporters_mb, $metaboxes );
+		// Hook to add metabox to edition
+		do_action_ref_array( 'pr_add_edition_exporter_metabox', array( &$metaboxes, $post->ID, true ) );
+		$this->_exporters_mb = $metaboxes;
 	}
 
 	/**
 	 * Get custom metaboxes configuration
 	 *
 	 * @param object $post
-	 * @void
+	 * @return object
 	 */
-	public function get_edition_metaboxes( $post ) {
-		$metabox = new PR_Metabox( 'edition_metabox', __( 'Issue Meta', 'edition' ), 'side', 'high', $post->ID );
-		$metabox->add_field( '_pr_author', __( 'Author', 'edition' ), __( 'Author', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
-		$metabox->add_field( '_pr_creator', __( 'Creator', 'edition' ), __( 'Creator', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
-		$metabox->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), __( 'Publisher', 'edition' ), 'text', get_bloginfo( 'name' ), array( "required" => true ) );
-		$metabox->add_field( '_pr_date', __( 'Publication date', 'edition' ), __( 'Publication date', 'edition' ), 'date', date('Y-m-d') );
-		$metabox->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), __( 'Select a theme', 'edition' ), 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
-		array_push( $this->_edition_mb, $metabox );
+	public function get_issuemeta_metabox( $post ) {
+		$issue_metabox = new PR_Metabox( 'issue_metabox', __( 'Issue Meta', 'edition' ), 'side', 'high', $post->ID );
+		$issue_metabox->add_field( '_pr_author', __( 'Author', 'edition' ), '', 'text', get_bloginfo( 'name' ), array( "required" => true ) );
+		$issue_metabox->add_field( '_pr_creator', __( 'Creator', 'edition' ), '', 'text', get_bloginfo( 'name' ), array( "required" => true ) );
+		$issue_metabox->add_field( '_pr_publisher', __( 'Publisher', 'edition' ), '', 'text', get_bloginfo( 'name' ), array( "required" => true ) );
+		$issue_metabox->add_field( '_pr_date', __( 'Publication date', 'edition' ), '', 'date', date('Y-m-d') );
+		$issue_metabox->add_field( '_pr_theme_select', __( 'Edition theme', 'edition' ), '', 'select', '', array( 'options' => PR_Theme::get_themes_list() ) );
+		return $issue_metabox;
 	}
 
 	/**
@@ -128,8 +121,14 @@ class PR_Edition
 	 * @void
 	 */
 	public function add_custom_metaboxes( $post_type, $post ) {
-		add_meta_box( 'pressroom_metabox', __( 'Pressroom', 'edition' ), array($this, 'add_exporter_metabox_callback'), PR_EDITION, 'advanced', 'high');
-		add_meta_box( 'pressroom_side_metabox', __( 'Issue meta', 'edition' ), array($this, 'add_custom_metabox_callback'), PR_EDITION, 'side', 'high');
+		add_meta_box( 'pressroom_issue_metabox', __( 'Issue meta', 'edition' ), array( $this, 'add_issue_metabox_callback' ), PR_EDITION, 'side', 'default' );
+		add_meta_box( 'pressroom_distribution_metabox', __( 'PressRoom', 'edition' ), array( $this, 'add_distribution_metabox_callback' ), PR_EDITION, 'side', 'default' );
+		add_meta_box('postexcerpt', __('Description'), 'post_excerpt_meta_box', PR_EDITION, 'normal', 'high');
+
+		$this->get_exporters_metaboxes( $post );
+		foreach ( $this->_exporters_mb as $metabox ) {
+			add_meta_box( $metabox->id, $metabox->title, array( $this, 'add_exporter_metabox_callback' ), PR_EDITION, $metabox->context, $metabox->priority );
+		}
 	}
 
 	/**
@@ -138,48 +137,74 @@ class PR_Edition
 	 * @param object $post
 	 * @echo
 	 */
-	public function add_exporter_metabox_callback( $post ) {
-		$this->get_exporters_metaboxes( $post );
-		echo '<input type="hidden" name="pr_edition_nonce" value="' . wp_create_nonce('pr_edition_nonce'). '" />
-		<div class="press-header postbox">
-		<div class="press-container">
-		<i class="press-pr-logo-gray-wp"></i>
-		<div class="press-header-right">';
-		$this->add_publication_action( $post->ID );
-		echo '</div>
-		</div>
-		<hr/>
-		<h2 class="nav-tab-wrapper pr-tab-wrapper">';
-		foreach ( $this->_exporters_mb as $i => $metabox ) {
-			echo '<a class="nav-tab ' . ( !$i ? 'nav-tab-active' : '' ) . '" data-tab="'.$metabox->id.'" href="#">' . $metabox->title . '</a>';
-		}
-		echo '</h2>
-		</div>
-		<table class="form-table">';
-		foreach ( $this->_exporters_mb as $metabox ) {
-			if ( $metabox->id != 'flatplan' ) {
-				echo $metabox->fields_to_html( false, $metabox->id );
+	public function add_exporter_metabox_callback( $post, $metabox ) {
+		foreach ( $this->_exporters_mb as $exporter_mb ) {
+			if ( $exporter_mb->id == $metabox['id'] ) {
+				echo $exporter_mb->fields_to_html( false, $exporter_mb->id );
 			}
 		}
-
-		echo '</table>
-		<div class="tabbed flatplan">';
-		// render Wp list table for flatplan
-		$this->add_presslist();
-		echo '</div>';
 	}
 
 	/**
-	 * Custom side metabox callback print html input field
+	 * Custom issue meta metabox callback print html input field
 	 *
 	 * @param object $post
 	 * @echo
 	 */
-	public function add_custom_metabox_callback( $post ) {
-		$this->get_edition_metaboxes( $post );
-		foreach ( $this->_edition_mb as $metabox ) {
-			echo $metabox->fields_to_html( false, $metabox->id );
+	public function add_issue_metabox_callback( $post ) {
+		$issue_metabox = $this->get_issuemeta_metabox( $post );
+		echo $issue_metabox->fields_to_html( false, $metabox->id );
+	}
+
+	/**
+	 * Custom distribution metabox callback
+	 *
+	 * @param object $post
+	 * @echo
+	 */
+	public function add_distribution_metabox_callback( $post ) {
+		$pr_settings = get_option( 'pr_settings' );
+		$packager_type = get_post_meta( $post->ID, '_pr_packager_type', true );
+
+		echo '<div class="submitbox" id="submitpost">
+<div id="minor-publishing">
+<div id="misc-publishing-actions">
+<div class="misc-pub-section">
+<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>
+<select id="pr_packager_type" name="pr_packager_type">';
+		foreach( $pr_settings['pr_enabled_exporters'] as $key => $exporter ) {
+			if ( isset( $exporter['active'] ) && $exporter['active'] ) {
+				echo '<option ' . ( $packager_type == $key ? 'selected="selected"' : '' ) . ' value="' . $key . '">' . $exporter['name'] . '</option>';
+			}
 		}
+		echo '</select>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div id="major-publishing-actions">
+<div id="publishing-action">
+<input type="hidden" value="' . PR_CORE_URI . '" id="pr_core_uri">
+<input type="hidden" name="pr_edition_nonce" value="' . wp_create_nonce('pr_edition_nonce'). '" />
+<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a>
+</div>
+<div class="clear"></div>
+</div>
+</div>';
+	}
+
+	/**
+	 * Render Wp list table for flatplan
+	 * @void
+	 */
+	public function add_presslist_to_form() {
+		echo '<div class="tabbed flatplan" id="pressroom_metabox">
+<div class="inside">';
+		$pr_table = new Pressroom_List_Table();
+		$pr_table->prepare_items();
+		$pr_table->display();
+		echo '</div>
+</div>';
 	}
 
 	/**
@@ -206,50 +231,12 @@ class PR_Edition
 	}
 
 	/**
-	* Pressroom metabox callback
-	* Render Wp list table
-	*
-	* @return void
-	*/
-	public function add_presslist() {
-
-		$pr_table = new Pressroom_List_Table();
-		$pr_table->prepare_items();
-		$pr_table->display();
-	}
-
-
-	/**
-	* Publication metabox callback
-	* Render publication buttons
-	*
-	* @param int $post_id
-	* @echo
-	*/
-	public function add_publication_action( $post_id ) {
-		if ( $this->ck_exporters ) {
-			$packager_type = get_post_meta( $post_id, '_pr_packager_type', true );
-			echo '<a id="preview_edition" target="_blank" href="#" class="button preview button">' . __( "Preview", "edition" ) . '</a>';
-			echo '<select id="pr_packager_type" name="pr_packager_type">';
-			foreach( $this->pr_options['pr_enabled_exporters'] as $key => $exporter ) {
-				if ( isset( $exporter['active'] ) && $exporter['active'] ) {
-					echo '<option '. ( $packager_type == $key ? 'selected="selected"' : '' ) .' value="'.$key.'">'.$exporter['name'].'</option>';
-				}
-			}
-			echo '</select>';
-			echo '<a id="publish_edition" target="_blank" href="#" class="button button-primary button-large">' . __( "Distribute", "edition" ) . '</a> ';
-			echo '<input type="hidden" value="'. PR_CORE_URI .'" id="pr_core_uri">';
-		}
-	}
-
-	/**
 	 * Save metabox form data
 	 *
 	 * @param  int $post_id
 	 * @void
 	 */
 	public function save_edition( $post_id ) {
-
 		$post = get_post($post_id);
 		if ( !$post || $post->post_type != PR_EDITION ) {
 			return;
@@ -278,10 +265,8 @@ class PR_Edition
 			}
 		}
 
-		$this->get_edition_metaboxes( $post );
-		foreach ($this->_edition_mb as $metabox ) {
-			$metabox->save_values();
-		}
+		$issue_metabox = $this->get_issuemeta_metabox( $post );
+		$issue_metabox->save_values();
 
 		$pr_packager_type = isset( $_POST['pr_packager_type'] ) ? $_POST['pr_packager_type'] : false;
 		if( $pr_packager_type ) {
@@ -309,7 +294,6 @@ class PR_Edition
 	 * @void
 	 */
 	public function sanitize_linked_posts( $edition ) {
-
 		$linked_posts = self::get_linked_posts( $edition );
 
 		$old_order = 1;
@@ -330,7 +314,6 @@ class PR_Edition
 
 				if ( $current_theme ) {
 					$themes = PR_Theme::get_themes();
-					// $default_template = $current_theme . DS . $themes[$current_theme]['layouts'][0]['path'];
 					p2p_update_meta( $post->p2p_id, 'template', '');
 				}
 			}
@@ -344,7 +327,6 @@ class PR_Edition
 	 * @return array $out or boolean
 	 */
 	public function check_posts_templates( $edition ) {
-
 		$linked_posts = self::get_linked_posts( $edition );
 
 		$out = array();
@@ -374,7 +356,6 @@ class PR_Edition
 	 * @void
 	 */
 	public function publishing_render_console() {
-
 		$packager = new PR_Packager();
 		$pl_url = plugins_url( 'assets', __DIR__ );
 		echo '<!DOCTYPE html>
@@ -412,7 +393,6 @@ class PR_Edition
 	* @void
 	*/
 	public function pr_preview() {
-
 		require PR_PREVIEW_PATH . "reader.php";
 	}
 
@@ -422,9 +402,7 @@ class PR_Edition
 	 * @echo
 	 */
 	public function ajax_publishing_callback() {
-
 		$post = get_post( $_POST['edition_id'] );
-
 		if ( !$post || $post->post_type != PR_EDITION ) {
 			return;
 		}
@@ -436,13 +414,10 @@ class PR_Edition
 			}
 		}
 
-		$this->get_edition_metaboxes( $post );
-		foreach ( $this->_edition_mb as $metabox ) {
-			$metabox->save_values();
-		}
+		$issue_metabox = $this->get_issuemeta_metabox( $post );
+		$issue_metabox->save_values();
 
 		$missing_templates = $this->check_posts_templates( $post );
-
 		if ( is_array( $missing_templates ) ) {
 			wp_send_json_error( array( 'missing'=> $missing_templates ) );
 		}
@@ -454,7 +429,6 @@ class PR_Edition
 		if( $pr_packager_type ) {
 			update_post_meta( $post->ID, '_pr_packager_type', $pr_packager_type );
 		}
-
 		wp_send_json_success();
 	}
 
@@ -467,8 +441,7 @@ class PR_Edition
 		remove_meta_box( 'commentstatusdiv', PR_EDITION, 'normal' ); // Comments Status Metabox
 		remove_meta_box( 'commentsdiv', PR_EDITION, 'normal' ); // Comments Metabox
 		remove_meta_box( 'postcustom', PR_EDITION, 'normal' ); // Custom Fields Metabox
-		// remove_meta_box( 'postexcerpt', PR_EDITION, 'normal' ); // Excerpt Metabox
-		// remove_meta_box( 'revisionsdiv', PR_EDITION, 'normal' ); // Revisions Metabox
+		remove_meta_box( 'postexcerpt', PR_EDITION, 'normal' ); // Excerpt Metabox
 		remove_meta_box( 'slugdiv', PR_EDITION, 'normal' ); // Slug Metabox
 		remove_meta_box( 'trackbacksdiv', PR_EDITION, 'normal' ); // Trackback Metabox
 		remove_meta_box( 'categorydiv', PR_EDITION, 'normal' ); // Categories Metabox
@@ -480,10 +453,8 @@ class PR_Edition
 	 * @void
 	 */
 	public function register_edition_scripts() {
-
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-
 		wp_register_script( 'edition', PR_ASSETS_URI . '/js/pr.edition.js', array( 'jquery' ), '1.0', true );
 		wp_enqueue_script( 'edition' );
 
@@ -499,7 +470,6 @@ class PR_Edition
 	 * @echo
 	 */
 	public function form_add_enctype() {
-
 		echo ' enctype="multipart/form-data"';
 	}
 
@@ -633,22 +603,5 @@ class PR_Edition
 			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
 		}
 		return $edition_bundle_id;
-	}
-
-	/**
-	 * Enabled exporters check
-	 *
-	 * @return bool
-	 */
-	public function check_exporters() {
-		$this->pr_options = get_option( 'pr_settings' );
-		$this->ck_exporters = false;
-		if( isset( $this->pr_options['pr_enabled_exporters'] ) ) {
-			foreach( $this->pr_options['pr_enabled_exporters'] as $exporter ) {
-				$this->ck_exporters = true;
-				return true;
-			}
-		}
-		return false;
 	}
 }

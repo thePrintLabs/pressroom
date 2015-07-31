@@ -1,11 +1,9 @@
 (function($) {
   $("#publish_edition").click(function(e) {
     e.preventDefault();
-
     var edition_id = $('#post_ID').val();
     var packager_type = $("#pr_packager_type option:selected").val();
     var url = ajaxurl + '?action=render_console&edition_id=' + edition_id + '&pr_no_theme=true&packager_type='+packager_type;
-
     validateTemplates(url, edition_id);
 
   });

@@ -180,6 +180,11 @@
 #pressroom_metabox .wp-list-table tr:hover {cursor: move}
 .number_element_input {margin-right: 5px;}
 
+#pressroom_distribution_metabox .inside{
+  margin:0;
+  padding:0;
+}
+
 /****************************/
 /*        FTP_SFTP          */
 /****************************/

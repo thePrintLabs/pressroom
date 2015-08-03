@@ -317,7 +317,7 @@ class PR_Theme
 						$product = self::get_remote_themes( $product_id );
 						if( $product ) {
 							$discount->products[] = '<a href="'.$product[0]->info->link.'">' . $product[0]->info->title . ' </a>';
-						}						
+						}
 					}
 				}
 

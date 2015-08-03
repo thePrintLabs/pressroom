@@ -47,8 +47,6 @@ define( "PR_SHELF_URI", PR_UPLOAD_URI . 'shelf/' );
 define( "PR_THEMES_PATH", trailingslashit( PR_UPLOAD_PATH . 'themes' ) );
 
 define( "PR_THEME_URI", PR_UPLOAD_URI . 'themes/' );
-define( "PR_STARTERR_THEME", 'starterr' );
-define( "PR_STARTERR_ZIP", 'starterr.zip' );
 
 // @TODO change on production
 define( "PR_API_URL", 'http://press-room.io/' );

@@ -19,6 +19,7 @@ class PR_Edition
 		add_action( 'press_flush_rules', array( $this, 'add_edition_post_type' ), 10 );
 		add_action( 'init', array( $this, 'add_edition_post_type' ), 10 );
 		add_action( 'init', array( 'PR_Theme', 'search_themes' ), 20 );
+		add_action( 'admin_notices', array( $this, 'edition_notices' ) );
 
 		add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 30, 2 );
 		add_action( 'do_meta_boxes', array( $this, 'change_featured_image_box' ) );
@@ -607,5 +608,19 @@ class PR_Edition
 			$edition_bundle_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_single_edition_prefix']. '.' . $product_id;
 		}
 		return $edition_bundle_id;
+	}
+
+	/**
+	 *
+	 *
+	 */
+	public function edition_notices() {
+		global $post_type;
+		if ( $post_type == PR_EDITION ) {
+			$themes = PR_Theme::get_themes();
+			if ( empty( $themes ) ) {
+				echo '<div class="pr-alert update-nag">' . __( sprintf( 'Please activate a theme to start using PressRoom. You can upload a custom theme, or get new ones from the %s', '<a href="' . admin_url( 'admin.php?page=pressroom-themes' ) . '">theme settings page</a>' ), 'edition' ) . '</div>';
+			}
+		}
 	}
 }

@@ -305,6 +305,7 @@ class PR_Theme
     $response = wp_remote_get( add_query_arg( $api_params, PR_API_EDD_URL . 'discounts' ), array( 'timeout' => 15, 'sslverify' => false ) );
     $response = json_decode( wp_remote_retrieve_body( $response ) );
 		$discount_codes = array();
+
 		if( $response && isset( $response->discounts ) ) {
 			foreach( $response->discounts as $discount ) {
 				$name = explode( '::', $discount->name );

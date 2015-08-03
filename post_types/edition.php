@@ -139,11 +139,11 @@ class PR_Edition
 	 */
 	public function add_exporter_metabox_callback( $post, $metabox ) {
 		foreach ( $this->_exporters_mb as $exporter_mb ) {
-			echo '<table class="form-table">';
 			if ( $exporter_mb->id == $metabox['id'] ) {
+				echo '<table class="form-table">';
 				echo $exporter_mb->fields_to_html( false, $exporter_mb->id );
+				echo '</table>';
 			}
-			echo '</table>';
 		}
 	}
 

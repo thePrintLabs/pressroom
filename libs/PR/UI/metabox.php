@@ -364,7 +364,7 @@ class PR_Metabox
           break;
 
         case 'date':
-          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" />
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:100%" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
 

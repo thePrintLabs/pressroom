@@ -39,6 +39,7 @@ class PR_themes_page {
     $item_name  = isset( $theme['title'] ) ? $theme['title'] : false;
     $item_price = isset( $theme['price'] ) ? $theme['price'] . '$' : false;
     $item_link  = isset( $theme['link'] ) ? $theme['link'] : false;
+    
     $item_thumbnail  = isset( $theme['thumbnail'] ) ? $theme['thumbnail'] : false;
     $item_content  = isset( $theme['content'] ) ? $theme['content'] : false;
 

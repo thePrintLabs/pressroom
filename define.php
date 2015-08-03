@@ -51,7 +51,7 @@ define( "PR_STARTERR_THEME", 'starterr' );
 define( "PR_STARTERR_ZIP", 'starterr.zip' );
 
 // @TODO change on production
-define( "PR_API_URL", 'http://test.press-room.io/' );
+define( "PR_API_URL", 'http://press-room.io/' );
 define( "PR_API_EDD_URL", PR_API_URL . 'edd-api/' );
 /* Packager */
 define( "PR_EDITION_MEDIA", 'gfx/' );

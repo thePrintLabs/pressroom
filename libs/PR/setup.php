@@ -28,9 +28,6 @@ class PR_Setup
     if ( !self::_setup_filesystem() ) {
       array_push( $errors, __( "Error creating required directory: <b>&quot;" . PR_ROOT . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
     }
-    if ( !self::_setup_starterr_theme() ) {
-      array_push( $errors, __( "Error creating starterr theme in directory: <b>&quot;" . PR_ROOT . "api/&quot;</b> or <b>&quot;" . PR_UPLOAD_PATH . "api/&quot;</b>. Check your write files permissions.", 'pressroom_setup' ) );
-    }
 
     PR_Cron::setup();
 
@@ -172,43 +169,8 @@ class PR_Setup
     $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'web' );
     $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'shelf' );
     $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'themes' );
-    $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'settings' );    
+    $upload_dir = $upload_dir && PR_Utils::make_dir( PR_UPLOAD_PATH, 'settings' );
 
     return !$api_dir && !$upload_dir ? false : true;
-  }
-
-  /**
-   * Unzip starterr theme to Pressroom upload is_dir
-   *
-   * @return boolean
-   */
-  private static function _setup_starterr_theme() {
-
-    $file_path = PR_ROOT . PR_STARTERR_ZIP;
-
-    if ( file_exists( $file_path ) ) {
-      $zip = new ZipArchive;
-      if ( $zip->open( $file_path ) ) {
-
-        // if a starterr theme exist yet, NOT override
-        if( is_dir( PR_THEMES_PATH . PR_STARTERR_THEME ) ) {
-          unlink( $file_path );
-          return true;
-        }
-
-        //extract and delete the zip file
-        if ( $zip->extractTo( PR_THEMES_PATH ) ) {
-          delete_option( 'pressroom_themes' );
-          unlink( $file_path );
-          return true;
-        }
-        else {
-          return false;
-        }
-        $zip->close();
-      }
-    }
-
-    return true;
   }
 }

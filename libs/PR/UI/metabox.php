@@ -252,7 +252,7 @@ class PR_Metabox
    *
    * @return string html field
    */
-  public function fields_to_html( $term = false, $class = false ) {
+  public function fields_to_html( $term = false, $class = '', $render_type = 'table' ) {
 
     $html = '';
     $img_add = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAOElEQVRIx2NgGAWjYCAAP60tqBi1YPhY4AjEGVjwehzisuQkRwksuAWHONtoJA8fCxJHi+NRgAIACRMLT1NmIO8AAAAASUVORK5CYIIbd6c9de163cea60b462a8c6cd83a93e7"/>';
@@ -277,32 +277,28 @@ class PR_Metabox
         $meta_value = esc_attr( $meta_value );
       }
 
-      $html.= '<tr ' . ( $class ? 'class="tabbed ' . $class.'"' : "") . '>
-      <th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '') . '><label for="' . $field['id'] . '">' . $field['name'] . '</label></th>
-      <td>';
+      $html.= $render_type == 'table' ? '<tr ' : '<div ';
+      $html.= 'class="' . $class . '">';
+      $html.= $render_type == 'table' ? '<th ' . ( $field['type'] == 'textnode' ? 'colspan="2"' : '' ) . '>' : ' ';
+      $html.= '<label for="' . $field['id'] . '">' . $field['name'] . '</label>';
+      $html.= $render_type == 'table' ? '</th><td>' : '<br>';
       switch ( $field['type'] ) {
-
         case 'text':
           $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" '.( isset( $field['required'] ) ? 'required="'.$field["required"].'"' : '') .' /><p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'password':
           $html.= '<input type="password" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'double_text':
           $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '[0]" id="' . $field['id'] . '_0" value="' . ( $meta_value ? $meta_value[0] : $field['default'] ) . '" size="20" style="width:94%" />';
           $html.= '<input type="text" placeholder="'.( isset( $field['placeholder'] ) ? $field['placeholder'] : '') .'" name="' . $field['id'] . '[1]" id="' . $field['id'] . '_1" value="' . ( $meta_value ? $meta_value[1] : $field['default'] ) . '" size="20" style="width:5%" /><p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'text_autocompleted':
           $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . ( $meta_value ? $meta_value : $field['default'] ) . '" size="20" style="width:100%" /><div class="pr_autocompleted"></div>';
           break;
-
         case 'textarea':
           $html.= '<textarea name="' . $field['id'] . '" id="' . $field['id'] . '" cols="60" rows="4" style="width:97%">' . ( $meta_value ? $meta_value : $field['default'] ) . '</textarea><p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'select':
           $html.= '<select name="' . $field['id'] . '" id="' . $field['id'] . '">';
           foreach ( $field['options'] as $option ) {
@@ -310,7 +306,6 @@ class PR_Metabox
           }
           $html.= '</select><p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'select_multiple':
           $html.= '<select multiple name="' . $field['id'] . '[]" id="' . $field['id'] . '" class="chosen-select" style="width:100%;">';
           foreach ( $field['options'] as $key => $group ) {
@@ -322,7 +317,6 @@ class PR_Metabox
           }
           $html.= '</select>';
           break;
-
         case 'radio':
           foreach ( $field['options'] as $i => $option ) {
             $checked = ( ( $meta_value && $meta_value == $option['value'] ) || ( !$i && !$meta_value ) );
@@ -331,18 +325,15 @@ class PR_Metabox
           }
           $html.= '<p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'checkbox':
           $html.= '<input type="checkbox" name="' . $field['id'] . '" id="' . $field['id'] . '" ' . ( $meta_value ? 'checked="checked"' : '' ) . ' /><p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'checkbox_list':
           foreach ( $field['options'] as $i => $option ) {
             $html.= '<input type="checkbox" name="' . $field['id'] . '[]" id="' . $field['id'] . '_' . $i . '" value="'. $option['value'] .'" '. ( !empty( $meta_value ) && in_array( $option['value'], $meta_value ) ? 'checked="checked"' : '' ) . ' />
             <label for="' . $field['id'] . '_' . $i . '">'. $option['text'] . '</label><br/>';
           }
           break;
-
         case 'file':
           $html.= '<input type="file" name="' . $field['id'] . '" id="' . $field['id'] . '" /><br>';
           if ( $meta_value ) {
@@ -362,35 +353,28 @@ class PR_Metabox
           }
           $html.= '<p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'date':
           $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" size="30" style="width:30%" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'color':
           $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="pr-color-picker" data-default-color="#ffffff" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'number':
           $html.= '<input type="number" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( !is_null( $meta_value ) ? $meta_value : $field['default'] ) . '" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'decimal':
           $html.= '<input type="number" min="0" max="1" step="0.1" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( !is_null( $meta_value ) ? $meta_value : $field['default'] ) . '" />
           <p class="description">'. $field['desc'] . '</p>';
           break;
-
         case 'textnode':
             $html.= $field['desc'];
           break;
-
         case 'custom_html':
           $html.= $field['desc'];
           break;
-
         case 'repeater':
           $i = 0;
           $values = array('');
@@ -408,7 +392,6 @@ class PR_Metabox
             $i++;
           }
           break;
-
         case 'repeater_with_radio':
           $i = 0;
           $radio_values = array();
@@ -441,9 +424,8 @@ class PR_Metabox
           }
           break;
       }
-      $html.= '</td></tr>';
+      $html.= $render_type == 'table' ? '</td></tr>' : '</div>';
     }
-
     return $html;
   }
 

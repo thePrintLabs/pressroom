@@ -50,7 +50,7 @@ define( "PR_THEMES_PATH", trailingslashit( PR_UPLOAD_PATH . 'themes' ) );
 define( "PR_THEME_URI", PR_UPLOAD_URI . 'themes/' );
 
 // @TODO change on production
-define( "PR_API_URL", 'http://test.press-room.io/' );
+define( "PR_API_URL", 'http://press-room.io/' );
 define( "PR_API_EDD_URL", PR_API_URL . 'edd-api/' );
 /* Packager */
 define( "PR_EDITION_MEDIA", 'gfx/' );

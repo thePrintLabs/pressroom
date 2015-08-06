@@ -101,7 +101,7 @@ class PR_addons_page {
     $item_id = $addon['itemid'];
     $item_slug = $addon['slug'];
     $item_name = $addon['name'];
-    $item_thumbnail = plugins_url( $addon['dir'] ) . '/thumb.jpg';
+    $item_thumbnail = plugins_url( $addon['dir'] ) . '/thumb.png';
 
     $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
     <form method="post" name="' . $item_slug . '">

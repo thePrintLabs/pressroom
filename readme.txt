@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: theprintlabs
-Donate link: http://example.com/
+Donate link: 
 Tags: editorial, journalism, newspaper, magazine, mag, publishing, ios, long-form, collection, static, static generator, edition, export, content management, Baker, Baker framework
 Requires at least: 3.7.0 or higher
 Tested up to: 4.2.4

@@ -1,36 +1,57 @@
 === Plugin Name ===
 Contributors: theprintlabs
-Tags: digital publishing, ios, hpub, newsstand, baker, baker framework
-Requires at least: 3.8
-Tested up to: 4.2.3
+Donate link: http://example.com/
+Tags: editorial, journalism, newspaper, magazine, mag, publishing, ios, long-form, collection, static, static generator, edition, export, content management
+Requires at least: 3.7.0 or higher
+Tested up to: 4.2.4
 Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-PressRoom let's you collect content from WordPress and publish on multiple channels at once, including Baker Framework HPUB and static Web files
+Turns WordPress into a multiple channel publishing platform.
 
 == Description ==
 
-PressRoom is designed to let publishers focus on their editorial projects and business models. Build HTML based editions and distribute them to iOS Apps or Static Web Sites.
+PressRoom supports the sub-compact publishing model. Content is structured around the concept of Editorial Projects. An Editorial Project contains an unlimited number of Editions, which in turn are collections of posts, pages and custom post types.
 
-Join the community at http://discourse.press-room.io or head over to the PressRoom PRO https://press-room.io version that includes business models such as iTunes In-App purchases, Advertisement packages and Custom HTML for art directed pages.
+Editions can be published to:
 
-#Editorial projects
-PressRoom manages an unlimited number of editorial projects that can be published to several channels at once. Each Editorial Project can have an unlimited number of issues. iTunes in-App purchases for single issues and subscriptions are handled by **PressRoom PRO.**
+- Web as static html
+- iOS, feeding a native client based on the open source Baker Framework
+- be packaged for the Adobe DPS HTML importer (*)
+- published as a Json stream (*)
 
-###Multiple Issues
-PressRoom manages collections of data (articles, pages, custom post types (PRO only), media, advertising packages (PRO only) and build packages as static files (hpub, html). Publishers can finally go back to focusing on content and experimenting with new editorial products. Readers will enjoy a beautiful reading experience, anywhere and on any device.
-###Simple & Powerful
-Professional themes are available with PressRoom PRO, beautifully crafted for the reading experience on every screen size. Easly design your own themes with the Wordpress Api. Real-Time preview your content and design while you work at any screen size with the built-in in-context previewer.
-###Any kind of content
-Structured content and template based layouts aren't the only way to output your content. Everything is flexible and fully customizable. **Art directed pages, Advertisement or Custom mobile commerce pages** can be published using the Custom HTML object or creating new ones. Take advantage of the next-generation responsive web design tools like Tumult Hype, WebFlow, Macaw and Adobe Edge Reflow to create your Art-directed pages or Advertising. Or just code them free.
-###Delighftul App experiences
-You can connect PressRoom with Baker Client to publish on a native iOS App using the HPUB file format. PressRoom creates the HPUB files as well as the required shelf.json endpoint.
+Suitable for books, magazines, newspapers or just to manage your static websites and release your blog to multiple channels. PressRoom is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
+
+(*) not yet ready for public distribution.
 
 == Installation ==
 
-1. Download the package
-2. Unzip and rename the folder to "pressroom"
-3. Extract or upload it to your /wp-content/plugins/ directory, then activate
-4. Set permalinks to /%postname%/
-5. Download a theme from themes page
+1. Extract or upload 'pressroom to your /wp-content/plugins/ directory, then activate
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Set permalinks to /%postname%/
+
+== Documentation ==
+
+https://docs.press-room.io/
+
+== Bug Submission and Support ==
+
+https://github.com/thePrintLabs/pressroom
+
+== Frequently Asked Questions ==
+
+
+== Screenshots ==
+
+1. Add a new Issue.
+2. Write a New Post and add it to an Issue
+3. Issue Editing
+4. Issue Preview
+5. Issue Packaging and Distribution
+6. PressRoom Themes
+7. Editorial Projects
+8. Editing an Editorial Project
+9. PressRoom Addons
+
+== Changelog ==

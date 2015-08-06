@@ -40,7 +40,7 @@ https://docs.press-room.io/
 https://github.com/thePrintLabs/pressroom
 
 == Frequently Asked Questions ==
-
+.
 
 == Screenshots ==
 
@@ -55,3 +55,4 @@ https://github.com/thePrintLabs/pressroom
 9. PressRoom Addons
 
 == Changelog ==
+.

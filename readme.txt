@@ -21,7 +21,7 @@ Editions can be published to:
 - be packaged for the Adobe DPS HTML importer (*)
 - published as a Json stream (*)
 
-Suitable for books, magazines, newspapers or just to manage your static websites and release your blog to multiple channels. PressRoom is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
+Suitable for magazines, newspapers or just to manage your static websites and release your blog to multiple channels. PressRoom is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
 
 (*) not yet ready for public distribution.
 

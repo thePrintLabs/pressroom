@@ -1,22 +1,26 @@
 <?php
-/*
-Plugin Name: Pressroom
-Plugin URI: http://press-room.io/
-Description: PressRoom turns Wordpress into a multi channel publishing environment.
-Version: 1.2
-Author: thePrintLabs Ltd
-Author URI: http://theprintlabs.com
-License: GPLv2
-
-    _____                                               _____
-   |  __ \                                             |  __ \
-   | |__) | __ ___  ___ ___ _ __ ___   ___  _ __ ___   | |__) | __ ___
-   |  ___/ '__/ _ \/ __/ __| '__/ _ \ / _ \| '_ ` _ \  |  ___/ '__/ _ \
-   | |   | | |  __/\__ \__ \ | | (_) | (_) | | | | | | | |   | | | (_) |
-   |_|   |_|  \___||___/___/_|  \___/ \___/|_| |_| |_| |_|   |_|  \___/
-
-  Copyright © 2014 - 2015 - thePrintLabs Ltd.
-*/
+/**
+ *
+ * @package   pressroom
+ * @author    thePrintLabs Ltd <info@theprintlabs.com>
+ * @license   GPL-2.0+
+ * @link      http://press-room.io
+ * @copyright 2014 thePrintLabs Ltd
+ *
+ * @wordpress-plugin
+ * Plugin Name:       pressroom
+ * Plugin URI:        http://press-room.io
+ * Description:       PressRoom turns Wordpress into a multi channel publishing environment
+ * Version:           1.2.1
+ * Author:            theprintlabs
+ * Author URI:        http://theprintlabs.com
+ * Text Domain:       pressroom
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * GitHub Plugin URI: https://github.com/thePrintLabs/pressroom
+ */
+?>
+<?php
 
 if (!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 

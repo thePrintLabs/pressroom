@@ -85,7 +85,7 @@ class PR_Addons
 		if( $response && isset( $response->discounts ) ) {
 			foreach( $response->discounts as $discount ) {
 				$name = explode( '::', $discount->name );
-				$category = trim( $name[1] );
+				$category = trim( isset( $name[1] ) ? $name[1] : '' );
 				if( $discount->status == 'active' && $category == 'addons' ) {
 					$discount->name = $name[0];
 					$products = $discount->product_requirements;

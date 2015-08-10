@@ -23,7 +23,7 @@ Temporary Items
 ### PressRoom ###
 /api
 
-### Assets & Build ###
+### Assets Build ###
 node_modules
 assets/css/main.min.css.map
 .sass-cache

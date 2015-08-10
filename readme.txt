@@ -1,10 +1,10 @@
 === Plugin Name ===
 Contributors: theprintlabs
-Donate link: http://example.com/
+Donate link: 
 Tags: editorial, journalism, newspaper, magazine, mag, publishing, ios, long-form, collection, static, static generator, edition, export, content management, Baker, Baker framework
 Requires at least: 3.7.0 or higher
 Tested up to: 4.2.4
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ Editions can be published to:
 - be packaged for the Adobe DPS HTML importer (*)
 - published as a Json stream (*)
 
-Suitable for books, magazines, newspapers or just to manage your static websites and release your blog to multiple channels. PressRoom is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
+Suitable for magazines, newspapers or just to manage your static websites and release your blog to multiple channels. PressRoom is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
 
 (*) not yet ready for public distribution.
 
@@ -55,4 +55,6 @@ https://github.com/thePrintLabs/pressroom
 9. PressRoom Addons
 
 == Changelog ==
-.
+
+= 1.2.1 =
+* fix: plugin header error

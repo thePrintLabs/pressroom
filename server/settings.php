@@ -30,6 +30,7 @@ class pressroom_Plist {
     $dict->add( 'newsstandLatestIssueCover', new CFBoolean( true ) );
     $dict->add( 'newsstandManifestUrl', new CFString( site_url() . DS . "pressroom-api/shelf/{$eproject_slug}" ) );
     $dict->add( 'purchaseConfirmationUrl', new CFString( site_url() . DS . "pressroom-api/purchaseConfirmationUrl/:app_id/:user_id/{$eproject_slug}" ) );
+    $dict->add( 'checkoutUrl', new CFString( site_url() . DS . "pressroom-api/pressroom_checkout/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'purchasesUrl', new CFString( site_url() . DS . "pressroom-api/itunes_purchases_list/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'postApnsTokenUrl', new CFString( site_url() . DS . "pressroom-api/apns_token/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'authenticationUrl', new CFString( site_url() . DS . "pressroom-api/sullivan_login/:app_id/:user_id/{$eproject_slug}" ) );

@@ -214,7 +214,7 @@ function pr_next( $post_id = false, $edition = false ) {
  * @param  object $post
  * @return string $permalink
  */
-function pr_get_sharing_placeholder( $post_id = false ) {
+function pr_get_sharing_placeholder( $post_id = false, $term_id ) {
 
   if( !$post_id ) {
     global $post;
@@ -224,9 +224,9 @@ function pr_get_sharing_placeholder( $post_id = false ) {
   $permalink = get_permalink( $post_id );
   $domain = get_home_url();
 
-  $options = get_option('pr_settings');
-  $sharing_domain = isset( $options['pr_sharing_domain'] ) ? $options['pr_sharing_domain'] : '' ;
-
+  // $options = get_option('pr_settings');
+  $options = get_option( "taxonomy_term_" . $term_id );
+  $sharing_domain = isset( $options['_pr_sharing_domain'] ) ? $options['_pr_sharing_domain'] : '' ;
   if( $sharing_domain ) {
     $permalink = str_replace( $domain, $sharing_domain, $permalink );
   }
@@ -240,7 +240,7 @@ function pr_get_sharing_placeholder( $post_id = false ) {
  * @param  object $post
  * @return string $sharing_url
  */
-function pr_get_sharing_url( $post_id = false ) {
+function pr_get_sharing_url( $post_id = false, $term_id ) {
 
   if( !$post_id ) {
     global $post;
@@ -252,7 +252,7 @@ function pr_get_sharing_url( $post_id = false ) {
     return $sharing_url;
   }
 
-  return pr_get_sharing_placeholder( $post_id );
+  return pr_get_sharing_placeholder( $post_id, $term_id );
 }
 
 /**

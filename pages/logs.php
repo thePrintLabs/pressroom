@@ -23,7 +23,7 @@ class PR_logs_page {
    */
   public function pr_add_admin_menu() {
 
-    add_submenu_page( 'pressroom', __( 'Logs' ), __( 'Logs' ), 'manage_options', 'pressroom-logs', array( $this, 'pr_logs_page' ) );
+    add_submenu_page( 'pressroom', __( 'Exporter logs' ), __( 'Exporter logs' ), 'manage_options', 'pressroom-logs', array( $this, 'pr_logs_page' ) );
   }
 
   /**
@@ -34,7 +34,7 @@ class PR_logs_page {
   public function pr_logs_page() {
 
     ?>
-    <h2>Pressroom logs</h2>
+    <h2>Pressroom exporter logs</h2>
     <?php
     $this->add_presslist_logs();
   }

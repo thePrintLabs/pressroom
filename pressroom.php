@@ -3,7 +3,7 @@
 Plugin Name: Pressroom
 Plugin URI: http://press-room.io/
 Description: PressRoom turns Wordpress into a multi channel publishing environment.
-Version: 1.2.1
+Version: 1.2.2
 Author: thePrintLabs Ltd
 Author URI: http://theprintlabs.com
 License: GPLv2

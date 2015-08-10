@@ -59,15 +59,19 @@
 
   $("#pr-theme-upload").change(function(){ $("#pr-theme-form").submit();});
   $(".pr-theme-delete").click(function(){ if(confirm(pr.delete_confirm)){
+    nanobar.go( 10 );
     $parent = $(this).parent().parent('.theme');
+    nanobar.go( 30 );
     $.post(ajaxurl, {
       'action':'pr_delete_theme',
       'theme_id': $parent.data('name')
     }, function(response) {
       if (response.success) {
+        nanobar.go( 60 );
         $counter = parseInt($('#pr-theme-count').text()) - 1;
         $('#pr-theme-count').text( $counter );
         $parent.fadeOut();
+        nanobar.go( 100 );
       } else {
         alert(pr.delete_failed);
       }

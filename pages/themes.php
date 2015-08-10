@@ -39,7 +39,7 @@ class PR_themes_page {
     $item_name  = isset( $theme['title'] ) ? $theme['title'] : false;
     $item_price = isset( $theme['price'] ) ? $theme['price'] . '$' : false;
     $item_link  = isset( $theme['link'] ) ? $theme['link'] : false;
-    
+
     $item_thumbnail  = isset( $theme['thumbnail'] ) ? $theme['thumbnail'] : false;
     $item_content  = isset( $theme['content'] ) ? $theme['content'] : false;
 
@@ -269,8 +269,9 @@ class PR_themes_page {
     }
 
     $is_activated = PR_EDD_License::check_license( $theme['slug'], $theme['title'], $is_free  );
-
-    echo $this->render_theme( $theme, $is_installed, $is_activated, $is_free  );
+    if( !$is_installed) {
+      echo $this->render_theme( $theme, $is_installed, $is_activated, $is_free  );
+    }    
   }
 
   /**

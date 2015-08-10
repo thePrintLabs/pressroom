@@ -229,8 +229,8 @@ class PR_addons_page {
       foreach ( $addons as $addon ) {
 
         $is_installed = false;
-        $filepath = isset( $enabled_exporters[$addon->info->slug]['filepath'] ) ? $enabled_exporters[$addon->info->slug]['filepath'] : false ;
 
+        $filepath = isset( $enabled_exporters[$addon->info->slug]['filepath'] ) ? $enabled_exporters[$addon->info->slug]['filepath'] : false ;
         // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
         if ( file_exists( $filepath ) ) {
           $is_installed = true;
@@ -239,8 +239,9 @@ class PR_addons_page {
         $is_free = $addon->pricing->amount == 0 ? true : false;
 
         $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title, $is_free );
-
-        echo $this->render_add_on( $addon, $is_installed, $is_activated, $is_free );
+        if( !$is_installed ) {
+          echo $this->render_add_on( $addon, $is_installed, $is_activated, $is_free );
+        }
       }
     }
 

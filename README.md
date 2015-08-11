@@ -8,7 +8,7 @@
 
 **Tested up to:** 4.2.3
 
-**Stable tag:** 1.2
+**Stable tag:** 1.2.3
 
 **License:** GPL v2
 
@@ -61,6 +61,6 @@ Have you got a project you would like to discuss? [Tell us more](https://theprin
 <a href="https://theprintlabs.typeform.com/to/QyHaBj" title="thePrintLabs" alt="thePrintLabs" target="_blank">![](logo-tpl.png?raw=true "thePrintlabs")</a>
 
 ##Licence
-PressRoom is open source, licensed under GPL v2.   
-**License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)   
+PressRoom is open source, licensed under GPL v2.
+**License URI:** [http://www.gnu.org/licenses/gpl-2.0.html](http://www.gnu.org/licenses/gpl-2.0.html)
 © 2014 [thePrintLabs Ltd.](http://theprintlabs.com)

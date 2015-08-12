@@ -30,10 +30,10 @@ class pressroom_Plist {
     $dict->add( 'newsstandLatestIssueCover', new CFBoolean( true ) );
     $dict->add( 'newsstandManifestUrl', new CFString( site_url() . DS . "pressroom-api/shelf/{$eproject_slug}" ) );
     $dict->add( 'purchaseConfirmationUrl', new CFString( site_url() . DS . "pressroom-api/purchaseConfirmationUrl/:app_id/:user_id/{$eproject_slug}" ) );
-    $dict->add( 'checkoutUrl', new CFString( site_url() . DS . "pressroom-api/pressroom_checkout/:app_id/:user_id/{$eproject_slug}" ) );
+    $dict->add( 'checkoutUrl', new CFString( site_url() . DS . "pressroom_checkout/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'purchasesUrl', new CFString( site_url() . DS . "pressroom-api/itunes_purchases_list/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'postApnsTokenUrl', new CFString( site_url() . DS . "pressroom-api/apns_token/:app_id/:user_id/{$eproject_slug}" ) );
-    $dict->add( 'authenticationUrl', new CFString( site_url() . DS . "pressroom-api/sullivan_login/:app_id/:user_id/{$eproject_slug}" ) );
+    $dict->add( 'authenticationUrl', new CFString( site_url() . DS . "pressroom-api/authentication/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'freeSubscriptionProductId', new CFString( "" ));
     $dict->add( 'autoRenewableSubscriptionProductIds', $productIds = new CFArray() );
 
@@ -221,11 +221,11 @@ class pressroom_Plist {
     $pad->add( 'navigationBarOptions', $padnavigationBarOptions = new CFDictionary() );
 
     $padnavigationBarOptions->add( 'book', $padNavBook = new CFDictionary() );
-    $padNavBook->add( 'tintColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['tintColor'] ) ? $hpub_pad['navigationBarOptionBook']['tintColor'] : '#FFFFFF'  ) );
+    $padNavBook->add( 'tintColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['tintColor'] ) ? $hpub_pad['navigationBarOptionBook']['tintColor'] : '#97724A'  ) );
     $padNavBook->add( 'titleFontSize', new CFNumber( isset( $hpub_pad['navigationBarOptionBook']['titleFontSize'] ) ? $hpub_pad['navigationBarOptionBook']['titleFontSize'] : 18  ) );
     $padNavBook->add( 'titleFont', new CFString( 'Gotham-Book' ) );
-    $padNavBook->add( 'titleColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['titleColor'] ) ? $hpub_pad['navigationBarOptionBook']['titleColor'] : '#FFFFFF'  ) );
-    $padNavBook->add( 'backgroundColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['backgroundColor'] ) ? $hpub_pad['navigationBarOptionBook']['backgroundColor'] : 'clear'  ) );
+    $padNavBook->add( 'titleColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['titleColor'] ) ? $hpub_pad['navigationBarOptionBook']['titleColor'] : '#97724A'  ) );
+    $padNavBook->add( 'backgroundColor', new CFString( isset( $hpub_pad['navigationBarOptionBook']['backgroundColor'] ) ? $hpub_pad['navigationBarOptionBook']['backgroundColor'] : '#FFFFFF'  ) );
     $padNavBook->add( 'marginBottom', new CFNumber( 60 ) );
 
     $padnavigationBarOptions->add( 'shelf', $padNavShelf = new CFDictionary() );

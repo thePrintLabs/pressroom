@@ -222,10 +222,10 @@ final class PR_Connector_Authentication extends PR_Server_API {
 
     $status = !empty( $data->subscriptions ) ? 'subscribed' : 'nosubscription';
 
-    if ( $status == 'nosubscription' ) {
-      $this->send_response( 500, __("Not found a valid subscription"), false );
-    }
-    else {
+    // if ( $status == 'nosubscription' ) {
+    //   $this->send_response( 500, __("Not found a valid subscription"), false );
+    // }
+    // else {
 
       $max_expiry_time = 3600 * 24 * 7; // @TODO: Inserire controllo data scadenza abbonamento
 
@@ -242,7 +242,7 @@ final class PR_Connector_Authentication extends PR_Server_API {
       );
 
       $this->send_response( 200, $params );
-    }
+    // }
   }
 
   /**

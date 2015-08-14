@@ -14,11 +14,13 @@ class pressroom_Plist {
 
     add_action( 'edited_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 1, 20 );
     add_action( 'create_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 1, 20 );
+    add_filter( 'pre_update_option_hpub_pad', array( $this, 'action_get_settings' ), 1, 20 );
+    add_filter( 'pre_update_option_hpub_phone', array( $this, 'action_get_settings' ), 1, 20 );
   }
 
 
   public function action_get_settings( $eproject_id ) {
-
+    
     $eproject = get_term( $eproject_id, PR_EDITORIAL_PROJECT );
     $eproject_slug = $eproject->slug;
 

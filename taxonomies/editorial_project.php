@@ -114,9 +114,10 @@ class PR_Editorial_Project
     switch ( $column_name ) {
 
        case 'actions':
-          $shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
+          //$shelf_url = home_url( 'pressroom-api/shelf/' . $editorial->slug );
+          $shelf_url = PR_IOS_SETTINGS_URI . $editorial->slug . '.xml.plist';
           $newsstand_url = home_url( 'pressroom-api/newsstand-issue-feed/' . $editorial->slug );
-          echo '<a target="_blank" href="' . $shelf_url . '">' . __("View shelf endpoint", 'editorial_project') . '</a><br/>';
+          echo '<a target="_blank" href="' . $shelf_url . '">' . __("Ios settings endpoint", 'editorial_project') . '</a><br/>';
           echo '<a target="_blank" href="' . $newsstand_url . '">' . __("View Apple Newsstand feed", 'editorial_project') . '</a><br/>';
           echo '<a href="#" data-term="'.$editorial_id.'" class="pr-reset" style="color:#A00">Restore default settings</a>';
           break;

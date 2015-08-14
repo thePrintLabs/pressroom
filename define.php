@@ -43,6 +43,7 @@ define( "PR_UPLOAD_URI", $upload_dir['baseurl'] . '/pressroom/' );
 define( "PR_HPUB_URI", PR_UPLOAD_URI . 'hpub/' );
 define( "PR_WEB_URI", PR_UPLOAD_URI . 'web/' );
 define( "PR_SHELF_URI", PR_UPLOAD_URI . 'shelf/' );
+define( "PR_IOS_SETTINGS_URI", PR_UPLOAD_URI . 'settings/' );
 
 /* THEMES*/
 define( "PR_THEMES_PATH", trailingslashit( PR_UPLOAD_PATH . 'themes' ) );

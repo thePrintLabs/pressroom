@@ -30,14 +30,32 @@ class PR_addons_page {
   * @param array $addon
   * @return string
   */
-  public function render_add_on( $addon, $installed, $activated, $free ) {
+  public function render_add_on( $addon, $installed, $activated, $free, $trial ) {
 
     $options = get_option( 'pr_settings' );
     $item_id = $addon->info->id;
     $item_slug = $addon->info->slug;
     $item_name = $addon->info->title;
-    $item_price = $addon->pricing->amount . '$';
-    $item_link = PR_API_URL . 'checkout?edd_action=add_to_cart&download_id=' . $addon->info->id;
+
+    if ( $trial ) {
+
+      $item_price = '';
+      $item_button = '';
+      $i = 0;
+      foreach ( $addon->pricing as $key => $price ) {
+        $i++;
+        if( $price > 0 ) {
+          $item_price .= $price . '$' . ' ';
+        }
+        $item_link = PR_API_URL . 'checkout?edd_action=add_to_cart&download_id=' . $addon->info->id . '&edd_options[price_id]=' . ( $i );
+        $item_button .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( $price == 0 ? 'Trial' : 'Buy', 'pressroom-themes' ).'</a>';
+      }
+    }
+    else {
+      $item_price = $addon->pricing->amount . '$';
+      $item_link = PR_API_URL . 'checkout?edd_action=add_to_cart&download_id=' . $addon->info->id;
+      $item_button = '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Buy", 'pressroom-themes' ).'</a>';
+    }
 
     $html = '<div class="theme ' . ( $activated ? 'active' : '' ) . '" data-name="' . $item_id . '" tabindex="0">
     <form method="post" name="' . $item_slug . '">
@@ -73,10 +91,10 @@ class PR_addons_page {
       $html .= '<input type="submit" class="button button-primary pr-theme-activate" name="pr_license_key_' . $item_slug . '_activate" value="' . __( "Activate", 'pressroom-addons' ) . '"/>';
     }
     elseif( !$installed && $free ) {
-      $html .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Download", 'pressroom-themes' ).'</a>';
+      $html .= $item_button;
     }
     elseif( !$installed  && !$free ) {
-      $html .= '<a class="button button-primary pr-theme-deactivate" target="_blank" href="'.$item_link.'">'.__( "Buy", 'pressroom-themes' ).'</a>';
+      $html .= $item_button;
     }
 
     $html .= '</div>
@@ -235,12 +253,27 @@ class PR_addons_page {
         if ( file_exists( $filepath ) ) {
           $is_installed = true;
         }
+        if( isset( $addon->pricing->amount ) ) {
+          $is_free = $addon->pricing->amount == 0 ? true : false;
+        }
+        else {
+          $is_trial = false;
+          foreach( $addon->pricing as $price ) {
 
-        $is_free = $addon->pricing->amount == 0 ? true : false;
+            if( $price == 0 ) {
+              $is_free = true;
+              $is_trial = true;
+            }
+            else {
+              $is_free = false;
+            }
+          }
+        }
+
 
         $is_activated = PR_EDD_License::check_license( $addon->info->slug, $addon->info->title, $is_free );
         if( !$is_installed ) {
-          echo $this->render_add_on( $addon, $is_installed, $is_activated, $is_free );
+          echo $this->render_add_on( $addon, $is_installed, $is_activated, $is_free, $is_trial );
         }
       }
     }

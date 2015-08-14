@@ -4,7 +4,7 @@ Donate link: https://press-room.io/donate/
 Tags: editorial, journalism, newspaper, magazine, mag, publishing, ios, long-form, collection, static, static generator, edition, export, content management, Baker, Baker framework
 Requires at least: 3.7.0 or higher
 Tested up to: 4.2.4
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

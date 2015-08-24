@@ -532,7 +532,7 @@ class pressroom_Plist {
      * Save PList as XML
      */
 
-    $plist->saveXML( PR_CLIENT_SETTINGS_PATH  . $eproject_slug . '.xml.plist' );
+    $plist->saveXML( PR_CLIENT_SETTINGS_PATH  . $eproject_slug . '.xml' );
 
   }
   /**

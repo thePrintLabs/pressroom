@@ -32,10 +32,11 @@ final class PR_Packager_Web_Core_Package
     add_action( 'wp_ajax_test_ftp_connection', array( $this, 'test_ftp_connection' ) );
 
     // packager hooks
-    add_action( 'pr_packager_web_start', array( $this, 'web_packager_start' ), 10, 2 );
-    add_action( 'pr_packager_web', array( $this, 'web_packager_run' ), 10, 4 );
-    add_action( 'pr_packager_web_end', array( $this, 'web_packager_end' ), 10, 2 );
-    add_action( 'pr_web_toc_rewrite_url', array( $this, 'rewrite_url' ), 10, 2 );
+    add_action( 'pr_packager_webcore_start', array( $this, 'web_packager_start' ), 10, 2 );
+    add_action( 'pr_packager_webcore', array( $this, 'web_packager_run' ), 10, 4 );
+    add_action( 'pr_packager_webcore_end', array( $this, 'web_packager_end' ), 10, 2 );
+    add_action( 'pr_webcore_toc_rewrite_url', array( $this, 'rewrite_url' ), 10, 2 );
+
   }
 
   /**

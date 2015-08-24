@@ -20,7 +20,7 @@ class pressroom_Plist {
 
 
   public function action_get_settings( $eproject_id ) {
-    
+
     $eproject = get_term( $eproject_id, PR_EDITORIAL_PROJECT );
     $eproject_slug = $eproject->slug;
 
@@ -44,6 +44,10 @@ class pressroom_Plist {
       $productIds->add( new CFString( $method ) );
     }
     $dict->add( 'requestTimeout', new CFNumber( 15 ) );
+
+    /* Resource Bundle */
+    $dict->add( 'resourceBundleName', new CFString( "{$eproject_slug}.bundle" ) );
+    $dict->add( 'resourceBundleUrl', new CFString( PR_IOS_SETTINGS_URI . $eproject_slug . '.bundle.zip' ) );
 
     /* Pad */
     $dict->add( 'Pad', $pad = new CFDictionary() );
@@ -532,7 +536,7 @@ class pressroom_Plist {
      * Save PList as XML
      */
 
-    $plist->saveXML( PR_CLIENT_SETTINGS_PATH  . $eproject_slug . '.xml.plist' );
+    $plist->saveXML( PR_CLIENT_SETTINGS_PATH  . $eproject_slug . '.xml' );
 
   }
   /**

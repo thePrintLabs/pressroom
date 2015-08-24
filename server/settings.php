@@ -49,9 +49,6 @@ class pressroom_Plist {
     $dict->add( 'resourceBundleName', new CFString( "{$eproject_slug}.bundle" ) );
     $dict->add( 'resourceBundleUrl', new CFString( PR_IOS_SETTINGS_URI . $eproject_slug . '.bundle.zip' ) );
 
-    pressroom-demo.bundle
-    http://demo.press-room.io/pressroom-api/bundle/pressroom-demo.bundle.zip
-
     /* Pad */
     $dict->add( 'Pad', $pad = new CFDictionary() );
 

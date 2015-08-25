@@ -14,10 +14,10 @@ jQuery(function(){
     var subscription = jQuery('#_pr_subscription_prefix');
 
     jQuery( '#_pr_prefix_bundle_id').keyup(function() {
-      jQuery( '#_pr_single_edition_prefix, #_pr_subscription_prefix, .pr_repeater input[type="text"]' ).trigger( "keyup" );
+      jQuery( '#_pr_single_edition_prefix, #_pr_subscription_free_prefix, #_pr_subscription_prefix, .pr_repeater input[type="text"]' ).trigger( "keyup" );
     });
 
-    jQuery('#_pr_single_edition_prefix, #_pr_subscription_prefix').keyup(function() {
+    jQuery('#_pr_single_edition_prefix, #_pr_subscription_free_prefix, #_pr_subscription_prefix').keyup(function() {
       var autocompleted = jQuery(this).next();
       autocompleted.html(prefix.val() + '.' + jQuery(this).val() );
       jQuery( '.pr_repeater input[type="text"]' ).trigger( "keyup" );

@@ -7,6 +7,7 @@
  */
 
 namespace CFPropertyList;
+use PR_Editorial_Project, PR_Utils;
 
 class pressroom_Plist {
 
@@ -36,13 +37,14 @@ class pressroom_Plist {
     $dict->add( 'purchasesUrl', new CFString( site_url() . DS . "pressroom-api/itunes_purchases_list/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'postApnsTokenUrl', new CFString( site_url() . DS . "pressroom-api/apns_token/:app_id/:user_id/{$eproject_slug}" ) );
     $dict->add( 'authenticationUrl', new CFString( site_url() . DS . "pressroom-api/authentication/:app_id/:user_id/{$eproject_slug}" ) );
-    $dict->add( 'freeSubscriptionProductId', new CFString( "" ));
     $dict->add( 'autoRenewableSubscriptionProductIds', $productIds = new CFArray() );
 
-    $methods = self::_get_subscription_method( $eproject->term_id );
-    foreach( $methods as $method ) {
-      $productIds->add( new CFString( $method ) );
+    $subscriptions = PR_Editorial_Project::get_subscriptions_id( $eproject->term_id );
+    foreach( $subscriptions as $sub ) {
+      $productIds->add( new CFString( $sub ) );
     }
+    $free_subscription_id = PR_Editorial_Project::get_free_subscription_id( $eproject->term_id );
+    $dict->add( 'freeSubscriptionProductId', new CFString( $free_subscription_id ? $free_subscription_id : "" ));
     $dict->add( 'requestTimeout', new CFNumber( 15 ) );
 
     /* Resource Bundle */
@@ -539,26 +541,6 @@ class pressroom_Plist {
     $plist->saveXML( PR_CLIENT_SETTINGS_PATH  . $eproject_slug . '.xml' );
 
   }
-  /**
-   * Get subscription method for editorial project
-   *
-   * @param  int $term_id
-   * @return array or bool
-   */
-    protected static function _get_subscription_method( $eproject_id ) {
-
-      $options = get_option( 'taxonomy_term_' . $eproject_id );
-      $subscription_types = $options['_pr_subscription_types'];
-      $subscription_methods = $options['_pr_subscription_method'];
-      $methods = array();
-      if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
-        foreach ( $subscription_types as $k => $type ) {
-          $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
-          array_push( $methods, $identifier );
-        }
-      }
-      return $methods;
-    }
 }
  new pressroom_Plist;
 ?>

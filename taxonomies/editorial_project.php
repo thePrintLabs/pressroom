@@ -363,26 +363,60 @@ class PR_Editorial_Project
 /**
  * Get subscription method for editorial project
  *
- * @param  int $term_id
+ * @param  int $editorial_project_id
  * @param  string $product_id
  * @return array or bool
  */
-  public static function get_subscription_method( $term_id, $product_id ) {
+  public static function get_subscription_method( $editorial_project_id, $product_id ) {
 
-    $options = self::get_configs( $term_id );
+    $subscriptions = self::get_subscriptions_id( $editorial_project_id );
+    if ( $subscriptions ) {
+      foreach ( $subscriptions as $identifier ) {
+        if ( $identifier == $product_id ) {
+          return $identifier;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Get subscriptions for editorial project
+   *
+   * @param  int $editorial_project_id
+   * @return array or bool
+   */
+  public static function get_subscriptions_id( $editorial_project_id ) {
+
+    $subscriptions = array();
+    $options = self::get_configs( $editorial_project_id );
     $subscription_types = $options['_pr_subscription_types'];
     $subscription_methods = $options['_pr_subscription_method'];
 
     if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
       foreach ( $subscription_types as $k => $type ) {
         $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
-        if ( $identifier == $product_id ) {
-          return $subscription_methods[$k];
-        }
+        $subscriptions[] = $identifier;
       }
     }
-    return false;
+    return $subscriptions;
   }
+
+  /**
+	 * Get the editorial project free subscription id
+	 *
+	 * @param int $editorial_project_id
+	 * @return string or boolean false
+	 */
+	public static function get_free_subscription_id( $editorial_project_id ) {
+
+		$free_subscription_id = false;
+		$eproject_options = self::get_configs( $editorial_project_id );
+		if ( $eproject_options ) {
+			$free_subscription_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_subscription_free_prefix'];
+		}
+		return $free_subscription_id;
+	}
 
   /**
    * Get all editions in a range of dates
@@ -492,7 +526,7 @@ class PR_Editorial_Project
   public static function get_bundle_id( $editorial_project_id ) {
 
     $eproject_bundle_id = false;
-    $eproject_options = PR_Editorial_Project::get_configs( $editorial_project_id );
+    $eproject_options = self::get_configs( $editorial_project_id );
 
     if ( $eproject_options ) {
       $eproject_bundle_id = isset( $eproject_options['_pr_prefix_bundle_id'] ) ? $eproject_options['_pr_prefix_bundle_id'] : '';
@@ -509,7 +543,7 @@ class PR_Editorial_Project
   public function remove_upload_file_callback() {
 
     $editorial_project_id = $_POST['term_id'];
-    $term_meta = PR_Editorial_Project::get_configs( $editorial_project_id );
+    $term_meta = self::get_configs( $editorial_project_id );
     $attach_id = $_POST['attach_id'];
     $field = $_POST['field'];
     $term_meta[$field] = '';

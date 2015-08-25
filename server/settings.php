@@ -57,8 +57,8 @@ class pressroom_Plist {
     $dict->add( 'requestTimeout', new CFNumber( 15 ) );
 
     /* Resource Bundle */
-    $dict->add( 'resourceBundleName', new CFString( "{$eproject_slug}.bundle" ) );
-    $dict->add( 'resourceBundleUrl', new CFString( PR_IOS_SETTINGS_URI . $eproject_slug . '.bundle.zip' ) );
+    $dict->add( 'resourceBundleName', new CFString( "{$eproject_slug}.images" ) );
+    $dict->add( 'resourceBundleUrl', new CFString( PR_IOS_SETTINGS_URI . $eproject_slug . '.images.zip' ) );
 
     /* Pad */
     $dict->add( 'Pad', $pad = new CFDictionary() );
@@ -583,7 +583,7 @@ class pressroom_Plist {
     }
 
     if( $atleast ) {
-      $filename = PR_IOS_SETTINGS_PATH . $eproject_slug . '.bundle.zip';
+      $filename = PR_IOS_SETTINGS_PATH . $eproject_slug . '.images.zip';
       PR_Utils::create_zip_file( $tmp_dir, $filename, '' );
     }
 

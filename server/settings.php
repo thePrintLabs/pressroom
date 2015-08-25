@@ -570,7 +570,7 @@ class pressroom_Plist {
       $atleast = true;
     }
     if( is_file( $padLogo ) ) {
-      copy( $padLogo, $tmp_dir . DS .  ' shelf-header.png' );
+      copy( $padLogo, $tmp_dir . DS .  'shelf-header.png' );
       $atleast = true;
     }
     if( is_file( $padModalBgImage ) ) {

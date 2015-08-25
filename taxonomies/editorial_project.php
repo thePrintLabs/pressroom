@@ -370,10 +370,12 @@ class PR_Editorial_Project
   public static function get_subscription_method( $editorial_project_id, $product_id ) {
 
     $subscriptions = self::get_subscriptions_id( $editorial_project_id );
-    if ( $subscriptions ) {
-      foreach ( $subscriptions as $identifier ) {
+    $subscription_methods = isset( $options['_pr_subscription_method'] ) ? $options['_pr_subscription_method'] : [];
+
+    if ( $subscriptions && $subscription_methods ) {
+      foreach ( $subscriptions as $k => $identifier ) {
         if ( $identifier == $product_id ) {
-          return $identifier;
+          return $subscription_methods[$k];
         }
       }
     }

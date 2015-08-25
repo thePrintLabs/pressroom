@@ -7,6 +7,7 @@
  */
 
 namespace CFPropertyList;
+use PR_Utils;
 
 class pressroom_Plist {
 
@@ -14,10 +15,19 @@ class pressroom_Plist {
 
     add_action( 'edited_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 1, 20 );
     add_action( 'create_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 1, 20 );
-    add_filter( 'pre_update_option_hpub_pad', array( $this, 'action_get_settings' ), 1, 20 );
-    add_filter( 'pre_update_option_hpub_phone', array( $this, 'action_get_settings' ), 1, 20 );
+    add_filter( 'pre_update_option_hpub_pad', array( $this, 'get_eprojects_settings' ), 1, 20 );
+    add_filter( 'pre_update_option_hpub_phone', array( $this, 'get_eprojects_settings' ), 1, 20 );
   }
 
+  public function get_eprojects_settings( $data ) {
+
+    $terms = get_terms( PR_EDITORIAL_PROJECT );
+    foreach( $terms as $term ) {
+      $this->action_get_settings( $term->term_id );
+    }
+
+    return $data;
+  }
 
   public function action_get_settings( $eproject_id ) {
 
@@ -240,7 +250,7 @@ class pressroom_Plist {
     $padNavShelf->add( 'titleFont', new CFString( 'Gotham-Book' ) );
     $padNavShelf->add( 'titleColor', new CFString( isset( $hpub_pad['navigationBarOptionShelf']['titleColor'] ) ? $hpub_pad['navigationBarOptionShelf']['titleColor'] : '#A99870'  ) );
     $padNavShelf->add( 'backgroundColor', new CFString( isset( $hpub_pad['navigationBarOptionShelf']['backgroundColor'] ) ? $hpub_pad['navigationBarOptionShelf']['backgroundColor'] : '#FFFFFF'  ) );
-    $padNavShelf->add( 'marginBottom', new CFNumber( 0 ) );
+    $padNavShelf->add( 'marginBottom', new CFNumber( 60 ) );
 
     $pad->add( 'subscriptionViewOptions', $padSubscriptionViewOptions = new CFDictionary() );
     $padSubscriptionViewOptions->add( 'useNativeControl', new CFBoolean( false ) );
@@ -536,7 +546,8 @@ class pressroom_Plist {
      * Save PList as XML
      */
 
-    $plist->saveXML( PR_CLIENT_SETTINGS_PATH  . $eproject_slug . '.xml' );
+    $plist->saveXML( PR_IOS_SETTINGS_PATH  . $eproject_slug . '.xml' );
+    $this->_create_bundle( $eproject_slug );
 
   }
   /**
@@ -545,20 +556,58 @@ class pressroom_Plist {
    * @param  int $term_id
    * @return array or bool
    */
-    protected static function _get_subscription_method( $eproject_id ) {
+  protected static function _get_subscription_method( $eproject_id ) {
 
-      $options = get_option( 'taxonomy_term_' . $eproject_id );
-      $subscription_types = $options['_pr_subscription_types'];
-      $subscription_methods = $options['_pr_subscription_method'];
-      $methods = array();
-      if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
-        foreach ( $subscription_types as $k => $type ) {
-          $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
-          array_push( $methods, $identifier );
-        }
+    $options = get_option( 'taxonomy_term_' . $eproject_id );
+    $subscription_types = isset( $options['_pr_subscription_types'] ) ? $options['_pr_subscription_types'] : null;
+    $subscription_methods = isset( $options['_pr_subscription_method'] ) ? $options['_pr_subscription_method'] : null;
+    $methods = array();
+    if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
+      foreach ( $subscription_types as $k => $type ) {
+        $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
+        array_push( $methods, $identifier );
       }
-      return $methods;
     }
+    return $methods;
+  }
+
+  protected function _create_bundle( $eproject_slug ) {
+
+    $hpub_pad = get_option( 'hpub_pad' );
+    $hpub_phone = get_option( 'hpub_phone' );
+    $upload_dir = wp_upload_dir();
+
+    $padBgImage = isset( $hpub_pad['issuesShelfOptions']['backgroundImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $hpub_pad['issuesShelfOptions']['backgroundImage'] ) : false;
+    $padLogo = isset( $hpub_pad['issuesShelfOptions']['headerBackgroundImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $hpub_pad['issuesShelfOptions']['headerBackgroundImage'] ) : false;
+    $padModalBgImage = isset( $hpub_pad['authenticationViewOptions']['modalLogoImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $hpub_pad['authenticationViewOptions']['modalLogoImage'] ) : false;
+    $phoneBgImage = isset( $hpub_phone['issuesShelfOptions']['backgroundImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $hpub_phone['issuesShelfOptions']['backgroundImage'] ) : false;
+
+    $atleast = false;
+    $tmp_dir = PR_Utils::make_dir( PR_TMP_PATH, 'bundle_' . $eproject_slug );
+    if( is_file( $padBgImage ) ) {
+      copy( $padBgImage, $tmp_dir . DS .  'shelf-background-pad.png' );
+      $atleast = true;
+    }
+    if( is_file( $padLogo ) ) {
+      copy( $padLogo, $tmp_dir . DS .  ' shelf-header.png' );
+      $atleast = true;
+    }
+    if( is_file( $padModalBgImage ) ) {
+      copy( $padModalBgImage, $tmp_dir . DS .  'modal-logo.png' );
+      $atleast = true;
+    }
+    if( is_file( $phoneBgImage ) ) {
+      copy( $phoneBgImage, $tmp_dir . DS .  'shelf-background-phone.png' );
+      $atleast = true;
+    }
+
+    if( $atleast ) {
+      $filename = PR_IOS_SETTINGS_PATH . $eproject_slug . '.bundle.zip';
+      PR_Utils::create_zip_file( $tmp_dir, $filename, '' );
+    }
+
+    PR_Utils::remove_dir( $tmp_dir );
+
+  }
 }
  new pressroom_Plist;
-?>

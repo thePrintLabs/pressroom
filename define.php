@@ -37,7 +37,7 @@ define( "PR_UPLOAD_PATH", $upload_dir['basedir'] . '/pressroom/' );
 define( "PR_HPUB_PATH", trailingslashit( PR_UPLOAD_PATH . 'hpub' ) );
 define( "PR_WEB_PATH", trailingslashit( PR_UPLOAD_PATH . 'web' ) );
 define( "PR_SHELF_PATH", trailingslashit( PR_UPLOAD_PATH . 'shelf' ) );
-define( "PR_CLIENT_SETTINGS_PATH", PR_UPLOAD_PATH . 'settings/' );
+define( "PR_IOS_SETTINGS_PATH", PR_UPLOAD_PATH . 'settings/' );
 
 define( "PR_UPLOAD_URI", $upload_dir['baseurl'] . '/pressroom/' );
 define( "PR_HPUB_URI", PR_UPLOAD_URI . 'hpub/' );

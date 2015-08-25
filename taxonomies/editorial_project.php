@@ -390,11 +390,9 @@ class PR_Editorial_Project
 
     $subscriptions = array();
     $options = self::get_configs( $editorial_project_id );
-    $subscription_types = $options['_pr_subscription_types'];
-    $subscription_methods = $options['_pr_subscription_method'];
-
-    if ( isset( $subscription_types ) && !empty( $subscription_types ) ) {
-      foreach ( $subscription_types as $k => $type ) {
+    $subscription_types = isset( $options['_pr_subscription_types'] ) ? $options['_pr_subscription_types'] : [];
+    if ( !empty( $subscription_types ) ) {
+      foreach ( $subscription_types as $type ) {
         $identifier = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $type;
         $subscriptions[] = $identifier;
       }
@@ -412,7 +410,7 @@ class PR_Editorial_Project
 
 		$free_subscription_id = false;
 		$eproject_options = self::get_configs( $editorial_project_id );
-		if ( $eproject_options ) {
+		if ( $eproject_options && isset( $eproject_options['_pr_prefix_bundle_id'], $eproject_options['_pr_subscription_free_prefix'] ) ) {
 			$free_subscription_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $eproject_options['_pr_subscription_free_prefix'];
 		}
 		return $free_subscription_id;

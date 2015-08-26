@@ -52,23 +52,24 @@ class pressroom_Plist {
     $dict->add( 'Pad', $pad = new CFDictionary() );
 
     /* Pad Issue Shelf Shelf */
-    $eproject_sgs = get_option( 'taxonomy_' . $eproject_id );
+    $eproject_sgs = get_option( 'taxonomy_term_' . $eproject_id );
+
     $pad->add( 'shelf', $padShelf = new CFDictionary() );
     $padShelf->add( 'layoutType', new CFString( 'grid' ) );
     $padShelf->add( 'gridColumns', new CFNumber( 2 ) );
     $padShelf->add( 'scrollDirection', new CFString( 'vertical' ) );
     $padShelf->add( 'pagingEnabled', new CFBoolean( false ) );
-    $padShelf->add( 'backgroundFillStyle', new CFString( isset( $eproject_sgs['_pr_pad_sgs_backgroundFillStyle'] ) ? $eproject_sgs['_pr_pad_sgs_backgroundFillStyle'] : 'Image' ) );
-    $padShelf->add( 'backgroundFillGradientStart', new CFString( isset( $eproject_sgs['_pr_pad_sgs_backgroundFillGradientStart'] ) ? $eproject_sgs['_pr_pad_sgs_backgroundFillGradientStart'] : '#FFFFFF' ) );
-    $padShelf->add( 'backgroundFillGradientStop', new CFString( isset( $eproject_sgs['_pr_pad_sgs_backgroundFillGradientStop'] ) ? $eproject_sgs['_pr_pad_sgs_backgroundFillGradientStop'] : '#EEEEEE' ) );
-    $padShelf->add( 'backgroundFillColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_backgroundFillColor'] ) ? $eproject_sgs['_pr_pad_sgs_backgroundFillColor'] : '#FFFFFF') );
-    $padShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_backgroundFitStyle'] ) ? $eproject_sgs['_pr_pad_sgs_backgroundFitStyle'] : false ) );
-    $padShelf->add( 'backgroundImage', new CFString( isset( $eproject_sgs['_pr_pad_sgs_backgroundImage'] ) ? $eproject_sgs['_pr_pad_sgs_backgroundImage'] : '' ) );
-    $padShelf->add( 'headerHidden', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_headerHidden'] ) ? $eproject_sgs['_pr_pad_sgs_headerHidden'] : false  ) );
-    $padShelf->add( 'headerSticky', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_headerSticky'] ) ? $eproject_sgs['_pr_pad_sgs_headerSticky'] : false ) );
-    $padShelf->add( 'headerStretch', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_headerStretch'] ) ? $eproject_sgs['_pr_pad_sgs_headerStretch'] : false ) );
-    $padShelf->add( 'headerBackgroundColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_headerBackgroundColor'] ) ? $eproject_sgs['_pr_pad_sgs_headerBackgroundColor'] : 'clear' ) );
-    $padShelf->add( 'headerImageFill', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_headerImageFill'] ) ? $eproject_sgs['_pr_pad_sgs_headerImageFill'] : false ) );
+    $padShelf->add( 'backgroundFillStyle', new CFString( isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillStyle'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillStyle'] : 'Image' ) );
+    $padShelf->add( 'backgroundFillGradientStart', new CFString( isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillGradientStart'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillGradientStart'] : '#FFFFFF' ) );
+    $padShelf->add( 'backgroundFillGradientStop', new CFString( isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillGradientStop'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillGradientStop'] : '#EEEEEE' ) );
+    $padShelf->add( 'backgroundFillColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillStyleColor'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_backgroundFillStyleColor'] : '#FFFFFF') );
+    $padShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundFitStyle'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_backgroundFitStyle'] : false ) );
+
+    $padShelf->add( 'headerHidden', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_shelf_headerHidden'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_headerHidden'] : false  ) );
+    $padShelf->add( 'headerSticky', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_shelf_headerSticky'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_headerSticky'] : false ) );
+    $padShelf->add( 'headerStretch', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_shelf_headerStretch'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_headerStretch'] : false ) );
+    $padShelf->add( 'headerBackgroundColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundColor'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundColor'] : 'clear' ) );
+    $padShelf->add( 'headerImageFill', new CFBoolean( isset( $eproject_sgs['_pr_pad_sgs_shelf_headerImageFill'] ) ? $eproject_sgs['_pr_pad_sgs_shelf_headerImageFill'] : false ) );
     $padShelf->add( 'headerHeightLandscape', new CFNumber( 118 ) );
     $padShelf->add( 'headerHeightPortrait', new CFNumber( 118 ) );
 
@@ -189,9 +190,9 @@ class pressroom_Plist {
     $landscapeActionButton->add( 'width', new CFNumber( 110 ) );
     $landscapeActionButton->add( 'height', new CFNumber( 30 ) );
     $landscapeActionButton->add( 'font', new CFString( 'Gotham-Book' ) );
-    $landscapeActionButton->add( 'fontSize', new CFNumber( isset( $eproject_sgs['_pr_pad_sgs_landscape_ActionButtonFontSize'] ) ? $eproject_sgs['_pr_pad_sgs_landscape_actionButtonFontSize'] : 14  ) );
-    $landscapeActionButton->add( 'backgroundColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_landscape_ActionButtonBackgroundColor'] ) ? $eproject_sgs['_pr_pad_sgs_landscape_actionButtonBackgroundColor'] : '#97724A'  ) );
-    $landscapeActionButton->add( 'textColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_landscape_ActionButtonTextColor'] ) ? $eproject_sgs['_pr_pad_sgs_landscape_actionButtonTextColor'] : '#FFFFFF'  ) );
+    $landscapeActionButton->add( 'fontSize', new CFNumber( isset( $eproject_sgs['_pr_pad_sgs_landscape_actionButtonFontSize'] ) ? $eproject_sgs['_pr_pad_sgs_landscape_actionButtonFontSize'] : 14  ) );
+    $landscapeActionButton->add( 'backgroundColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_landscape_actionButtonBackgroundColor'] ) ? $eproject_sgs['_pr_pad_sgs_landscape_actionButtonBackgroundColor'] : '#97724A'  ) );
+    $landscapeActionButton->add( 'textColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_landscape_actionButtonTextColor'] ) ? $eproject_sgs['_pr_pad_sgs_landscape_actionButtonTextColor'] : '#FFFFFF'  ) );
 
     $padIssueLandscape->add( 'archiveButton', $landscapeArchiveButton = new CFDictionary() );
     $landscapeArchiveButton->add( 'width', new CFNumber( 30 ) );
@@ -258,7 +259,7 @@ class pressroom_Plist {
 
     $padSubscriptionViewOptions->add( 'buttonFont', new CFString( 'Lato-Regular' ) );
     $padSubscriptionViewOptions->add( 'buttonFontSize', new CFNumber( isset( $eproject_sgs['_pr_pad_sgs_subView_buttonFontSize'] ) ? $eproject_sgs['_pr_pad_sgs_subView_buttonFontSize'] : 21  ) );
-    $padSubscriptionViewOptions->add( 'separatorColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_subView_SeparatorColor'] ) ? $eproject_sgs['_pr_pad_sgs_subView_separatorColor'] : '#D8D8D8'  ) );
+    $padSubscriptionViewOptions->add( 'separatorColor', new CFString( isset( $eproject_sgs['_pr_pad_sgs_subView_separatorColor'] ) ? $eproject_sgs['_pr_pad_sgs_subView_separatorColor'] : '#D8D8D8'  ) );
     $padSubscriptionViewOptions->add( 'separatorHeight', new CFNumber( 1 ) );
 
     $pad->add( 'authenticationViewOptions', $padAuthenticationViewOptions = new CFDictionary() );
@@ -299,16 +300,16 @@ class pressroom_Plist {
     $phoneShelf->add( 'gridColumns', new CFNumber( 1 ) );
     $phoneShelf->add( 'scrollDirection', new CFString( 'horizontal' ) );
     $phoneShelf->add( 'pagingEnabled', new CFBoolean( true ) );
-    $phoneShelf->add( 'backgroundFillStyle', new CFString( isset( $eproject_sgs['_pr_phone_sgs_backgroundFillStyle'] ) ? $eproject_sgs['_pr_phone_sgs_backgroundFillStyle'] : 'Image' ) );
-    $phoneShelf->add( 'backgroundFillGradientStart', new CFString( isset( $eproject_sgs['_pr_phone_sgs_backgroundFillGradientStart'] ) ? $eproject_sgs['_pr_phone_sgs_backgroundFillGradientStart'] : '#FFFFFF' ) );
-    $phoneShelf->add( 'backgroundFillGradientStop', new CFString( isset( $eproject_sgs['_pr_phone_sgs_backgroundFillGradientStop'] ) ? $eproject_sgs['_pr_phone_sgs_backgroundFillGradientStop'] : '#EEEEEE' ) );
-    $phoneShelf->add( 'backgroundFillColor', new CFString( isset( $eproject_sgs['_pr_phone_sgs_backgroundFillColor'] ) ? $eproject_sgs['_pr_phone_sgs_backgroundFillColor'] : '#FFFFFF') );
-    $phoneShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_backgroundFitStyle'] ) ? $eproject_sgs['_pr_phone_sgs_backgroundFitStyle'] : false ) );
-    $phoneShelf->add( 'headerHidden', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_headerHidden'] ) ? $eproject_sgs['_pr_phone_sgs_headerHidden'] : true  ) );
-    $phoneShelf->add( 'headerSticky', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_headerSticky'] ) ? $eproject_sgs['_pr_phone_sgs_headerSticky'] : false ) );
-    $phoneShelf->add( 'headerStretch', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_headerStretch'] ) ? $eproject_sgs['_pr_phone_sgs_headerStretch'] : false ) );
-    $phoneShelf->add( 'headerBackgroundColor', new CFString( isset( $eproject_sgs['_pr_phone_sgs_headerBackgroundColor'] ) ? $eproject_sgs['_pr_phone_sgs_headerBackgroundColor'] : 'clear' ) );
-    $phoneShelf->add( 'headerImageFill', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_headerImageFill'] ) ? $eproject_sgs['_pr_phone_sgs_headerImageFill'] : false ) );
+    $phoneShelf->add( 'backgroundFillStyle', new CFString( isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillStyle'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillStyle'] : 'Image' ) );
+    $phoneShelf->add( 'backgroundFillGradientStart', new CFString( isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillGradientStart'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillGradientStart'] : '#FFFFFF' ) );
+    $phoneShelf->add( 'backgroundFillGradientStop', new CFString( isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillGradientStop'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillGradientStop'] : '#EEEEEE' ) );
+    $phoneShelf->add( 'backgroundFillColor', new CFString( isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillStyleColor'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_backgroundFillStyleColor'] : '#FFFFFF') );
+    $phoneShelf->add( 'backgroundFitStyle', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundFitStyle'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_backgroundFitStyle'] : false ) );
+    $phoneShelf->add( 'headerHidden', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_shelf_headerHidden'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_headerHidden'] : true  ) );
+    $phoneShelf->add( 'headerSticky', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_shelf_headerSticky'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_headerSticky'] : false ) );
+    $phoneShelf->add( 'headerStretch', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_shelf_headerStretch'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_headerStretch'] : false ) );
+    $phoneShelf->add( 'headerBackgroundColor', new CFString( isset( $eproject_sgs['_pr_phone_sgs_shelf_headerBackgroundColor'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_headerBackgroundColor'] : 'clear' ) );
+    $phoneShelf->add( 'headerImageFill', new CFBoolean( isset( $eproject_sgs['_pr_phone_sgs_shelf_headerImageFill'] ) ? $eproject_sgs['_pr_phone_sgs_shelf_headerImageFill'] : false ) );
     $phoneShelf->add( 'headerHeightLandscape', new CFNumber( 150 ) );
     $phoneShelf->add( 'headerHeightPortrait', new CFNumber( 150 ) );
 
@@ -541,14 +542,14 @@ class pressroom_Plist {
 
   protected function _create_bundle( $eproject_slug, $eproject_id ) {
 
-    $eproject_sgs = get_option( 'taxonomy_' . $eproject_id );
+    $eproject_sgs = get_option( 'taxonomy_term_' . $eproject_id );
     $upload_dir = wp_upload_dir();
 
-    $padBgImage = isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $eproject_sgs['_pr_pad_sgs_shelf_backgroundImage'] ) : false;
-    $padLogo = isset( $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundImage'] ) : false;
-    $padModalBgImage = isset( $eproject_sgs['_pr_pad_sgs_authView_modalLogoImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $eproject_sgs['_pr_pad_sgs_authView_modalLogoImage'] ) : false;
-    $phoneBgImage = isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundImage'] ) ? str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $eproject_sgs['_pr_phone_sgs_shelf_backgroundImage'] ) : false;
-
+    $padBgImage = isset( $eproject_sgs['_pr_pad_sgs_shelf_backgroundImage'] ) ? get_attached_file( $eproject_sgs['_pr_pad_sgs_shelf_backgroundImage'] ) : false;
+    $padLogo = isset( $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundImage'] ) ? get_attached_file( $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundImage'] ) : false;
+    $padModalBgImage = isset( $eproject_sgs['_pr_pad_sgs_authView_modalLogoImage'] ) ? get_attached_file( $eproject_sgs['_pr_pad_sgs_authView_modalLogoImage'] ) : false;
+    $phoneBgImage = isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundImage'] ) ? get_attached_file( $eproject_sgs['_pr_phone_sgs_shelf_backgroundImage'] ) : false;
+    
     $atleast = false;
     $tmp_dir = PR_Utils::make_dir( PR_TMP_PATH, 'bundle_' . $eproject_slug );
     if( is_file( $padBgImage ) ) {

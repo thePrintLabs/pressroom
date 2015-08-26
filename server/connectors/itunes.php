@@ -31,11 +31,17 @@ final class PR_Connector_iTunes extends PR_Server_API {
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/itunes_purchase_confirmation/([^&]+)/([^&]+)/([^&]+)/?$',
+    add_rewrite_rule( '^pressroom-api/itunes_purchase_confirmation/([^&]+)/([^&]+)/([^&]+)/?$',
                       'index.php?__pressroom-api=itunes_purchase_confirmation&app_id=$matches[1]&user_id=$matches[2]&editorial_project=$matches[3]',
                       'top' );
-    add_rewrite_rule( 'pressroom-api/itunes_purchases_list/([^&]+)/([^&]+)/([^&]+)/?$',
+    add_rewrite_rule( '^([^/]*)/pressroom-api/itunes_purchase_confirmation/([^&]+)/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=itunes_purchase_confirmation&app_id=$matches[2]&user_id=$matches[3]&editorial_project=$matches[4]',
+                      'top' );
+    add_rewrite_rule( '^pressroom-api/itunes_purchases_list/([^&]+)/([^&]+)/([^&]+)/?$',
                       'index.php?__pressroom-api=itunes_purchases_list&app_id=$matches[1]&user_id=$matches[2]&editorial_project=$matches[3]',
+                      'top' );
+    add_rewrite_rule( '^([^/]*)/pressroom-api/itunes_purchases_list/([^&]+)/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=itunes_purchases_list&app_id=$matches[2]&user_id=$matches[3]&editorial_project=$matches[4]',
                       'top' );
   }
 

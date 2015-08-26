@@ -17,8 +17,11 @@ final class PR_Server_Feed extends PR_Server_API
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/newsstand-issue-feed/([^&]+)/?$',
+    add_rewrite_rule( '^pressroom-api/newsstand-issue-feed/([^&]+)/?$',
                       'index.php?__pressroom-api=newsstand_issue_feed&editorial_project=$matches[1]',
+                      'top' );
+    add_rewrite_rule( '^([^/]*)/pressroom-api/newsstand-issue-feed/([^&]+)/?$',
+                      'index.php?__pressroom-api=newsstand_issue_feed&editorial_project=$matches[2]',
                       'top' );
   }
 

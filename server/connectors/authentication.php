@@ -37,8 +37,11 @@ final class PR_Connector_Authentication extends PR_Server_API {
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/authentication/([^&]+)/([^&]+)/([^&]+)/?$',
+    add_rewrite_rule( '^pressroom-api/authentication/([^&]+)/([^&]+)/([^&]+)/?$',
                       'index.php?__pressroom-api=authentication&app_id=$matches[1]&user_id=$matches[2]&editorial_project=$matches[3]',
+                      'top' );
+    add_rewrite_rule( '^([^/]*)/pressroom-api/authentication/([^&]+)/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=authentication&app_id=$matches[2]&user_id=$matches[3]&editorial_project=$matches[4]',
                       'top' );
   }
 

@@ -13,8 +13,8 @@ class pressroom_Plist {
 
   public function __construct() {
 
-    add_action( 'edited_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 1, 20 );
-    add_action( 'create_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 1, 20 );
+    add_action( 'edited_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 50 );
+    add_action( 'create_' . PR_EDITORIAL_PROJECT, array( $this, 'action_get_settings' ), 50 );
   }
 
   public function action_get_settings( $eproject_id ) {
@@ -549,7 +549,7 @@ class pressroom_Plist {
     $padLogo = isset( $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundImage'] ) ? get_attached_file( $eproject_sgs['_pr_pad_sgs_shelf_headerBackgroundImage'] ) : false;
     $padModalBgImage = isset( $eproject_sgs['_pr_pad_sgs_authView_modalLogoImage'] ) ? get_attached_file( $eproject_sgs['_pr_pad_sgs_authView_modalLogoImage'] ) : false;
     $phoneBgImage = isset( $eproject_sgs['_pr_phone_sgs_shelf_backgroundImage'] ) ? get_attached_file( $eproject_sgs['_pr_phone_sgs_shelf_backgroundImage'] ) : false;
-    
+
     $atleast = false;
     $tmp_dir = PR_Utils::make_dir( PR_TMP_PATH, 'bundle_' . $eproject_slug );
     if( is_file( $padBgImage ) ) {

@@ -17,8 +17,11 @@ final class PR_Server_Issue extends PR_Server_API
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/edition/([^&]+)/([^&]+)/?$',
+    add_rewrite_rule( '^pressroom-api/edition/([^&]+)/([^&]+)/?$',
                       'index.php?__pressroom-api=edition&editorial_project=$matches[1]&edition_name=$matches[2]',
+                      'top' );
+    add_rewrite_rule( '^([^/]*)/pressroom-api/edition/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=edition&editorial_project=$matches[2]&edition_name=$matches[3]',
                       'top' );
   }
 

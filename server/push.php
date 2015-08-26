@@ -20,8 +20,11 @@ final class PR_Server_APNS_Token extends PR_Server_API
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/apns_token/([^&]+)/([^&]+)/([^&]+)/?$',
+    add_rewrite_rule( '^pressroom-api/apns_token/([^&]+)/([^&]+)/([^&]+)/?$',
                       'index.php?__pressroom-api=apns_token&app_id=$matches[1]&user_id=$matches[2]&editorial_project=$matches[3]',
+                      'top' );
+    add_rewrite_rule( '^([^/]*)/pressroom-api/apns_token/([^&]+)/([^&]+)/([^&]+)/?$',
+                      'index.php?__pressroom-api=apns_token&app_id=$matches[2]&user_id=$matches[3]&editorial_project=$matches[4]',
                       'top' );
   }
 

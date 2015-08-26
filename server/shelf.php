@@ -17,8 +17,11 @@ final class PR_Server_Shelf_JSON extends PR_Server_API
   public function add_endpoint() {
 
     parent::add_endpoint();
-    add_rewrite_rule( 'pressroom-api/shelf/([^&]+)/?$',
+    add_rewrite_rule( '^pressroom-api/shelf/([^&]+)/?$',
                       'index.php?__pressroom-api=shelf_json&editorial_project=$matches[1]',
+                      'top' );
+    add_rewrite_rule( '^([^/]*)/pressroom-api/shelf/([^&]+)/?$',
+                      'index.php?__pressroom-api=shelf_json&editorial_project=$matches[2]',
                       'top' );
   }
 

@@ -101,10 +101,10 @@ class PR_Metabox
           }
           break;
         case 'color_clear':
-          if ( isset( $_POST[$field_id] ) ) {
-            $new_value = $_POST[$field_id];
-          } elseif ( isset( $_POST[$field_id . '_clear'] ) ) {
+          if ( isset( $_POST[$field_id . '_clear'] ) ) {
             $new_value = 'clear';
+          } elseif ( isset( $_POST[$field_id] ) ) {
+            $new_value = $_POST[$field_id];
           } else {
             $new_value = $field['default'];
           }
@@ -190,10 +190,10 @@ class PR_Metabox
           $term_meta[$field_id] = isset( $_POST[$field_id] ) ? $_POST[$field_id] : $default;
           break;
         case 'color_clear':
-          if ( isset( $_POST[$field_id] ) ) {
-            $term_meta[$field_id] = $_POST[$field_id];
-          } elseif ( isset( $_POST[$field_id . '_clear'] ) ) {
+          if ( isset( $_POST[$field_id . '_clear'] ) ) {
             $term_meta[$field_id] = 'clear';
+          } elseif ( isset( $_POST[$field_id] ) ) {
+            $term_meta[$field_id] = $_POST[$field_id];
           } else {
             $term_meta[$field_id] = $field['default'];
           }

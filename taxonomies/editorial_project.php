@@ -227,12 +227,11 @@ class PR_Editorial_Project
       $metabox->save_term_values();
     }
 
-
-    if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
-      $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
-      wp_redirect( $url );
-      exit;
-    }
+    // if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
+    //   $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
+    //   wp_redirect( $url );
+    //   exit;
+    // }
 
   }
 
@@ -259,11 +258,11 @@ class PR_Editorial_Project
       $metabox->save_term_values( true );
     }
 
-    if( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
-      $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
-      wp_redirect( $url );
-      exit;
-    }
+    // if ( isset( $_POST['action']) && $_POST['action'] == 'editedtag' ) {
+    //   $url = admin_url( 'edit-tags.php?action=edit&post_type='. PR_EDITION .'&taxonomy=' . PR_EDITORIAL_PROJECT . '&tag_ID=' . $term_id );
+    //   wp_redirect( $url );
+    //   exit;
+    // }
   }
 
   /**

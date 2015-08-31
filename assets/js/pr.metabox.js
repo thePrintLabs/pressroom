@@ -80,10 +80,9 @@ jQuery(function($) {
     $('.tabbed').css('display','none');
     $('.'+ tab).css('display','table-row');
 
-    if ($(this).find( 'input[name="_pr_pad_sgs_shelf_backgroundFillStyle"]' )) {
+    if (tab == 'pad_meta') {
       $( 'input[name="_pr_pad_sgs_shelf_backgroundFillStyle"]' ).change();
-    }
-    if ($(this).find( 'input[name="_pr_phone_sgs_shelf_backgroundFillStyle"]' )) {
+    } else if (tab == 'phone_meta') {
       $( 'input[name="_pr_phone_sgs_shelf_backgroundFillStyle"]' ).change();
     }
   });

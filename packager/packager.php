@@ -54,14 +54,17 @@ class PR_Packager
 			exit;
 		}
 
-		$options = get_option( 'pr_settings' );
-		$exporter = isset( $options['pr_enabled_exporters'][$_GET['packager_type']]) ? $options['pr_enabled_exporters'][$_GET['packager_type']] : false ;
-		if( !$exporter || !isset( $exporter['active'] ) || !$exporter['active'] ) {
-			$setting_page_url = admin_url() . 'admin.php?page=pressroom-addons';
-			self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom add-ons page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
-			$this->exit_on_error();
-			return;
+		if( $_GET['packager_type'] != 'webcore' ) {
+			$options = get_option( 'pr_settings' );
+			$exporter = isset( $options['pr_enabled_exporters'][$_GET['packager_type']]) ? $options['pr_enabled_exporters'][$_GET['packager_type']] : false ;
+			if( !$exporter || !PR_EDD_License::check_license( $exporter['itemid'], $exporter['name'] ) ) {
+				$setting_page_url = admin_url() . 'admin.php?page=pressroom-addons';
+				self::print_line( sprintf( __('Exporter %s not enabled. Please enable it from <a href="%s">Pressroom add-ons page</a>', 'edition'), $_GET['packager_type'], $setting_page_url ), 'error' );
+				$this->exit_on_error();
+				return;
+			}
 		}
+
 
 		$this->package_type = $_GET['packager_type'];
 

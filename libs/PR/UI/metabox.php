@@ -96,12 +96,19 @@ class PR_Metabox
         default:
           if ( isset( $_POST[$field_id] ) ) {
             $new_value = $_POST[$field_id];
-          }
-          else {
+          } else {
             $new_value = $field['default'];
           }
           break;
-
+        case 'color_clear':
+          if ( isset( $_POST[$field_id] ) ) {
+            $new_value = $_POST[$field_id];
+          } elseif ( isset( $_POST[$field_id . '_clear'] ) ) {
+            $new_value = 'clear';
+          } else {
+            $new_value = $field['default'];
+          }
+          break;
         case 'checkbox':
           if ( isset( $_POST[$field_id] ) ) {
             $new_value = $_POST[$field_id];
@@ -139,20 +146,17 @@ class PR_Metabox
             $new_value = $current_value;
           }
           break;
-
         case 'date':
           if ( isset( $_POST[$field_id] ) ) {
             $new_value = date('Y-m-d', strtotime($_POST[$field_id]));
           }
           break;
-
         case 'repeater':
           if ( isset( $_POST[$field_id] ) ) {
             foreach ( $_POST[$field_id] as $key => $single ) {
               $new_value[$key] = $single;
             }
-          }
-          else {
+          } else {
             $new_value[$key] = $_POST[$field_id][0];
           }
           break;
@@ -185,30 +189,33 @@ class PR_Metabox
         default:
           $term_meta[$field_id] = isset( $_POST[$field_id] ) ? $_POST[$field_id] : $default;
           break;
-
+        case 'color_clear':
+          if ( isset( $_POST[$field_id] ) ) {
+            $term_meta[$field_id] = $_POST[$field_id];
+          } elseif ( isset( $_POST[$field_id . '_clear'] ) ) {
+            $term_meta[$field_id] = 'clear';
+          } else {
+            $term_meta[$field_id] = $field['default'];
+          }
+          break;
         case 'double_text':
           $term_meta[$field_id][0] = isset( $_POST[$field_id][0] ) ? $_POST[$field_id][0] : $default;
           $term_meta[$field_id][1] = isset( $_POST[$field_id][1] ) ? $_POST[$field_id][1] : $default;
           break;
-
         case 'repeater':
           $term_meta[$field_id] = array_filter( $_POST[$field_id] );
           break;
-
         case 'repeater_with_radio':
           if ( isset( $_POST[$field_id] ) ) {
             $term_meta[$field_id] = array_filter( $_POST[$field_id] );
           }
-
           if ( isset( $_POST[$field['radio_field']] ) ) {
             $term_meta[$field['radio_field']] = array_filter( $_POST[$field['radio_field']] );
           }
           break;
-
         case 'date':
           $term_meta[$field_id] = date( 'Y-m-d', strtotime( $_POST[$field_id] ) );
           break;
-
         case 'file':
           $current_value = isset( $term_meta[$field_id] ) ? $term_meta[$field_id] : '';
           if ( !empty( $_FILES[$field_id]['name'] ) ) {
@@ -237,8 +244,7 @@ class PR_Metabox
                 $term_meta[$field_id] = $attach_id;
               }
             }
-          }
-          else {
+          } else {
             $term_meta[$field_id] = $current_value;
           }
           break;
@@ -359,6 +365,11 @@ class PR_Metabox
           break;
         case 'color':
           $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value ? $meta_value : $field['default'] ) . '" class="pr-color-picker" data-default-color="#ffffff" />
+          <p class="description">'. $field['desc'] . '</p>';
+          break;
+        case 'color_clear':
+          $html.= '<input type="text" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. ( $meta_value == 'clear' ? '' : ( $meta_value ? $meta_value : $field['default'] ) ) . '" class="pr-color-picker" data-default-color="#ffffff" />
+          <label for="' . $field['id'] . '_clear" class="pr-picker-clear"><input type="checkbox" name="' . $field['id'] . '_clear" id="' . $field['id'] . '_clear" ' . ( $meta_value == 'clear' ? 'checked="checked"' : '' ) . ' />' . __("Transparent", 'pr_metabox') . '</label>
           <p class="description">'. $field['desc'] . '</p>';
           break;
         case 'number':

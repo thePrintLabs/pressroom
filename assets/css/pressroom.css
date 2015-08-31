@@ -189,6 +189,12 @@
   display: none;
 }
 
+.pr-picker-clear {
+  vertical-align: top;
+  display: inline-block;
+  padding: 5px 0;
+}
+
 /****************************/
 /*        FTP_SFTP          */
 /****************************/

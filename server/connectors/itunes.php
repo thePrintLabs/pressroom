@@ -185,7 +185,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
     global $wpdb;
     $sql = "SELECT DISTINCT base64_receipt, transaction_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS;
-    $sql.= " WHERE app_bundle_id = %s AND device_id = %s AND type = 'auto-renewable-subscription'";
+    $sql.= " WHERE app_bundle_id = %s AND device_id = %s AND type IN ('auto-renewable-subscription', 'free-subscription')";
     $sql.= " ORDER BY transaction_id DESC LIMIT 0, 1";
     $data = $wpdb->get_row( $wpdb->prepare( $sql, $this->app_id, $this->device_id ) );
     return $data;

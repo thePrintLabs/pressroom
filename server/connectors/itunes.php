@@ -219,13 +219,21 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
     global $wpdb;
     $issues = array();
+    $today = date('Y-m-d H:i');
     $transaction_id = $receipt_data->receipt->transaction_id;
+    $subscription_bundle_id = $receipt_data->receipt->product_id;
 
     if ( $receipt_data->status == 0 ) {
       $to_date = date( 'Y-m-d H:i', (int)( ( isset( $receipt_data->latest_receipt_info->expires_date_ms ) ? $receipt_data->latest_receipt_info->expires_date_ms : $receipt_data->latest_receipt_info->expires_date ) / 1000 ) );
     }
     elseif ( $receipt_data->status == 21006 ) {
       $to_date = date( 'Y-m-d H:i', (int)( ( isset( $receipt_data->latest_expired_receipt_info->expires_date_ms ) ? $receipt_data->latest_expired_receipt_info->expires_date_ms : $receipt_data->latest_expired_receipt_info->expires_date ) / 1000 ) );
+    }
+
+    // Free subscription does not expire
+    $free_subscription_id = PR_Editorial_Project::get_free_subscription_id( $this->eproject->term_id );
+    if ( $free_subscription_id && $free_subscription_id == $subscription_bundle_id ) {
+      $to_date = $today;
     }
 
     // Get the editorial project settings
@@ -237,10 +245,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       $last_edition_date = get_post_meta( $last_edition, '_pr_date', true );
     }
 
-    $today = date('Y-m-d H:i');
-    $product_id = $receipt_data->receipt->product_id;
-    $subscription_method = PR_Editorial_Project::get_subscription_method( $this->eproject->term_id, $product_id );
-
+    $subscription_method = PR_Editorial_Project::get_subscription_method( $this->eproject->term_id, $subscription_bundle_id );
     // Enable all editions if the subscription method is not defined or is setted on all
     // and the current date is between the subscription range
     if ( ( !$subscription_method || $subscription_method == 'all' ) && ( $to_date >= $today ) ) {
@@ -260,7 +265,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
       foreach ( $editions as $edition ) {
         $subscription_plans = get_post_meta( $edition->ID, '_pr_subscriptions_select', true );
         if ( !empty( $subscription_plans ) ) {
-          if ( in_array( $product_id, $subscription_plans ) ) {
+          if ( in_array( $subscription_bundle_id, $subscription_plans ) ) {
             $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
             array_push( $issues, $edition_bundle_id );
           }

@@ -410,9 +410,9 @@ class PR_Editorial_Project
 	public static function get_free_subscription_id( $editorial_project_id ) {
 
 		$free_subscription_id = false;
-		$eproject_options = self::get_configs( $editorial_project_id );
-		if ( $eproject_options && isset( $eproject_options['_pr_prefix_bundle_id'], $eproject_options['_pr_subscription_free_prefix'] ) ) {
-      $free_subscription_id = $eproject_options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $eproject_options['_pr_subscription_free_prefix'];
+		$options = self::get_configs( $editorial_project_id );
+		if ( $options && isset( $options['_pr_prefix_bundle_id'], $options['_pr_subscription_free_prefix'] ) ) {
+      $free_subscription_id = $options['_pr_prefix_bundle_id'] . '.' . $options['_pr_subscription_prefix']. '.' . $options['_pr_subscription_free_prefix'];
 		}
 		return $free_subscription_id;
 	}

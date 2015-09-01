@@ -21,6 +21,12 @@ jQuery(function($) {
     $( '.pr_repeater input[type="text"]' ).trigger( "keyup" );
   });
 
+  $('#_pr_subscription_free_prefix').keyup(function() {
+    var autocompleted = $(this).next();
+    autocompleted.html(prefix.val() + '.' + subscription.val() + '.' + $(this).val() );
+    $( '.pr_repeater input[type="text"]' ).trigger( "keyup" );
+  });
+
   $( ".form-table" ).delegate('.pr_repeater input[type="text"]','keyup',function() {
     var autocompleted = $(this).parent().find('.repeater-completer');
     autocompleted.html(prefix.val() + '.' + subscription.val() + '.' + $(this).val() );

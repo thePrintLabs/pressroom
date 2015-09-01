@@ -16,14 +16,17 @@ PressRoom supports the sub-compact publishing model. Content is structured aroun
 
 Editions can be published to:
 
-- Web as static html
-- iOS, feeding a native client based on the open source Baker Framework
+- Web as static html files
+- iOS Apps, feeding a native client based on the open source Baker Framework
+- Web Apps with offline reading on mobile and desktop devices (*)
 - be packaged for the Adobe DPS HTML importer (*)
 - published as a Json stream (*)
 
+Get the iOS client https://betas.to/dPPWzSnE
+
 Suitable for magazines, newspapers or just to manage your static websites and release your blog to multiple channels. PressRoom is being developed around a vision for digital publishing that we see growing and struggling with the available technologies.
 
-(*) not yet ready for public distribution.
+(*) not yet ready for public distribution, but available as custom development for immediate deployment
 
 == Installation ==
 

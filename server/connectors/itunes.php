@@ -185,7 +185,7 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
     global $wpdb;
     $sql = "SELECT DISTINCT base64_receipt, transaction_id FROM " . $wpdb->prefix . PR_TABLE_RECEIPTS;
-    $sql.= " WHERE app_bundle_id = %s AND device_id = %s AND type = 'auto-renewable-subscription'";
+    $sql.= " WHERE app_bundle_id = %s AND device_id = %s AND type IN ('auto-renewable-subscription', 'free-subscription')";
     $sql.= " ORDER BY transaction_id DESC LIMIT 0, 1";
     $data = $wpdb->get_row( $wpdb->prepare( $sql, $this->app_id, $this->device_id ) );
     return $data;
@@ -238,7 +238,8 @@ final class PR_Connector_iTunes extends PR_Server_API {
     }
 
     $today = date('Y-m-d H:i');
-    $subscription_method = PR_Editorial_Project::get_subscription_method( $this->eproject->term_id, $receipt_data->receipt->product_id );
+    $product_id = $receipt_data->receipt->product_id;
+    $subscription_method = PR_Editorial_Project::get_subscription_method( $this->eproject->term_id, $product_id );
 
     // Enable all editions if the subscription method is not defined or is setted on all
     // and the current date is between the subscription range
@@ -257,8 +258,13 @@ final class PR_Connector_iTunes extends PR_Server_API {
 
     if ( !empty( $editions ) ) {
       foreach ( $editions as $edition ) {
-        $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
-        array_push( $issues, $edition_bundle_id );
+        $subscription_plans = get_post_meta( $edition->ID, '_pr_subscriptions_select', true );
+        if ( !empty( $subscription_plans ) ) {
+          if ( in_array( $product_id, $subscription_plans ) ) {
+            $edition_bundle_id = PR_Edition::get_bundle_id( $edition->ID, $this->eproject->term_id );
+            array_push( $issues, $edition_bundle_id );
+          }
+        }
       }
     }
     return $issues;

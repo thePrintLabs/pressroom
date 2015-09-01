@@ -15,16 +15,15 @@ jQuery(function($) {
     $( '#_pr_single_edition_prefix, #_pr_subscription_free_prefix, #_pr_subscription_prefix, .pr_repeater input[type="text"]' ).trigger( "keyup" );
   });
 
-  $('#_pr_single_edition_prefix, #_pr_subscription_free_prefix, #_pr_subscription_prefix').keyup(function() {
+  $('#_pr_single_edition_prefix, #_pr_subscription_prefix').keyup(function() {
     var autocompleted = $(this).next();
     autocompleted.html(prefix.val() + '.' + $(this).val() );
-    $( '.pr_repeater input[type="text"]' ).trigger( "keyup" );
+    $( '.pr_repeater input[type="text"], #_pr_subscription_free_prefix' ).trigger( "keyup" );
   });
 
   $('#_pr_subscription_free_prefix').keyup(function() {
     var autocompleted = $(this).next();
     autocompleted.html(prefix.val() + '.' + subscription.val() + '.' + $(this).val() );
-    $( '.pr_repeater input[type="text"]' ).trigger( "keyup" );
   });
 
   $( ".form-table" ).delegate('.pr_repeater input[type="text"]','keyup',function() {

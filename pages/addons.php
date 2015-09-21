@@ -247,7 +247,8 @@ class PR_addons_page {
       foreach ( $addons as $addon ) {
 
         $is_installed = false;
-
+        $is_trial = false;
+        
         $filepath = isset( $enabled_exporters[$addon->info->slug]['filepath'] ) ? $enabled_exporters[$addon->info->slug]['filepath'] : false ;
         // check if file exist and is out of pressroom plugin dir ( embedded web exporter )
         if ( file_exists( $filepath ) ) {
@@ -257,7 +258,6 @@ class PR_addons_page {
           $is_free = $addon->pricing->amount == 0 ? true : false;
         }
         else {
-          $is_trial = false;
           foreach( $addon->pricing as $price ) {
 
             if( $price == 0 ) {

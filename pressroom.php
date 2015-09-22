@@ -45,7 +45,7 @@ class TPL_Pressroom
 		if ( false !== $response ) {
 			$html = '<h1>' . __('Pressroom') . '</h1>
 			<p><b>' .__( 'An error occurred during activation. Please see details below.', 'pressroom_setup' ). '</b></p>
-			<ul><li>' .implode( "</li><li>", $errors ). '</li></ul>';
+			<ul><li>' .implode( "</li><li>", $response ). '</li></ul>';
 			wp_die( $html, __( 'Pressroom activation error', 'pressroom_setup' ), ('back_link=true') );
 		}
 		do_action( 'press_flush_rules' );
